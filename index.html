@@ -472,7 +472,7 @@ async function adminV(){
     const [au,pr]=await Promise.all([api('auth').then(x=>x||{}),allProfs()]);
     body=`<table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
    return `<tr><td>${esc(p.name)}</td><td>${esc(au[k].email)}</td><td>${au[k].role}</td><td>${cnt(p)}</td><td>${p.public?'Public':'Private'}</td>
-   <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k==='david'?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`).join('')}</table>`}
+   <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k==='david'?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`}).join('')}</table>`}
   else if(atab==='orders')body=await ordersHTML();
   else if(atab==='inv')body=await invHTML();
   else if(atab==='news')body=await newsAdminHTML();
