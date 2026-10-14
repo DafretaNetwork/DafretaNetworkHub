@@ -237,7 +237,7 @@ async function homeV(){
   const you=me?(await api('profiles/'+me.k)||{}):{avatar:0,frame:'gold'};
   const lk=p=>'#/char/'+p.name.toLowerCase(),top=pr.slice(0,3),rest=pr.slice(3);
   view(`<section class="heroW"><canvas id="pt"></canvas><div class="hero"><div><h1>Your name.<br>Your <em>badges.</em></h1>
-  <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way.</p>
+  <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way!.</p>
   <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}<button class="g" onclick="goShop()&&(location.hash='#/shop')">Visit shop</button></div></div>
   <div style="display:grid;place-items:center">${av(you,220)}</div></div></section>
   <div class="sec-h"><h2>Top collectors</h2><span class="mut">Most badges earned</span></div>
