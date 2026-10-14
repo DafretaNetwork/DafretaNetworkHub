@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#02060d">
 <title>Dafreta Network</title>
 <link rel="icon" type="image/webp" href="https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/dafreta-network-favicon.webp">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -301,6 +302,147 @@ background:radial-gradient(circle,var(--ac) 0,transparent 66%);filter:blur(10px)
 .gn.gp{left:12px}.gn.gx{right:12px}
 .gc{position:absolute;bottom:12px;left:50%;translate:-50% 0;background:#050a12b3;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid #ffffff26;border-radius:99px;padding:2px 12px;font:600 13px 'Chakra Petch';color:#fff}
 .code-hint{font-size:13px;color:var(--mute);margin:4px 0}
+
+/* ---------- product card: roomier info area (desktop + mobile) ---------- */
+.pr .tx{padding:18px 20px 22px}
+.pr .tx .cl{-webkit-line-clamp:3;min-height:4.5em;margin:6px 0 12px;font-size:14.5px}
+/* mobile-only controls are hidden on desktop, so desktop looks exactly as before */
+.hb,.sb,.tb,.nbk{display:none}
+
+/* =====================================================================
+   MOBILE APP VIEW  (phones only, desktop is untouched)
+   ===================================================================== */
+@media(max-width:760px){
+body{font-size:15px;-webkit-text-size-adjust:100%}
+a,button{-webkit-tap-highlight-color:transparent}
+body.mo{overflow:hidden}
+main{padding:18px 14px calc(96px + env(safe-area-inset-bottom))}
+
+/* top bar */
+nav{gap:0 8px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:#02060df2;backdrop-filter:none;-webkit-backdrop-filter:none;align-items:center}
+.logo img{height:32px}
+nav .sp{flex:1;order:1}
+.sb,.hb{display:grid;position:relative;z-index:40}
+.sb{order:2;width:42px;height:42px;padding:0;border-radius:50%;clip-path:none;background:#14243c;color:var(--ink);place-items:center}
+.sb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+body.ms .sb{background:var(--gold);color:#201400}
+.hb{order:3;width:44px;height:44px;padding:0;background:transparent;clip-path:none;place-content:center;gap:5px}
+.hb:hover{filter:none}
+.hb span{display:block;width:24px;height:3px;border-radius:3px;background:var(--ink);transform-origin:center;transition:transform .4s cubic-bezier(.68,-.5,.27,1.5),opacity .2s,background .3s}
+.hb span:nth-child(2){width:16px;margin-left:auto}
+body.mo .hb span{background:var(--gold)}
+body.mo .hb span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+body.mo .hb span:nth-child(2){opacity:0;transform:scaleX(0)}
+body.mo .hb span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+/* search row slides down */
+.sw{order:10;width:100%;max-height:0;opacity:0;overflow:hidden;margin:0;transition:max-height .32s ease,opacity .25s ease,margin .32s ease}
+body.ms .sw{max-height:64px;opacity:1;overflow:visible;margin-top:10px}
+.sw input{height:46px;border-radius:14px;padding:0 16px}
+#sr{top:52px;border-radius:14px;overflow:hidden}
+/* slide-in menu */
+.nbk{display:block;position:fixed;inset:0;z-index:25;background:#000b;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+body.mo .nbk{opacity:1;pointer-events:auto}
+#nl{position:fixed;top:0;right:0;bottom:0;z-index:30;width:min(84vw,330px);flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:8px;
+padding:calc(78px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom));overflow-y:auto;
+background:linear-gradient(180deg,#0b1a33,#050a12 70%);border-left:1px solid var(--line);box-shadow:-24px 0 60px #000c;
+transform:translateX(105%);visibility:hidden;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s .42s}
+body.mo #nl{transform:none;visibility:visible;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s}
+#nl::before{content:'Menu';font:700 13px 'Chakra Petch';letter-spacing:2px;text-transform:uppercase;color:var(--mute);padding:0 4px 8px}
+#nl>*{opacity:0;transform:translateX(26px);transition:opacity .35s ease,transform .45s cubic-bezier(.22,1,.36,1)}
+body.mo #nl>*{opacity:1;transform:none}
+body.mo #nl>:nth-child(1){transition-delay:.08s}body.mo #nl>:nth-child(2){transition-delay:.13s}body.mo #nl>:nth-child(3){transition-delay:.18s}
+body.mo #nl>:nth-child(4){transition-delay:.23s}body.mo #nl>:nth-child(5){transition-delay:.28s}body.mo #nl>:nth-child(6){transition-delay:.33s}body.mo #nl>:nth-child(7){transition-delay:.38s}
+#nl a.l{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#0a1626;font:600 17px 'Chakra Petch';color:var(--ink)}
+#nl a.l:active{background:#12223a;border-color:var(--gold)}
+#nl a.l::before{font-size:20px;width:28px;text-align:center}
+#nl a[href="#/shop"]::before{content:'🛒'}#nl a[href="#/news"]::before{content:'📰'}#nl a[href="#/friends"]::before{content:'👥'}
+#nl a[href="#/me"]::before{content:'⚙️'}#nl a[href="#/admin"]::before{content:'🛡️'}#nl a[href^="#/char"]::before{content:'🎮'}#nl a[href="#/login"]::before{content:'🔑'}
+#nl .dot{margin-left:auto}
+#nl button{width:100%;min-height:50px;font-size:16px;margin-top:4px}
+#nl button.lo{margin-top:auto}
+body.mo .cbw{display:none}
+
+/* bottom tab bar */
+.tb{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:fixed;left:0;right:0;bottom:0;z-index:15;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:#050b14f2;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.tb:empty{display:none}
+.tbi{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 4px;color:var(--mute);font:600 11px 'Chakra Petch';transition:color .2s}
+.tbi svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s cubic-bezier(.34,1.8,.5,1)}
+.tbi.on{color:var(--gold)}
+.tbi.on svg{transform:translateY(-2px) scale(1.12)}
+.tbi.on::before{content:'';position:absolute;top:-7px;left:32%;right:32%;height:3px;border-radius:0 0 4px 4px;background:var(--gold);box-shadow:0 0 12px var(--gold)}
+.tbi:active svg{transform:scale(.86)}
+.tdot{position:absolute;top:1px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:99px;background:#FF2400;color:#fff;font:700 11px/18px 'Chakra Petch';text-align:center;padding:0 4px}
+
+/* hero */
+.heroW{min-height:0;margin:-18px 0 34px calc(50% - 50vw);padding:34px 20px 40px}
+.hero{gap:18px;text-align:center}
+.hero>div:last-child{order:-1}
+.hero .av{--s:150px!important}
+.hero h1{font-size:44px;line-height:1.02}
+.hero p{margin:12px auto 20px}
+.hero .row{justify-content:center}
+.hero .row button{flex:1 1 140px;min-height:46px}
+.sec-h{flex-direction:column;gap:0;margin-bottom:14px}
+.sec-h h2{font-size:30px}
+
+/* podium + ranks */
+.pod{grid-template-columns:repeat(3,1fr);gap:8px;margin-top:66px}
+.pc.r1{order:2!important}.pc.r2{order:1!important}.pc.r3{order:3!important}
+.pc{padding:14px 6px 12px}
+.pc.r1{padding-top:26px;padding-bottom:16px}
+.pc .av{--s:62px!important}.pc.r1 .av{--s:82px!important}
+.pc b{font-size:14px;margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc span.mut{font-size:11px}
+.aw{width:50px;height:62px;margin:-40px auto 4px}
+.pc.r1 .aw{width:58px;height:72px;margin-top:-52px}
+.cols{grid-template-columns:1fr;gap:10px}
+.pl{border-radius:16px;padding:10px 12px}
+
+/* news */
+.nw{padding:16px}
+.nw h3{font-size:24px}
+.nwh .av{--s:44px!important}
+.nwp{max-height:170px}
+
+/* shop: 2-column app grid */
+#shop .sec-h,#news .sec-h{margin-top:44px!important}
+.shop{grid-template-columns:repeat(2,1fr);gap:12px}
+.pr{border-radius:18px}
+.pr .tx{padding:10px 12px 14px}
+.pr .tx b{font-size:15px;line-height:1.2}
+.pr .tx span{font-size:16px}
+.pr .tx em{float:none;display:block;margin-top:2px;font-size:12px}
+.pr .tx .cl{-webkit-line-clamp:2;min-height:0;font-size:13px;margin:4px 0 8px}
+
+/* popups become bottom sheets */
+.ov{place-items:end center;padding:0}
+.md{width:100%;max-height:92dvh;border-radius:26px 26px 0 0;padding:24px 18px calc(28px + env(safe-area-inset-bottom));animation:sheet .4s cubic-bezier(.22,1,.36,1)}
+.md::before{content:'';display:block;width:44px;height:5px;border-radius:9px;background:#27415f;margin:-12px auto 14px}
+.md .xx{top:12px;right:12px}
+@keyframes sheet{from{transform:translateY(100%)}to{transform:none}}
+.md::-webkit-scrollbar-track{margin:30px 0 20px}
+
+/* forms, tabs, lists */
+input,select,textarea{border-radius:12px;padding:12px 14px}
+.box{padding:18px}
+.auth{margin:10px auto}
+.auth button{min-height:46px}
+.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;padding:10px 14px}
+.fr-row{flex-wrap:wrap}
+.fr-row>.row{flex-basis:100%;padding-left:60px}
+.news{gap:14px}
+
+/* chat becomes a full-screen sheet */
+.cbw{right:14px;bottom:calc(76px + env(safe-area-inset-bottom));width:54px;height:54px}
+#cb{width:52px;height:52px;font-size:24px}
+#cp{left:0;right:0;top:0;bottom:0;width:100%;height:100dvh;border:0;clip-path:none;animation:sheet .38s cubic-bezier(.22,1,.36,1)}
+.cx-h{padding-top:calc(12px + env(safe-area-inset-top))}
+.cx-f{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+/* notifications drop in from the top like app banners */
+#toast{top:calc(66px + env(safe-area-inset-top));bottom:auto;left:12px;right:12px;max-width:none;border-radius:16px;z-index:70}
+}
 </style>
 </head>
 <body>
@@ -308,8 +450,12 @@ background:radial-gradient(circle,var(--ac) 0,transparent 66%);filter:blur(10px)
 <div class="logo" onclick="location.hash='#/'"><img src="https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/dafreta-network-logo-name.webp" alt="Dafreta Network"></div>
 <div class="sw"><input id="q" placeholder="Search players" autocomplete="off" oninput="search(this.value)"><div id="sr"></div></div>
 <div class="sp"></div><div id="nl" class="row"></div>
+<button class="sb" onclick="tgSearch()" aria-label="Search players"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+<button class="hb" id="hb" onclick="tgNav()" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="nbk" onclick="setNav(false)"></div>
 </nav>
 <main id="app"></main>
+<div id="tb" class="tb"></div>
 <div id="toast"></div>
 <script>
 const DB='https://dafreta-network-default-rtdb.asia-southeast1.firebasedatabase.app';
@@ -376,7 +522,7 @@ const unseen=()=>Object.values(IN.notes).filter(n=>n.t>(+IN.seen||0)).length;
 function nav(){setTimeout(watch,0);
   const fc=me?Object.keys(IN.reqs).length+unseen():0;
   $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goSec(\'shop\')">Shop</a><a class="l" href="#/news" onclick="return goSec(\'news\')">News</a>'+(me?`<a class="l" href="#/friends">Friends${fc?`<b class="dot">${fc}</b>`:''}</a><a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s lo" onclick="askLogout()">Log out</button>`
-  :`<a class="l" href="#/login">Log in</a><button class="s" onclick="location.hash='#/register'">Create account</button>`)}
+  :`<a class="l" href="#/login">Log in</a><button class="s" onclick="location.hash='#/register'">Create account</button>`);tabBar(fc)}
 function askLogout(){
   modal(`<div style="text-align:center;padding:10px 0 4px"><div style="font-size:54px">👋</div><div class="mt" style="margin-top:8px">Log out?</div>
   <p class="mut" style="margin:10px 0 24px">Are you sure you want to log out?</p>
@@ -385,7 +531,7 @@ function logout(){localStorage.removeItem('dn_s');stopIn();inOK=false;IN=E0();cw
 const view=h=>{$('#app').innerHTML=h;window.scrollTo(0,0)};
 async function route(){
   const [,pg,arg,arg2]=location.hash.split('/');
-  CURC=null;
+  CURC=null;setNav(false);tbSel=null;setTab();
   try{
     if(pg==='login')return loginV();
     if(pg==='register')return regV();
@@ -1077,6 +1223,31 @@ function mnSuggest(){clearTimeout(mnT);mnT=setTimeout(async()=>{
   box.innerHTML=r.map(([k,p])=>`<div class="mni" onmousedown="event.preventDefault();mnPick('${k}')">${av(p,28)}<span>${esc(p.name)}</span></div>`).join('');box.style.display=r.length?'block':'none'}catch(e){}},180)}
 function mnPick(k){const i=$('#cin');if(!i)return;const pos=i.selectionStart,b=i.value.slice(0,pos).replace(/@([a-z0-9_]*)$/i,'@'+k+' ');
   i.value=b+i.value.slice(pos);i.focus();i.setSelectionRange(b.length,b.length);$('#mnl').style.display='none'}
+/* ---------- mobile app shell: hamburger menu, search toggle, bottom tab bar ---------- */
+const setNav=o=>{document.body.classList.toggle('mo',!!o);if(o)document.body.classList.remove('ms');const h=$('#hb');h&&h.setAttribute('aria-expanded',String(!!o))};
+const tgNav=()=>setNav(!document.body.classList.contains('mo'));
+const tgSearch=()=>{const b=document.body.classList,on=!b.contains('ms');b.toggle('ms',on);if(on){setNav(false);setTimeout(()=>$('#q').focus(),60)}};
+let tbSel=null;
+const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+shop:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
+news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5"/>',
+friends:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 5a3.5 3.5 0 0 1 0 7M18 14.8c1.9.7 3.2 2.4 3.5 5.2"/>',
+me:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.5 4-7 8-7s7.2 2.5 8 7"/>',
+login:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4"/><path d="M10 8l-4 4 4 4M6 12h10"/>'};
+const tbi=(k,l,href,on,extra)=>`<a href="${href}" class="tbi" data-k="${k}" onclick="${on}"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg><span>${l}</span>${extra||''}</a>`;
+function tabBar(fc){const t=$('#tb');if(!t)return;
+  t.innerHTML=tbi('home','Home','#/',"tbOn(this);if(!location.hash||location.hash==='#/'){scrollTo({top:0,behavior:'smooth'});return false}")
+   +tbi('shop','Shop','#/shop',"tbOn(this);return goSec('shop')")
+   +tbi('news','News','#/news',"tbOn(this);return goSec('news')")
+   +(me?tbi('friends','Friends','#/friends','tbOn(this)',fc?`<b class="tdot">${fc}</b>`:'')+tbi('me','Me','#/char/'+me.k,'tbOn(this)'):tbi('login','Log in','#/login','tbOn(this)'));
+  setTab()}
+function tbOn(el){tbSel=el.dataset.k;document.querySelectorAll('.tbi').forEach(a=>a.classList.toggle('on',a===el))}
+function setTab(){const [,pg,arg]=location.hash.split('/');
+  const k=tbSel||(!pg?'home':pg==='shop'?'shop':pg==='news'?'news':pg==='friends'?'friends':(pg==='me'||(pg==='char'&&me&&arg===me.k))?'me':(pg==='login'||pg==='register')?'login':'');
+  document.querySelectorAll('.tbi').forEach(a=>a.classList.toggle('on',a.dataset.k===k))}
+$('#nl').addEventListener('click',e=>{if(e.target.closest('a,button'))setNav(false)});
+$('#sr').addEventListener('click',e=>{if(e.target.closest('a[href]'))document.body.classList.remove('ms')});
+matchMedia('(min-width:761px)').addEventListener('change',e=>{if(e.matches)document.body.classList.remove('mo','ms')});
 boot();
 </script>
 </body>
