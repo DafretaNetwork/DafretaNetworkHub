@@ -26,7 +26,7 @@ nav a.l:hover{border-color:var(--gold)}
 #sr a:hover{background:#12223a}
 main{max-width:1080px;margin:0 auto;padding:30px 20px 80px}
 input,select,textarea{background:#050b14;border:1px solid var(--line);color:var(--ink);padding:10px 12px;font:inherit;outline:none;width:100%}
-input:focus,select:focus{border-color:var(--gold)}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 label{display:block;color:var(--mute);font-size:14px;margin:12px 0 4px}
 button{cursor:pointer;border:0;background:var(--gold);color:#201400;font-weight:700;font-size:15px;padding:10px 20px;
 clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
@@ -58,11 +58,10 @@ clip-path:polygon(14% 0,100% 0,100% 86%,86% 100%,0 100%,0 14%)}
 .bg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
 .bd{background:var(--panel2);border:1px solid var(--rc);padding:14px 10px;text-align:center;position:relative;
 box-shadow:inset 0 -3px 0 var(--rc)}
-.bd i{font-style:normal;font-size:38px;display:block}
 .bd b{display:block;font-family:'Chakra Petch';margin-top:4px}
 .bd small{display:block;color:var(--mute);font-size:12.5px;line-height:1.3;margin-top:3px}
 .bd em{font-style:normal;font-size:12px;color:var(--rc)}
-.bd .x{position:absolute;top:4px;right:4px;padding:1px 7px;font-size:12px}
+.bd .x{position:absolute;top:4px;right:4px;padding:1px 7px;font-size:12px;z-index:2}
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
 .tab{padding:10px 18px;cursor:pointer;color:var(--mute)}
 .tab.on{color:var(--gold);border-bottom:2px solid var(--gold)}
@@ -131,6 +130,28 @@ background:radial-gradient(ellipse 55% 80% at 82% 50%,#10305f99,transparent 70%)
 .pm.maya{background:#050505;color:#2ee27d;border-color:#1f6b45}.pm.maya .lg{background:#2ee27d;color:#000}
 .qr img{display:block;max-width:100%;max-height:340px;margin:8px auto 18px;border-radius:16px;background:#fff}
 body{overflow-x:hidden}#shop{scroll-margin-top:72px}
+
+/* ---------- logout button pop + close button spin ---------- */
+button.lo{transition:transform .25s cubic-bezier(.34,1.8,.5,1),background .25s,color .25s}
+button.lo:hover{transform:scale(1.15) translateY(-2px);background:var(--red);color:#fff;filter:none}
+button.lo:active{transform:scale(.93)}
+.md .xx,.bd .x{transition:transform .5s ease,background .25s,color .25s}
+.md .xx:hover,.bd .x:hover{transform:rotate(360deg);background:var(--red);color:#fff;filter:none}
+.md .xx:hover{box-shadow:0 0 14px #ff546899}
+
+/* ---------- badges + glow ---------- */
+.bd{cursor:pointer;transition:transform .2s}
+.bd:hover{transform:translateY(-3px)}
+.bi{--bs:64px;position:relative;isolation:isolate;width:var(--bs);height:var(--bs);margin:0 auto 6px;display:grid;place-items:center;font-size:calc(var(--bs)*.6)}
+.bi img{width:100%;height:100%;object-fit:contain;position:relative}
+.bi.gl::before{content:'';position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,var(--rc) 0,transparent 70%);filter:blur(7px);z-index:-1;opacity:.8}
+.bi.gl img{filter:drop-shadow(0 0 5px var(--rc))}
+@media(prefers-reduced-motion:no-preference){.bi.gl::before{animation:glow 2.2s ease-in-out infinite}}
+@keyframes glow{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}
+.bx2{background:var(--panel2);border:1px solid var(--line);padding:14px;margin-bottom:14px}
+.bx2 table{margin-top:12px}
+code{font:600 14px monospace;letter-spacing:1px;color:var(--gold)}
+textarea{resize:vertical;min-height:90px}
 </style>
 </head>
 <body>
@@ -145,7 +166,7 @@ body{overflow-x:hidden}#shop{scroll-margin-top:72px}
 const DB='https://dafreta-network-default-rtdb.asia-southeast1.firebasedatabase.app';
 const AV=['🧙','⚔️','🏹','🐉','🦊','🤖','👹','🧛','🥷','🐺','🦅','💀','🧝','🐲','👽','🦁'];
 const F={none:'#26364d',bronze:'linear-gradient(135deg,#d98a3d,#6b3d12)',silver:'linear-gradient(135deg,#fff,#7d8590)',gold:'linear-gradient(135deg,#ffe27a,#c47f00,#ffe27a)',neon:'linear-gradient(135deg,#00f0ff,#0050ff)',flame:'linear-gradient(0deg,#ff2d00,#ffb300)',rainbow:'conic-gradient(#f33,#fd3,#3f6,#3df,#35f,#f3d,#f33)',void:'linear-gradient(135deg,#fff,#111 50%,#fff)'};
-const RC={common:'#7f93ad',rare:'#3b8bff',epic:'#b36bff',legendary:'#f5b335'};
+const RC={common:'#7f93ad',rare:'#2f8bff',epic:'#a24dff',legendary:'#ff8a1f'};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const api=async(p,m='GET',b)=>{const r=await fetch(`${DB}/${p}.json`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return r.json()};
@@ -155,9 +176,11 @@ const av=(p,s=100)=>`<div class="av" style="--s:${s}px;--f:${F[p.frame]||F.none}
 const cnt=p=>Object.keys(p.badges||{}).length;
 const fmt=t=>t?new Date(t).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'-';
 const normCode=c=>String(c).toUpperCase().replace(/[^A-Z0-9_-]/g,'');
-let me=null,tmp={},codes={},cache=null,tab='badges',atab='players';
+let me=null,tmp={},codes={},bdg={},cache=null,tab='badges',atab='players';
 function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600)}
-const getCodes=async()=>codes=(await api('codes'))||{};
+const getCodes=async()=>{codes=(await api('codes'))||{};bdg=(await api('badges'))||{};return codes};
+/* badge definition: new badges live in /badges, old-style codes carry their own details */
+const def=k=>bdg[k]||codes[k]||{title:k,icon:'🎖️',rarity:'common',desc:''};
 
 async function boot(){
   try{
@@ -177,8 +200,12 @@ async function boot(){
   nav();route();
 }
 function nav(){setTimeout(watch,0);
-  $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goShop()">Shop</a>'+(me?`<a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s" onclick="logout()">Log out</button>`
+  $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goShop()">Shop</a>'+(me?`<a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s lo" onclick="askLogout()">Log out</button>`
   :`<a class="l" href="#/login">Log in</a><button class="s" onclick="location.hash='#/register'">Create account</button>`)}
+function askLogout(){
+  modal(`<div style="text-align:center;padding:10px 0 4px"><div style="font-size:54px">👋</div><div class="mt" style="margin-top:8px">Log out?</div>
+  <p class="mut" style="margin:10px 0 24px">Are you sure you want to log out?</p>
+  <div class="row" style="justify-content:center"><button class="d" onclick="closeM();logout()">Yes, proceed logout</button><button class="g" onclick="closeM()">No</button></div></div>`)}
 function logout(){localStorage.removeItem('dn_s');me=null;nav();location.hash='#/'; route()}
 const view=h=>{$('#app').innerHTML=h;window.scrollTo(0,0)};
 async function route(){
@@ -259,19 +286,25 @@ async function charV(k){
   if(!p||(!p.public&&!(me&&(me.k===k||me.role==='admin'))))return view('<div class="box auth"><h2>Player not found</h2><p class="mut">This player does not exist or keeps their page private.</p></div>');
   await getCodes();
   const own=me&&(me.k===k);
-  const by={};Object.keys(p.badges||{}).forEach(c=>{const r=(codes[c]||{}).rarity||'common';by[r]=(by[r]||0)+1});
+  const by={};Object.keys(p.badges||{}).forEach(c=>{const r=def(c).rarity||'common';by[r]=(by[r]||0)+1});
   view(`<div class="char"><div class="box side">${av(p,170)}<h2>${esc(p.name)}</h2>${p.public?'':'<p class="mut">Private page</p>'}
   <div class="stat"><span>Badges</span><b>${cnt(p)}</b></div><div class="stat"><span>Legendary</span><b>${by.legendary||0}</b></div>
   <div class="stat"><span>Epic</span><b>${by.epic||0}</b></div><div class="stat"><span>Joined</span><b>${fmt(p.created)}</b></div>
   ${own?'<div style="margin-top:14px"><button onclick="location.hash=\'#/me\'">Edit character</button></div>':''}</div>
   <div class="box"><h3>Badges</h3>${badgeGrid(p,codes,false)}</div></div>`);
 }
+/* badge icon: uploaded image (or emoji) with pulsing glow for rare / epic / legendary */
+const bi=(d,s=64)=>`<div class="bi${d.rarity&&d.rarity!=='common'&&RC[d.rarity]?' gl':''}" style="--rc:${RC[d.rarity]||RC.common};--bs:${s}px">${/^data:image\//.test(d.img||'')?`<img src="${d.img}" alt="">`:esc(d.icon||'🎖️')}</div>`;
 function badgeGrid(p,codes,rm,k){
   const e=Object.entries(p.badges||{}).sort((a,b)=>b[1]-a[1]);
   if(!e.length)return '<p class="mut" style="margin-top:10px">No badges yet. Redeem a code to earn your first.</p>';
-  return `<div class="bg">${e.map(([c,t])=>{const d=codes[c]||{title:c,icon:'🎖️',rarity:'common',desc:''};
-  return `<div class="bd" style="--rc:${RC[d.rarity]||RC.common}">${rm?`<button class="d x" onclick="rmBadge('${k}','${c}')">x</button>`:''}<i>${esc(d.icon)}</i><b>${esc(d.title)}</b><em>${esc(d.rarity)}</em><small>${esc(d.desc)}</small><small>${fmt(t)}</small></div>`}).join('')}</div>`;
+  return `<div class="bg">${e.map(([c,t])=>{const d=def(c);
+  return `<div class="bd" tabindex="0" onclick="showBadge('${c}',${+t||0})" onkeydown="event.key==='Enter'&&showBadge('${c}',${+t||0})" style="--rc:${RC[d.rarity]||RC.common}">${rm?`<button class="d x" onclick="event.stopPropagation();rmBadge('${k}','${c}')">x</button>`:''}${bi(d,64)}<b>${esc(d.title)}</b><em>${esc(d.rarity)}</em><small>${esc(d.desc)}</small><small>${fmt(t)}</small></div>`}).join('')}</div>`;
 }
+function showBadge(c,t){const d=def(c);
+  modal(`<div style="text-align:center;padding-top:10px">${bi(d,120)}<div class="mt" style="margin-top:16px">${esc(d.title)}</div>
+  <span style="color:${RC[d.rarity]||RC.common};text-transform:uppercase;letter-spacing:1.5px;font-size:13px;font-weight:700">${esc(d.rarity)}</span></div>
+  <p style="margin:18px 0 8px;white-space:pre-wrap">${esc(d.full||d.desc||'No description yet.')}</p>${t?`<p class="mut" style="font-size:13px">Earned ${fmt(t)}</p>`:''}`)}
 /* ---------- avatar picker ---------- */
 function picker(p){
   tmp={avatar:p.avatar||0,frame:p.frame||'none',img:p.img||''};
@@ -291,13 +324,19 @@ const shrink=(f,max,q,sq)=>new Promise((ok,no)=>{const im=new Image(),u=URL.crea
     else{const k=Math.min(1,max/Math.max(w,h));c.width=Math.round(w*k);c.height=Math.round(h*k);g.drawImage(im,0,0,c.width,c.height)}
     URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',q))};
   im.onerror=()=>no(new Error('Could not read that image.'));im.src=u});
+/* PNG version keeps transparency (used for badge logos) */
+const shrinkPng=(f,max)=>new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);
+  im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    URL.revokeObjectURL(u);ok(c.toDataURL('image/png'))};
+  im.onerror=()=>no(new Error('Could not read that image.'));im.src=u});
 async function upImg(i){const f=i.files[0];if(!f)return;try{tmp.img=await shrink(f,192,.85,true);paint()}catch(e){toast(e.message)}}
 /* ---------- my account ---------- */
 async function meV(){
   const p=await api('profiles/'+me.k);await getCodes();
   const T=[['badges','Badges'],['char','Character'],['sec','Account']];
   let body='';
-  if(tab==='badges')body=`<h3>Redeem a code</h3><p class="mut">Codes look like 2026-F3DP-SUPPORTER-PROD</p><div id="m"></div>
+  if(tab==='badges')body=`<h3>Redeem a code</h3><p class="mut">Enter the 12-character code you received</p><div id="m"></div>
    <div class="row" style="margin:10px 0 22px"><input id="cd" style="max-width:380px" placeholder="Enter badge code" onkeydown="event.key==='Enter'&&redeem()"><button onclick="redeem()">Add badge</button></div>
    <h3>My badges (${cnt(p)})</h3>${badgeGrid(p,codes,false)}`;
   if(tab==='char')body=`${picker(p)}<div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Let anyone find and view my page, even without an account</span></div><button onclick="saveChar()">Save character</button>`;
@@ -310,8 +349,13 @@ async function redeem(){
   if(!c)return;
   try{const d=await api('codes/'+c);
     if(!d)return m.innerHTML='<div class="msg">That code is not valid.</div>';
-    if(await api(`profiles/${me.k}/badges/${c}`))return m.innerHTML='<div class="msg">You already have this badge.</div>';
-    await api(`profiles/${me.k}/badges/${c}`,'PUT',Date.now());cache=null;toast('Badge added: '+d.title);meV();
+    if(d.usedBy)return m.innerHTML='<div class="msg">This code has already been used.</div>';
+    const id=d.badge||c;
+    if(await api(`profiles/${me.k}/badges/${id}`))return m.innerHTML='<div class="msg">You already have this badge.</div>';
+    await api(`profiles/${me.k}/badges/${id}`,'PUT',Date.now());
+    if(d.badge)await api('codes/'+c,'PATCH',{usedBy:me.k,usedAt:Date.now()});
+    const b=d.badge?await api('badges/'+id):d;
+    cache=null;toast('Badge added: '+((b||d).title||'Badge'));meV();
   }catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}
 }
 async function saveChar(){await api('profiles/'+me.k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});cache=null;toast('Character saved')}
@@ -329,17 +373,63 @@ async function adminV(){
   if(atab==='players')body=`<table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
    return `<tr><td>${esc(p.name)}</td><td>${esc(au[k].email)}</td><td>${au[k].role}</td><td>${cnt(p)}</td><td>${p.public?'Public':'Private'}</td>
    <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k==='david'?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`}).join('')}</table>`;
-  else if(atab==='orders')body=await ordersHTML();else body=`<h3>Create badge code</h3><div id="m"></div><div class="row" style="margin:10px 0 24px">
-   <input id="nc" placeholder="2026-F3DP-SUPPORTER-PROD" style="flex:2 1 240px"><input id="nt" placeholder="Badge title" style="flex:1 1 140px"><input id="ni" placeholder="Icon (emoji)" style="width:110px">
-   <select id="nr" style="width:130px">${Object.keys(RC).map(r=>`<option>${r}</option>`)}</select><input id="nd" placeholder="Description" style="flex:2 1 240px"><button onclick="addCode()">Create code</button></div>
-   <table><tr><th></th><th>Code</th><th>Title</th><th>Rarity</th><th></th></tr>${Object.entries(codes).map(([c,d])=>`<tr><td>${esc(d.icon)}</td><td>${c}</td><td>${esc(d.title)}</td><td>${d.rarity}</td><td><button class="d s" onclick="delCode('${c}')">Delete</button></td></tr>`).join('')}</table>`;
+  else if(atab==='orders')body=await ordersHTML();else body=codesHTML();
   view(`<h2 style="margin-bottom:14px">Admin</h2><div class="tabs"><div class="tab ${atab==='players'?'on':''}" onclick="atab='players';adminV()">Players (${Object.keys(au).length})</div><div class="tab ${atab==='codes'?'on':''}" onclick="atab='codes';adminV()">Badge codes</div><div class="tab ${atab==='orders'?'on':''}" onclick="atab='orders';adminV()">Payments${pend?` (${pend})`:''}</div></div><div class="box" style="overflow-x:auto">${body}</div>`);
 }
 async function delUser(k){if(!confirm('Delete '+k+' and all their badges?'))return;await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');cache=null;toast('Deleted '+k);adminV()}
-async function addCode(){const c=normCode($('#nc').value),t=$('#nt').value.trim();
-  if(!c||!t)return $('#m').innerHTML='<div class="msg">Code and title are required.</div>';
-  await api('codes/'+c,'PUT',{title:t,icon:$('#ni').value.trim()||'🎖️',rarity:$('#nr').value,desc:$('#nd').value.trim()});toast('Code created');adminV()}
+
+/* ---------- badge codes (admin) ---------- */
+let bimg='';
+const QO=[...Array(10)].map((_,i)=>`<option>${i+1}</option>`).join('');
+const gen=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=crypto.getRandomValues(new Uint8Array(12));return [...r].map(x=>A[x%A.length]).join('')};
+async function mkCodes(id,n){
+  n=Math.min(10,Math.max(1,+n||1));const o={};
+  while(Object.keys(o).length<n){const c=gen();if(!codes[c]&&!o[c])o[c]={badge:id,created:Date.now()}}
+  await api('codes','PATCH',o);Object.assign(codes,o);return n}
+async function bImg(i){const f=i.files[0];if(!f)return;
+  try{bimg=await shrinkPng(f,192);$('#bp').innerHTML=`<img src="${bimg}" alt="" style="height:56px;vertical-align:middle">`}catch(e){toast(e.message)}}
+function codesHTML(){
+  bimg='';
+  const g={};Object.entries(codes).forEach(([c,d])=>{const id=d.badge||c;(g[id]=g[id]||[]).push([c,d])});
+  const ids=[...new Set([...Object.keys(bdg),...Object.keys(g)])];
+  return `<h3>Create badge</h3><div id="m"></div>
+  <div class="f2" style="margin:8px 0">
+   <div><label>Badge title</label><input id="nt" placeholder="F3DP Supporter"></div>
+   <div><label>Rarity</label><select id="nr">${Object.keys(RC).map(r=>`<option>${r}</option>`).join('')}</select></div>
+   <div><label>Badge image (logo)</label><div class="row" style="align-items:center"><button class="s" onclick="$('#bf').click()">Upload image</button><span id="bp" class="mut">No image</span></div><input id="bf" type="file" accept="image/*" hidden onchange="bImg(this)"></div>
+   <div><label>Fallback emoji (optional)</label><input id="ni" placeholder="🎖️"></div>
+   <div><label>Short description (shown on the card)</label><input id="nd"></div>
+   <div><label>How many codes to generate? (1-10)</label><select id="nq">${QO}</select></div></div>
+  <label>Full description (shown when the badge is clicked)</label><textarea id="nf"></textarea>
+  <div style="margin:14px 0 26px"><button onclick="addBadge()">Create badge and generate codes</button></div>
+  <h3 style="margin-bottom:12px">Badges and codes</h3>${ids.length?'':'<p class="mut">No badges yet.</p>'}
+  ${ids.map(id=>{const d=def(id),L=g[id]||[],leg=!bdg[id],used=L.filter(x=>x[1].usedBy).length;
+   return `<div class="bx2"><div class="row" style="align-items:center;gap:16px">${bi(d,56)}<div style="flex:1;min-width:180px"><b>${esc(d.title)}</b> <span style="color:${RC[d.rarity]||RC.common};font-size:13px;text-transform:uppercase">${esc(d.rarity)}</span><br><span class="mut">${esc(d.desc)}</span><br><span class="mut" style="font-size:13px">${leg?'Old-style reusable code':`${used} of ${L.length} codes used`}</span></div>
+   <div class="row">${leg?'':`<button class="s" onclick="moreM('${id}')">+ Codes</button>`}${leg?'':`<button class="d s" onclick="delBadge('${id}')">Delete badge</button>`}</div></div>
+   ${L.length?`<table><tr><th>Code</th><th>Status</th><th></th></tr>${L.map(([c,x])=>`<tr><td><code>${c}</code></td><td>${x.usedBy?`<b style="color:var(--red)">Used</b> <span class="mut">by ${esc(x.usedBy)} · ${fmt(x.usedAt)}</span>`:leg?'<span class="mut">Reusable</span>':'<b style="color:var(--ok)">Unused</b>'}</td><td class="row"><button class="g s" onclick="navigator.clipboard&&navigator.clipboard.writeText('${c}');toast('Code copied')">Copy</button><button class="d s" onclick="delCode('${c}')">Delete</button></td></tr>`).join('')}</table>`:''}</div>`}).join('')}`;
+}
+async function addBadge(){
+  const t=$('#nt').value.trim(),ic=$('#ni').value.trim(),m=$('#m');
+  if(!t)return m.innerHTML='<div class="msg">Badge title is required.</div>';
+  if(!bimg&&!ic)return m.innerHTML='<div class="msg">Upload a badge image (or enter a fallback emoji).</div>';
+  try{
+    const id='b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n=+$('#nq').value;
+    await api('badges/'+id,'PUT',{title:t,rarity:$('#nr').value,desc:$('#nd').value.trim(),full:$('#nf').value.trim(),icon:ic||'🎖️',img:bimg||null,created:Date.now()});
+    await mkCodes(id,n);bimg='';toast(`Badge created with ${n} code${n>1?'s':''}`);adminV();
+  }catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}
+}
+function moreM(id){
+  modal(`<div class="mt">Generate codes</div><p class="mut" style="margin:8px 0 12px">How many new codes for ${esc(def(id).title)}? (1-10)</p><select id="mq">${QO}</select>
+  <div class="row" style="margin-top:18px"><button onclick="moreGo('${id}')">Generate</button><button class="g" onclick="closeM()">Cancel</button></div>`)}
+async function moreGo(id){const n=+$('#mq').value;closeM();try{await mkCodes(id,n);toast(n+' code'+(n>1?'s':'')+' generated')}catch(e){toast(e.message)}adminV()}
+async function delBadge(id){
+  if(!confirm('Delete this badge, all its codes, and remove it from every player who earned it?'))return;
+  const pr=await api('profiles')||{};
+  for(const [k,p] of Object.entries(pr))if(p.badges&&p.badges[id])await api(`profiles/${k}/badges/${id}`,'DELETE');
+  for(const [c,d] of Object.entries(codes))if(d.badge===id)await api('codes/'+c,'DELETE');
+  await api('badges/'+id,'DELETE');cache=null;toast('Badge deleted');adminV()}
 async function delCode(c){if(confirm('Delete code '+c+'? Players keep badges already earned.')){await api('codes/'+c,'DELETE');adminV()}}
+const badgeOpts=()=>[...new Set([...Object.keys(bdg),...Object.entries(codes).filter(([c,d])=>!d.badge).map(x=>x[0])])].map(id=>`<option value="${id}">${esc(def(id).title)}</option>`).join('');
 async function editV(k){
   const [a,p]=[await api('auth/'+k),await api('profiles/'+k)];await getCodes();
   if(!a||!p)return view('<div class="msg">Player not found.</div>');
@@ -350,7 +440,7 @@ async function editV(k){
   <div style="margin:18px 0">${picker(p)}</div><div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Public page</span></div>
   <button onclick="saveUser('${k}')">Save changes</button></div>
   <div class="box" style="margin-top:20px"><h3>Badges (${cnt(p)})</h3>
-  <div class="row" style="margin:10px 0"><input id="ac" style="max-width:380px" placeholder="Badge code to add"><button onclick="giveBadge('${k}')">Add badge</button></div>${badgeGrid(p,codes,true,k)}</div>`);
+  <div class="row" style="margin:10px 0"><select id="ac" style="max-width:380px">${badgeOpts()}</select><button onclick="giveBadge('${k}')">Add badge</button></div>${badgeGrid(p,codes,true,k)}</div>`);
 }
 async function saveUser(k){
   const d={email:$('#ee').value.trim()};if(k!=='david')d.role=$('#er').value;
@@ -358,8 +448,7 @@ async function saveUser(k){
   await api('auth/'+k,'PATCH',d);
   await api('profiles/'+k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});cache=null;toast('Saved');
 }
-async function giveBadge(k){const c=normCode($('#ac').value);if(!c)return;
-  if(!await api('codes/'+c))return $('#m').innerHTML='<div class="msg">That code does not exist. Create it under Badge codes first.</div>';
+async function giveBadge(k){const c=$('#ac').value;if(!c)return $('#m').innerHTML='<div class="msg">Create a badge first under Badge codes.</div>';
   await api(`profiles/${k}/badges/${c}`,'PUT',Date.now());toast('Badge added');editV(k)}
 async function rmBadge(k,c){if(confirm('Remove this badge?')){await api(`profiles/${k}/badges/${c}`,'DELETE');editV(k)}}
 /* ---------- particles ---------- */
