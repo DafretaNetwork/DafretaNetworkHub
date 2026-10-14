@@ -13,10 +13,11 @@ body{background:#000;color:var(--ink);font:500 16px/1.5 Barlow,system-ui,sans-se
 background-image:radial-gradient(ellipse 70% 40% at 50% -10%,#0d2447 0,transparent 70%)}
 h1,h2,h3,h4,.logo,button,.tab{font-family:'Chakra Petch',Barlow,sans-serif}
 a{color:var(--blue);text-decoration:none}
-nav{display:flex;align-items:center;gap:18px;padding:12px 24px;border-bottom:1px solid var(--line);background:#000c;position:sticky;top:0;z-index:20;backdrop-filter:blur(6px)}
+nav{display:flex;align-items:center;gap:18px;padding:12px 24px;border-bottom:1px solid var(--line);background:#000c;position:sticky;top:0;z-index:20;backdrop-filter:blur(6px);flex-wrap:wrap}
 .logo{font-weight:700;font-size:22px;color:var(--gold);letter-spacing:.5px;cursor:pointer}
 .logo small{color:var(--ink);font-weight:500}
 nav .sp{flex:1}
+#nl{align-items:center}
 nav a.l{color:var(--ink);padding:6px 4px;border-bottom:2px solid transparent}
 nav a.l:hover{border-color:var(--gold)}
 .sw{position:relative;width:240px}
@@ -31,6 +32,7 @@ label{display:block;color:var(--mute);font-size:14px;margin:12px 0 4px}
 button{cursor:pointer;border:0;background:var(--gold);color:#201400;font-weight:700;font-size:15px;padding:10px 20px;
 clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 button:hover{filter:brightness(1.12)}
+button:disabled{opacity:.5;cursor:default}
 button.g{background:#14243c;color:var(--ink)}
 button.d{background:var(--red);color:#fff}
 button.s{padding:5px 12px;font-size:13px}
@@ -75,7 +77,7 @@ td,th{padding:9px 8px;border-bottom:1px solid var(--line)}
 .tg{display:flex;align-items:center;gap:8px;margin:14px 0}.tg input{width:auto}
 .msg{padding:10px 14px;margin:10px 0;border-left:3px solid var(--red);background:#1a0a10}
 .msg.ok{border-color:var(--ok);background:#08170f}
-#toast{position:fixed;bottom:20px;right:20px;background:var(--panel2);border:1px solid var(--gold);padding:12px 18px;display:none;z-index:50}
+#toast{position:fixed;bottom:96px;right:20px;background:var(--panel2);border:1px solid var(--gold);padding:12px 18px;display:none;z-index:70;cursor:pointer;max-width:min(340px,calc(100vw - 40px))}
 .auth{max-width:400px;margin:30px auto}
 .mut{color:var(--mute)}
 @media(max-width:760px){.hero,.char{grid-template-columns:1fr}.sw{width:140px}nav{gap:10px;padding:10px 12px}}
@@ -101,12 +103,18 @@ background:radial-gradient(ellipse 55% 80% at 82% 50%,#10305f99,transparent 70%)
 .shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
 .pr{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform .2s}
 .pr:hover{border-color:var(--gold);transform:translateY(-4px)}
+.pr.so{opacity:.6}
 .im{display:grid;place-items:center;background:radial-gradient(circle,#173560,#050a12)}
-.pr .im{height:180px;font-size:76px}
+.pr .im{height:180px;font-size:76px;overflow:hidden}
+.pr .im img{width:100%;height:100%;object-fit:cover;display:block}
 .pr .tx{padding:14px 18px 18px}.pr .tx b{font:700 19px 'Chakra Petch';display:block}.pr .tx span{color:var(--gold);font-weight:700;font-size:18px}
+.pr .tx em{font-style:normal;float:right;font-size:13px;margin-top:5px;font-weight:600}
+.pr .tx em.okk{color:var(--ok)}.pr .tx em.low{color:var(--gold)}.pr .tx em.out{color:var(--red)}
+.cl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:4px 0 8px}
+.cl4{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .ov{position:fixed;inset:0;background:#000a;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:60;display:grid;place-items:center;padding:16px;overflow:auto}
 .md{background:#0a1220;border:1px solid var(--line);border-radius:26px;width:min(520px,100%);max-height:94vh;overflow:auto;padding:28px;box-shadow:0 30px 90px #000;position:relative}
-.md .xx{position:absolute;top:14px;right:14px;width:34px;height:34px;padding:0;border-radius:50%;background:#14243c;color:var(--ink);clip-path:none}
+.md .xx{position:absolute;top:14px;right:14px;width:34px;height:34px;padding:0;border-radius:50%;background:#14243c;color:var(--ink);clip-path:none;z-index:3}
 .md input{border-radius:12px}
 .mt{font:700 26px 'Chakra Petch';color:var(--gold)}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -128,7 +136,7 @@ background:radial-gradient(ellipse 55% 80% at 82% 50%,#10305f99,transparent 70%)
 .pm.gcash{background:#0b6cf0}.pm.gcash .lg{background:#fff;color:#0b6cf0}
 .pm.maya{background:#050505;color:#2ee27d;border-color:#1f6b45}.pm.maya .lg{background:#2ee27d;color:#000}
 .qr img{display:block;max-width:100%;max-height:340px;margin:8px auto 18px;border-radius:16px;background:#fff}
-body{overflow-x:hidden}#shop{scroll-margin-top:72px}
+body{overflow-x:hidden}#shop,#news{scroll-margin-top:72px}
 
 /* ---------- logout button pop + close button spin ---------- */
 button.lo{transition:transform .25s cubic-bezier(.34,1.8,.5,1),background .25s,color .25s}
@@ -151,6 +159,59 @@ button.lo:active{transform:scale(.93)}
 .bx2 table{margin-top:12px}
 code{font:600 14px monospace;letter-spacing:1px;color:var(--gold)}
 textarea{resize:vertical;min-height:90px}
+
+/* ---------- news ---------- */
+.news{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.nw{background:var(--panel);border:1px solid var(--line);padding:20px 22px;cursor:pointer;transition:border-color .2s,transform .2s;
+clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+.nw:hover{border-color:var(--gold);transform:translateY(-3px)}
+.nw small{display:block;margin-bottom:6px;font-size:13px}
+.nw h3{font:700 26px/1.15 'Chakra Petch',sans-serif;color:#fff;overflow-wrap:anywhere}
+.nw h4{font:600 17px/1.3 Barlow,sans-serif;color:var(--gold);margin:6px 0 10px;overflow-wrap:anywhere}
+.nw p{font-size:14.5px;color:#aebcd0;overflow-wrap:anywhere;white-space:pre-wrap}
+
+/* ---------- product gallery ---------- */
+.gm{display:block;width:100%;max-height:280px;object-fit:contain;background:#050a12;border-radius:16px}
+.gts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.gt{width:56px;height:56px;object-fit:cover;border-radius:10px;border:2px solid transparent;cursor:pointer;opacity:.75}
+.gt.on{border-color:var(--gold);opacity:1}
+
+/* ---------- friends ---------- */
+.fr-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.fr-row:last-child{border-bottom:0}
+.fh{display:flex;align-items:center;gap:10px;margin:22px 0 6px}.fh:first-child{margin-top:0}
+.fh h3{font-size:20px}
+.cnt{background:#14243c;border-radius:99px;font-size:12px;padding:1px 9px;color:var(--mute)}
+
+/* ---------- chat widget ---------- */
+.cbw{position:fixed;right:20px;bottom:20px;z-index:40;width:62px;height:62px;display:grid;place-items:center;
+animation:cbob 3.4s ease-in-out infinite,cglow 2.6s ease-in-out infinite}
+.cbw.has{animation-duration:1.6s,1.2s}
+@keyframes cbob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.07)}}
+@keyframes cglow{0%,100%{filter:drop-shadow(0 0 4px #f5b33555)}50%{filter:drop-shadow(0 0 20px #f5b335d0)}}
+@media(prefers-reduced-motion:reduce){.cbw{animation:none}}
+#cb{width:60px;height:60px;padding:0;font-size:27px;display:grid;place-items:center;
+clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+.cbd{position:absolute;top:-4px;right:-4px;min-width:22px;height:22px;border-radius:99px;background:var(--red);color:#fff;font:700 12px/22px 'Chakra Petch';text-align:center;padding:0 5px}
+.cbd[hidden]{display:none}
+#cp{position:fixed;right:20px;bottom:100px;width:min(370px,calc(100vw - 24px));height:min(520px,calc(100vh - 130px));background:var(--panel);border:1px solid var(--line);z-index:45;display:none;flex-direction:column;
+clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);background-image:radial-gradient(ellipse 80% 30% at 50% 0,#0d2447 0,transparent 80%)}
+.cx-h{display:flex;align-items:center;gap:10px;padding:12px 14px 12px 20px;border-bottom:1px solid var(--line)}
+.cx-h b{flex:1;font:700 18px 'Chakra Petch';color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cx-b{flex:1;overflow-y:auto}
+.cx-i{display:flex;gap:12px;align-items:center;padding:10px 16px;cursor:pointer;border-bottom:1px solid #112238}
+.cx-i:hover,.cx-i:focus-visible{background:#0e1c30}
+.cx-i small{display:block;color:var(--mute);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cx-i b{display:block}
+.ud{width:11px;height:11px;border-radius:50%;background:var(--red);flex:none;box-shadow:0 0 8px var(--red)}
+.cx-m{display:flex;flex-direction:column;gap:8px;padding:12px}
+.mb{max-width:80%;padding:8px 12px;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:14px}
+.mb small{display:block;font-size:11px;opacity:.6;margin-top:2px}
+.mb.me{align-self:flex-end;background:#3a2a07;border:1px solid #6b4d10;border-bottom-right-radius:4px}
+.mb.th{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.cx-f{display:flex;gap:8px;padding:10px 12px 18px;border-top:1px solid var(--line)}
+.cx-f input{border-radius:10px}
+@media(max-width:760px){.cbw{right:12px;bottom:12px}#cp{right:12px;bottom:88px}#toast{right:12px}}
 </style>
 </head>
 <body>
@@ -168,18 +229,35 @@ const F={none:'#26364d',bronze:'linear-gradient(135deg,#d98a3d,#6b3d12)',silver:
 const RC={common:'#7f93ad',rare:'#2f8bff',epic:'#a24dff',legendary:'#ff8a1f'};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const api=async(p,m='GET',b)=>{const r=await fetch(`${DB}/${p}.json`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return r.json()};
+/* api: path may carry a query string, e.g. 'news?orderBy=%22$key%22&limitToLast=6'. api('', 'PATCH', {...}) = multi-path update in ONE request */
+const api=async(p,m='GET',b)=>{const [a,q]=p.split('?');const r=await fetch(`${DB}/${a}.json${q?'?'+q:''}`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return r.json()};
+const mp=o=>api('','PATCH',o);
+const skeys=async p=>{const r=await fetch(`${DB}/${p}.json?shallow=true`);if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return Object.keys(await r.json()||{})};
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('dafreta:'+s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
-const hasImg=p=>/^data:image\//.test(p.img||'');
-const av=(p,s=100)=>`<div class="av" style="--s:${s}px;--f:${F[p.frame]||F.none}"><span${hasImg(p)?` style="background:center/cover url(${p.img})"`:''}>${hasImg(p)?'':AV[p.avatar]||AV[0]}</span></div>`;
-const cnt=p=>Object.keys(p.badges||{}).length;
+const mid=()=>Date.now().toString(36).padStart(9,'0')+Math.random().toString(36).slice(2,5);
+const pair=(a,b)=>[a,b].sort().join('~');
+const hasImg=p=>/^data:image\//.test((p&&p.img)||'');
+const av=(p,s=100)=>{p=p||{};return `<div class="av" style="--s:${s}px;--f:${F[p.frame]||F.none}"><span${hasImg(p)?` style="background:center/cover url(${p.img})"`:''}>${hasImg(p)?'':AV[p.avatar]||AV[0]}</span></div>`};
+const cnt=p=>Object.keys((p&&p.badges)||{}).length;
 const fmt=t=>t?new Date(t).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'-';
 const normCode=c=>String(c).toUpperCase().replace(/[^A-Z0-9_-]/g,'');
-let me=null,tmp={},codes={},bdg={},cache=null,tab='badges',atab='players';
-function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600)}
-const getCodes=async()=>{codes=(await api('codes'))||{};bdg=(await api('badges'))||{};return codes};
+let me=null,tmp={},codes={},bdg={},tab='badges',atab='players',CURC=null;
+
+/* ---------- caches (keeps Firebase downloads low) ---------- */
+const TTL=60000;
+let PC={},PA={t:0,d:{}},SK={t:0,d:[]},NEWS={t:0,d:[]},INV={t:0,d:{}},DC={};
+const invP=k=>{if(k)delete PC[k];else PC={};PA.t=0;SK.t=0};
+async function getProf(k,f){const c=PC[k];if(!f&&c&&Date.now()-c.t<300000)return c.d;const d=await api('profiles/'+k);PC[k]={t:Date.now(),d};return d}
+async function allProfs(){if(Date.now()-PA.t<90000)return PA.d;const d=await api('profiles')||{};PA={t:Date.now(),d};for(const k in d)PC[k]={t:Date.now(),d:d[k]};return d}
+async function profKeys(){if(Date.now()-SK.t<120000)return SK.d;SK={t:Date.now(),d:await skeys('profiles')};return SK.d}
+async function getNews(){if(Date.now()-NEWS.t<TTL)return NEWS.d;const o=await api('news?orderBy=%22$key%22&limitToLast=8')||{};NEWS={t:Date.now(),d:Object.entries(o).map(([id,v])=>({id,...v})).sort((a,b)=>b.t-a.t)};return NEWS.d}
+async function getInv(f){if(!f&&Date.now()-INV.t<TTL)return INV.d;INV={t:Date.now(),d:await api('inv')||{}};return INV.d}
+const getCodes=async()=>{codes=(await api('codes'))||{};bdg=(await api('badges'))||{};for(const k in bdg)DC[k]=bdg[k];for(const k in codes)if(!codes[k].badge)DC[k]=codes[k];return codes};
 /* badge definition: new badges live in /badges, old-style codes carry their own details */
-const def=k=>bdg[k]||codes[k]||{title:k,icon:'🎖️',rarity:'common',desc:''};
+const def=k=>DC[k]||bdg[k]||codes[k]||{title:k,icon:'🎖️',rarity:'common',desc:''};
+async function defs(ids){await Promise.all(ids.filter(k=>!DC[k]).map(async k=>{const b=await api('badges/'+k)||await api('codes/'+k);if(b)DC[k]=b}))}
+
+function toast(t,fn){const e=$('#toast');e.textContent=t;e.onclick=fn?()=>{e.style.display='none';fn()}:null;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',fn?5000:2600)}
 
 async function boot(){
   try{
@@ -196,54 +274,67 @@ async function boot(){
     const s=JSON.parse(localStorage.dn_s||'null');
     if(s){const a=await api('auth/'+s.u);if(a&&a.hash===s.h)me={k:s.u,role:a.role,email:a.email||''}}
   }catch(e){return $('#app').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
-  nav();route();
+  afterAuth();route();
 }
+function afterAuth(){inOK=false;IN=E0();nav();startIn();cwInit()}
+const unseen=()=>Object.values(IN.notes).filter(n=>n.t>(+IN.seen||0)).length;
 function nav(){setTimeout(watch,0);
-  $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goShop()">Shop</a>'+(me?`<a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s lo" onclick="askLogout()">Log out</button>`
+  const fc=me?Object.keys(IN.reqs).length+unseen():0;
+  $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goSec(\'shop\')">Shop</a><a class="l" href="#/news" onclick="return goSec(\'news\')">News</a>'+(me?`<a class="l" href="#/friends">Friends${fc?`<b class="dot">${fc}</b>`:''}</a><a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s lo" onclick="askLogout()">Log out</button>`
   :`<a class="l" href="#/login">Log in</a><button class="s" onclick="location.hash='#/register'">Create account</button>`)}
 function askLogout(){
   modal(`<div style="text-align:center;padding:10px 0 4px"><div style="font-size:54px">👋</div><div class="mt" style="margin-top:8px">Log out?</div>
   <p class="mut" style="margin:10px 0 24px">Are you sure you want to log out?</p>
   <div class="row" style="justify-content:center"><button class="d" onclick="closeM();logout()">Yes, proceed logout</button><button class="g" onclick="closeM()">No</button></div></div>`)}
-function logout(){localStorage.removeItem('dn_s');me=null;nav();location.hash='#/'; route()}
+function logout(){localStorage.removeItem('dn_s');stopIn();inOK=false;IN=E0();cwRemove();me=null;nav();location.hash='#/'; route()}
 const view=h=>{$('#app').innerHTML=h;window.scrollTo(0,0)};
 async function route(){
   const [,pg,arg,arg2]=location.hash.split('/');
+  CURC=null;
   try{
     if(pg==='login')return loginV();
     if(pg==='register')return regV();
-    if(pg==='shop'){if(!$('#shop'))await homeV();return $('#shop').scrollIntoView({behavior:'smooth'})}
+    if(pg==='shop'||pg==='news'){if(!$('#'+pg))await homeV();return $('#'+pg).scrollIntoView({behavior:'smooth'})}
     if(pg==='char')return charV((arg||'').toLowerCase());
     if(pg==='me')return me?meV():loginV();
+    if(pg==='friends')return friendsV();
     if(pg==='admin')return me&&me.role==='admin'?(arg==='user'?editV(arg2):adminV()):view('<div class="msg">Admins only.</div>');
     homeV();
   }catch(e){view(`<div class="msg">${esc(e.message)}</div>`)}
 }
 window.onhashchange=route;
+function goSec(id){const e=$('#'+id);if(!e)return true;e.scrollIntoView({behavior:'smooth'});return false}
 
-/* ---------- search ---------- */
+/* ---------- search (shallow key list + only the few matching profiles) ---------- */
 let st;
 function search(v){clearTimeout(st);const box=$('#sr');v=v.trim().toLowerCase();if(!v){box.style.display='none';return}
   st=setTimeout(async()=>{
-    cache=cache||await api('profiles')||{};
-    const r=Object.entries(cache).filter(([k,p])=>(p.public||(me&&me.role==='admin'))&&k.includes(v)).slice(0,6);
+    try{const ks=(await profKeys()).filter(k=>k.includes(v)).slice(0,8);
+    const ps=await Promise.all(ks.map(async k=>[k,await getProf(k)]));
+    const r=ps.filter(([k,p])=>p&&(p.public||(me&&me.role==='admin'))).slice(0,6);
     box.innerHTML=r.length?r.map(([k,p])=>`<a href="#/char/${k}" onclick="$('#sr').style.display='none'">${av(p,32)}<span>${esc(p.name)}</span></a>`).join(''):'<a class="mut">No public players found</a>';
-    box.style.display='block'},250)}
+    box.style.display='block'}catch(e){}},300)}
 document.addEventListener('click',e=>{if(!e.target.closest('.sw'))$('#sr').style.display='none'});
 
 /* ---------- pages ---------- */
+const newsCard=n=>`<div class="nw" tabindex="0" onclick="showNews('${n.id}')" onkeydown="event.key==='Enter'&&showNews('${n.id}')"><small class="mut">${fmt(n.t)}</small><h3>${esc(n.h)}</h3>${n.s?`<h4>${esc(n.s)}</h4>`:''}<p class="cl4">${esc(n.b)}</p></div>`;
+const newsHTML=L=>`<section id="news"><div class="sec-h" style="margin-top:64px"><h2>News</h2><span class="mut">Updates from the team</span></div>${L.length?`<div class="news">${L.slice(0,6).map(newsCard).join('')}</div>`:'<p class="mut">No news yet. Check back soon.</p>'}</section>`;
+function showNews(id){const n=NEWS.d.find(x=>x.id===id);if(!n)return;
+  modal(`<div style="padding-right:30px"><small class="mut">${fmt(n.t)}</small><div style="font:700 30px/1.15 'Chakra Petch';color:#fff;margin:6px 0 8px;overflow-wrap:anywhere">${esc(n.h)}</div>${n.s?`<div style="font:600 18px/1.3 Barlow;color:var(--gold);margin-bottom:14px;overflow-wrap:anywhere">${esc(n.s)}</div>`:''}<p style="font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere;color:#c3cfdf">${esc(n.b)}</p></div>`)}
 async function homeV(){
-  const pr=Object.values(await api('profiles')||{}).filter(p=>p.public).sort((a,b)=>cnt(b)-cnt(a)).slice(0,11);
-  const you=me?(await api('profiles/'+me.k)||{}):{avatar:0,frame:'gold'};
+  const [all,news]=await Promise.all([allProfs(),getNews(),getInv()]);
+  const pr=Object.values(all).filter(p=>p.public).sort((a,b)=>cnt(b)-cnt(a)).slice(0,11);
+  const you=me?(await getProf(me.k)||{}):{avatar:0,frame:'gold'};
   const lk=p=>'#/char/'+p.name.toLowerCase(),top=pr.slice(0,3),rest=pr.slice(3);
   view(`<section class="heroW"><canvas id="pt"></canvas><div class="hero"><div><h1>Your name.<br>Your <em>badges.</em></h1>
-  <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way!.</p>
-  <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}<button class="g" onclick="goShop()&&(location.hash='#/shop')">Visit shop</button></div></div>
+  <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way.</p>
+  <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}<button class="g" onclick="goSec('shop')">Visit shop</button></div></div>
   <div style="display:grid;place-items:center">${av(you,220)}</div></div></section>
   <div class="sec-h"><h2>Top collectors</h2><span class="mut">Most badges earned</span></div>
   ${pr.length?'':'<p class="mut">No public players yet.</p>'}
   <div class="pod">${top.map((p,i)=>`<a class="pc r${i+1}" href="${lk(p)}"><span class="rk">${i+1}</span>${av(p,i?112:148)}<b>${esc(p.name)}</b><span class="mut">${cnt(p)} badges</span></a>`).join('')}</div>
   <div class="cols">${rest.map(p=>`<a class="pl" href="${lk(p)}">${av(p,56)}<div><b>${esc(p.name)}</b><span>${cnt(p)} badges</span></div></a>`).join('')}</div>
+  ${newsHTML(news)}
   ${shopHTML()}`);
   particles();
 }
@@ -256,7 +347,7 @@ async function doLogin(){
   const k=$('#u').value.trim().toLowerCase(),h=await sha($('#p').value);
   try{const a=k&&await api('auth/'+k);
     if(!a||a.hash!==h)return $('#m').innerHTML='<div class="msg">Wrong username or password.</div>';
-    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};nav();location.hash==='#/'?route():location.hash='#/';
+    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};afterAuth();location.hash==='#/'?route():location.hash='#/';
   }catch(e){$('#m').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
 }
 function regV(){
@@ -277,20 +368,21 @@ async function doReg(){
     const h=await sha(p);
     await api('auth/'+k,'PUT',{hash:h,email:e,role:'player'});
     await api('profiles/'+k,'PUT',{name:n,avatar:Math.floor(Math.random()*AV.length),frame:'none',public:$('#pub').checked,created:Date.now()});
-    cache=null;localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:'player',email:e};nav();location.hash='#/me';
+    invP();localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:'player',email:e};afterAuth();location.hash='#/';
   }catch(x){bad(esc(x.message))}
 }
 async function charV(k){
-  const p=k&&await api('profiles/'+k);
+  const p=k&&await getProf(k,true);
   if(!p||(!p.public&&!(me&&(me.k===k||me.role==='admin'))))return view('<div class="box auth"><h2>Player not found</h2><p class="mut">This player does not exist or keeps their page private.</p></div>');
-  await getCodes();
+  await defs(Object.keys(p.badges||{}));
   const own=me&&(me.k===k);
   const by={};Object.keys(p.badges||{}).forEach(c=>{const r=def(c).rarity||'common';by[r]=(by[r]||0)+1});
+  CURC=k;
   view(`<div class="char"><div class="box side">${av(p,170)}<h2>${esc(p.name)}</h2>${p.public?'':'<p class="mut">Private page</p>'}
   <div class="stat"><span>Badges</span><b>${cnt(p)}</b></div><div class="stat"><span>Legendary</span><b>${by.legendary||0}</b></div>
   <div class="stat"><span>Epic</span><b>${by.epic||0}</b></div><div class="stat"><span>Joined</span><b>${fmt(p.created)}</b></div>
-  ${own?'<div style="margin-top:14px"><button onclick="location.hash=\'#/me\'">Edit character</button></div>':''}</div>
-  <div class="box"><h3>Badges</h3>${badgeGrid(p,codes,false)}</div></div>`);
+  ${own?'<div style="margin-top:14px"><button onclick="location.hash=\'#/me\'">Edit character</button></div>':`<div id="fb" style="margin-top:14px">${fbtnH(k)}</div>`}</div>
+  <div class="box"><h3>Badges</h3>${badgeGrid(p,{},false)}</div></div>`);
 }
 /* badge icon: uploaded image (or emoji) with pulsing glow for rare / epic / legendary */
 const bi=(d,s=64)=>`<div class="bi${d.rarity&&d.rarity!=='common'&&RC[d.rarity]?' gl':''}" style="--rc:${RC[d.rarity]||RC.common};--bs:${s}px">${/^data:image\//.test(d.img||'')?`<img src="${d.img}" alt="">`:esc(d.icon||'🎖️')}</div>`;
@@ -329,15 +421,20 @@ const shrinkPng=(f,max)=>new Promise((ok,no)=>{const im=new Image(),u=URL.create
     c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
     URL.revokeObjectURL(u);ok(c.toDataURL('image/png'))};
   im.onerror=()=>no(new Error('Could not read that image.'));im.src=u});
+/* small JPEG copy of an existing data URL (shop card thumbnails) */
+const thumbOf=(src,max,q)=>new Promise((ok,no)=>{const im=new Image();
+  im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',q))};
+  im.onerror=()=>no(new Error('Could not read that image.'));im.src=src});
 async function upImg(i){const f=i.files[0];if(!f)return;try{tmp.img=await shrink(f,192,.85,true);paint()}catch(e){toast(e.message)}}
 /* ---------- my account ---------- */
 async function meV(){
-  const p=await api('profiles/'+me.k);await getCodes();
+  const p=await getProf(me.k,true);await defs(Object.keys(p.badges||{}));
   const T=[['badges','Badges'],['char','Character'],['sec','Account']];
   let body='';
   if(tab==='badges')body=`<h3>Redeem a code</h3><p class="mut">Enter the 12-character code you received</p><div id="m"></div>
    <div class="row" style="margin:10px 0 22px"><input id="cd" style="max-width:380px" placeholder="Enter badge code" onkeydown="event.key==='Enter'&&redeem()"><button onclick="redeem()">Add badge</button></div>
-   <h3>My badges (${cnt(p)})</h3>${badgeGrid(p,codes,false)}`;
+   <h3>My badges (${cnt(p)})</h3>${badgeGrid(p,{},false)}`;
   if(tab==='char')body=`${picker(p)}<div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Let anyone find and view my page, even without an account</span></div><button onclick="saveChar()">Save character</button>`;
   if(tab==='sec')body=`<div id="m"></div><div style="max-width:380px"><h3>Email</h3><label>Current: ${esc(me.email||'none')}</label><input id="ne" type="email" placeholder="New email"><div style="margin-top:10px"><button onclick="chEmail()">Change email</button></div>
    <h3 style="margin-top:30px">Password</h3><label>Current password</label><input id="op" type="password"><label>New password</label><input id="np" type="password"><div style="margin-top:10px"><button onclick="chPass()">Change password</button></div></div>`;
@@ -354,10 +451,11 @@ async function redeem(){
     await api(`profiles/${me.k}/badges/${id}`,'PUT',Date.now());
     if(d.badge)await api('codes/'+c,'PATCH',{usedBy:me.k,usedAt:Date.now()});
     const b=d.badge?await api('badges/'+id):d;
-    cache=null;toast('Badge added: '+((b||d).title||'Badge'));meV();
+    if(b)DC[id]=b;
+    invP(me.k);toast('Badge added: '+((b||d).title||'Badge'));meV();
   }catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}
 }
-async function saveChar(){await api('profiles/'+me.k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});cache=null;toast('Character saved')}
+async function saveChar(){await api('profiles/'+me.k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});invP(me.k);toast('Character saved')}
 async function chEmail(){const e=$('#ne').value.trim();if(!/^\S+@\S+\.\S+$/.test(e))return $('#m').innerHTML='<div class="msg">Enter a valid email.</div>';
   await api('auth/'+me.k,'PATCH',{email:e});me.email=e;toast('Email changed');meV()}
 async function chPass(){
@@ -365,17 +463,24 @@ async function chPass(){
   if(a.hash!==await sha($('#op').value))return $('#m').innerHTML='<div class="msg">Current password is wrong.</div>';
   if(np.length<4)return $('#m').innerHTML='<div class="msg">New password needs at least 4 characters.</div>';
   const h=await sha(np);await api('auth/'+me.k,'PATCH',{hash:h});localStorage.dn_s=JSON.stringify({u:me.k,h});toast('Password changed');meV()}
+
 /* ---------- admin ---------- */
+const AT=[['players','Players'],['codes','Badge codes'],['inv','Inventory'],['news','News'],['orders','Payments']];
 async function adminV(){
-  const [au,pr]=[await api('auth')||{},await api('profiles')||{}];await getCodes();
-  let body;
-  if(atab==='players')body=`<table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
+  let body='';
+  if(atab==='players'){
+    const [au,pr]=await Promise.all([api('auth').then(x=>x||{}),allProfs()]);
+    body=`<table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
    return `<tr><td>${esc(p.name)}</td><td>${esc(au[k].email)}</td><td>${au[k].role}</td><td>${cnt(p)}</td><td>${p.public?'Public':'Private'}</td>
-   <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k==='david'?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`}).join('')}</table>`;
-  else if(atab==='orders')body=await ordersHTML();else body=codesHTML();
-  view(`<h2 style="margin-bottom:14px">Admin</h2><div class="tabs"><div class="tab ${atab==='players'?'on':''}" onclick="atab='players';adminV()">Players (${Object.keys(au).length})</div><div class="tab ${atab==='codes'?'on':''}" onclick="atab='codes';adminV()">Badge codes</div><div class="tab ${atab==='orders'?'on':''}" onclick="atab='orders';adminV()">Payments${pend?` (${pend})`:''}</div></div><div class="box" style="overflow-x:auto">${body}</div>`);
+   <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k==='david'?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`).join('')}</table>`}
+  else if(atab==='orders')body=await ordersHTML();
+  else if(atab==='inv')body=await invHTML();
+  else if(atab==='news')body=await newsAdminHTML();
+  else{await getCodes();body=codesHTML()}
+  view(`<h2 style="margin-bottom:14px">Admin</h2><div class="tabs">${AT.map(([k,l])=>`<div class="tab ${atab===k?'on':''}" onclick="atab='${k}';adminV()">${l}${k==='orders'&&pend?` (${pend})`:''}</div>`).join('')}</div><div class="box" style="overflow-x:auto">${body}</div>`);
+  if(atab==='inv')paintIP();
 }
-async function delUser(k){if(!confirm('Delete '+k+' and all their badges?'))return;await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');cache=null;toast('Deleted '+k);adminV()}
+async function delUser(k){if(!confirm('Delete '+k+' and all their badges?'))return;await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');invP();toast('Deleted '+k);adminV()}
 
 /* ---------- badge codes (admin) ---------- */
 let bimg='';
@@ -426,11 +531,11 @@ async function delBadge(id){
   const pr=await api('profiles')||{};
   for(const [k,p] of Object.entries(pr))if(p.badges&&p.badges[id])await api(`profiles/${k}/badges/${id}`,'DELETE');
   for(const [c,d] of Object.entries(codes))if(d.badge===id)await api('codes/'+c,'DELETE');
-  await api('badges/'+id,'DELETE');cache=null;toast('Badge deleted');adminV()}
+  await api('badges/'+id,'DELETE');delete DC[id];invP();toast('Badge deleted');adminV()}
 async function delCode(c){if(confirm('Delete code '+c+'? Players keep badges already earned.')){await api('codes/'+c,'DELETE');adminV()}}
 const badgeOpts=()=>[...new Set([...Object.keys(bdg),...Object.entries(codes).filter(([c,d])=>!d.badge).map(x=>x[0])])].map(id=>`<option value="${id}">${esc(def(id).title)}</option>`).join('');
 async function editV(k){
-  const [a,p]=[await api('auth/'+k),await api('profiles/'+k)];await getCodes();
+  const [a,p]=[await api('auth/'+k),await getProf(k,true)];await getCodes();await defs(Object.keys((p&&p.badges)||{}));
   if(!a||!p)return view('<div class="msg">Player not found.</div>');
   view(`<p><a href="#/admin">Back to players</a></p><h2 style="margin:8px 0 14px">Edit ${esc(p.name)}</h2><div id="m"></div>
   <div class="box"><div style="max-width:420px"><label>Email</label><input id="ee" value="${esc(a.email)}">
@@ -439,17 +544,91 @@ async function editV(k){
   <div style="margin:18px 0">${picker(p)}</div><div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Public page</span></div>
   <button onclick="saveUser('${k}')">Save changes</button></div>
   <div class="box" style="margin-top:20px"><h3>Badges (${cnt(p)})</h3>
-  <div class="row" style="margin:10px 0"><select id="ac" style="max-width:380px">${badgeOpts()}</select><button onclick="giveBadge('${k}')">Add badge</button></div>${badgeGrid(p,codes,true,k)}</div>`);
+  <div class="row" style="margin:10px 0"><select id="ac" style="max-width:380px">${badgeOpts()}</select><button onclick="giveBadge('${k}')">Add badge</button></div>${badgeGrid(p,{},true,k)}</div>`);
 }
 async function saveUser(k){
   const d={email:$('#ee').value.trim()};if(k!=='david')d.role=$('#er').value;
   const np=$('#ep').value;if(np)d.hash=await sha(np);
   await api('auth/'+k,'PATCH',d);
-  await api('profiles/'+k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});cache=null;toast('Saved');
+  await api('profiles/'+k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});invP(k);toast('Saved');
 }
 async function giveBadge(k){const c=$('#ac').value;if(!c)return $('#m').innerHTML='<div class="msg">Create a badge first under Badge codes.</div>';
-  await api(`profiles/${k}/badges/${c}`,'PUT',Date.now());toast('Badge added');editV(k)}
-async function rmBadge(k,c){if(confirm('Remove this badge?')){await api(`profiles/${k}/badges/${c}`,'DELETE');editV(k)}}
+  await api(`profiles/${k}/badges/${c}`,'PUT',Date.now());invP(k);toast('Badge added');editV(k)}
+async function rmBadge(k,c){if(confirm('Remove this badge?')){await api(`profiles/${k}/badges/${c}`,'DELETE');invP(k);editV(k)}}
+
+/* ---------- inventory (admin) ---------- */
+/* inv/{id} = name, desc, price, stock, thumb (small)  |  invimg/{id} = full images (only loaded when a product is opened) */
+const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],created:0});
+let IF=newIF();
+async function invHTML(){
+  const inv=await getInv(true);
+  const L=Object.entries(inv).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
+  return `<h3>${IF.id?'Edit product':'Add product'}</h3><div id="m"></div>
+  <div class="f2" style="margin:8px 0">
+   <div style="grid-column:1/-1"><label>Product name</label><input id="pn" maxlength="80" value="${esc(IF.name)}"></div>
+   <div><label>Price (₱)</label><input id="pp" type="number" min="0" step="any" value="${esc(IF.price)}"></div>
+   <div><label>Stocks available</label><input id="ps" type="number" min="0" step="1" value="${esc(IF.stock)}"></div></div>
+  <label>Description</label><textarea id="pd" maxlength="1500">${esc(IF.desc)}</textarea>
+  <label>Product images (1 to 6, the first one is the shop cover)</label>
+  <div class="row" style="align-items:center;margin:6px 0 4px"><button class="s" onclick="$('#pif').click()">Add images</button><span id="ipc" class="mut"></span></div>
+  <input id="pif" type="file" accept="image/*" multiple hidden onchange="addPImgs(this)">
+  <div id="ip" class="row" style="margin:10px 0"></div>
+  <div class="row" style="margin:14px 0 26px"><button onclick="saveProd()">${IF.id?'Save changes':'Add to inventory'}</button>${IF.id?'<button class="g" onclick="IF=newIF();adminV()">Cancel edit</button>':''}</div>
+  <h3 style="margin-bottom:10px">Inventory (${L.length})</h3>
+  ${L.length?`<table><tr><th></th><th>Product</th><th>Price</th><th>Stock</th><th></th></tr>${L.map(([id,p])=>`<tr><td>${p.thumb?`<img src="${esc(p.thumb)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`:''}</td><td><b>${esc(p.name)}</b></td><td>${peso(p.price)}</td>
+   <td><input type="number" min="0" step="1" value="${+p.stock||0}" style="width:84px" onchange="setStock('${id}',this.value)"></td>
+   <td class="row"><button class="s" onclick="editProd('${id}')">Edit</button><button class="d s" onclick="delProd('${id}')">Delete</button></td></tr>`).join('')}</table>`:'<p class="mut">No products yet. Add your first one above.</p>'}`;
+}
+function paintIP(){const e=$('#ip');if(!e)return;
+  e.innerHTML=IF.imgs.map((d,i)=>`<div style="position:relative"><img src="${d}" alt="" style="height:76px;width:76px;object-fit:cover;border-radius:10px;border:2px solid ${i?'var(--line)':'var(--gold)'};display:block"><button class="d s" style="position:absolute;top:-7px;right:-7px;padding:0 7px;font-size:12px" onclick="rmPImg(${i})" aria-label="Remove image">x</button></div>`).join('');
+  const c=$('#ipc');if(c)c.textContent=IF.imgs.length+' / 6 images'}
+async function addPImgs(i){const fs=[...i.files];i.value='';const room=6-IF.imgs.length;
+  if(room<=0)return toast('Maximum of 6 images');
+  if(fs.length>room)toast(`Only ${room} more image${room>1?'s':''} allowed`);
+  for(const f of fs.slice(0,room)){try{IF.imgs.push(await shrink(f,900,.7))}catch(e){toast(e.message)}}
+  paintIP()}
+function rmPImg(i){IF.imgs.splice(i,1);paintIP()}
+async function saveProd(){
+  const m=$('#m'),bad=t=>m.innerHTML=`<div class="msg">${t}</div>`;
+  const name=$('#pn').value.trim(),price=+$('#pp').value,stock=Math.floor(+$('#ps').value),desc=$('#pd').value.trim();
+  if(!name)return bad('Product name is required.');
+  if(!(price>=0)||$('#pp').value==='')return bad('Enter a valid price.');
+  if(!(stock>=0)||$('#ps').value==='')return bad('Enter how many are in stock (0 or more).');
+  if(!IF.imgs.length)return bad('Add at least 1 image (up to 6).');
+  try{
+    const id=IF.id||'p'+mid(),thumb=await thumbOf(IF.imgs[0],360,.65);
+    await api('invimg/'+id,'PUT',IF.imgs);
+    await api('inv/'+id,'PUT',{name,desc,price,stock,thumb,created:IF.created||Date.now()});
+    INV.t=0;IF=newIF();toast('Product saved');adminV();
+  }catch(e){bad(esc(e.message))}
+}
+async function editProd(id){
+  try{const [p,im]=await Promise.all([api('inv/'+id),api('invimg/'+id)]);if(!p)return toast('Product not found');
+  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:p.desc||'',imgs:Object.values(im||[]),created:p.created||0};
+  await adminV();window.scrollTo(0,0)}catch(e){toast(e.message)}}
+async function setStock(id,v){const n=Math.max(0,Math.floor(+v)||0);
+  try{await api(`inv/${id}/stock`,'PUT',n);if(INV.d[id])INV.d[id].stock=n;toast('Stock updated')}catch(e){toast(e.message)}}
+async function delProd(id){if(!confirm('Delete this product?'))return;
+  await api('inv/'+id,'DELETE');await api('invimg/'+id,'DELETE');INV.t=0;if(IF.id===id)IF=newIF();toast('Product deleted');adminV()}
+
+/* ---------- news (admin) ---------- */
+async function newsAdminHTML(){
+  const o=await api('news?orderBy=%22$key%22&limitToLast=30')||{};
+  const L=Object.entries(o).sort((a,b)=>b[1].t-a[1].t);
+  return `<h3>Post news</h3><div id="m"></div>
+  <label>Header</label><input id="nh" maxlength="120" placeholder="Big headline" style="font:700 22px 'Chakra Petch'">
+  <label>Subheader</label><input id="ns" maxlength="160" placeholder="Short line under the headline (optional)">
+  <label>Body</label><textarea id="nb" maxlength="2000" style="min-height:130px"></textarea>
+  <div style="margin:14px 0 26px"><button onclick="postNews()">Post news</button></div>
+  <h3 style="margin-bottom:10px">Recent posts (${L.length})</h3>
+  ${L.length?L.map(([id,n])=>`<div class="bx2"><div class="row" style="align-items:flex-start"><div style="flex:1;min-width:200px"><span class="mut" style="font-size:13px">${fmt(n.t)}</span><div style="font:700 20px/1.2 'Chakra Petch'">${esc(n.h)}</div>${n.s?`<div style="color:var(--gold)">${esc(n.s)}</div>`:''}<div class="mut cl4" style="font-size:14px;white-space:pre-wrap">${esc(n.b)}</div></div><button class="d s" onclick="delNews('${id}')">Delete</button></div></div>`).join(''):'<p class="mut">No news posted yet.</p>'}`;
+}
+async function postNews(){
+  const h=$('#nh').value.trim(),s=$('#ns').value.trim(),b=$('#nb').value.trim(),m=$('#m');
+  if(!h||!b)return m.innerHTML='<div class="msg">Header and body are required.</div>';
+  try{await api('news/'+mid(),'PUT',{h,s,b,t:Date.now()});NEWS.t=0;toast('News posted');adminV()}catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}}
+async function delNews(id){if(!confirm('Delete this news post?'))return;await api('news/'+id,'DELETE');NEWS.t=0;toast('News deleted');adminV()}
+
 /* ---------- particles ---------- */
 function particles(){
   const c=$('#pt');if(!c)return;const x=c.getContext('2d');let W,H,P=[];
@@ -468,51 +647,220 @@ function particles(){
     }
     if(!still)requestAnimationFrame(f)})();
 }
+
 /* ---------- shop ---------- */
-const PRODUCTS=[{name:'Test Product',price:100,icon:'🎁',desc:'Placeholder item for testing the checkout flow.',details:['Delivered within 24 hours after your payment is verified','Sent to your email or by SMS','Message us if anything looks wrong']}];
 const IMG='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/payments/';
 const PAY={gcash:{n:'GCash',img:IMG+'gcash.png'},maya:{n:'Maya',img:IMG+'maya.png'}};
 const peso=n=>'₱'+Number(n).toLocaleString();
-let od={};
-const shopHTML=()=>`<section id="shop"><div class="sec-h" style="margin-top:64px"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div><div class="shop">${PRODUCTS.map((p,i)=>`<div class="pr" tabindex="0" onclick="buy(${i})" onkeydown="event.key==='Enter'&&buy(${i})"><div class="im">${p.icon}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut">${esc(p.desc)}</p><span>${peso(p.price)}</span></div></div>`).join('')}</div></section>`;
-function goShop(){const e=$('#shop');if(!e)return true;e.scrollIntoView({behavior:'smooth'});return false}
+const NOTES=['Delivered within 24 hours after your payment is verified','Sent to your email or by SMS','Message us if anything looks wrong'];
+let od={},G={imgs:[],i:0};
+const stk=n=>n<=0?'<em class="out">Sold out</em>':n<=5?`<em class="low">Only ${n} left</em>`:`<em class="okk">${n} in stock</em>`;
+function shopHTML(){
+  const L=Object.entries(INV.d).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
+  return `<section id="shop"><div class="sec-h" style="margin-top:64px"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div>${L.length?`<div class="shop">${L.map(([id,p])=>`<div class="pr${+p.stock>0?'':' so'}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')"><div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(p.desc)}</p><span>${peso(p.price)}</span>${stk(+p.stock||0)}</div></div>`).join('')}</div>`:'<p class="mut">No products available yet. Check back soon.</p>'}</section>`}
 function modal(h){let o=$('#ov');if(!o){o=document.createElement('div');o.id='ov';o.className='ov';o.onmousedown=e=>{if(e.target===o)closeM()};document.body.appendChild(o)}
   o.innerHTML=`<div class="md"><button class="xx" onclick="closeM()" aria-label="Close">✕</button>${h}</div>`}
 const closeM=()=>{const o=$('#ov');o&&o.remove()};
-function buy(i){od={i};const p=PRODUCTS[i];
-  modal(`<div style="display:flex;gap:16px;align-items:center;margin-bottom:14px;padding-right:30px"><div class="im" style="width:84px;height:84px;border-radius:18px;font-size:42px">${p.icon}</div><div><div class="mt">${esc(p.name)}</div><b style="font-size:20px">${peso(p.price)}</b></div></div>
-  <p class="mut">${esc(p.desc)}</p><ul class="mut" style="margin:10px 0 6px 18px">${p.details.map(d=>`<li>${esc(d)}</li>`).join('')}</ul><div id="m"></div>
+async function openProd(id){const p=INV.d[id];if(!p)return;od={id};
+  modal(`<div class="mt" style="padding-right:40px">${esc(p.name)}</div><p class="mut" style="margin-top:14px">Loading...</p>`);
+  let imgs=[],stock=+p.stock||0;
+  try{const [a,s]=await Promise.all([api('invimg/'+id),api(`inv/${id}/stock`)]);imgs=Object.values(a||[]);stock=Math.max(0,+s||0);p.stock=stock}catch(e){}
+  if(!$('#ov')||od.id!==id)return;
+  G={imgs:imgs.length?imgs:(p.thumb?[p.thumb]:[]),i:0};
+  const form=stock>0?`<div id="m"></div>
   <div class="f2"><div><label>First name</label><input id="fn" autocomplete="given-name"></div><div><label>Last name</label><input id="ln" autocomplete="family-name"></div></div>
   <label>Email</label><input id="em" type="email" value="${esc(me?me.email:'')}"><label>Phone number</label><input id="ph" type="tel" placeholder="09XX XXX XXXX">
-  <label>Choose payment method</label><div class="pay">${Object.entries(PAY).map(([k,v])=>`<button class="pm ${k}" onclick="pickPay('${k}')"><i class="lg">${k==='maya'?'m':'G'}</i>${v.n}</button>`).join('')}</div>`)}
+  <label>Choose payment method</label><div class="pay">${Object.entries(PAY).map(([k,v])=>`<button class="pm ${k}" onclick="pickPay('${k}')"><i class="lg">${k==='maya'?'m':'G'}</i>${v.n}</button>`).join('')}</div>`
+  :'<div class="msg">This item is sold out right now.</div>';
+  modal(`${G.imgs.length?`<img id="gm" class="gm" alt="" style="margin-top:22px">${G.imgs.length>1?`<div class="gts">${G.imgs.map((_,i)=>`<img class="gt" data-i="${i}" alt="" onclick="gsel(${i})">`).join('')}</div>`:''}`:''}
+  <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div><div class="row" style="align-items:baseline;gap:14px"><b style="font-size:20px">${peso(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div></div>
+  <p class="mut" style="white-space:pre-wrap;margin-top:8px">${esc(p.desc)}</p><ul class="mut" style="margin:10px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>${form}`);
+  document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);gsel(0)}
+function gsel(i){G.i=i;const m=$('#gm');if(m)m.src=G.imgs[i];document.querySelectorAll('.gt').forEach(t=>t.classList.toggle('on',+t.dataset.i===i))}
 function pickPay(k){
   const v=id=>$(id).value.trim(),f={first:v('#fn'),last:v('#ln'),email:v('#em'),phone:v('#ph')},bad=t=>$('#m').innerHTML=`<div class="msg">${t}</div>`;
   if(!f.first||!f.last)return bad('Enter your first and last name.');
   if(!/^\S+@\S+\.\S+$/.test(f.email))return bad('Enter a valid email.');
   if(f.phone.replace(/\D/g,'').length<10)return bad('Enter a valid phone number.');
-  Object.assign(od,f,{method:k});const p=PRODUCTS[od.i];
+  Object.assign(od,f,{method:k});const p=INV.d[od.id];
   modal(`<div class="qr"><img src="${PAY[k].img}" alt="${PAY[k].n} QR code"></div><div class="mt">Upload proof of payment</div><p class="mut" style="margin:6px 0 14px">Pay ${peso(p.price)} with ${PAY[k].n}, then upload a screenshot of your receipt. We check it as soon as it arrives.</p>
   <div id="m"></div>
   <div class="drop" id="dz" onclick="$('#pf').click()"><div style="font-size:34px">📤</div>Click to upload your screenshot<br><small>PNG or JPG</small></div>
-  <input id="pf" type="file" accept="image/*" hidden onchange="sendProof(this)"><div style="margin-top:14px"><button class="g s" onclick="buy(od.i)">Back</button></div>`)}
+  <input id="pf" type="file" accept="image/*" hidden onchange="sendProof(this)"><div style="margin-top:14px"><button class="g s" onclick="openProd(od.id)">Back</button></div>`)}
 async function sendProof(i){
   const f=i.files[0];if(!f)return;const dz=$('#dz');dz.textContent='Uploading...';
-  try{const proof=await shrink(f,1000,.72),p=PRODUCTS[od.i];
-    await api('orders','POST',{product:p.name,price:p.price,method:od.method,first:od.first,last:od.last,email:od.email,phone:od.phone,user:me?me.k:'guest',proof,created:Date.now()});
+  try{const p=INV.d[od.id],s=+await api(`inv/${od.id}/stock`);
+    if(!(s>0)){p.stock=0;dz.textContent='Click to upload your screenshot';return $('#m').innerHTML='<div class="msg">Sorry, this item just sold out.</div>'}
+    const proof=await shrink(f,1000,.72);
+    await api('orders','POST',{pid:od.id,product:p.name,price:p.price,method:od.method,first:od.first,last:od.last,email:od.email,phone:od.phone,user:me?me.k:'guest',proof,created:Date.now()});
     modal(`<div class="done"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25"/><path d="M14 27l8 8 16-17"/></svg><div class="mt" style="margin-top:12px">Payment submitted</div>
     <p class="mut" style="margin:8px 0 20px">Please wait patiently. An email or personal message via SMS will be sent to you within 24 hours for completion.</p><button onclick="closeM()">Done</button></div>`);
   }catch(e){dz.textContent='Click to upload your screenshot';$('#m').innerHTML=`<div class="msg">${esc(e.message)}</div>`}}
+
 /* ---------- admin payments + notifications ---------- */
 let pend=0,wt=0,seen=-1,ORD={};
-async function chk(){try{const o=await (await fetch(DB+'/orders.json?shallow=true')).json(),n=o?Object.keys(o).length:0;
+async function chk(){if(document.hidden)return;try{const n=(await skeys('orders')).length;
   if(n>seen&&n>0)toast(`${n} payment${n>1?'s':''} waiting for review`);const ch=n!==pend;pend=n;seen=n;if(ch)nav()}catch(e){}}
-function watch(){if(me&&me.role==='admin'){if(!wt){wt=setInterval(chk,30000);chk()}}else if(wt){clearInterval(wt);wt=0;pend=0;seen=-1}}
+function watch(){if(me&&me.role==='admin'){if(!wt){wt=setInterval(chk,60000);chk()}}else if(wt){clearInterval(wt);wt=0;pend=0;seen=-1}}
 async function ordersHTML(){
   ORD=await api('orders')||{};const e=Object.entries(ORD).sort((a,b)=>b[1].created-a[1].created);pend=e.length;seen=pend;
   if(!e.length)return '<p class="mut">No payments waiting.</p>';
-  return `<table><tr><th>Date</th><th>Customer</th><th>Contact</th><th>Order</th><th>Proof</th><th></th></tr>${e.map(([id,r])=>`<tr><td>${new Date(r.created).toLocaleString()}</td><td>${esc(r.first)} ${esc(r.last)}<br><span class="mut">${esc(r.user)}</span></td><td>${esc(r.email)}<br>${esc(r.phone)}</td><td>${esc(r.product)}<br>${peso(r.price)} via ${esc(r.method)}</td><td><img class="pf" src="${esc(r.proof)}" alt="Proof" onclick="showProof('${id}')"></td><td><button class="d s" onclick="delOrder('${id}')">Delete</button></td></tr>`).join('')}</table>`}
+  return `<table><tr><th>Date</th><th>Customer</th><th>Contact</th><th>Order</th><th>Proof</th><th></th></tr>${e.map(([id,r])=>`<tr><td>${new Date(r.created).toLocaleString()}</td><td>${esc(r.first)} ${esc(r.last)}<br><span class="mut">${esc(r.user)}</span></td><td>${esc(r.email)}<br>${esc(r.phone)}</td><td>${esc(r.product)}<br>${peso(r.price)} via ${esc(r.method)}</td><td><img class="pf" src="${esc(r.proof)}" alt="Proof" onclick="showProof('${id}')"></td><td class="row"><button class="s" onclick="doneOrder('${id}')">Complete</button><button class="d s" onclick="delOrder('${id}')">Delete</button></td></tr>`).join('')}</table>`}
 const showProof=id=>modal(`<img src="${esc(ORD[id].proof)}" alt="Proof of payment" style="width:100%;border-radius:14px;margin-top:20px">`);
+/* Complete = payment verified: stock goes down by 1 and the record (with its big screenshot) is removed */
+async function doneOrder(id){const r=ORD[id];if(!r)return;
+  if(!confirm('Mark as completed? Stock goes down by 1 and this payment record is removed.'))return;
+  try{if(r.pid){const s=+await api(`inv/${r.pid}/stock`);if(s>0){await api(`inv/${r.pid}/stock`,'PUT',s-1);INV.t=0}else if(s===0)toast('Heads up: stock was already 0')}
+  await api('orders/'+id,'DELETE');pend=Math.max(0,pend-1);seen=pend;nav();toast('Order completed');adminV()}catch(e){toast(e.message)}}
 async function delOrder(id){if(!confirm('Delete this payment record from the database?'))return;await api('orders/'+id,'DELETE');pend=Math.max(0,pend-1);seen=pend;nav();adminV()}
+
+/* ======================================================================
+   FRIENDS + CHAT  (one live stream per logged-in user, only while the tab is visible)
+   inbox/{me}: fr{friend:true}  reqs{from:ts}  out{to:ts}  notes{id:{type,from,t}}  unread{from:{t,p}}  th{user:ts}  seen
+   chats/{a~b}/{id} = {f,t,ts}
+   ====================================================================== */
+const E0=()=>({fr:{},reqs:{},out:{},notes:{},unread:{},th:{},seen:0});
+let IN=E0(),es=null,inOK=false;
+function startIn(){stopIn();if(!me||document.hidden)return;
+  es=new EventSource(`${DB}/inbox/${me.k}.json`);
+  const h=e=>{try{onIn(e.type,JSON.parse(e.data))}catch(x){}};
+  es.addEventListener('put',h);es.addEventListener('patch',h)}
+function stopIn(){es&&es.close();es=null}
+function setP(path,v){const s=path.split('/').filter(Boolean);if(!s.length)return;
+  if(s.length===1&&v===null){IN[s[0]]=s[0]==='seen'?0:{};return}
+  let o=IN;for(let i=0;i<s.length-1;i++){if(typeof o[s[i]]!=='object'||o[s[i]]===null){if(v===null)return;o[s[i]]={}}o=o[s[i]]}
+  if(v===null)delete o[s[s.length-1]];else o[s[s.length-1]]=v}
+function onIn(type,{path,data}){
+  const pv={r:{...IN.reqs},n:{...IN.notes},u:{...IN.unread}};
+  if(type==='put'&&path==='/')IN=Object.assign(E0(),data||{});
+  else if(type==='put')setP(path,data);
+  else for(const k in (data||{}))setP((path==='/'?'':path)+'/'+k,data[k]);
+  if(inOK){
+    for(const k in IN.reqs)if(!(k in pv.r))toast(`${k} sent you a friend request`,()=>location.hash='#/friends');
+    for(const [id,n] of Object.entries(IN.notes))if(!(id in pv.n))toast(n.type==='acc'?`${n.from} accepted your friend request`:`${n.from} declined your friend request`,()=>location.hash='#/friends');
+    for(const [k,u] of Object.entries(IN.unread))if(!pv.u[k]||u.t>pv.u[k].t){
+      if(CH.open&&CH.with===k)clearUnread(k);else toast(`New message from ${k}: ${u.p}`,()=>openChat(k))}
+  }
+  inOK=true;ui()}
+function ui(){nav();cwBadge();if(CH.open&&CH.with===null)chatList();fbtn();if(location.hash==='#/friends')friendsV(true)}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){stopIn();closeStream()}
+  else if(me){startIn();if(CH.open&&CH.with&&CH.with!=='*all')chatStream(CH.with)}});
+
+/* ---- friend actions (each one is a single multi-path write) ---- */
+function fbtnH(k){
+  if(!me)return `<button class="s" onclick="location.hash='#/login'">+ Add friend</button>`;
+  if(me.k===k||!inOK)return '';
+  if(IN.fr[k])return `<div class="row" style="justify-content:center"><button class="s" onclick="openChat('${k}')">💬 Message</button><button class="g s" onclick="unfriend('${k}')">Unfriend</button></div><p class="mut" style="margin-top:6px;font-size:13px">You are friends</p>`;
+  if(IN.out[k])return `<button class="g s" onclick="cancelReq('${k}')">Request sent · Cancel</button>`;
+  if(IN.reqs[k])return `<div class="row" style="justify-content:center"><button class="s" onclick="acceptReq('${k}')">Accept</button><button class="g s" onclick="denyReq('${k}')">Deny</button></div><p class="mut" style="margin-top:6px;font-size:13px">sent you a friend request</p>`;
+  return `<button class="s" onclick="addFriend('${k}')">+ Add friend</button>`}
+const fbtn=()=>{const e=$('#fb');if(e&&CURC)e.innerHTML=fbtnH(CURC)};
+async function addFriend(k){if(!me)return location.hash='#/login';if(k===me.k||IN.fr[k]||IN.out[k])return;
+  if(IN.reqs[k])return acceptReq(k);
+  try{const t=Date.now();await mp({[`inbox/${k}/reqs/${me.k}`]:t,[`inbox/${me.k}/out/${k}`]:t});IN.out[k]=t;toast('Friend request sent');ui()}catch(e){toast(e.message)}}
+async function cancelReq(k){try{await mp({[`inbox/${k}/reqs/${me.k}`]:null,[`inbox/${me.k}/out/${k}`]:null});delete IN.out[k];toast('Request cancelled');ui()}catch(e){toast(e.message)}}
+async function acceptReq(k){
+  try{await mp({[`inbox/${me.k}/fr/${k}`]:true,[`inbox/${k}/fr/${me.k}`]:true,[`inbox/${me.k}/reqs/${k}`]:null,[`inbox/${k}/out/${me.k}`]:null,[`inbox/${k}/notes/${mid()}`]:{type:'acc',from:me.k,t:Date.now()}});
+  IN.fr[k]=true;delete IN.reqs[k];toast(`You and ${k} are now friends`);ui()}catch(e){toast(e.message)}}
+async function denyReq(k){
+  try{await mp({[`inbox/${me.k}/reqs/${k}`]:null,[`inbox/${k}/out/${me.k}`]:null,[`inbox/${k}/notes/${mid()}`]:{type:'den',from:me.k,t:Date.now()}});
+  delete IN.reqs[k];toast('Request declined');ui()}catch(e){toast(e.message)}}
+async function unfriend(k){if(!confirm('Remove '+k+' from your friends?'))return;
+  try{await mp({[`inbox/${me.k}/fr/${k}`]:null,[`inbox/${k}/fr/${me.k}`]:null,[`inbox/${me.k}/th/${k}`]:null,[`inbox/${k}/th/${me.k}`]:null});
+  delete IN.fr[k];delete IN.th[k];if(CH.with===k)chatList();toast('Friend removed');ui()}catch(e){toast(e.message)}}
+async function clearNotes(){try{await api(`inbox/${me.k}/notes`,'DELETE');IN.notes={};ui()}catch(e){toast(e.message)}}
+
+async function friendsV(quiet){
+  if(!me)return loginV();
+  if(!inOK){if(!quiet)view('<p class="mut">Loading...</p>');return}
+  const fr=Object.keys(IN.fr),rq=Object.keys(IN.reqs),ou=Object.keys(IN.out),nt=Object.entries(IN.notes).sort((a,b)=>b[1].t-a[1].t);
+  const ks=[...new Set([...fr,...rq,...ou,...nt.map(x=>x[1].from)])],ps={};
+  await Promise.all(ks.map(async k=>{try{ps[k]=await getProf(k)}catch(e){ps[k]=null}}));
+  if(location.hash!=='#/friends')return;
+  fr.filter(k=>!ps[k]).forEach(k=>{delete IN.fr[k];api(`inbox/${me.k}/fr/${k}`,'DELETE').catch(()=>{})});
+  const P=k=>ps[k]||{name:k};
+  const row=(k,b,sub)=>`<div class="fr-row">${av(P(k),48)}<div style="flex:1;min-width:0"><b>${esc(P(k).name)}</b>${sub?`<div class="mut" style="font-size:13px">${sub}</div>`:''}</div><div class="row">${b}</div></div>`;
+  const vw=k=>`<button class="g s" onclick="location.hash='#/char/${k}'">View</button>`;
+  const frL=Object.keys(IN.fr);
+  const html=`<h2 style="margin-bottom:14px">Friends</h2><div class="box">
+  <div class="fh"><h3>Friend requests</h3><span class="cnt">${rq.length}</span></div>
+  ${rq.length?rq.map(k=>row(k,`<button class="s" onclick="acceptReq('${k}')">Accept</button><button class="g s" onclick="denyReq('${k}')">Deny</button>${vw(k)}`,'wants to be your friend')).join(''):'<p class="mut">No pending requests.</p>'}
+  <div class="fh"><h3>My friends</h3><span class="cnt">${frL.length}</span></div>
+  ${frL.length?frL.map(k=>row(k,`<button class="s" onclick="openChat('${k}')">💬 Message</button>${vw(k)}<button class="g s" onclick="unfriend('${k}')">Unfriend</button>`)).join(''):'<p class="mut">No friends yet. Search for a player and press Add friend on their page.</p>'}
+  ${ou.length?`<div class="fh"><h3>Sent requests</h3><span class="cnt">${ou.length}</span></div>${ou.map(k=>row(k,`${vw(k)}<button class="g s" onclick="cancelReq('${k}')">Cancel</button>`,'waiting for a reply')).join('')}`:''}
+  <div class="fh"><h3>Notifications</h3><span class="cnt">${nt.length}</span>${nt.length?'<button class="g s" style="margin-left:auto" onclick="clearNotes()">Clear</button>':''}</div>
+  ${nt.length?nt.map(([id,n])=>row(n.from,vw(n.from),`${n.type==='acc'?'accepted your friend request':'declined your friend request'} · ${fmt(n.t)}`)).join(''):'<p class="mut">Nothing new.</p>'}
+  </div>`;
+  quiet?($('#app').innerHTML=html):view(html);
+  if(unseen()){IN.seen=Date.now();api(`inbox/${me.k}/seen`,'PUT',IN.seen).catch(()=>{});nav()}
+}
+
+/* ---- chat ---- */
+let CH={open:false,with:null,es:null,msgs:{}};
+function cwInit(){if(!me||$('#cw'))return;
+  const d=document.createElement('div');d.id='cw';
+  d.innerHTML=`<div class="cbw" id="cbw"><button id="cb" onclick="toggleChat()" aria-label="Open chat">💬</button><b class="cbd" id="cbd" hidden></b></div><div id="cp" role="dialog" aria-label="Chat"></div>`;
+  document.body.appendChild(d);cwBadge()}
+function cwRemove(){closeStream();CH={open:false,with:null,es:null,msgs:{}};const d=$('#cw');d&&d.remove()}
+function cwBadge(){const b=$('#cbd');if(!b)return;const n=Object.keys(IN.unread).length;b.hidden=!n;b.textContent=n>9?'9+':n;$('#cbw').classList.toggle('has',n>0)}
+function toggleChat(){if(CH.open)closeChat();else{CH.open=true;CH.with?openChat(CH.with):chatList()}}
+function closeChat(){CH.open=false;closeStream();const p=$('#cp');if(p)p.style.display='none'}
+function closeStream(){CH.es&&CH.es.close();CH.es=null}
+function clearUnread(k){if(IN.unread[k]){delete IN.unread[k];cwBadge();api(`inbox/${me.k}/unread/${k}`,'DELETE').catch(()=>{})}}
+async function chatList(){
+  const p=$('#cp');if(!p||!me)return;CH.open=true;CH.with=null;closeStream();p.style.display='flex';
+  const ks=[...new Set([...Object.keys(IN.fr),...Object.keys(IN.th)])];
+  ks.sort((a,b)=>((IN.unread[b]&&IN.unread[b].t)||IN.th[b]||0)-((IN.unread[a]&&IN.unread[a].t)||IN.th[a]||0));
+  const ps={};await Promise.all(ks.map(async k=>{try{ps[k]=await getProf(k)}catch(e){}}));
+  if(!CH.open||CH.with!==null)return;
+  const it=k=>{const u=IN.unread[k];return `<div class="cx-i" tabindex="0" onclick="openChat('${k}')" onkeydown="event.key==='Enter'&&openChat('${k}')">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${u?esc(u.p):(IN.fr[k]?'Tap to chat':'Admin message')}</small></div>${u?'<i class="ud"></i>':''}</div>`};
+  p.innerHTML=`<div class="cx-h"><b>Chat</b><button class="g s" onclick="closeChat()" aria-label="Close chat">✕</button></div><div class="cx-b">
+  ${me.role==='admin'?`<div class="cx-i" tabindex="0" onclick="openChat('*all')" onkeydown="event.key==='Enter'&&openChat('*all')"><span style="font-size:30px;width:40px;text-align:center">📢</span><div style="flex:1"><b>Broadcast</b><small>Message every account</small></div></div>`:''}
+  ${ks.length?ks.map(it).join(''):'<p class="mut" style="padding:24px 20px;text-align:center">No chats yet.<br>Add a friend, then message them here.</p>'}</div>`}
+async function openChat(k){
+  if(!me||(k==='*all'&&me.role!=='admin'))return;
+  cwInit();CH.open=true;CH.with=k;CH.msgs={};closeStream();
+  const p=$('#cp');p.style.display='flex';
+  const all=k==='*all',pf=all?{name:'Broadcast'}:(await getProf(k).catch(()=>null))||{name:k};
+  if(CH.with!==k)return;
+  p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button>${all?'<span style="font-size:26px">📢</span>':av(pf,34)}<b>${esc(pf.name)}</b><button class="g s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
+  <div class="cx-b" id="cxb">${all?'<p class="mut" style="padding:16px 18px">Type <code>*admin/all</code>, a space, then your message. It is delivered to every other account.</p>':''}<div class="cx-m" id="cxm"></div></div>
+  <div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="${all?'*admin/all your message':'Write a message'}" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`;
+  if(!all){clearUnread(k);chatStream(k)}
+  setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
+function chatStream(k){closeStream();CH.msgs={};
+  const e=new EventSource(`${DB}/chats/${pair(me.k,k)}.json?orderBy=%22$key%22&limitToLast=50`);CH.es=e;
+  const h=ev=>{try{const {path,data}=JSON.parse(ev.data);
+    if(path==='/'){if(ev.type==='put')CH.msgs=data||{};else Object.assign(CH.msgs,data||{})}
+    else if(ev.type==='put'){const id=path.split('/')[1];if(data===null)delete CH.msgs[id];else if(path.split('/').length===2)CH.msgs[id]=data}
+  }catch(x){return}
+  if(CH.with===k){paintMsgs();if(IN.unread[k])clearUnread(k)}};
+  e.addEventListener('put',h);e.addEventListener('patch',h)}
+function paintMsgs(){const m=$('#cxm');if(!m)return;
+  const L=Object.entries(CH.msgs).sort((a,b)=>a[0]<b[0]?-1:1);
+  m.innerHTML=L.length?L.map(([id,x])=>`<div class="mb ${x.f===me.k?'me':'th'}">${esc(x.t)}<small>${new Date(x.ts).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</small></div>`).join(''):'<p class="mut" style="text-align:center;margin-top:30px">Say hi 👋</p>';
+  const b=$('#cxb');b.scrollTop=b.scrollHeight}
+async function sendChat(){
+  const inp=$('#ci');if(!inp||!me)return;let t=inp.value.trim().slice(0,500);if(!t)return;
+  const to=CH.with,ts=Date.now(),id=mid(),cmd=/^\*admin\/all(\s+|$)/i;
+  try{
+    if(me.role==='admin'&&cmd.test(t)){
+      t=t.replace(cmd,'').trim();if(!t)return toast('Type your message after *admin/all');
+      inp.value='';
+      const us=(await skeys('auth')).filter(u=>u!==me.k);if(!us.length)return toast('No other accounts yet');
+      const o={},pv=t.slice(0,60);
+      us.forEach(u=>{o[`chats/${pair(me.k,u)}/${id}`]={f:me.k,t,ts};o[`inbox/${u}/unread/${me.k}`]={t:ts,p:pv};o[`inbox/${u}/th/${me.k}`]=ts});
+      await mp(o);toast(`Sent to ${us.length} account${us.length>1?'s':''}`);
+      if(to==='*all'){const m=$('#cxm');if(m){m.insertAdjacentHTML('beforeend',`<div class="mb me">${esc(t)}<small>Sent to ${us.length} account${us.length>1?'s':''}</small></div>`);const b=$('#cxb');b.scrollTop=b.scrollHeight}}
+      return}
+    if(to==='*all')return toast('Start with *admin/all, a space, then your message');
+    if(!(IN.fr[to]||IN.th[to]))return toast('You can only chat with friends');
+    inp.value='';
+    const msg={f:me.k,t,ts};CH.msgs[id]=msg;paintMsgs();
+    await mp({[`chats/${pair(me.k,to)}/${id}`]:msg,[`inbox/${to}/unread/${me.k}`]:{t:ts,p:t.slice(0,60)},[`inbox/${to}/th/${me.k}`]:ts,[`inbox/${me.k}/th/${to}`]:ts});
+    IN.th[to]=ts;
+  }catch(e){toast(e.message)}}
 boot();
 </script>
 </body>
