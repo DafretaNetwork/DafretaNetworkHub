@@ -55,13 +55,12 @@ clip-path:polygon(14% 0,100% 0,100% 86%,86% 100%,0 100%,0 14%)}
 .char h2{font-size:28px;color:var(--gold)}
 .stat{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:8px 0;color:var(--mute);text-align:left}
 .stat b{color:var(--ink)}
-.bg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
-.bd{background:var(--panel2);border:1px solid var(--rc);padding:14px 10px;text-align:center;position:relative;
-box-shadow:inset 0 -3px 0 var(--rc)}
-.bd b{display:block;font-family:'Chakra Petch';margin-top:4px}
+.bg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+.bd{background:var(--panel2);border:0;border-radius:22px;padding:18px 10px 16px;text-align:center;position:relative}
+.bd b{display:block;font:700 16px/1.2 'Chakra Petch',sans-serif;letter-spacing:.3px;margin-top:12px;text-wrap:balance;overflow-wrap:anywhere}
 .bd small{display:block;color:var(--mute);font-size:12.5px;line-height:1.3;margin-top:3px}
-.bd em{font-style:normal;font-size:12px;color:var(--rc)}
-.bd .x{position:absolute;top:4px;right:4px;padding:1px 7px;font-size:12px;z-index:2}
+.bd em{display:block;font-style:normal;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--rc);margin-top:4px}
+.bd .x{position:absolute;top:8px;right:8px;padding:1px 7px;font-size:12px;z-index:2}
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
 .tab{padding:10px 18px;cursor:pointer;color:var(--mute)}
 .tab.on{color:var(--gold);border-bottom:2px solid var(--gold)}
@@ -141,7 +140,7 @@ button.lo:active{transform:scale(.93)}
 
 /* ---------- badges + glow ---------- */
 .bd{cursor:pointer;transition:transform .2s}
-.bd:hover{transform:translateY(-3px)}
+.bd:hover{transform:translateY(-3px);box-shadow:0 8px 26px -10px var(--rc)}
 .bi{--bs:64px;position:relative;isolation:isolate;width:var(--bs);height:var(--bs);margin:0 auto 6px;display:grid;place-items:center;font-size:calc(var(--bs)*.6)}
 .bi img{width:100%;height:100%;object-fit:contain;position:relative}
 .bi.gl::before{content:'';position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,var(--rc) 0,transparent 70%);filter:blur(7px);z-index:-1;opacity:.8}
@@ -299,7 +298,7 @@ function badgeGrid(p,codes,rm,k){
   const e=Object.entries(p.badges||{}).sort((a,b)=>b[1]-a[1]);
   if(!e.length)return '<p class="mut" style="margin-top:10px">No badges yet. Redeem a code to earn your first.</p>';
   return `<div class="bg">${e.map(([c,t])=>{const d=def(c);
-  return `<div class="bd" tabindex="0" onclick="showBadge('${c}',${+t||0})" onkeydown="event.key==='Enter'&&showBadge('${c}',${+t||0})" style="--rc:${RC[d.rarity]||RC.common}">${rm?`<button class="d x" onclick="event.stopPropagation();rmBadge('${k}','${c}')">x</button>`:''}${bi(d,64)}<b>${esc(d.title)}</b><em>${esc(d.rarity)}</em><small>${esc(d.desc)}</small><small>${fmt(t)}</small></div>`}).join('')}</div>`;
+  return `<div class="bd" tabindex="0" onclick="showBadge('${c}',${+t||0})" onkeydown="event.key==='Enter'&&showBadge('${c}',${+t||0})" style="--rc:${RC[d.rarity]||RC.common}">${rm?`<button class="d x" onclick="event.stopPropagation();rmBadge('${k}','${c}')">x</button>`:''}${bi(d,112)}<b>${esc(d.title)}</b><em>${esc(d.rarity)}</em></div>`}).join('')}</div>`;
 }
 function showBadge(c,t){const d=def(c);
   modal(`<div style="text-align:center;padding-top:10px">${bi(d,120)}<div class="mt" style="margin-top:16px">${esc(d.title)}</div>
