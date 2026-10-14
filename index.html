@@ -85,8 +85,8 @@ td,th{padding:9px 8px;border-bottom:1px solid var(--line)}
 
 .logo img{height:38px;display:block}
 .dot{background:var(--red);color:#fff;border-radius:99px;font-size:12px;padding:1px 7px;margin-left:5px}
-.heroW{position:relative;overflow:hidden;border:1px solid var(--line);margin:-6px 0 46px;padding:60px 44px;min-height:480px;display:flex;align-items:center;
-background:radial-gradient(ellipse 55% 80% at 82% 50%,#10305f99,transparent 70%),#02060d;clip-path:polygon(30px 0,100% 0,100% calc(100% - 30px),calc(100% - 30px) 100%,0 100%,0 30px)}
+.heroW{position:relative;overflow:hidden;border-block:1px solid var(--line);width:100vw;margin:-30px 0 50px calc(50% - 50vw);padding:70px max(24px,calc(50vw - 520px));min-height:520px;display:flex;align-items:center;
+background:radial-gradient(ellipse 55% 80% at 82% 50%,#10305f99,transparent 70%),#02060d}
 #pt{position:absolute;inset:0;width:100%;height:100%}
 .heroW .hero{position:relative;width:100%;padding:0}
 .hero h1{font-size:clamp(46px,8vw,96px);text-shadow:0 0 40px #3b8bff66}
@@ -125,6 +125,12 @@ background:radial-gradient(ellipse 55% 80% at 82% 50%,#10305f99,transparent 70%)
 @keyframes st{to{stroke-dashoffset:0}}
 .pf{width:90px;border-radius:8px;cursor:pointer;display:block}
 @media(max-width:760px){.pod{grid-template-columns:1fr}.pc{order:0!important}.heroW{padding:36px 20px}.f2,.pay{grid-template-columns:1fr}}
+.pm{display:flex;gap:10px;align-items:center;justify-content:center;font:700 24px 'Chakra Petch';color:#fff}
+.pm .lg{font-style:normal;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:21px}
+.pm.gcash{background:#0b6cf0}.pm.gcash .lg{background:#fff;color:#0b6cf0}
+.pm.maya{background:#050505;color:#2ee27d;border-color:#1f6b45}.pm.maya .lg{background:#2ee27d;color:#000}
+.qr img{display:block;max-width:100%;max-height:340px;margin:8px auto 18px;border-radius:16px;background:#fff}
+body{overflow-x:hidden}#shop{scroll-margin-top:72px}
 </style>
 </head>
 <body>
@@ -171,7 +177,7 @@ async function boot(){
   nav();route();
 }
 function nav(){setTimeout(watch,0);
-  $('#nl').innerHTML='<a class="l" href="#/shop">Shop</a>'+(me?`<a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s" onclick="logout()">Log out</button>`
+  $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goShop()">Shop</a>'+(me?`<a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s" onclick="logout()">Log out</button>`
   :`<a class="l" href="#/login">Log in</a><button class="s" onclick="location.hash='#/register'">Create account</button>`)}
 function logout(){localStorage.removeItem('dn_s');me=null;nav();location.hash='#/'; route()}
 const view=h=>{$('#app').innerHTML=h;window.scrollTo(0,0)};
@@ -180,7 +186,7 @@ async function route(){
   try{
     if(pg==='login')return loginV();
     if(pg==='register')return regV();
-    if(pg==='shop')return shopV();
+    if(pg==='shop'){if(!$('#shop'))await homeV();return $('#shop').scrollIntoView({behavior:'smooth'})}
     if(pg==='char')return charV((arg||'').toLowerCase());
     if(pg==='me')return me?meV():loginV();
     if(pg==='admin')return me&&me.role==='admin'?(arg==='user'?editV(arg2):adminV()):view('<div class="msg">Admins only.</div>');
@@ -206,12 +212,13 @@ async function homeV(){
   const lk=p=>'#/char/'+p.name.toLowerCase(),top=pr.slice(0,3),rest=pr.slice(3);
   view(`<section class="heroW"><canvas id="pt"></canvas><div class="hero"><div><h1>Your name.<br>Your <em>badges.</em></h1>
   <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way.</p>
-  <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}<button class="g" onclick="location.hash='#/shop'">Visit shop</button></div></div>
+  <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}<button class="g" onclick="goShop()&&(location.hash='#/shop')">Visit shop</button></div></div>
   <div style="display:grid;place-items:center">${av(you,220)}</div></div></section>
   <div class="sec-h"><h2>Top collectors</h2><span class="mut">Most badges earned</span></div>
   ${pr.length?'':'<p class="mut">No public players yet.</p>'}
   <div class="pod">${top.map((p,i)=>`<a class="pc r${i+1}" href="${lk(p)}"><span class="rk">${i+1}</span>${av(p,i?112:148)}<b>${esc(p.name)}</b><span class="mut">${cnt(p)} badges</span></a>`).join('')}</div>
-  <div class="cols">${rest.map(p=>`<a class="pl" href="${lk(p)}">${av(p,56)}<div><b>${esc(p.name)}</b><span>${cnt(p)} badges</span></div></a>`).join('')}</div>`);
+  <div class="cols">${rest.map(p=>`<a class="pl" href="${lk(p)}">${av(p,56)}<div><b>${esc(p.name)}</b><span>${cnt(p)} badges</span></div></a>`).join('')}</div>
+  ${shopHTML()}`);
   particles();
 }
 function loginV(){
@@ -376,10 +383,11 @@ function particles(){
 /* ---------- shop ---------- */
 const PRODUCTS=[{name:'Test Product',price:100,icon:'🎁',desc:'Placeholder item for testing the checkout flow.',details:['Delivered within 24 hours after your payment is verified','Sent to your email or by SMS','Message us if anything looks wrong']}];
 const IMG='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/payments/';
-const PAY={gcash:{n:'GCash',img:IMG+'gcash.png',acct:'GCash number: 09XX XXX XXXX (account name here)'},maya:{n:'Maya',img:IMG+'maya.png',acct:'Maya number: 09XX XXX XXXX (account name here)'}};
+const PAY={gcash:{n:'GCash',img:IMG+'gcash.png'},maya:{n:'Maya',img:IMG+'maya.png'}};
 const peso=n=>'₱'+Number(n).toLocaleString();
 let od={};
-function shopV(){view(`<div class="sec-h"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div><div class="shop">${PRODUCTS.map((p,i)=>`<div class="pr" tabindex="0" onclick="buy(${i})" onkeydown="event.key==='Enter'&&buy(${i})"><div class="im">${p.icon}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut">${esc(p.desc)}</p><span>${peso(p.price)}</span></div></div>`).join('')}</div>`)}
+const shopHTML=()=>`<section id="shop"><div class="sec-h" style="margin-top:64px"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div><div class="shop">${PRODUCTS.map((p,i)=>`<div class="pr" tabindex="0" onclick="buy(${i})" onkeydown="event.key==='Enter'&&buy(${i})"><div class="im">${p.icon}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut">${esc(p.desc)}</p><span>${peso(p.price)}</span></div></div>`).join('')}</div></section>`;
+function goShop(){const e=$('#shop');if(!e)return true;e.scrollIntoView({behavior:'smooth'});return false}
 function modal(h){let o=$('#ov');if(!o){o=document.createElement('div');o.id='ov';o.className='ov';o.onmousedown=e=>{if(e.target===o)closeM()};document.body.appendChild(o)}
   o.innerHTML=`<div class="md"><button class="xx" onclick="closeM()" aria-label="Close">✕</button>${h}</div>`}
 const closeM=()=>{const o=$('#ov');o&&o.remove()};
@@ -388,15 +396,15 @@ function buy(i){od={i};const p=PRODUCTS[i];
   <p class="mut">${esc(p.desc)}</p><ul class="mut" style="margin:10px 0 6px 18px">${p.details.map(d=>`<li>${esc(d)}</li>`).join('')}</ul><div id="m"></div>
   <div class="f2"><div><label>First name</label><input id="fn" autocomplete="given-name"></div><div><label>Last name</label><input id="ln" autocomplete="family-name"></div></div>
   <label>Email</label><input id="em" type="email" value="${esc(me?me.email:'')}"><label>Phone number</label><input id="ph" type="tel" placeholder="09XX XXX XXXX">
-  <label>Choose payment method</label><div class="pay">${Object.entries(PAY).map(([k,v])=>`<button class="pm" onclick="pickPay('${k}')" aria-label="${v.n}"><img src="${v.img}" alt="${v.n}"></button>`).join('')}</div>`)}
+  <label>Choose payment method</label><div class="pay">${Object.entries(PAY).map(([k,v])=>`<button class="pm ${k}" onclick="pickPay('${k}')"><i class="lg">${k==='maya'?'m':'G'}</i>${v.n}</button>`).join('')}</div>`)}
 function pickPay(k){
   const v=id=>$(id).value.trim(),f={first:v('#fn'),last:v('#ln'),email:v('#em'),phone:v('#ph')},bad=t=>$('#m').innerHTML=`<div class="msg">${t}</div>`;
   if(!f.first||!f.last)return bad('Enter your first and last name.');
   if(!/^\S+@\S+\.\S+$/.test(f.email))return bad('Enter a valid email.');
   if(f.phone.replace(/\D/g,'').length<10)return bad('Enter a valid phone number.');
   Object.assign(od,f,{method:k});const p=PRODUCTS[od.i];
-  modal(`<div class="mt">Upload proof of payment</div><p class="mut" style="margin:6px 0 14px">Pay ${peso(p.price)} with ${PAY[k].n}, then upload a screenshot of your receipt. We check it as soon as it arrives.</p>
-  <div class="acct"><img src="${PAY[k].img}" alt=""><span>${esc(PAY[k].acct)}</span></div><div id="m"></div>
+  modal(`<div class="qr"><img src="${PAY[k].img}" alt="${PAY[k].n} QR code"></div><div class="mt">Upload proof of payment</div><p class="mut" style="margin:6px 0 14px">Pay ${peso(p.price)} with ${PAY[k].n}, then upload a screenshot of your receipt. We check it as soon as it arrives.</p>
+  <div id="m"></div>
   <div class="drop" id="dz" onclick="$('#pf').click()"><div style="font-size:34px">📤</div>Click to upload your screenshot<br><small>PNG or JPG</small></div>
   <input id="pf" type="file" accept="image/*" hidden onchange="sendProof(this)"><div style="margin-top:14px"><button class="g s" onclick="buy(od.i)">Back</button></div>`)}
 async function sendProof(i){
