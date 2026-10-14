@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dafreta Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--panel:#08101c;--panel2:#0c1727;--line:#1d3350;--ink:#e6edf7;--mute:#7f93ad;--gold:#f5b335;--blue:#3b8bff;--red:#ff5468;--ok:#47d18c}
+*{box-sizing:border-box;margin:0}
+body{background:#000;color:var(--ink);font:500 16px/1.5 Barlow,system-ui,sans-serif;min-height:100vh;
+background-image:radial-gradient(ellipse 70% 40% at 50% -10%,#0d2447 0,transparent 70%)}
+h1,h2,h3,h4,.logo,button,.tab{font-family:'Chakra Petch',Barlow,sans-serif}
+a{color:var(--blue);text-decoration:none}
+nav{display:flex;align-items:center;gap:18px;padding:12px 24px;border-bottom:1px solid var(--line);background:#000c;position:sticky;top:0;z-index:20;backdrop-filter:blur(6px)}
+.logo{font-weight:700;font-size:22px;color:var(--gold);letter-spacing:.5px;cursor:pointer}
+.logo small{color:var(--ink);font-weight:500}
+nav .sp{flex:1}
+nav a.l{color:var(--ink);padding:6px 4px;border-bottom:2px solid transparent}
+nav a.l:hover{border-color:var(--gold)}
+.sw{position:relative;width:240px}
+.sw input{width:100%}
+#sr{position:absolute;top:44px;left:0;right:0;background:var(--panel2);border:1px solid var(--line);display:none}
+#sr a{display:flex;gap:10px;align-items:center;padding:8px 10px;color:var(--ink)}
+#sr a:hover{background:#12223a}
+main{max-width:1080px;margin:0 auto;padding:30px 20px 80px}
+input,select,textarea{background:#050b14;border:1px solid var(--line);color:var(--ink);padding:10px 12px;font:inherit;outline:none;width:100%}
+input:focus,select:focus{border-color:var(--gold)}
+label{display:block;color:var(--mute);font-size:14px;margin:12px 0 4px}
+button{cursor:pointer;border:0;background:var(--gold);color:#201400;font-weight:700;font-size:15px;padding:10px 20px;
+clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+button:hover{filter:brightness(1.12)}
+button.g{background:#14243c;color:var(--ink)}
+button.d{background:var(--red);color:#fff}
+button.s{padding:5px 12px;font-size:13px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.box{background:var(--panel);border:1px solid var(--line);padding:22px;clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center;padding:30px 0 40px}
+.hero h1{font-size:clamp(38px,6vw,68px);line-height:1;color:#fff}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p{color:var(--mute);margin:16px 0 22px;max-width:46ch}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.pl{display:flex;gap:12px;align-items:center;padding:12px;background:var(--panel);border:1px solid var(--line);color:var(--ink)}
+.pl:hover{border-color:var(--gold)}
+.pl b{display:block}.pl span{color:var(--mute);font-size:13px}
+.av{--s:100px;width:var(--s);height:var(--s);padding:calc(var(--s)*.05);background:var(--f);flex:none;display:grid;
+clip-path:polygon(14% 0,100% 0,100% 86%,86% 100%,0 100%,0 14%)}
+.av span{display:grid;place-items:center;font-size:calc(var(--s)*.55);background:radial-gradient(circle at 50% 35%,#223a5c,#050a12);
+clip-path:polygon(14% 0,100% 0,100% 86%,86% 100%,0 100%,0 14%)}
+.char{display:grid;grid-template-columns:300px 1fr;gap:20px}
+.char .side{text-align:center}
+.char .side .av{margin:6px auto 14px}
+.char h2{font-size:28px;color:var(--gold)}
+.stat{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:8px 0;color:var(--mute);text-align:left}
+.stat b{color:var(--ink)}
+.bg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.bd{background:var(--panel2);border:1px solid var(--rc);padding:14px 10px;text-align:center;position:relative;
+box-shadow:inset 0 -3px 0 var(--rc)}
+.bd i{font-style:normal;font-size:38px;display:block}
+.bd b{display:block;font-family:'Chakra Petch';margin-top:4px}
+.bd small{display:block;color:var(--mute);font-size:12.5px;line-height:1.3;margin-top:3px}
+.bd em{font-style:normal;font-size:12px;color:var(--rc)}
+.bd .x{position:absolute;top:4px;right:4px;padding:1px 7px;font-size:12px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+.tab{padding:10px 18px;cursor:pointer;color:var(--mute)}
+.tab.on{color:var(--gold);border-bottom:2px solid var(--gold)}
+.pk{display:flex;gap:24px;flex-wrap:wrap}
+.grid{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;max-width:430px}
+.ch{width:46px;height:46px;padding:0;font-size:24px;background:#0a1626;border:1px solid var(--line);clip-path:none;display:grid;place-items:center}
+.ch.fb{background:var(--f)}
+.ch.sel{border-color:var(--gold);outline:2px solid var(--gold)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--mute);font-weight:500;font-size:14px}
+td,th{padding:9px 8px;border-bottom:1px solid var(--line)}
+.tg{display:flex;align-items:center;gap:8px;margin:14px 0}.tg input{width:auto}
+.msg{padding:10px 14px;margin:10px 0;border-left:3px solid var(--red);background:#1a0a10}
+.msg.ok{border-color:var(--ok);background:#08170f}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--panel2);border:1px solid var(--gold);padding:12px 18px;display:none;z-index:50}
+.auth{max-width:400px;margin:30px auto}
+.mut{color:var(--mute)}
+@media(max-width:760px){.hero,.char{grid-template-columns:1fr}.sw{width:140px}nav{gap:10px;padding:10px 12px}}
+@media(prefers-reduced-motion:no-preference){.hero .av{animation:fl 4s ease-in-out infinite}@keyframes fl{50%{transform:translateY(-8px)}}}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo" onclick="location.hash='#/'">DAFRETA<small> network</small></div>
+<div class="sw"><input id="q" placeholder="Search players" autocomplete="off" oninput="search(this.value)"><div id="sr"></div></div>
+<div class="sp"></div><div id="nl" class="row"></div>
+</nav>
+<main id="app"></main>
+<div id="toast"></div>
+<script>
+const DB='https://dafreta-network-default-rtdb.asia-southeast1.firebasedatabase.app';
+const AV=['🧙','⚔️','🏹','🐉','🦊','🤖','👹','🧛','🥷','🐺','🦅','💀','🧝','🐲','👽','🦁'];
+const F={none:'#26364d',bronze:'linear-gradient(135deg,#d98a3d,#6b3d12)',silver:'linear-gradient(135deg,#fff,#7d8590)',gold:'linear-gradient(135deg,#ffe27a,#c47f00,#ffe27a)',neon:'linear-gradient(135deg,#00f0ff,#0050ff)',flame:'linear-gradient(0deg,#ff2d00,#ffb300)',rainbow:'conic-gradient(#f33,#fd3,#3f6,#3df,#35f,#f3d,#f33)',void:'linear-gradient(135deg,#fff,#111 50%,#fff)'};
+const RC={common:'#7f93ad',rare:'#3b8bff',epic:'#b36bff',legendary:'#f5b335'};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const api=async(p,m='GET',b)=>{const r=await fetch(`${DB}/${p}.json`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return r.json()};
+const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('dafreta:'+s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
+const av=(p,s=100)=>`<div class="av" style="--s:${s}px;--f:${F[p.frame]||F.none}"><span>${AV[p.avatar]||AV[0]}</span></div>`;
+const cnt=p=>Object.keys(p.badges||{}).length;
+const fmt=t=>t?new Date(t).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'-';
+const normCode=c=>String(c).toUpperCase().replace(/[^A-Z0-9_-]/g,'');
+let me=null,tmp={},codes={},cache=null,tab='badges',atab='players';
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600)}
+const getCodes=async()=>codes=(await api('codes'))||{};
+
+async function boot(){
+  try{
+    if(!await api('auth/david')){
+      await api('auth/david','PUT',{hash:await sha('david'),email:'',role:'admin'});
+      await api('profiles/david','PUT',{name:'david',avatar:0,frame:'gold',public:true,created:Date.now()});
+    }
+    if(!await api('codes/2026-F3DP-SUPPORTER-PROD'))
+      await api('codes/2026-F3DP-SUPPORTER-PROD','PUT',{title:'F3DP Supporter',desc:'Backed Dafreta Network from the start.',icon:'🏅',rarity:'legendary'});
+    const s=JSON.parse(localStorage.dn_s||'null');
+    if(s){const a=await api('auth/'+s.u);if(a&&a.hash===s.h)me={k:s.u,role:a.role,email:a.email||''}}
+  }catch(e){return $('#app').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
+  nav();route();
+}
+function nav(){
+  $('#nl').innerHTML=me?`<a class="l" href="#/me">My account</a>${me.role==='admin'?'<a class="l" href="#/admin">Admin</a>':''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s" onclick="logout()">Log out</button>`
+  :`<a class="l" href="#/login">Log in</a><button class="s" onclick="location.hash='#/register'">Create account</button>`;
+}
+function logout(){localStorage.removeItem('dn_s');me=null;nav();location.hash='#/'; route()}
+const view=h=>{$('#app').innerHTML=h;window.scrollTo(0,0)};
+async function route(){
+  const [,pg,arg,arg2]=location.hash.split('/');
+  try{
+    if(pg==='login')return loginV();
+    if(pg==='register')return regV();
+    if(pg==='char')return charV((arg||'').toLowerCase());
+    if(pg==='me')return me?meV():loginV();
+    if(pg==='admin')return me&&me.role==='admin'?(arg==='user'?editV(arg2):adminV()):view('<div class="msg">Admins only.</div>');
+    homeV();
+  }catch(e){view(`<div class="msg">${esc(e.message)}</div>`)}
+}
+window.onhashchange=route;
+
+/* ---------- search ---------- */
+let st;
+function search(v){clearTimeout(st);const box=$('#sr');v=v.trim().toLowerCase();if(!v){box.style.display='none';return}
+  st=setTimeout(async()=>{
+    cache=cache||await api('profiles')||{};
+    const r=Object.entries(cache).filter(([k,p])=>(p.public||(me&&me.role==='admin'))&&k.includes(v)).slice(0,6);
+    box.innerHTML=r.length?r.map(([k,p])=>`<a href="#/char/${k}" onclick="$('#sr').style.display='none'">${av(p,32)}<span>${esc(p.name)}</span></a>`).join(''):'<a class="mut">No public players found</a>';
+    box.style.display='block'},250)}
+document.addEventListener('click',e=>{if(!e.target.closest('.sw'))$('#sr').style.display='none'});
+
+/* ---------- pages ---------- */
+async function homeV(){
+  const pr=Object.values(await api('profiles')||{}).filter(p=>p.public).sort((a,b)=>cnt(b)-cnt(a)).slice(0,8);
+  view(`<section class="hero"><div><h1>Your name.<br>Your <em>badges.</em></h1>
+  <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way.</p>
+  <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}</div></div>
+  <div class="box" style="display:grid;place-items:center">${av({avatar:0,frame:'gold'},190)}</div></section>
+  <h3 style="margin-bottom:12px">Top collectors</h3>
+  <div class="cols">${pr.map(p=>`<a class="pl" href="#/char/${p.name.toLowerCase()}">${av(p,56)}<div><b>${esc(p.name)}</b><span>${cnt(p)} badges</span></div></a>`).join('')||'<p class="mut">No public players yet.</p>'}</div>`);
+}
+function loginV(){
+  view(`<div class="auth box"><h2>Log in</h2><div id="m"></div>
+  <label>Username</label><input id="u" autocomplete="username"><label>Password</label><input id="p" type="password" autocomplete="current-password" onkeydown="event.key==='Enter'&&doLogin()">
+  <div class="row" style="margin-top:18px"><button onclick="doLogin()">Log in</button><button class="g" onclick="location.hash='#/register'">Create account</button></div></div>`);
+}
+async function doLogin(){
+  const k=$('#u').value.trim().toLowerCase(),h=await sha($('#p').value);
+  try{const a=k&&await api('auth/'+k);
+    if(!a||a.hash!==h)return $('#m').innerHTML='<div class="msg">Wrong username or password.</div>';
+    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};nav();location.hash='#/char/'+k;
+  }catch(e){$('#m').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
+}
+function regV(){
+  view(`<div class="auth box"><h2>Create account</h2><div id="m"></div>
+  <label>Username (3-16 letters, numbers, _)</label><input id="u" autocomplete="username"><label>Email</label><input id="e" type="email">
+  <label>Password</label><input id="p" type="password" autocomplete="new-password"><label>Confirm password</label><input id="p2" type="password">
+  <div class="tg"><input id="pub" type="checkbox" checked><span>Let other players find my page</span></div>
+  <button onclick="doReg()">Create account</button></div>`);
+}
+async function doReg(){
+  const n=$('#u').value.trim(),k=n.toLowerCase(),e=$('#e').value.trim(),p=$('#p').value,m=$('#m');
+  const bad=t=>m.innerHTML=`<div class="msg">${t}</div>`;
+  if(!/^[a-z0-9_]{3,16}$/.test(k))return bad('Username must be 3-16 letters, numbers or underscores.');
+  if(!/^\S+@\S+\.\S+$/.test(e))return bad('Enter a valid email.');
+  if(p.length<4)return bad('Password needs at least 4 characters.');
+  if(p!==$('#p2').value)return bad('Passwords do not match.');
+  try{if(await api('auth/'+k))return bad('That username is taken.');
+    const h=await sha(p);
+    await api('auth/'+k,'PUT',{hash:h,email:e,role:'player'});
+    await api('profiles/'+k,'PUT',{name:n,avatar:Math.floor(Math.random()*AV.length),frame:'none',public:$('#pub').checked,created:Date.now()});
+    cache=null;localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:'player',email:e};nav();location.hash='#/me';
+  }catch(x){bad(esc(x.message))}
+}
+async function charV(k){
+  const p=k&&await api('profiles/'+k);
+  if(!p||(!p.public&&!(me&&(me.k===k||me.role==='admin'))))return view('<div class="box auth"><h2>Player not found</h2><p class="mut">This player does not exist or keeps their page private.</p></div>');
+  await getCodes();
+  const own=me&&(me.k===k);
+  const by={};Object.keys(p.badges||{}).forEach(c=>{const r=(codes[c]||{}).rarity||'common';by[r]=(by[r]||0)+1});
+  view(`<div class="char"><div class="box side">${av(p,170)}<h2>${esc(p.name)}</h2>${p.public?'':'<p class="mut">Private page</p>'}
+  <div class="stat"><span>Badges</span><b>${cnt(p)}</b></div><div class="stat"><span>Legendary</span><b>${by.legendary||0}</b></div>
+  <div class="stat"><span>Epic</span><b>${by.epic||0}</b></div><div class="stat"><span>Joined</span><b>${fmt(p.created)}</b></div>
+  ${own?'<div style="margin-top:14px"><button onclick="location.hash=\'#/me\'">Edit character</button></div>':''}</div>
+  <div class="box"><h3>Badges</h3>${badgeGrid(p,codes,false)}</div></div>`);
+}
+function badgeGrid(p,codes,rm,k){
+  const e=Object.entries(p.badges||{}).sort((a,b)=>b[1]-a[1]);
+  if(!e.length)return '<p class="mut" style="margin-top:10px">No badges yet. Redeem a code to earn your first.</p>';
+  return `<div class="bg">${e.map(([c,t])=>{const d=codes[c]||{title:c,icon:'🎖️',rarity:'common',desc:''};
+  return `<div class="bd" style="--rc:${RC[d.rarity]||RC.common}">${rm?`<button class="d x" onclick="rmBadge('${k}','${c}')">x</button>`:''}<i>${esc(d.icon)}</i><b>${esc(d.title)}</b><em>${esc(d.rarity)}</em><small>${esc(d.desc)}</small><small>${fmt(t)}</small></div>`}).join('')}</div>`;
+}
+/* ---------- avatar picker ---------- */
+function picker(p){
+  tmp={avatar:p.avatar||0,frame:p.frame||'none'};
+  setTimeout(paint,0);
+  return `<div class="pk"><div id="prev"></div><div><h4>Character</h4><div class="grid" id="avg">${AV.map((e,i)=>`<button class="ch" data-i="${i}" onclick="pick('avatar',${i})">${e}</button>`).join('')}</div>
+  <h4>Frame</h4><div class="grid" id="frg">${Object.keys(F).map(k=>`<button class="ch fb" style="--f:${F[k]}" title="${k}" data-k="${k}" onclick="pick('frame','${k}')"></button>`).join('')}</div></div></div>`;
+}
+const pick=(t,v)=>{tmp[t]=v;paint()};
+function paint(){$('#prev').innerHTML=av(tmp,150);
+  document.querySelectorAll('#avg .ch').forEach(b=>b.classList.toggle('sel',+b.dataset.i===tmp.avatar));
+  document.querySelectorAll('#frg .ch').forEach(b=>b.classList.toggle('sel',b.dataset.k===tmp.frame))}
+/* ---------- my account ---------- */
+async function meV(){
+  const p=await api('profiles/'+me.k);await getCodes();
+  const T=[['badges','Badges'],['char','Character'],['sec','Account']];
+  let body='';
+  if(tab==='badges')body=`<h3>Redeem a code</h3><p class="mut">Codes look like 2026-F3DP-SUPPORTER-PROD</p><div id="m"></div>
+   <div class="row" style="margin:10px 0 22px"><input id="cd" style="max-width:380px" placeholder="Enter badge code" onkeydown="event.key==='Enter'&&redeem()"><button onclick="redeem()">Add badge</button></div>
+   <h3>My badges (${cnt(p)})</h3>${badgeGrid(p,codes,false)}`;
+  if(tab==='char')body=`${picker(p)}<div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Let anyone find and view my page, even without an account</span></div><button onclick="saveChar()">Save character</button>`;
+  if(tab==='sec')body=`<div id="m"></div><div style="max-width:380px"><h3>Email</h3><label>Current: ${esc(me.email||'none')}</label><input id="ne" type="email" placeholder="New email"><div style="margin-top:10px"><button onclick="chEmail()">Change email</button></div>
+   <h3 style="margin-top:30px">Password</h3><label>Current password</label><input id="op" type="password"><label>New password</label><input id="np" type="password"><div style="margin-top:10px"><button onclick="chPass()">Change password</button></div></div>`;
+  view(`<h2 style="margin-bottom:14px">${esc(p.name)}</h2><div class="tabs">${T.map(t=>`<div class="tab ${tab===t[0]?'on':''}" onclick="tab='${t[0]}';meV()">${t[1]}</div>`).join('')}</div><div class="box">${body}</div>`);
+}
+async function redeem(){
+  const c=normCode($('#cd').value),m=$('#m');
+  if(!c)return;
+  try{const d=await api('codes/'+c);
+    if(!d)return m.innerHTML='<div class="msg">That code is not valid.</div>';
+    if(await api(`profiles/${me.k}/badges/${c}`))return m.innerHTML='<div class="msg">You already have this badge.</div>';
+    await api(`profiles/${me.k}/badges/${c}`,'PUT',Date.now());cache=null;toast('Badge added: '+d.title);meV();
+  }catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}
+}
+async function saveChar(){await api('profiles/'+me.k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,public:$('#pub').checked});cache=null;toast('Character saved')}
+async function chEmail(){const e=$('#ne').value.trim();if(!/^\S+@\S+\.\S+$/.test(e))return $('#m').innerHTML='<div class="msg">Enter a valid email.</div>';
+  await api('auth/'+me.k,'PATCH',{email:e});me.email=e;toast('Email changed');meV()}
+async function chPass(){
+  const a=await api('auth/'+me.k),np=$('#np').value;
+  if(a.hash!==await sha($('#op').value))return $('#m').innerHTML='<div class="msg">Current password is wrong.</div>';
+  if(np.length<4)return $('#m').innerHTML='<div class="msg">New password needs at least 4 characters.</div>';
+  const h=await sha(np);await api('auth/'+me.k,'PATCH',{hash:h});localStorage.dn_s=JSON.stringify({u:me.k,h});toast('Password changed');meV()}
+/* ---------- admin ---------- */
+async function adminV(){
+  const [au,pr]=[await api('auth')||{},await api('profiles')||{}];await getCodes();
+  let body;
+  if(atab==='players')body=`<table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
+   return `<tr><td>${esc(p.name)}</td><td>${esc(au[k].email)}</td><td>${au[k].role}</td><td>${cnt(p)}</td><td>${p.public?'Public':'Private'}</td>
+   <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k==='david'?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`}).join('')}</table>`;
+  else body=`<h3>Create badge code</h3><div id="m"></div><div class="row" style="margin:10px 0 24px">
+   <input id="nc" placeholder="2026-F3DP-SUPPORTER-PROD" style="flex:2 1 240px"><input id="nt" placeholder="Badge title" style="flex:1 1 140px"><input id="ni" placeholder="Icon (emoji)" style="width:110px">
+   <select id="nr" style="width:130px">${Object.keys(RC).map(r=>`<option>${r}</option>`)}</select><input id="nd" placeholder="Description" style="flex:2 1 240px"><button onclick="addCode()">Create code</button></div>
+   <table><tr><th></th><th>Code</th><th>Title</th><th>Rarity</th><th></th></tr>${Object.entries(codes).map(([c,d])=>`<tr><td>${esc(d.icon)}</td><td>${c}</td><td>${esc(d.title)}</td><td>${d.rarity}</td><td><button class="d s" onclick="delCode('${c}')">Delete</button></td></tr>`).join('')}</table>`;
+  view(`<h2 style="margin-bottom:14px">Admin</h2><div class="tabs"><div class="tab ${atab==='players'?'on':''}" onclick="atab='players';adminV()">Players (${Object.keys(au).length})</div><div class="tab ${atab==='codes'?'on':''}" onclick="atab='codes';adminV()">Badge codes</div></div><div class="box" style="overflow-x:auto">${body}</div>`);
+}
+async function delUser(k){if(!confirm('Delete '+k+' and all their badges?'))return;await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');cache=null;toast('Deleted '+k);adminV()}
+async function addCode(){const c=normCode($('#nc').value),t=$('#nt').value.trim();
+  if(!c||!t)return $('#m').innerHTML='<div class="msg">Code and title are required.</div>';
+  await api('codes/'+c,'PUT',{title:t,icon:$('#ni').value.trim()||'🎖️',rarity:$('#nr').value,desc:$('#nd').value.trim()});toast('Code created');adminV()}
+async function delCode(c){if(confirm('Delete code '+c+'? Players keep badges already earned.')){await api('codes/'+c,'DELETE');adminV()}}
+async function editV(k){
+  const [a,p]=[await api('auth/'+k),await api('profiles/'+k)];await getCodes();
+  if(!a||!p)return view('<div class="msg">Player not found.</div>');
+  view(`<p><a href="#/admin">Back to players</a></p><h2 style="margin:8px 0 14px">Edit ${esc(p.name)}</h2><div id="m"></div>
+  <div class="box"><div style="max-width:420px"><label>Email</label><input id="ee" value="${esc(a.email)}">
+  <label>Role</label><select id="er" ${k==='david'?'disabled':''}><option ${a.role==='player'?'selected':''}>player</option><option ${a.role==='admin'?'selected':''}>admin</option></select>
+  <label>Set new password (leave empty to keep)</label><input id="ep" placeholder="New password"></div>
+  <div style="margin:18px 0">${picker(p)}</div><div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Public page</span></div>
+  <button onclick="saveUser('${k}')">Save changes</button></div>
+  <div class="box" style="margin-top:20px"><h3>Badges (${cnt(p)})</h3>
+  <div class="row" style="margin:10px 0"><input id="ac" style="max-width:380px" placeholder="Badge code to add"><button onclick="giveBadge('${k}')">Add badge</button></div>${badgeGrid(p,codes,true,k)}</div>`);
+}
+async function saveUser(k){
+  const d={email:$('#ee').value.trim()};if(k!=='david')d.role=$('#er').value;
+  const np=$('#ep').value;if(np)d.hash=await sha(np);
+  await api('auth/'+k,'PATCH',d);
+  await api('profiles/'+k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,public:$('#pub').checked});cache=null;toast('Saved');
+}
+async function giveBadge(k){const c=normCode($('#ac').value);if(!c)return;
+  if(!await api('codes/'+c))return $('#m').innerHTML='<div class="msg">That code does not exist. Create it under Badge codes first.</div>';
+  await api(`profiles/${k}/badges/${c}`,'PUT',Date.now());toast('Badge added');editV(k)}
+async function rmBadge(k,c){if(confirm('Remove this badge?')){await api(`profiles/${k}/badges/${c}`,'DELETE');editV(k)}}
+boot();
+</script>
+</body>
+</html>
