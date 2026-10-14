@@ -212,6 +212,95 @@ clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 
 .cx-f{display:flex;gap:8px;padding:10px 12px 18px;border-top:1px solid var(--line)}
 .cx-f input{border-radius:10px}
 @media(max-width:760px){.cbw{right:12px;bottom:12px}#cp{right:12px;bottom:88px}#toast{right:12px}}
+
+/* ---------- v3 additions ---------- */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#050b14}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#f5b335,#b8780a);border-radius:99px;border:2px solid #050b14}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#ffd067,#f5b335)}
+::-webkit-scrollbar-corner{background:transparent}
+.md::-webkit-scrollbar-track{background:transparent;margin:24px 0}
+.md::-webkit-scrollbar-thumb{border:3px solid #0a1220}
+.cx-b::-webkit-scrollbar{width:8px}
+.cx-b::-webkit-scrollbar-track{background:transparent}
+.cx-b::-webkit-scrollbar-thumb{border:2px solid var(--panel)}
+@supports not selector(::-webkit-scrollbar){*{scrollbar-width:thin;scrollbar-color:#f5b335 #08101c}}
+.md{width:min(var(--mw,520px),100%)}
+/* close buttons */
+button.xr,.md .xx,.bd .x{background:#FF2400;color:#fff}
+.md .xx:hover,.bd .x:hover,button.xr:hover{background:#ff4a24;color:#fff;filter:none;box-shadow:0 0 16px #FF2400aa}
+/* chat button: smooth float + soft breathing glow */
+.cbw{right:22px;bottom:22px;animation:cbob 3.6s cubic-bezier(.45,0,.55,1) infinite;will-change:transform}
+.cbw::before{content:'';position:absolute;inset:-28px;border-radius:50%;background:radial-gradient(circle,#f5b335b0 0,#f5b33538 42%,transparent 70%);filter:blur(7px);animation:cbreath 3.6s cubic-bezier(.45,0,.55,1) infinite;pointer-events:none}
+.cbw.has{animation-duration:2.2s}
+.cbw.has::before{animation-duration:2.2s}
+#cb{position:relative}
+@keyframes cbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes cbreath{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:.95;transform:scale(1.12)}}
+@media(prefers-reduced-motion:reduce){.cbw,.cbw::before{animation:none}}
+/* top 3 podium: synced bounce + ribbon awards */
+.pod{margin-top:92px}
+.pc{animation:bnc 2.8s ease-in-out infinite}
+.pc:hover{transform:scale(1.03)}
+.pc.r1{--rk:#f5b335}.pc.r2{--rk:#a24dff}.pc.r3{--rk:#3b8bff}
+@keyframes bnc{0%,100%{translate:0 0}50%{translate:0 -14px}}
+.aw{position:relative;width:80px;height:100px;margin:-64px auto 8px;isolation:isolate}
+.pc.r1 .aw{width:92px;height:115px;margin-top:-84px}
+.aw svg{width:100%;height:100%;position:relative;display:block;filter:drop-shadow(0 4px 8px #000a)}
+.aw::before{content:'';position:absolute;left:50%;top:34%;width:190%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;z-index:-1;
+background:repeating-conic-gradient(from 0deg,var(--ac) 0 9deg,transparent 9deg 30deg);
+-webkit-mask:radial-gradient(circle,#000 22%,transparent 66%);mask:radial-gradient(circle,#000 22%,transparent 66%);opacity:.6;animation:awspin 9s linear infinite}
+.aw::after{content:'';position:absolute;left:50%;top:34%;width:140%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;z-index:-1;
+background:radial-gradient(circle,var(--ac) 0,transparent 66%);filter:blur(10px);opacity:.65;animation:awpulse 3s ease-in-out infinite}
+@keyframes awspin{to{rotate:360deg}}
+@keyframes awpulse{0%,100%{opacity:.35;scale:.85}50%{opacity:.85;scale:1.1}}
+@media(prefers-reduced-motion:reduce){.pc,.aw::before,.aw::after{animation:none}}
+.rn{font:700 15px 'Chakra Petch';font-style:normal;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#14243c;color:var(--gold);flex:none}
+/* shop cards: square images */
+.pr .im{height:auto;aspect-ratio:1/1;font-size:96px}
+/* news: full width posts */
+.news{grid-template-columns:1fr;gap:18px}
+.nw{padding:22px 26px;width:100%}
+.nw .nwh small{margin:0}
+.nwh{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.nwh b.mod{display:block;font:700 17px 'Chakra Petch';color:var(--gold);letter-spacing:.5px}
+.nw h3{font-size:30px}
+.nwp{position:relative;max-height:200px;overflow:hidden;margin-top:8px}
+.nwp.fd::after{content:'';position:absolute;left:0;right:0;bottom:0;height:70px;background:linear-gradient(transparent,var(--panel));pointer-events:none}
+.nwf{display:flex;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:var(--mute);font-size:14px}
+.nwf .rm{color:var(--gold);font-weight:700}
+.rt{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;color:#aebcd0}
+.cf{display:block;width:100%;border:0;height:60px;background:transparent}
+.cf.pv{pointer-events:none}
+/* comments */
+.cmw{margin-top:26px;border-top:1px solid var(--line);padding-top:6px}
+.cm{display:flex;gap:10px;margin:14px 0 0}
+.cm.sub{margin-left:46px}
+.cmb{flex:1;min-width:0}
+.cmt{background:#0f1c30;border:1px solid var(--line);border-radius:16px;padding:8px 14px;display:inline-block;max-width:100%}
+.cmt a{color:var(--ink)}
+.cmt b{display:block;font:700 14px 'Chakra Petch'}
+.cmt span{display:block;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere;color:#c3cfdf}
+.cma{display:flex;gap:14px;align-items:center;padding:3px 10px;font-size:13px;color:var(--mute)}
+.lk{background:none;color:var(--mute);padding:0;font:600 13px Barlow,sans-serif;clip-path:none}
+.lk:hover{color:var(--gold);filter:none}.lk.rd:hover{color:#FF2400}
+.mn{color:var(--blue);font-weight:600}
+.rb{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute);margin:12px 0 6px}
+.mnl{display:none;position:absolute;left:0;right:0;bottom:100%;margin-bottom:6px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;overflow:hidden;z-index:5}
+.mni{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer}
+.mni:hover{background:#12223a}
+/* product gallery */
+.gw{position:relative;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:radial-gradient(circle,#173560,#050a12);margin-top:34px;touch-action:pan-y}
+.gm{width:100%;height:100%;max-height:none;object-fit:contain;background:none;border-radius:0;display:block}
+.gm.in{animation:gin .3s ease}
+@keyframes gin{from{opacity:0;transform:scale(1.03)}to{opacity:1;transform:none}}
+.gn{position:absolute;top:50%;translate:0 -50%;width:42px;height:42px;padding:0;border-radius:50%;clip-path:none;background:#050a12b3;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid #ffffff26;color:#fff;display:grid;place-items:center;transition:background .2s,color .2s,scale .2s}
+.gn:hover{background:var(--gold);color:#201400;filter:none;scale:1.1}
+.gn:active{scale:.94}
+.gn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.gn.gp{left:12px}.gn.gx{right:12px}
+.gc{position:absolute;bottom:12px;left:50%;translate:-50% 0;background:#050a12b3;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid #ffffff26;border-radius:99px;padding:2px 12px;font:600 13px 'Chakra Petch';color:#fff}
+.code-hint{font-size:13px;color:var(--mute);margin:4px 0}
 </style>
 </head>
 <body>
@@ -236,12 +325,18 @@ const skeys=async p=>{const r=await fetch(`${DB}/${p}.json?shallow=true`);if(!r.
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('dafreta:'+s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const mid=()=>Date.now().toString(36).padStart(9,'0')+Math.random().toString(36).slice(2,5);
 const pair=(a,b)=>[a,b].sort().join('~');
-const hasImg=p=>/^data:image\//.test((p&&p.img)||'');
+const hasImg=p=>/^(data:image\/|https:\/\/raw\.githubusercontent\.com\/)/.test((p&&p.img)||'');
+const FAV='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/dafreta-network-favicon.webp';
+/* system senders: announcements never show the real admin account */
+const SYS={'@mod':{name:'MODERATOR',img:FAV,frame:'gold'},'@news':{name:'News',img:FAV,frame:'neon'}};
+const nm=k=>SYS[k]?SYS[k].name:k;
+const gp=k=>SYS[k]?Promise.resolve(SYS[k]):getProf(k);
+const ago=t=>{const s=(Date.now()-t)/1000;return s<60?'just now':s<3600?Math.floor(s/60)+'m':s<86400?Math.floor(s/3600)+'h':fmt(t)};
 const av=(p,s=100)=>{p=p||{};return `<div class="av" style="--s:${s}px;--f:${F[p.frame]||F.none}"><span${hasImg(p)?` style="background:center/cover url(${p.img})"`:''}>${hasImg(p)?'':AV[p.avatar]||AV[0]}</span></div>`};
 const cnt=p=>Object.keys((p&&p.badges)||{}).length;
 const fmt=t=>t?new Date(t).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'-';
 const normCode=c=>String(c).toUpperCase().replace(/[^A-Z0-9_-]/g,'');
-let me=null,tmp={},codes={},bdg={},tab='badges',atab='players',CURC=null;
+let me=null,tmp={},codes={},bdg={},tab='badges',atab='players',CURC=null,RET='';
 
 /* ---------- caches (keeps Firebase downloads low) ---------- */
 const TTL=60000;
@@ -250,7 +345,7 @@ const invP=k=>{if(k)delete PC[k];else PC={};PA.t=0;SK.t=0};
 async function getProf(k,f){const c=PC[k];if(!f&&c&&Date.now()-c.t<300000)return c.d;const d=await api('profiles/'+k);PC[k]={t:Date.now(),d};return d}
 async function allProfs(){if(Date.now()-PA.t<90000)return PA.d;const d=await api('profiles')||{};PA={t:Date.now(),d};for(const k in d)PC[k]={t:Date.now(),d:d[k]};return d}
 async function profKeys(){if(Date.now()-SK.t<120000)return SK.d;SK={t:Date.now(),d:await skeys('profiles')};return SK.d}
-async function getNews(){if(Date.now()-NEWS.t<TTL)return NEWS.d;const o=await api('news?orderBy=%22$key%22&limitToLast=8')||{};NEWS={t:Date.now(),d:Object.entries(o).map(([id,v])=>({id,...v})).sort((a,b)=>b.t-a.t)};return NEWS.d}
+async function getNews(){if(Date.now()-NEWS.t<TTL)return NEWS.d;const o=await api('news?orderBy=%22$key%22&limitToLast=5')||{};NEWS={t:Date.now(),d:Object.entries(o).map(([id,v])=>({id,...v})).sort((a,b)=>b.t-a.t)};return NEWS.d}
 async function getInv(f){if(!f&&Date.now()-INV.t<TTL)return INV.d;INV={t:Date.now(),d:await api('inv')||{}};return INV.d}
 const getCodes=async()=>{codes=(await api('codes'))||{};bdg=(await api('badges'))||{};for(const k in bdg)DC[k]=bdg[k];for(const k in codes)if(!codes[k].badge)DC[k]=codes[k];return codes};
 /* badge definition: new badges live in /badges, old-style codes carry their own details */
@@ -317,13 +412,14 @@ function search(v){clearTimeout(st);const box=$('#sr');v=v.trim().toLowerCase();
 document.addEventListener('click',e=>{if(!e.target.closest('.sw'))$('#sr').style.display='none'});
 
 /* ---------- pages ---------- */
-const newsCard=n=>`<div class="nw" tabindex="0" onclick="showNews('${n.id}')" onkeydown="event.key==='Enter'&&showNews('${n.id}')"><small class="mut">${fmt(n.t)}</small><h3>${esc(n.h)}</h3>${n.s?`<h4>${esc(n.s)}</h4>`:''}<p class="cl4">${esc(n.b)}</p></div>`;
-const newsHTML=L=>`<section id="news"><div class="sec-h" style="margin-top:64px"><h2>News</h2><span class="mut">Updates from the team</span></div>${L.length?`<div class="news">${L.slice(0,6).map(newsCard).join('')}</div>`:'<p class="mut">No news yet. Check back soon.</p>'}</section>`;
-function showNews(id){const n=NEWS.d.find(x=>x.id===id);if(!n)return;
-  modal(`<div style="padding-right:30px"><small class="mut">${fmt(n.t)}</small><div style="font:700 30px/1.15 'Chakra Petch';color:#fff;margin:6px 0 8px;overflow-wrap:anywhere">${esc(n.h)}</div>${n.s?`<div style="font:600 18px/1.3 Barlow;color:var(--gold);margin-bottom:14px;overflow-wrap:anywhere">${esc(n.s)}</div>`:''}<p style="font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere;color:#c3cfdf">${esc(n.b)}</p></div>`)}
+const modHead=(n,sz)=>`<div class="nwh">${av(SYS['@mod'],sz||54)}<div><b class="mod">MODERATOR</b><small class="mut">${fmt(n.t)}</small></div></div>`;
+const newsCard=n=>`<article class="nw" tabindex="0" onclick="openPost('${n.id}')" onkeydown="event.key==='Enter'&&openPost('${n.id}')">${modHead(n)}<h3>${esc(n.h)}</h3>${n.s?`<h4>${esc(n.s)}</h4>`:''}<div class="nwp">${rich(n.b,true)}</div><div class="nwf"><span>💬 ${Math.max(0,+n.cc||0)} comment${(+n.cc||0)===1?'':'s'}</span><span class="rm">Read more</span></div></article>`;
+const newsHTML=L=>`<section id="news"><div class="sec-h" style="margin-top:64px"><h2>News</h2><span class="mut">Updates from the team</span></div>${L.length?`<div class="news">${L.slice(0,5).map(newsCard).join('')}</div>`:'<p class="mut">No news yet. Check back soon.</p>'}</section>`;
+const AWD={1:['#ffe27a','#c47f00','#f5b335','1ST','#2a1800'],2:['#d9b8ff','#7a2de0','#a24dff','2ND','#fff'],3:['#9cc8ff','#1f5fd1','#3b8bff','3RD','#fff']};
+const award=n=>{const [a,b,c,t,tc]=AWD[n];return `<div class="aw" style="--ac:${c}"><svg viewBox="0 0 80 100" role="img" aria-label="${t} place"><defs><linearGradient id="ag${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><path d="M20 50 L8 96 L26 86 L36 98 L44 52Z" fill="${b}"/><path d="M60 50 L72 96 L54 86 L44 98 L36 52Z" fill="${b}" opacity=".85"/><circle cx="40" cy="34" r="30" fill="url(#ag${n})" stroke="#fff" stroke-opacity=".6" stroke-width="2"/><circle cx="40" cy="34" r="23" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.5"/><text x="40" y="42" text-anchor="middle" font-family="Chakra Petch,sans-serif" font-weight="700" font-size="22" fill="${tc}" stroke="#0006" stroke-width="${n===1?0:2.5}" paint-order="stroke">${t}</text></svg></div>`};
 async function homeV(){
   const [all,news]=await Promise.all([allProfs(),getNews(),getInv()]);
-  const pr=Object.values(all).filter(p=>p.public).sort((a,b)=>cnt(b)-cnt(a)).slice(0,11);
+  const pr=Object.values(all).filter(p=>p.public).sort((a,b)=>cnt(b)-cnt(a)).slice(0,12);
   const you=me?(await getProf(me.k)||{}):{avatar:0,frame:'gold'};
   const lk=p=>'#/char/'+p.name.toLowerCase(),top=pr.slice(0,3),rest=pr.slice(3);
   view(`<section class="heroW"><canvas id="pt"></canvas><div class="hero"><div><h1>Your name.<br>Your <em>badges.</em></h1>
@@ -332,11 +428,11 @@ async function homeV(){
   <div style="display:grid;place-items:center">${av(you,220)}</div></div></section>
   <div class="sec-h"><h2>Top collectors</h2><span class="mut">Most badges earned</span></div>
   ${pr.length?'':'<p class="mut">No public players yet.</p>'}
-  <div class="pod">${top.map((p,i)=>`<a class="pc r${i+1}" href="${lk(p)}"><span class="rk">${i+1}</span>${av(p,i?112:148)}<b>${esc(p.name)}</b><span class="mut">${cnt(p)} badges</span></a>`).join('')}</div>
-  <div class="cols">${rest.map(p=>`<a class="pl" href="${lk(p)}">${av(p,56)}<div><b>${esc(p.name)}</b><span>${cnt(p)} badges</span></div></a>`).join('')}</div>
+  <div class="pod">${top.map((p,i)=>`<a class="pc r${i+1}" href="${lk(p)}">${award(i+1)}${av(p,i?112:148)}<b>${esc(p.name)}</b><span class="mut">${cnt(p)} badges</span></a>`).join('')}</div>
+  <div class="cols">${rest.map((p,i)=>`<a class="pl" href="${lk(p)}"><i class="rn">${i+4}</i>${av(p,56)}<div><b>${esc(p.name)}</b><span>${cnt(p)} badges</span></div></a>`).join('')}</div>
   ${newsHTML(news)}
   ${shopHTML()}`);
-  particles();
+  fades();particles();
 }
 function loginV(){
   view(`<div class="auth box"><h2>Log in</h2><div id="m"></div>
@@ -347,7 +443,7 @@ async function doLogin(){
   const k=$('#u').value.trim().toLowerCase(),h=await sha($('#p').value);
   try{const a=k&&await api('auth/'+k);
     if(!a||a.hash!==h)return $('#m').innerHTML='<div class="msg">Wrong username or password.</div>';
-    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};afterAuth();location.hash==='#/'?route():location.hash='#/';
+    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};afterAuth();const r=RET||'#/';RET='';location.hash===r?route():location.hash=r;
   }catch(e){$('#m').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
 }
 function regV(){
@@ -368,7 +464,7 @@ async function doReg(){
     const h=await sha(p);
     await api('auth/'+k,'PUT',{hash:h,email:e,role:'player'});
     await api('profiles/'+k,'PUT',{name:n,avatar:Math.floor(Math.random()*AV.length),frame:'none',public:$('#pub').checked,created:Date.now()});
-    invP();localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:'player',email:e};afterAuth();location.hash='#/';
+    invP();localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:'player',email:e};afterAuth();const r=RET||'#/';RET='';location.hash=r;
   }catch(x){bad(esc(x.message))}
 }
 async function charV(k){
@@ -422,9 +518,11 @@ const shrinkPng=(f,max)=>new Promise((ok,no)=>{const im=new Image(),u=URL.create
     URL.revokeObjectURL(u);ok(c.toDataURL('image/png'))};
   im.onerror=()=>no(new Error('Could not read that image.'));im.src=u});
 /* small JPEG copy of an existing data URL (shop card thumbnails) */
-const thumbOf=(src,max,q)=>new Promise((ok,no)=>{const im=new Image();
-  im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');
-    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',q))};
+const thumbOf=(src,max,q,sq)=>new Promise((ok,no)=>{const im=new Image();
+  im.onload=()=>{const c=document.createElement('canvas'),g=c.getContext('2d');
+    if(sq){const m=Math.min(im.width,im.height),z=Math.min(max,m);c.width=c.height=z;g.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,z,z)}
+    else{const k=Math.min(1,max/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);g.drawImage(im,0,0,c.width,c.height)}
+    ok(c.toDataURL('image/jpeg',q))};
   im.onerror=()=>no(new Error('Could not read that image.'));im.src=src});
 async function upImg(i){const f=i.files[0];if(!f)return;try{tmp.img=await shrink(f,192,.85,true);paint()}catch(e){toast(e.message)}}
 /* ---------- my account ---------- */
@@ -568,7 +666,8 @@ async function invHTML(){
    <div style="grid-column:1/-1"><label>Product name</label><input id="pn" maxlength="80" value="${esc(IF.name)}"></div>
    <div><label>Price (₱)</label><input id="pp" type="number" min="0" step="any" value="${esc(IF.price)}"></div>
    <div><label>Stocks available</label><input id="ps" type="number" min="0" step="1" value="${esc(IF.stock)}"></div></div>
-  <label>Description</label><textarea id="pd" maxlength="1500">${esc(IF.desc)}</textarea>
+  <label>Description (plain text, or paste HTML / CSS source code to design it freely)</label><textarea id="pd" maxlength="8000" style="min-height:130px;font-family:monospace;font-size:14px">${esc(IF.desc)}</textarea>
+  <div class="row" style="margin-top:6px"><button class="g s" onclick="previewRich('pd')">Preview</button></div>
   <label>Product images (1 to 6, the first one is the shop cover)</label>
   <div class="row" style="align-items:center;margin:6px 0 4px"><button class="s" onclick="$('#pif').click()">Add images</button><span id="ipc" class="mut"></span></div>
   <input id="pif" type="file" accept="image/*" multiple hidden onchange="addPImgs(this)">
@@ -580,7 +679,7 @@ async function invHTML(){
    <td class="row"><button class="s" onclick="editProd('${id}')">Edit</button><button class="d s" onclick="delProd('${id}')">Delete</button></td></tr>`).join('')}</table>`:'<p class="mut">No products yet. Add your first one above.</p>'}`;
 }
 function paintIP(){const e=$('#ip');if(!e)return;
-  e.innerHTML=IF.imgs.map((d,i)=>`<div style="position:relative"><img src="${d}" alt="" style="height:76px;width:76px;object-fit:cover;border-radius:10px;border:2px solid ${i?'var(--line)':'var(--gold)'};display:block"><button class="d s" style="position:absolute;top:-7px;right:-7px;padding:0 7px;font-size:12px" onclick="rmPImg(${i})" aria-label="Remove image">x</button></div>`).join('');
+  e.innerHTML=IF.imgs.map((d,i)=>`<div style="position:relative"><img src="${d}" alt="" style="height:76px;width:76px;object-fit:cover;border-radius:10px;border:2px solid ${i?'var(--line)':'var(--gold)'};display:block"><button class="xr s" style="position:absolute;top:-7px;right:-7px;padding:0 7px;font-size:12px" onclick="rmPImg(${i})" aria-label="Remove image">x</button></div>`).join('');
   const c=$('#ipc');if(c)c.textContent=IF.imgs.length+' / 6 images'}
 async function addPImgs(i){const fs=[...i.files];i.value='';const room=6-IF.imgs.length;
   if(room<=0)return toast('Maximum of 6 images');
@@ -596,20 +695,21 @@ async function saveProd(){
   if(!(stock>=0)||$('#ps').value==='')return bad('Enter how many are in stock (0 or more).');
   if(!IF.imgs.length)return bad('Add at least 1 image (up to 6).');
   try{
-    const id=IF.id||'p'+mid(),thumb=await thumbOf(IF.imgs[0],360,.65);
+    const id=IF.id||'p'+mid(),thumb=await thumbOf(IF.imgs[0],420,.7,true);
     await api('invimg/'+id,'PUT',IF.imgs);
-    await api('inv/'+id,'PUT',{name,desc,price,stock,thumb,created:IF.created||Date.now()});
+    await api('invdesc/'+id,'PUT',desc||null);
+    await api('inv/'+id,'PUT',{name,desc:plain(desc).slice(0,160),price,stock,thumb,created:IF.created||Date.now()});
     INV.t=0;IF=newIF();toast('Product saved');adminV();
   }catch(e){bad(esc(e.message))}
 }
 async function editProd(id){
-  try{const [p,im]=await Promise.all([api('inv/'+id),api('invimg/'+id)]);if(!p)return toast('Product not found');
-  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:p.desc||'',imgs:Object.values(im||[]),created:p.created||0};
+  try{const [p,im,dd]=await Promise.all([api('inv/'+id),api('invimg/'+id),api('invdesc/'+id)]);if(!p)return toast('Product not found');
+  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:dd!=null?dd:(p.desc||''),imgs:Object.values(im||[]),created:p.created||0};
   await adminV();window.scrollTo(0,0)}catch(e){toast(e.message)}}
 async function setStock(id,v){const n=Math.max(0,Math.floor(+v)||0);
   try{await api(`inv/${id}/stock`,'PUT',n);if(INV.d[id])INV.d[id].stock=n;toast('Stock updated')}catch(e){toast(e.message)}}
 async function delProd(id){if(!confirm('Delete this product?'))return;
-  await api('inv/'+id,'DELETE');await api('invimg/'+id,'DELETE');INV.t=0;if(IF.id===id)IF=newIF();toast('Product deleted');adminV()}
+  await api('inv/'+id,'DELETE');await api('invimg/'+id,'DELETE');await api('invdesc/'+id,'DELETE');INV.t=0;if(IF.id===id)IF=newIF();toast('Product deleted');adminV()}
 
 /* ---------- news (admin) ---------- */
 async function newsAdminHTML(){
@@ -618,34 +718,60 @@ async function newsAdminHTML(){
   return `<h3>Post news</h3><div id="m"></div>
   <label>Header</label><input id="nh" maxlength="120" placeholder="Big headline" style="font:700 22px 'Chakra Petch'">
   <label>Subheader</label><input id="ns" maxlength="160" placeholder="Short line under the headline (optional)">
-  <label>Body</label><textarea id="nb" maxlength="2000" style="min-height:130px"></textarea>
+  <label>Body</label><textarea id="nb" maxlength="12000" style="min-height:170px;font-family:monospace;font-size:14px"></textarea><div class="code-hint">Plain text, or paste HTML / CSS source code and it will be shown as designed.</div><div class="row" style="margin-top:6px"><button class="g s" onclick="previewRich('nb')">Preview</button></div>
   <div style="margin:14px 0 26px"><button onclick="postNews()">Post news</button></div>
   <h3 style="margin-bottom:10px">Recent posts (${L.length})</h3>
-  ${L.length?L.map(([id,n])=>`<div class="bx2"><div class="row" style="align-items:flex-start"><div style="flex:1;min-width:200px"><span class="mut" style="font-size:13px">${fmt(n.t)}</span><div style="font:700 20px/1.2 'Chakra Petch'">${esc(n.h)}</div>${n.s?`<div style="color:var(--gold)">${esc(n.s)}</div>`:''}<div class="mut cl4" style="font-size:14px;white-space:pre-wrap">${esc(n.b)}</div></div><button class="d s" onclick="delNews('${id}')">Delete</button></div></div>`).join(''):'<p class="mut">No news posted yet.</p>'}`;
+  ${L.length?L.map(([id,n])=>`<div class="bx2"><div class="row" style="align-items:flex-start"><div style="flex:1;min-width:200px"><span class="mut" style="font-size:13px">${fmt(n.t)}</span><div style="font:700 20px/1.2 'Chakra Petch'">${esc(n.h)}</div>${n.s?`<div style="color:var(--gold)">${esc(n.s)}</div>`:''}<div class="mut cl4" style="font-size:14px">${esc(plain(n.b))}</div></div><button class="d s" onclick="delNews('${id}')">Delete</button></div></div>`).join(''):'<p class="mut">No news posted yet.</p>'}`;
 }
 async function postNews(){
   const h=$('#nh').value.trim(),s=$('#ns').value.trim(),b=$('#nb').value.trim(),m=$('#m');
   if(!h||!b)return m.innerHTML='<div class="msg">Header and body are required.</div>';
   try{await api('news/'+mid(),'PUT',{h,s,b,t:Date.now()});NEWS.t=0;toast('News posted');adminV()}catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}}
-async function delNews(id){if(!confirm('Delete this news post?'))return;await api('news/'+id,'DELETE');NEWS.t=0;toast('News deleted');adminV()}
+async function delNews(id){if(!confirm('Delete this news post?'))return;await api('news/'+id,'DELETE');await api('comments/'+id,'DELETE');NEWS.t=0;toast('News deleted');adminV()}
 
 /* ---------- particles ---------- */
 function particles(){
-  const c=$('#pt');if(!c)return;const x=c.getContext('2d');let W,H,P=[];
-  const mk=i=>({x:Math.random()*W,y:i?Math.random()*H:H+10,r:Math.random()*2.2+.6,v:Math.random()*.6+.2,d:Math.random()*6,g:Math.random()<.35});
-  const rs=()=>{W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;P=Array.from({length:Math.min(90,W/11|0)},()=>mk(true))};
-  rs();new ResizeObserver(rs).observe(c);
-  const still=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  (function f(){
-    if(!c.isConnected)return;x.clearRect(0,0,W,H);
-    for(const p of P){
-      if(!still){p.y-=p.v;p.x+=Math.sin(p.y/40+p.d)*.4;if(p.y<-10)Object.assign(p,mk(false))}
-      x.shadowBlur=0;
-      for(const q of P){const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<100){x.strokeStyle=`rgba(80,150,255,${.18*(1-d/100)})`;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(q.x,q.y);x.stroke()}}
-      x.fillStyle=p.g?'rgba(245,179,53,.9)':'rgba(100,170,255,.8)';x.shadowBlur=12;x.shadowColor=x.fillStyle;
-      x.beginPath();x.arc(p.x,p.y,p.r,0,6.3);x.fill();
-    }
-    if(!still)requestAnimationFrame(f)})();
+  const c=$('#pt');if(!c)return;const host=c.parentElement,x=c.getContext('2d');if(!x)return;
+  const still=matchMedia('(prefers-reduced-motion:reduce)').matches,dpr=Math.min(2,window.devicePixelRatio||1);
+  const GOLD='245,179,53',BLUE='59,139,255',CY='96,200,255',VI='162,77,255';
+  let W=0,H=0,E=[],O=[],R=[],S=[],mx=null,my=null,vis=true,last=performance.now(),nextS=1.2;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const pickC=()=>{const r=Math.random();return r<.45?GOLD:r<.8?BLUE:r<.92?CY:VI};
+  const mkE=init=>({x:rnd(0,W),y:init?rnd(0,H):H+rnd(5,40),r:rnd(.8,2.6),vy:rnd(14,48),sw:rnd(.6,2),ph:rnd(0,6.3),a:rnd(.45,1),c:pickC(),vx:0});
+  const mkR=init=>({x:rnd(0,W),y:init?rnd(0,H):H+30,s:rnd(5,13),vy:rnd(8,22),rot:rnd(0,6.3),vr:rnd(-.6,.6),ph:rnd(0,6.3),c:Math.random()<.6?GOLD:BLUE});
+  const mkO=()=>({x:rnd(0,W),y:rnd(0,H),r:rnd(90,220),vx:rnd(-9,9),vy:rnd(-6,6),c:[BLUE,VI,GOLD][Math.floor(Math.random()*3)],a:rnd(.06,.13)});
+  const size=()=>{W=host.clientWidth;H=host.clientHeight;if(!W||!H)return;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);
+    const n=Math.max(18,Math.min(80,Math.round(W/16)));
+    E=Array.from({length:n},()=>mkE(true));R=Array.from({length:Math.max(3,Math.round(n/6))},()=>mkR(true));O=Array.from({length:4},mkO)};
+  size();new ResizeObserver(size).observe(host);
+  host.addEventListener('pointermove',e=>{const b=host.getBoundingClientRect();mx=e.clientX-b.left;my=e.clientY-b.top});
+  host.addEventListener('pointerleave',()=>{mx=my=null});
+  if('IntersectionObserver' in window)new IntersectionObserver(en=>{vis=en[0].isIntersecting}).observe(host);
+  function frame(t){
+    if(!c.isConnected)return;
+    if(!still)requestAnimationFrame(frame);
+    const dt=Math.min(.05,(t-last)/1000)||.016;last=t;
+    if(!W||!H||(!vis&&!still)||document.hidden)return;
+    x.clearRect(0,0,W,H);x.globalCompositeOperation='lighter';
+    for(const o of O){
+      if(!still){o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.x<-o.r)o.x=W+o.r;if(o.x>W+o.r)o.x=-o.r;if(o.y<-o.r)o.y=H+o.r;if(o.y>H+o.r)o.y=-o.r}
+      const g=x.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);g.addColorStop(0,`rgba(${o.c},${o.a})`);g.addColorStop(1,`rgba(${o.c},0)`);x.fillStyle=g;x.fillRect(o.x-o.r,o.y-o.r,o.r*2,o.r*2)}
+    if(!still){nextS-=dt;if(nextS<=0){nextS=rnd(2.2,5);S.push({x:rnd(W*.3,W*1.1),y:rnd(-20,H*.4),vx:-rnd(420,700),vy:rnd(220,360),life:0,max:rnd(.7,1.1),c:Math.random()<.6?GOLD:CY})}}
+    for(let i=S.length-1;i>=0;i--){const q=S[i];q.life+=dt;q.x+=q.vx*dt;q.y+=q.vy*dt;const k=1-q.life/q.max;if(k<=0){S.splice(i,1);continue}
+      const m=Math.hypot(q.vx,q.vy),dx=q.vx/m*90,dy=q.vy/m*90,g=x.createLinearGradient(q.x,q.y,q.x-dx,q.y-dy);
+      g.addColorStop(0,`rgba(${q.c},${.9*k})`);g.addColorStop(1,`rgba(${q.c},0)`);x.strokeStyle=g;x.lineWidth=2;x.lineCap='round';x.beginPath();x.moveTo(q.x,q.y);x.lineTo(q.x-dx,q.y-dy);x.stroke()}
+    for(const r of R){
+      if(!still){r.y-=r.vy*dt;r.rot+=r.vr*dt;r.ph+=dt*1.4;if(r.y<-30)Object.assign(r,mkR(false))}
+      const a=.3+.25*Math.sin(r.ph);x.save();x.translate(r.x,r.y);x.rotate(r.rot);x.strokeStyle=`rgba(${r.c},${a+.15})`;x.lineWidth=1.4;x.shadowColor=`rgba(${r.c},.9)`;x.shadowBlur=10;
+      x.beginPath();x.moveTo(0,-r.s);x.lineTo(r.s*.7,0);x.lineTo(0,r.s);x.lineTo(-r.s*.7,0);x.closePath();x.stroke();x.restore()}
+    for(const p of E){
+      if(!still){p.ph+=dt*p.sw;p.y-=p.vy*dt;p.x+=Math.sin(p.ph)*18*dt+p.vx*dt;p.vx*=.96}
+      if(mx!==null&&!still){const dx=p.x-mx,dy=p.y-my,d=Math.hypot(dx,dy);
+        if(d<130&&d>0){const f=(1-d/130)*220;p.vx+=dx/d*f*dt;p.y+=dy/d*f*dt*.4;x.strokeStyle=`rgba(${p.c},${.3*(1-d/130)})`;x.lineWidth=1;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(mx,my);x.stroke()}}
+      if(p.y<-10)Object.assign(p,mkE(false));
+      const tw=.65+.35*Math.sin(p.ph*2.3);x.fillStyle=`rgba(${p.c},${p.a*tw})`;x.shadowColor=`rgba(${p.c},1)`;x.shadowBlur=9;x.beginPath();x.arc(p.x,p.y,p.r,0,6.283);x.fill()}
+    x.shadowBlur=0;x.globalCompositeOperation='source-over'}
+  frame(performance.now()+16)
 }
 
 /* ---------- shop ---------- */
@@ -657,26 +783,35 @@ let od={},G={imgs:[],i:0};
 const stk=n=>n<=0?'<em class="out">Sold out</em>':n<=5?`<em class="low">Only ${n} left</em>`:`<em class="okk">${n} in stock</em>`;
 function shopHTML(){
   const L=Object.entries(INV.d).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
-  return `<section id="shop"><div class="sec-h" style="margin-top:64px"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div>${L.length?`<div class="shop">${L.map(([id,p])=>`<div class="pr${+p.stock>0?'':' so'}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')"><div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(p.desc)}</p><span>${peso(p.price)}</span>${stk(+p.stock||0)}</div></div>`).join('')}</div>`:'<p class="mut">No products available yet. Check back soon.</p>'}</section>`}
-function modal(h){let o=$('#ov');if(!o){o=document.createElement('div');o.id='ov';o.className='ov';o.onmousedown=e=>{if(e.target===o)closeM()};document.body.appendChild(o)}
-  o.innerHTML=`<div class="md"><button class="xx" onclick="closeM()" aria-label="Close">✕</button>${h}</div>`}
+  return `<section id="shop"><div class="sec-h" style="margin-top:64px"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div>${L.length?`<div class="shop">${L.map(([id,p])=>`<div class="pr${+p.stock>0?'':' so'}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')"><div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(plain(p.desc))}</p><span>${peso(p.price)}</span>${stk(+p.stock||0)}</div></div>`).join('')}</div>`:'<p class="mut">No products available yet. Check back soon.</p>'}</section>`}
+function modal(h,w){let o=$('#ov');if(!o){o=document.createElement('div');o.id='ov';o.className='ov';o.onmousedown=e=>{if(e.target===o)closeM()};document.body.appendChild(o)}
+  o.innerHTML=`<div class="md"${w?` style="--mw:${w}px"`:''}><button class="xx" onclick="closeM()" aria-label="Close">✕</button>${h}</div>`}
 const closeM=()=>{const o=$('#ov');o&&o.remove()};
-async function openProd(id){const p=INV.d[id];if(!p)return;od={id};
-  modal(`<div class="mt" style="padding-right:40px">${esc(p.name)}</div><p class="mut" style="margin-top:14px">Loading...</p>`);
-  let imgs=[],stock=+p.stock||0;
-  try{const [a,s]=await Promise.all([api('invimg/'+id),api(`inv/${id}/stock`)]);imgs=Object.values(a||[]);stock=Math.max(0,+s||0);p.stock=stock}catch(e){}
+async function openProd(id){const p=INV.d[id];if(!p)return;
+  if(!me){RET='#/shop';toast('Please log in to view and buy products');location.hash='#/login';return}
+  od={id};
+  modal(`<div class="mt" style="padding-right:40px">${esc(p.name)}</div><p class="mut" style="margin-top:14px">Loading...</p>`,560);
+  let imgs=[],stock=+p.stock||0,dd=null;
+  try{const [a,s,d]=await Promise.all([api('invimg/'+id),api(`inv/${id}/stock`),api('invdesc/'+id)]);imgs=Object.values(a||[]);stock=Math.max(0,+s||0);p.stock=stock;dd=d}catch(e){}
   if(!$('#ov')||od.id!==id)return;
   G={imgs:imgs.length?imgs:(p.thumb?[p.thumb]:[]),i:0};
+  const full=dd!=null?dd:p.desc,n=G.imgs.length;
   const form=stock>0?`<div id="m"></div>
   <div class="f2"><div><label>First name</label><input id="fn" autocomplete="given-name"></div><div><label>Last name</label><input id="ln" autocomplete="family-name"></div></div>
   <label>Email</label><input id="em" type="email" value="${esc(me?me.email:'')}"><label>Phone number</label><input id="ph" type="tel" placeholder="09XX XXX XXXX">
   <label>Choose payment method</label><div class="pay">${Object.entries(PAY).map(([k,v])=>`<button class="pm ${k}" onclick="pickPay('${k}')"><i class="lg">${k==='maya'?'m':'G'}</i>${v.n}</button>`).join('')}</div>`
   :'<div class="msg">This item is sold out right now.</div>';
-  modal(`${G.imgs.length?`<img id="gm" class="gm" alt="" style="margin-top:22px">${G.imgs.length>1?`<div class="gts">${G.imgs.map((_,i)=>`<img class="gt" data-i="${i}" alt="" onclick="gsel(${i})">`).join('')}</div>`:''}`:''}
+  modal(`${n?`<div class="gw" id="gw" ontouchstart="G.x=event.touches[0].clientX" ontouchend="gswipe(event)"><img id="gm" class="gm" alt="">${n>1?`<button class="gn gp" onclick="gstep(-1)" aria-label="Previous image"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gn gx" onclick="gstep(1)" aria-label="Next image"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button><span class="gc" id="gcn"></span>`:''}</div>${n>1?`<div class="gts">${G.imgs.map((_,i)=>`<img class="gt" data-i="${i}" alt="" onclick="gsel(${i})">`).join('')}</div>`:''}`:''}
   <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div><div class="row" style="align-items:baseline;gap:14px"><b style="font-size:20px">${peso(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div></div>
-  <p class="mut" style="white-space:pre-wrap;margin-top:8px">${esc(p.desc)}</p><ul class="mut" style="margin:10px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>${form}`);
-  document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);gsel(0)}
-function gsel(i){G.i=i;const m=$('#gm');if(m)m.src=G.imgs[i];document.querySelectorAll('.gt').forEach(t=>t.classList.toggle('on',+t.dataset.i===i))}
+  <div style="margin-top:10px">${rich(full)}</div><ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>${form}`,560);
+  document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);if(n)gsel(0)}
+function gsel(i){G.i=i;const m=$('#gm');if(m){m.classList.remove('in');void m.offsetWidth;m.src=G.imgs[i];m.classList.add('in')}
+  const c=$('#gcn');if(c)c.textContent=(i+1)+' / '+G.imgs.length;
+  document.querySelectorAll('.gt').forEach(t=>{const on=+t.dataset.i===i;t.classList.toggle('on',on);if(on&&t.scrollIntoView)t.scrollIntoView({block:'nearest',inline:'nearest'})})}
+const gstep=d=>{if(G.imgs.length>1)gsel((G.i+d+G.imgs.length)%G.imgs.length)};
+const gswipe=e=>{const dx=e.changedTouches[0].clientX-(G.x||0);if(Math.abs(dx)>40)gstep(dx<0?1:-1)};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#ov'))closeM();
+  if($('#gw')&&(e.key==='ArrowLeft'||e.key==='ArrowRight')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))gstep(e.key==='ArrowLeft'?-1:1)});
 function pickPay(k){
   const v=id=>$(id).value.trim(),f={first:v('#fn'),last:v('#ln'),email:v('#em'),phone:v('#ph')},bad=t=>$('#m').innerHTML=`<div class="msg">${t}</div>`;
   if(!f.first||!f.last)return bad('Enter your first and last name.');
@@ -737,9 +872,9 @@ function onIn(type,{path,data}){
   else for(const k in (data||{}))setP((path==='/'?'':path)+'/'+k,data[k]);
   if(inOK){
     for(const k in IN.reqs)if(!(k in pv.r))toast(`${k} sent you a friend request`,()=>location.hash='#/friends');
-    for(const [id,n] of Object.entries(IN.notes))if(!(id in pv.n))toast(n.type==='acc'?`${n.from} accepted your friend request`:`${n.from} declined your friend request`,()=>location.hash='#/friends');
+    for(const [id,n] of Object.entries(IN.notes))if(!(id in pv.n))noteToast(n);
     for(const [k,u] of Object.entries(IN.unread))if(!pv.u[k]||u.t>pv.u[k].t){
-      if(CH.open&&CH.with===k)clearUnread(k);else toast(`New message from ${k}: ${u.p}`,()=>openChat(k))}
+      if(CH.open&&CH.with===k)clearUnread(k);else toast(`New message from ${nm(k)}: ${u.p}`,()=>openChat(k))}
   }
   inOK=true;ui()}
 function ui(){nav();cwBadge();if(CH.open&&CH.with===null)chatList();fbtn();if(location.hash==='#/friends')friendsV(true)}
@@ -790,7 +925,7 @@ async function friendsV(quiet){
   ${frL.length?frL.map(k=>row(k,`<button class="s" onclick="openChat('${k}')">💬 Message</button>${vw(k)}<button class="g s" onclick="unfriend('${k}')">Unfriend</button>`)).join(''):'<p class="mut">No friends yet. Search for a player and press Add friend on their page.</p>'}
   ${ou.length?`<div class="fh"><h3>Sent requests</h3><span class="cnt">${ou.length}</span></div>${ou.map(k=>row(k,`${vw(k)}<button class="g s" onclick="cancelReq('${k}')">Cancel</button>`,'waiting for a reply')).join('')}`:''}
   <div class="fh"><h3>Notifications</h3><span class="cnt">${nt.length}</span>${nt.length?'<button class="g s" style="margin-left:auto" onclick="clearNotes()">Clear</button>':''}</div>
-  ${nt.length?nt.map(([id,n])=>row(n.from,vw(n.from),`${n.type==='acc'?'accepted your friend request':'declined your friend request'} · ${fmt(n.t)}`)).join(''):'<p class="mut">Nothing new.</p>'}
+  ${nt.length?nt.map(([id,n])=>row(n.from,(n.p?`<button class="s" onclick="openPost('${n.p}')">Open post</button>`:'')+vw(n.from),`${noteTxt(n)} · ${fmt(n.t)}`)).join(''):'<p class="mut">Nothing new.</p>'}
   </div>`;
   quiet?($('#app').innerHTML=html):view(html);
   if(unseen()){IN.seen=Date.now();api(`inbox/${me.k}/seen`,'PUT',IN.seen).catch(()=>{});nav()}
@@ -812,23 +947,23 @@ async function chatList(){
   const p=$('#cp');if(!p||!me)return;CH.open=true;CH.with=null;closeStream();p.style.display='flex';
   const ks=[...new Set([...Object.keys(IN.fr),...Object.keys(IN.th)])];
   ks.sort((a,b)=>((IN.unread[b]&&IN.unread[b].t)||IN.th[b]||0)-((IN.unread[a]&&IN.unread[a].t)||IN.th[a]||0));
-  const ps={};await Promise.all(ks.map(async k=>{try{ps[k]=await getProf(k)}catch(e){}}));
+  const ps={};await Promise.all(ks.map(async k=>{try{ps[k]=await gp(k)}catch(e){}}));
   if(!CH.open||CH.with!==null)return;
-  const it=k=>{const u=IN.unread[k];return `<div class="cx-i" tabindex="0" onclick="openChat('${k}')" onkeydown="event.key==='Enter'&&openChat('${k}')">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${u?esc(u.p):(IN.fr[k]?'Tap to chat':'Admin message')}</small></div>${u?'<i class="ud"></i>':''}</div>`};
-  p.innerHTML=`<div class="cx-h"><b>Chat</b><button class="g s" onclick="closeChat()" aria-label="Close chat">✕</button></div><div class="cx-b">
+  const it=k=>{const u=IN.unread[k];return `<div class="cx-i" tabindex="0" onclick="openChat('${k}')" onkeydown="event.key==='Enter'&&openChat('${k}')">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${u?esc(u.p):(IN.fr[k]?'Tap to chat':(k[0]==='@'?'Announcements':'Message'))}</small></div>${u?'<i class="ud"></i>':''}</div>`};
+  p.innerHTML=`<div class="cx-h"><b>Chat</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div><div class="cx-b">
   ${me.role==='admin'?`<div class="cx-i" tabindex="0" onclick="openChat('*all')" onkeydown="event.key==='Enter'&&openChat('*all')"><span style="font-size:30px;width:40px;text-align:center">📢</span><div style="flex:1"><b>Broadcast</b><small>Message every account</small></div></div>`:''}
   ${ks.length?ks.map(it).join(''):'<p class="mut" style="padding:24px 20px;text-align:center">No chats yet.<br>Add a friend, then message them here.</p>'}</div>`}
 async function openChat(k){
   if(!me||(k==='*all'&&me.role!=='admin'))return;
   cwInit();CH.open=true;CH.with=k;CH.msgs={};closeStream();
   const p=$('#cp');p.style.display='flex';
-  const all=k==='*all',pf=all?{name:'Broadcast'}:(await getProf(k).catch(()=>null))||{name:k};
+  const all=k==='*all',sys=k[0]==='@',pf=all?{name:'Broadcast'}:(await gp(k).catch(()=>null))||{name:k};
   if(CH.with!==k)return;
-  p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button>${all?'<span style="font-size:26px">📢</span>':av(pf,34)}<b>${esc(pf.name)}</b><button class="g s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
-  <div class="cx-b" id="cxb">${all?'<p class="mut" style="padding:16px 18px">Type <code>*admin/all</code>, a space, then your message. It is delivered to every other account.</p>':''}<div class="cx-m" id="cxm"></div></div>
-  <div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="${all?'*admin/all your message':'Write a message'}" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`;
+  p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button>${all?'<span style="font-size:26px">📢</span>':av(pf,34)}<b>${esc(pf.name)}</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
+  <div class="cx-b" id="cxb">${all?'<p class="mut" style="padding:16px 18px">Type <code>*admin/all</code> to send as MODERATOR, or <code>*admin/news</code> to send as News, then a space and your message. It is delivered to every other account.</p>':''}<div class="cx-m" id="cxm"></div></div>
+  ${sys?'<div class="cx-f"><p class="mut" style="font-size:14px;padding:4px 6px">This is an announcement channel. Replies are not available.</p></div>':`<div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="${all?'*admin/all your message':'Write a message'}" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`}`;
   if(!all){clearUnread(k);chatStream(k)}
-  setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
+  if(!sys)setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
 function chatStream(k){closeStream();CH.msgs={};
   const e=new EventSource(`${DB}/chats/${pair(me.k,k)}.json?orderBy=%22$key%22&limitToLast=50`);CH.es=e;
   const h=ev=>{try{const {path,data}=JSON.parse(ev.data);
@@ -843,24 +978,105 @@ function paintMsgs(){const m=$('#cxm');if(!m)return;
   const b=$('#cxb');b.scrollTop=b.scrollHeight}
 async function sendChat(){
   const inp=$('#ci');if(!inp||!me)return;let t=inp.value.trim().slice(0,500);if(!t)return;
-  const to=CH.with,ts=Date.now(),id=mid(),cmd=/^\*admin\/all(\s+|$)/i;
+  const to=CH.with,ts=Date.now(),id=mid(),cmd=/^\*admin\/(all|news)(\s+|$)/i,mm=t.match(cmd);
   try{
-    if(me.role==='admin'&&cmd.test(t)){
-      t=t.replace(cmd,'').trim();if(!t)return toast('Type your message after *admin/all');
+    if(me.role==='admin'&&mm){
+      const from=mm[1].toLowerCase()==='news'?'@news':'@mod';
+      t=t.replace(cmd,'').trim();if(!t)return toast('Type your message after '+mm[0].trim());
       inp.value='';
       const us=(await skeys('auth')).filter(u=>u!==me.k);if(!us.length)return toast('No other accounts yet');
       const o={},pv=t.slice(0,60);
-      us.forEach(u=>{o[`chats/${pair(me.k,u)}/${id}`]={f:me.k,t,ts};o[`inbox/${u}/unread/${me.k}`]={t:ts,p:pv};o[`inbox/${u}/th/${me.k}`]=ts});
-      await mp(o);toast(`Sent to ${us.length} account${us.length>1?'s':''}`);
-      if(to==='*all'){const m=$('#cxm');if(m){m.insertAdjacentHTML('beforeend',`<div class="mb me">${esc(t)}<small>Sent to ${us.length} account${us.length>1?'s':''}</small></div>`);const b=$('#cxb');b.scrollTop=b.scrollHeight}}
+      us.forEach(u=>{o[`chats/${pair(from,u)}/${id}`]={f:from,t,ts};o[`inbox/${u}/unread/${from}`]={t:ts,p:pv};o[`inbox/${u}/th/${from}`]=ts});
+      await mp(o);toast(`Sent as ${nm(from)} to ${us.length} account${us.length>1?'s':''}`);
+      if(to==='*all'){const m=$('#cxm');if(m){m.insertAdjacentHTML('beforeend',`<div class="mb me">${esc(t)}<small>Sent as ${nm(from)} to ${us.length} account${us.length>1?'s':''}</small></div>`);const b=$('#cxb');b.scrollTop=b.scrollHeight}}
       return}
-    if(to==='*all')return toast('Start with *admin/all, a space, then your message');
+    if(to==='*all')return toast('Start with *admin/all or *admin/news, a space, then your message');
+    if(to[0]==='@')return toast('Announcements cannot be replied to');
     if(!(IN.fr[to]||IN.th[to]))return toast('You can only chat with friends');
     inp.value='';
     const msg={f:me.k,t,ts};CH.msgs[id]=msg;paintMsgs();
     await mp({[`chats/${pair(me.k,to)}/${id}`]:msg,[`inbox/${to}/unread/${me.k}`]:{t:ts,p:t.slice(0,60)},[`inbox/${to}/th/${me.k}`]:ts,[`inbox/${me.k}/th/${to}`]:ts});
     IN.th[to]=ts;
   }catch(e){toast(e.message)}}
+
+/* ---------- custom code (HTML/CSS) in posts and product descriptions ----------
+   Shown inside a sandboxed iframe: free design, but it can never touch the site, its storage or the admin session. */
+const isCode=s=>/<\/?[a-z][a-z0-9-]*(\s[^>]*)?>/i.test(String(s||''));
+const plain=s=>String(s||'').replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+let RI=0;
+function rich(s,prev){
+  s=String(s||'');
+  if(!isCode(s))return `<div class="rt">${esc(s)}</div>`;
+  const id='cf'+(++RI);
+  const doc=`<!doctype html><html><head><meta charset="utf-8"><base target="_blank"><style>html,body{margin:0;padding:0}body{font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:#c3cfdf;overflow-wrap:anywhere}a{color:#3b8bff}img,video,iframe{max-width:100%}</style></head><body>${s}<script>(function(){var i='${id}';function s(){parent.postMessage({dnh:document.documentElement.scrollHeight,id:i},'*')}addEventListener('load',s);if(window.ResizeObserver)new ResizeObserver(s).observe(document.documentElement);s()})()<\/script></body></html>`;
+  return `<iframe id="${id}" class="cf${prev?' pv':''}" sandbox="allow-scripts allow-popups" srcdoc="${esc(doc)}" scrolling="no" title="Custom content"></iframe>`;
+}
+addEventListener('message',e=>{const d=e.data;if(!d||typeof d.dnh!=='number'||typeof d.id!=='string')return;
+  const f=document.getElementById(d.id);if(!f||e.source!==f.contentWindow)return;
+  f.style.height=Math.min(4000,Math.max(40,Math.ceil(d.dnh)))+'px';
+  const w=f.closest('.nwp');if(w)w.classList.toggle('fd',w.scrollHeight>w.clientHeight+2)});
+const fades=()=>document.querySelectorAll('.nwp').forEach(w=>w.classList.toggle('fd',w.scrollHeight>w.clientHeight+2));
+const previewRich=id=>modal(`<div style="padding-top:22px">${rich($('#'+id).value)}</div>`,760);
+
+/* ---------- news posts: full view, comments, replies, @mentions ---------- */
+const noteTxt=n=>n.type==='acc'?'accepted your friend request':n.type==='den'?'declined your friend request':n.type==='men'?'mentioned you in a comment':'replied to your comment';
+const noteToast=n=>toast(`${n.from} ${noteTxt(n)}`,()=>n.p?openPost(n.p):location.hash='#/friends');
+let CM={id:null,list:{},reply:null},mnT;
+async function getPost(id){const c=NEWS.d.find(x=>x.id===id);if(c)return c;const d=await api('news/'+id);return d?{id,...d}:null}
+const mention=t=>esc(t).replace(/(^|[^a-z0-9_])@([a-z0-9_]{3,16})/gi,(m,a,u)=>`${a}<a class="mn" href="#/char/${u.toLowerCase()}" onclick="closeM()">@${u}</a>`);
+async function openPost(id){
+  if(!id)return;
+  modal('<p class="mut" style="padding:20px 0">Loading...</p>',760);
+  let n;try{n=await getPost(id)}catch(e){closeM();return toast(e.message)}
+  if(!n){closeM();return toast('This post is no longer available')}
+  CM={id,list:{},reply:null};
+  modal(`<div style="padding-right:36px">${modHead(n,56)}<div style="font:700 30px/1.15 'Chakra Petch';color:#fff;margin:10px 0 8px;overflow-wrap:anywhere">${esc(n.h)}</div>${n.s?`<div style="font:600 18px/1.3 Barlow;color:var(--gold);margin-bottom:14px;overflow-wrap:anywhere">${esc(n.s)}</div>`:''}</div>
+  <div>${rich(n.b)}</div>
+  <div class="cmw"><div class="fh"><h3>Comments</h3><span class="cnt" id="cmc">0</span></div><div id="cml"><p class="mut">Loading comments...</p></div>
+  ${me?`<div id="rb"></div><div style="position:relative;margin-top:12px"><div id="mnl" class="mnl"></div><div class="row" style="flex-wrap:nowrap"><input id="cin" maxlength="500" autocomplete="off" placeholder="Write a comment. Type @ to mention someone" oninput="mnSuggest()" onkeydown="event.key==='Enter'&&sendCm()"><button onclick="sendCm()">Post</button></div></div>`:`<div style="margin-top:14px"><button onclick="closeM();RET='#/';location.hash='#/login'">Log in to comment</button></div>`}</div>`,760);
+  loadCm()}
+async function loadCm(){const id=CM.id;let o={};
+  try{o=await api(`comments/${id}?orderBy=%22$key%22&limitToLast=100`)||{}}catch(e){}
+  if(CM.id!==id)return;CM.list=o;
+  await Promise.all([...new Set(Object.values(o).map(c=>c.u))].map(u=>getProf(u).catch(()=>null)));
+  if(CM.id===id)paintCm()}
+function paintCm(){const L=$('#cml');if(!L)return;
+  const E=Object.entries(CM.list).sort((a,b)=>a[0]<b[0]?-1:1),top=E.filter(e=>!e[1].p),rep={};
+  E.filter(e=>e[1].p).forEach(e=>(rep[e[1].p]=rep[e[1].p]||[]).push(e));
+  const one=([cid,c],sub)=>{const p=(PC[c.u]&&PC[c.u].d)||{name:c.u};
+    return `<div class="cm${sub?' sub':''}">${av(p,sub?30:38)}<div class="cmb"><div class="cmt"><a href="#/char/${esc(c.u)}" onclick="closeM()"><b>${esc(p.name||c.u)}</b></a><span>${mention(c.t)}</span></div><div class="cma"><small>${ago(c.ts)}</small>${me?`<button class="lk" onclick="replyTo('${cid}')">Reply</button>`:''}${me&&(me.k===c.u||me.role==='admin')?`<button class="lk rd" onclick="delCm('${cid}')">Delete</button>`:''}</div></div></div>`};
+  L.innerHTML=top.length?top.map(t=>`<div>${one(t)}${(rep[t[0]]||[]).map(r=>one(r,true)).join('')}</div>`).join(''):'<p class="mut">No comments yet. Be the first to comment.</p>';
+  const c=$('#cmc');if(c)c.textContent=E.length}
+function rbPaint(){const r=$('#rb');if(!r)return;r.innerHTML=CM.reply?`<div class="rb">Replying to <b>@${esc(CM.reply.user)}</b><button class="xr s" onclick="cancelReply()" aria-label="Cancel reply">✕</button></div>`:''}
+function replyTo(cid){const c=CM.list[cid];if(!c)return;CM.reply={top:c.p||cid,user:c.u};rbPaint();const i=$('#cin');if(i){i.value='@'+c.u+' ';i.focus()}}
+function cancelReply(){CM.reply=null;rbPaint()}
+async function sendCm(){
+  if(!me)return;const inp=$('#cin');if(!inp)return;const t=inp.value.trim().slice(0,500);if(!t)return;
+  const id=mid(),ts=Date.now(),rec={u:me.k,t,ts},rp=CM.reply;if(rp)rec.p=rp.top;
+  inp.value='';
+  try{
+    const keys=await profKeys();
+    const ms=[...new Set([...t.matchAll(/(?:^|[^a-z0-9_])@([a-z0-9_]{3,16})/gi)].map(m=>m[1].toLowerCase()))].filter(u=>u!==me.k&&keys.includes(u)).slice(0,5);
+    const o={[`comments/${CM.id}/${id}`]:rec,[`news/${CM.id}/cc`]:{'.sv':{increment:1}}};
+    ms.forEach((u,i)=>{o[`inbox/${u}/notes/${mid()}m${i}`]={type:'men',from:me.k,t:ts,p:CM.id}});
+    if(rp&&rp.user!==me.k&&!ms.includes(rp.user))o[`inbox/${rp.user}/notes/${mid()}r`]={type:'rep',from:me.k,t:ts,p:CM.id};
+    await mp(o);
+    CM.list[id]=rec;CM.reply=null;rbPaint();await getProf(me.k).catch(()=>{});paintCm();
+    const n=NEWS.d.find(x=>x.id===CM.id);if(n)n.cc=(+n.cc||0)+1;
+  }catch(e){toast(e.message);inp.value=t}}
+async function delCm(cid){const c=CM.list[cid];if(!c||!confirm('Delete this comment?'))return;
+  const ids=[cid,...(c.p?[]:Object.entries(CM.list).filter(e=>e[1].p===cid).map(e=>e[0]))];
+  const o={};ids.forEach(i=>o[`comments/${CM.id}/${i}`]=null);o[`news/${CM.id}/cc`]={'.sv':{increment:-ids.length}};
+  try{await mp(o);ids.forEach(i=>delete CM.list[i]);paintCm();const n=NEWS.d.find(x=>x.id===CM.id);if(n)n.cc=Math.max(0,(+n.cc||0)-ids.length)}catch(e){toast(e.message)}}
+function mnSuggest(){clearTimeout(mnT);mnT=setTimeout(async()=>{
+  const i=$('#cin'),box=$('#mnl');if(!i||!box)return;
+  const m=i.value.slice(0,i.selectionStart).match(/@([a-z0-9_]*)$/i);if(!m){box.style.display='none';return}
+  try{const ks=(await profKeys()).filter(k=>k.startsWith(m[1].toLowerCase())).slice(0,6);
+  const ps=await Promise.all(ks.map(async k=>[k,await getProf(k).catch(()=>null)]));
+  const r=ps.filter(([k,p])=>p&&(p.public||k===me.k||me.role==='admin')).slice(0,5);
+  box.innerHTML=r.map(([k,p])=>`<div class="mni" onmousedown="event.preventDefault();mnPick('${k}')">${av(p,28)}<span>${esc(p.name)}</span></div>`).join('');box.style.display=r.length?'block':'none'}catch(e){}},180)}
+function mnPick(k){const i=$('#cin');if(!i)return;const pos=i.selectionStart,b=i.value.slice(0,pos).replace(/@([a-z0-9_]*)$/i,'@'+k+' ');
+  i.value=b+i.value.slice(pos);i.focus();i.setSelectionRange(b.length,b.length);$('#mnl').style.display='none'}
 boot();
 </script>
 </body>
