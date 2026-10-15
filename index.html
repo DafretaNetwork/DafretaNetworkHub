@@ -486,6 +486,38 @@ animation:bnfloat 2.4s ease-in-out infinite,bnglow 2.4s ease-in-out infinite;tra
 @keyframes bnfloat{0%,100%{translate:0 0}50%{translate:0 -10px}}
 @keyframes bnglow{0%,100%{box-shadow:0 0 10px #47d18c55,0 0 22px #47d18c33,0 0 0 0 #47d18c55}50%{box-shadow:0 0 22px #47d18ccc,0 0 46px #47d18c88,0 0 0 12px #47d18c00}}
 @media(prefers-reduced-motion:reduce){.bnb{animation:none}}
+
+/* ---------- free products + stock sash ---------- */
+.pr{position:relative}
+.pr .tx .px.fr{display:inline-block;background:linear-gradient(135deg,#7dffb8,#47d18c 55%,#22a867);color:#04210f;font:700 14px 'Chakra Petch',sans-serif;letter-spacing:1.4px;padding:2px 13px;border-radius:99px;box-shadow:0 0 14px #47d18c66}
+.pg.fr{color:var(--ok);font-family:'Chakra Petch',sans-serif;letter-spacing:1.4px}
+.sash{position:absolute;top:0;right:0;width:112px;height:112px;overflow:hidden;pointer-events:none;z-index:3;border-top-right-radius:18px}
+.sash span{position:absolute;top:28px;right:-38px;width:160px;text-align:center;transform:rotate(45deg);padding:6px 0;overflow:hidden;
+font:700 11.5px/1 'Chakra Petch',sans-serif;letter-spacing:.9px;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px #0009;white-space:nowrap;
+background:linear-gradient(90deg,#ff1e00,#ff5a00 50%,#ff1e00);border-block:1px solid #ffffff55;box-shadow:0 3px 10px #0008;
+animation:sashp .8s ease-in-out infinite}
+.sash span::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,#ffffffaa 50%,transparent 70%);transform:translateX(-120%);animation:sashw 1.8s ease-in-out infinite}
+.sash.s2 span{background:linear-gradient(90deg,#ff6a00,#ffa31a 50%,#ff6a00);animation-duration:1.4s}
+.sash.s3 span{background:linear-gradient(90deg,#f5b335,#ffd36b 50%,#f5b335);color:#2a1800;text-shadow:none;animation:none}
+.sash.s3 span::after{animation-duration:3.2s}
+.sash.sx span{background:linear-gradient(90deg,#2b3646,#4a5568 50%,#2b3646);animation:none;color:#c3cfdf}
+.sash.sx span::after{display:none}
+@keyframes sashp{0%,100%{filter:brightness(1) saturate(1)}50%{filter:brightness(1.3) saturate(1.3);box-shadow:0 3px 18px #ff2400}}
+@keyframes sashw{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
+.sash.s1 span{animation:sashp .8s ease-in-out infinite,sashs 2.4s ease-in-out infinite}
+@keyframes sashs{0%,86%,100%{translate:0 0}89%{translate:-1.5px 0}92%{translate:1.5px 0}95%{translate:-1px 0}}
+@media(max-width:760px){.sash{width:98px;height:98px;border-top-right-radius:16px}.sash span{top:22px;right:-36px;width:140px;font-size:10px;padding:5px 0;letter-spacing:.6px}}
+@media(prefers-reduced-motion:reduce){.sash span,.sash span::after{animation:none!important}}
+.frw{margin:18px 0 6px;text-align:center}
+.frb{width:100%;max-width:420px;clip-path:none;border-radius:99px;padding:15px 24px;font:700 18px 'Chakra Petch',sans-serif;letter-spacing:.7px;color:#04210f;background:linear-gradient(135deg,#7dffb8,#47d18c 55%,#22a867);border:1px solid #ffffff55;animation:bnglow 2.4s ease-in-out infinite;transition:scale .2s}
+.frb:hover{filter:none;scale:1.04}.frb:active{scale:.96}
+@media(prefers-reduced-motion:reduce){.frb{animation:none}}
+/* ---------- particle background (my account + my page) ---------- */
+.pgbg{position:fixed;inset:0;z-index:0;pointer-events:none;
+background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),radial-gradient(ellipse 55% 45% at 8% 92%,#2a1a5a44,transparent 70%)}
+.pgbg canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pgw{position:relative;z-index:1}
+.pgw .box{background:#08101ce6}
 </style>
 </head>
 <body>
@@ -671,11 +703,11 @@ async function charV(k){
   const own=me&&(me.k===k);
   const by={};Object.keys(p.badges||{}).forEach(c=>{const r=def(c).rarity||'common';by[r]=(by[r]||0)+1});
   CURC=k;
-  view(`<div class="char"><div class="box side">${av(p,170)}<h2>${esc(p.name)}</h2>${p.public?'':'<p class="mut">Private page</p>'}
+  view(`<div class="pgbg"><canvas id="pt2"></canvas></div><div class="pgw"><div class="char"><div class="box side">${av(p,170)}<h2>${esc(p.name)}</h2>${p.public?'':'<p class="mut">Private page</p>'}
   <div class="stat"><span>Badges</span><b>${cnt(p)}</b></div><div class="stat"><span>Legendary</span><b>${by.legendary||0}</b></div>
   <div class="stat"><span>Epic</span><b>${by.epic||0}</b></div><div class="stat"><span>Joined</span><b>${fmt(p.created)}</b></div>
   ${own?'<div style="margin-top:14px"><button onclick="location.hash=\'#/me\'">Edit character</button></div>':`<div id="fb" style="margin-top:14px">${fbtnH(k)}</div>`}</div>
-  <div class="box"><h3>Badges</h3>${badgeGrid(p,{},false)}</div></div>`);
+  <div class="box"><h3>Badges</h3>${badgeGrid(p,{},false)}</div></div></div>`);particles('pt2',1);
 }
 /* badge icon: uploaded image (or emoji) with pulsing glow for rare / epic / legendary */
 const bi=(d,s=64)=>`<div class="bi${d.rarity&&d.rarity!=='common'&&RC[d.rarity]?' gl':''}" style="--rc:${RC[d.rarity]||RC.common};--bs:${s}px">${/^data:image\//.test(d.img||'')?`<img src="${d.img}" alt="">`:esc(d.icon||'🎖️')}</div>`;
@@ -733,7 +765,7 @@ async function meV(){
   if(tab==='char')body=`${picker(p)}<div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Let anyone find and view my page, even without an account</span></div><button onclick="saveChar()">Save character</button>`;
   if(tab==='sec')body=`<div id="m"></div><div style="max-width:380px"><h3>Email</h3><label>Current: ${esc(me.email||'none')}</label><input id="ne" type="email" placeholder="New email"><div style="margin-top:10px"><button onclick="chEmail()">Change email</button></div>
    <h3 style="margin-top:30px">Password</h3><label>Current password</label><input id="op" type="password"><label>New password</label><input id="np" type="password"><div style="margin-top:10px"><button onclick="chPass()">Change password</button></div></div>`;
-  view(`<h2 style="margin-bottom:14px">${esc(p.name)}</h2><div class="tabs">${T.map(t=>`<div class="tab ${tab===t[0]?'on':''}" onclick="tab='${t[0]}';meV()">${t[1]}</div>`).join('')}</div><div class="box">${body}</div>`);
+  view(`<div class="pgbg"><canvas id="pt2"></canvas></div><div class="pgw"><h2 style="margin-bottom:14px">${esc(p.name)}</h2><div class="tabs">${T.map(t=>`<div class="tab ${tab===t[0]?'on':''}" onclick="tab='${t[0]}';meV()">${t[1]}</div>`).join('')}</div><div class="box">${body}</div></div>`);particles('pt2',1);
 }
 async function redeem(){
   const c=normCode($('#cd').value),m=$('#m');
@@ -860,7 +892,7 @@ async function rmBadge(k,c){if(confirm('Remove this badge?')){await api(`profile
 
 /* ---------- inventory (admin) ---------- */
 /* inv/{id} = name, desc, price, stock, thumb (small)  |  invimg/{id} = full images (only loaded when a product is opened) */
-const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],tags:[],ph:false,created:0});
+const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],tags:[],ph:false,free:false,flink:'',sash:false,created:0});
 let IF=newIF();
 async function invHTML(){
   const [inv]=await Promise.all([getInv(true),getCats(true)]);
@@ -869,9 +901,9 @@ async function invHTML(){
   return `<h3>${IF.id?'Edit product':'Add product'}</h3><div id="m"></div>
   <div class="f2" style="margin:8px 0">
    <div style="grid-column:1/-1"><label>Product name</label><input id="pn" maxlength="80" value="${esc(IF.name)}"></div>
-   <div><label>Price in PHP (₱) - shoppers see it converted to their own currency</label><input id="pp" type="number" min="0" step="any" value="${esc(IF.price)}"></div>
+   <div><label>Price in PHP (₱) - shoppers see it converted to their own currency</label><input id="pp" type="number" min="0" step="any" value="${esc(IF.price)}"${IF.free?' disabled':''}></div>
    <div><label>Stocks available</label><input id="ps" type="number" min="0" step="1" value="${esc(IF.stock)}"></div>
-   <div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pph" type="checkbox" ${IF.ph?'checked':''}><span>Philippines only (buyers outside the Philippines see "${NOSHIP}" instead of the price and stock)</span></div></div>
+   <div style="grid-column:1/-1"><label>Stocks left display on the product card</label><select id="psm"><option value="normal"${IF.sash?'':' selected'}>Normal (small text beside the price)</option><option value="sash"${IF.sash?' selected':''}>Sash (urgent ribbon on the top right corner)</option></select></div><div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pfree" type="checkbox" ${IF.free?'checked':''} onchange="frTog()"><span>Free product (no payment methods; shoppers see a "Get now for free!" button instead)</span></div><div id="pflw" style="grid-column:1/-1;${IF.free?'':'display:none'}"><label>Link for the "Get now for free!" button (shoppers are sent here)</label><input id="pfl" type="url" maxlength="500" placeholder="https://..." value="${esc(IF.flink)}"></div><div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pph" type="checkbox" ${IF.ph?'checked':''}><span>Philippines only (buyers outside the Philippines see "${NOSHIP}" instead of the price and stock)</span></div></div>
   <label>Tags (every tag automatically becomes a shop category)</label>
   <div class="row" style="flex-wrap:nowrap;max-width:520px"><input id="ptg" maxlength="24" placeholder="Type a tag, then press Enter" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();addTag()}"><button class="s" onclick="addTag()">Add tag</button></div>
   <div id="tgc" class="tgc"></div><div id="tgs" class="tgc" style="margin-top:0"></div>
@@ -887,11 +919,12 @@ async function invHTML(){
   <div class="row" style="flex-wrap:nowrap;max-width:520px"><input id="nc" maxlength="24" placeholder="New category name" onkeydown="event.key==='Enter'&&addCat()"><button onclick="addCat()">Add category</button></div>
   <div class="tgc" style="margin:12px 0 26px">${cs.length?cs.map(c=>`<span class="tc">${esc(c.name)}<small class="mut">${c.n}</small><button class="tcx" data-k="${esc(c.k)}" onclick="rmCat(this.dataset.k)" aria-label="Remove category">✕</button></span>`).join(''):'<span class="mut" style="font-size:14px">No categories yet.</span>'}</div>
   <h3 style="margin-bottom:10px">Inventory (${L.length})</h3>
-  ${L.length?`<table><tr><th></th><th>Product</th><th>Price</th><th>Stock</th><th>PH only</th><th></th></tr>${L.map(([id,p])=>`<tr><td>${p.thumb?`<img src="${esc(p.thumb)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`:''}</td><td><b>${esc(p.name)}</b>${ptags(p).length?`<div class="mut" style="font-size:12px;margin-top:2px">${ptags(p).map(esc).join(' · ')}</div>`:''}</td><td>${peso(p.price)}</td>
+  ${L.length?`<table><tr><th></th><th>Product</th><th>Price</th><th>Stock</th><th>PH only</th><th></th></tr>${L.map(([id,p])=>`<tr><td>${p.thumb?`<img src="${esc(p.thumb)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`:''}</td><td><b>${esc(p.name)}</b>${ptags(p).length?`<div class="mut" style="font-size:12px;margin-top:2px">${ptags(p).map(esc).join(' · ')}</div>`:''}</td><td>${p.free?'<b style="color:var(--ok)">FREE</b>':peso(p.price)}</td>
    <td><input type="number" min="0" step="1" value="${+p.stock||0}" style="width:84px" onchange="setStock('${id}',this.value)"></td>
    <td><input type="checkbox" ${p.ph?'checked':''} style="width:auto" onchange="setPH('${id}',this.checked)" aria-label="Philippines only"></td>
    <td class="row"><button class="s" onclick="editProd('${id}')">Edit</button><button class="d s" onclick="delProd('${id}')">Delete</button></td></tr>`).join('')}</table>`:'<p class="mut">No products yet. Add your first one above.</p>'}`;
 }
+function frTog(){const on=$('#pfree').checked,pp=$('#pp');$('#pflw').style.display=on?'':'none';pp.disabled=on;if(on)pp.value='0';else if(pp.value==='0')pp.value=''}
 function addTag(){const i=$('#ptg');if(!i)return;const parts=i.value.split(',');i.value='';
   for(let raw of parts){raw=raw.trim().replace(/\s+/g,' ').slice(0,24);if(!raw)continue;const k=tkey(raw);
     if(IF.tags.some(t=>tkey(t)===k))continue;
@@ -925,22 +958,23 @@ function rmPImg(i){IF.imgs.splice(i,1);paintIP()}
 async function saveProd(){
   addTag();
   const m=$('#m'),bad=t=>m.innerHTML=`<div class="msg">${t}</div>`;
-  const name=$('#pn').value.trim(),price=+$('#pp').value,stock=Math.floor(+$('#ps').value),desc=$('#pd').value.trim(),ph=$('#pph').checked;
+  const name=$('#pn').value.trim(),free=$('#pfree').checked,flink=$('#pfl').value.trim(),sash=$('#psm').value==='sash',price=free?0:+$('#pp').value,stock=Math.floor(+$('#ps').value),desc=$('#pd').value.trim(),ph=$('#pph').checked;
   if(!name)return bad('Product name is required.');
-  if(!(price>=0)||$('#pp').value==='')return bad('Enter a valid price.');
+  if(!free&&(!(price>=0)||$('#pp').value===''))return bad('Enter a valid price.');
+  if(free&&!/^https?:\/\/\S+$/i.test(flink))return bad('Enter the link for the free button (it must start with https:// or http://).');
   if(!(stock>=0)||$('#ps').value==='')return bad('Enter how many are in stock (0 or more).');
   if(!IF.imgs.length)return bad('Add at least 1 image (up to 6).');
   try{
     const id=IF.id||'p'+mid(),thumb=await thumbOf(IF.imgs[0],420,.7,true);
     await api('invimg/'+id,'PUT',IF.imgs);
     await api('invdesc/'+id,'PUT',desc||null);
-    await api('inv/'+id,'PUT',{name,desc:plain(desc).slice(0,160),price,stock,thumb,created:IF.created||Date.now(),...(IF.tags.length?{tags:IF.tags}:{}),...(ph?{ph:true}:{})});
+    await api('inv/'+id,'PUT',{name,desc:plain(desc).slice(0,160),price,stock,thumb,created:IF.created||Date.now(),...(IF.tags.length?{tags:IF.tags}:{}),...(ph?{ph:true}:{}),...(free?{free:true,flink}:{}),...(sash?{sash:true}:{})});
     INV.t=0;IF=newIF();toast('Product saved');adminV();
   }catch(e){bad(esc(e.message))}
 }
 async function editProd(id){
   try{const [p,im,dd]=await Promise.all([api('inv/'+id),api('invimg/'+id),api('invdesc/'+id)]);if(!p)return toast('Product not found');
-  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:dd!=null?dd:(p.desc||''),imgs:Object.values(im||[]),tags:ptags(p),ph:!!p.ph,created:p.created||0};
+  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:dd!=null?dd:(p.desc||''),imgs:Object.values(im||[]),tags:ptags(p),ph:!!p.ph,free:!!p.free,flink:p.flink||'',sash:!!p.sash,created:p.created||0};
   await adminV();window.scrollTo(0,0)}catch(e){toast(e.message)}}
 async function setStock(id,v){const n=Math.max(0,Math.floor(+v)||0);
   try{await api(`inv/${id}/stock`,'PUT',n);if(INV.d[id])INV.d[id].stock=n;toast('Stock updated')}catch(e){toast(e.message)}}
@@ -966,8 +1000,8 @@ async function postNews(){
 async function delNews(id){if(!confirm('Delete this news post?'))return;await api('news/'+id,'DELETE');await api('comments/'+id,'DELETE');NEWS.t=0;toast('News deleted');adminV()}
 
 /* ---------- particles ---------- */
-function particles(){
-  const c=$('#pt');if(!c)return;const host=c.parentElement,x=c.getContext('2d');if(!x)return;
+function particles(id,fx){
+  const c=$('#'+(id||'pt'));if(!c)return;const host=c.parentElement,x=c.getContext('2d');if(!x)return;
   const still=matchMedia('(prefers-reduced-motion:reduce)').matches,dpr=Math.min(2,window.devicePixelRatio||1);
   const GOLD='245,179,53',BLUE='59,139,255',CY='96,200,255',VI='162,77,255';
   let W=0,H=0,E=[],O=[],R=[],S=[],mx=null,my=null,vis=true,last=performance.now(),nextS=1.2;
@@ -976,12 +1010,12 @@ function particles(){
   const mkE=init=>({x:rnd(0,W),y:init?rnd(0,H):H+rnd(5,40),r:rnd(.8,2.6),vy:rnd(14,48),sw:rnd(.6,2),ph:rnd(0,6.3),a:rnd(.45,1),c:pickC(),vx:0});
   const mkR=init=>({x:rnd(0,W),y:init?rnd(0,H):H+30,s:rnd(5,13),vy:rnd(8,22),rot:rnd(0,6.3),vr:rnd(-.6,.6),ph:rnd(0,6.3),c:Math.random()<.6?GOLD:BLUE});
   const mkO=()=>({x:rnd(0,W),y:rnd(0,H),r:rnd(90,220),vx:rnd(-9,9),vy:rnd(-6,6),c:[BLUE,VI,GOLD][Math.floor(Math.random()*3)],a:rnd(.06,.13)});
-  const size=()=>{W=host.clientWidth;H=host.clientHeight;if(!W||!H)return;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);
-    const n=Math.max(18,Math.min(80,Math.round(W/16)));
+  const size=()=>{const nw=host.clientWidth,nh=host.clientHeight;if(!nw||!nh)return;const re=!E.length||nw!==W||Math.abs(nh-H)>150;W=nw;H=nh;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);if(!re)return;
+    const n=Math.max(18,Math.min(fx?55:80,Math.round(W/(fx?20:16))));
     E=Array.from({length:n},()=>mkE(true));R=Array.from({length:Math.max(3,Math.round(n/6))},()=>mkR(true));O=Array.from({length:4},mkO)};
   size();new ResizeObserver(size).observe(host);
-  host.addEventListener('pointermove',e=>{const b=host.getBoundingClientRect();mx=e.clientX-b.left;my=e.clientY-b.top});
-  host.addEventListener('pointerleave',()=>{mx=my=null});
+  const tgt=fx?window:host,mv=e=>{if(!c.isConnected){tgt.removeEventListener('pointermove',mv);return}const b=host.getBoundingClientRect();mx=e.clientX-b.left;my=e.clientY-b.top};tgt.addEventListener('pointermove',mv);
+  if(fx){const out=e=>{if(!c.isConnected){document.removeEventListener('pointerout',out);return}if(!e.relatedTarget)mx=my=null};document.addEventListener('pointerout',out)}else host.addEventListener('pointerleave',()=>{mx=my=null});
   if('IntersectionObserver' in window)new IntersectionObserver(en=>{vis=en[0].isIntersecting}).observe(host);
   function frame(t){
     if(!c.isConnected)return;
@@ -1046,6 +1080,7 @@ const PAY={gcash:{n:'GCash',img:IMG+'gcash.png'},maya:{n:'Maya',img:IMG+'maya.pn
 const peso=n=>'₱'+Number(n).toLocaleString();
 const NOTES=['Delivered within 24 hours after your payment is verified','Sent to your email or by SMS','Message us if anything looks wrong'];
 let od={},G={imgs:[],i:0};
+const sashH=n=>{const c=n<=0?'sx':n<=5?'s1':n<=15?'s2':'s3',t=n<=0?'Sold out':n<=5?`Only ${n} left!`:n<=15?`${n} left`:`${n} in stock`;return `<div class="sash ${c}" aria-label="${t}"><span>${t}</span></div>`};
 const stk=n=>n<=0?'<em class="out">Sold out</em>':n<=5?`<em class="low">Only ${n} left</em>`:`<em class="okk">${n} in stock</em>`;
 let SC='all';
 const tkey=s=>String(s||'').trim().toLowerCase();
@@ -1062,8 +1097,8 @@ function catBar(){
   const pill=(k,l,n)=>`<button class="cp${SC===k?' on':''}" data-k="${esc(k)}" onclick="setCat(this.dataset.k)"><span>${esc(l)}</span><i>${n}</i></button>`;
   return `<div class="cats"><div class="cbar" role="tablist" aria-label="Shop categories">${pill('all','All',Object.keys(INV.d).length)}${cs.map(c=>pill(c.k,c.name,c.n)).join('')}</div></div>`}
 function prCard(id,p,i){
-  const bl=!!p.ph&&!LOC.ph,st=+p.stock||0,tg=ptags(p).slice(0,2);
-  return `<div class="pr${bl||st<=0?' so':''}" style="--i:${Math.min(i,12)}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')"><div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}${tg.length?`<div class="tgs">${tg.map(t=>`<i>${esc(t)}</i>`).join('')}</div>`:''}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(plain(p.desc))}</p>${bl?`<div class="ns">${NOSHIP}</div>`:`<span class="px">${priceH(p.price)}</span>${stk(st)}`}</div></div>`}
+  const bl=!!p.ph&&!LOC.ph,st=+p.stock||0,tg=ptags(p).slice(0,2),fr=!!p.free,sh=!!p.sash&&!bl;
+  return `<div class="pr${bl||st<=0?' so':''}" style="--i:${Math.min(i,12)}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')">${sh?sashH(st):''}<div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}${tg.length?`<div class="tgs">${tg.map(t=>`<i>${esc(t)}</i>`).join('')}</div>`:''}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(plain(p.desc))}</p>${bl?`<div class="ns">${NOSHIP}</div>`:`<span class="px${fr?' fr':''}">${fr?'FREE':priceH(p.price)}</span>${sh?'':stk(st)}`}</div></div>`}
 function shopGrid(){
   if(!Object.keys(INV.d).length)return '<p class="mut">No products available yet. Check back soon.</p>';
   let L=Object.entries(INV.d).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
@@ -1086,19 +1121,23 @@ async function openProd(id){const p=INV.d[id];if(!p)return;
   if(!$('#ov')||od.id!==id)return;
   G={imgs:imgs.length?imgs:(p.thumb?[p.thumb]:[]),i:0};
   const full=dd!=null?dd:p.desc,n=G.imgs.length;
-  const blocked=!!p.ph&&!LOC.ph,canBuy=!blocked&&stock>0;
-  const form=blocked?`<div class="ns">${NOSHIP}</div>`:stock>0?`<div id="m"></div>
+  const blocked=!!p.ph&&!LOC.ph,fr=!!p.free,canBuy=!blocked&&!fr&&stock>0,canFree=!blocked&&fr&&stock>0;
+  const form0=blocked?`<div class="ns">${NOSHIP}</div>`:stock>0?`<div id="m"></div>
   <div class="f2"><div><label>First name</label><input id="fn" autocomplete="given-name"></div><div><label>Last name</label><input id="ln" autocomplete="family-name"></div></div>
   <label>Email</label><input id="em" type="email" value="${esc(me?me.email:'')}"><label>Phone number</label><input id="ph" type="tel" placeholder="09XX XXX XXXX">
   <label>Choose payment method</label><div class="pay">${Object.entries(PAY).map(([k,v])=>`<button class="pm ${k}" onclick="pickPay('${k}')"><i class="lg">${k==='maya'?'m':'G'}</i>${v.n}</button>`).join('')}</div>`
   :'<div class="msg">This item is sold out right now.</div>';
+  const form=canFree?`<div class="frw"><button class="frb" onclick="getFree()">🎁 Get now for free!</button><p class="mut" style="font-size:13px;margin-top:8px">You will be taken to the free link in a new tab.</p></div>`:form0;
   modal(`${n?`<div class="gw" id="gw" ontouchstart="G.x=event.touches[0].clientX" ontouchend="gswipe(event)"><img id="gm" class="gm" alt="">${n>1?`<button class="gn gp" onclick="gstep(-1)" aria-label="Previous image"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gn gx" onclick="gstep(1)" aria-label="Next image"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button><span class="gc" id="gcn"></span>`:''}</div>${n>1?`<div class="gts">${G.imgs.map((_,i)=>`<img class="gt" data-i="${i}" alt="" onclick="gsel(${i})">`).join('')}</div>`:''}`:''}
-  <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div>${blocked?'':`<div class="row" style="align-items:baseline;gap:14px"><b class="pg" style="font-size:20px">${priceH(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div>`}</div>
-  <div style="margin-top:10px">${rich(full)}</div>${blocked?'':`<ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`}<div id="paysec">${form}</div>${canBuy?'<div class="bnw"><button class="bnb" onclick="buyNow()">Buy Now</button></div>':''}`,560);
+  <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div>${blocked?'':`<div class="row" style="align-items:baseline;gap:14px"><b class="pg${fr?' fr':''}" style="font-size:20px">${fr?'FREE':priceH(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div>`}</div>
+  <div style="margin-top:10px">${rich(full)}</div>${blocked||fr?'':`<ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`}<div id="paysec">${form}</div>${canBuy?'<div class="bnw"><button class="bnb" onclick="buyNow()">Buy Now</button></div>':canFree?'<div class="bnw"><button class="bnb" onclick="getFree()">Get now for free!</button></div>':''}`,560);
   document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);if(n)gsel(0);
   const ps=$('#paysec'),bw=$('.bnw'),rt=$('.md');
   if(ps&&bw&&rt&&'IntersectionObserver' in window)new IntersectionObserver(en=>bw.classList.toggle('hide',en[0].isIntersecting),{root:rt,threshold:.12}).observe(ps)}
 /* Buy Now: smooth-scroll the popup down to the payment form */
+function getFree(){const p=INV.d[od.id];if(!p||!p.free||(p.ph&&!LOC.ph))return;const u=String(p.flink||'').trim();
+  if(!/^https?:\/\/\S+$/i.test(u))return toast('This free link is not available yet. Please contact us.');
+  if(!window.open(u,'_blank','noopener'))location.href=u}
 function buyNow(){const e=$('#paysec');e&&e.scrollIntoView({behavior:'smooth',block:'start'})}
 function gsel(i){G.i=i;const m=$('#gm');if(m){m.classList.remove('in');void m.offsetWidth;m.src=G.imgs[i];m.classList.add('in')}
   const c=$('#gcn');if(c)c.textContent=(i+1)+' / '+G.imgs.length;
