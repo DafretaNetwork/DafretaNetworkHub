@@ -474,6 +474,18 @@ transition:transform .25s cubic-bezier(.34,1.6,.5,1),border-color .2s,box-shadow
 .tcx{padding:0;width:22px;height:22px;border-radius:50%;clip-path:none;background:#FF2400;color:#fff;font-size:11px;display:grid;place-items:center}
 .tcx:hover{background:#ff4a24;filter:none}
 @media(max-width:760px){.cats{margin:0 -14px 16px}.cbar{padding-left:14px;padding-right:14px}.cp{padding:8px 10px 8px 15px;font-size:13.5px}.ns{font-size:11px;padding:8px 8px}}
+/* ---------- floating Buy Now button (product popup) ---------- */
+#paysec{scroll-margin-top:14px}
+.bnw{position:sticky;bottom:14px;height:0;z-index:6;display:flex;justify-content:center;overflow:visible;pointer-events:none;transition:opacity .3s,visibility .3s}
+.bnw.hide{opacity:0;visibility:hidden}
+.bnb{position:absolute;bottom:0;pointer-events:auto;clip-path:none;border-radius:99px;padding:13px 38px;font:700 17px 'Chakra Petch',sans-serif;letter-spacing:.6px;color:#04210f;
+background:linear-gradient(135deg,#7dffb8,#47d18c 55%,#22a867);border:1px solid #ffffff55;
+animation:bnfloat 2.4s ease-in-out infinite,bnglow 2.4s ease-in-out infinite;transition:scale .2s}
+.bnb:hover{filter:none;scale:1.07}
+.bnb:active{scale:.94}
+@keyframes bnfloat{0%,100%{translate:0 0}50%{translate:0 -10px}}
+@keyframes bnglow{0%,100%{box-shadow:0 0 10px #47d18c55,0 0 22px #47d18c33,0 0 0 0 #47d18c55}50%{box-shadow:0 0 22px #47d18ccc,0 0 46px #47d18c88,0 0 0 12px #47d18c00}}
+@media(prefers-reduced-motion:reduce){.bnb{animation:none}}
 </style>
 </head>
 <body>
@@ -1074,7 +1086,7 @@ async function openProd(id){const p=INV.d[id];if(!p)return;
   if(!$('#ov')||od.id!==id)return;
   G={imgs:imgs.length?imgs:(p.thumb?[p.thumb]:[]),i:0};
   const full=dd!=null?dd:p.desc,n=G.imgs.length;
-  const blocked=!!p.ph&&!LOC.ph;
+  const blocked=!!p.ph&&!LOC.ph,canBuy=!blocked&&stock>0;
   const form=blocked?`<div class="ns">${NOSHIP}</div>`:stock>0?`<div id="m"></div>
   <div class="f2"><div><label>First name</label><input id="fn" autocomplete="given-name"></div><div><label>Last name</label><input id="ln" autocomplete="family-name"></div></div>
   <label>Email</label><input id="em" type="email" value="${esc(me?me.email:'')}"><label>Phone number</label><input id="ph" type="tel" placeholder="09XX XXX XXXX">
@@ -1082,8 +1094,12 @@ async function openProd(id){const p=INV.d[id];if(!p)return;
   :'<div class="msg">This item is sold out right now.</div>';
   modal(`${n?`<div class="gw" id="gw" ontouchstart="G.x=event.touches[0].clientX" ontouchend="gswipe(event)"><img id="gm" class="gm" alt="">${n>1?`<button class="gn gp" onclick="gstep(-1)" aria-label="Previous image"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gn gx" onclick="gstep(1)" aria-label="Next image"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button><span class="gc" id="gcn"></span>`:''}</div>${n>1?`<div class="gts">${G.imgs.map((_,i)=>`<img class="gt" data-i="${i}" alt="" onclick="gsel(${i})">`).join('')}</div>`:''}`:''}
   <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div>${blocked?'':`<div class="row" style="align-items:baseline;gap:14px"><b class="pg" style="font-size:20px">${priceH(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div>`}</div>
-  <div style="margin-top:10px">${rich(full)}</div>${blocked?'':`<ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`}${form}`,560);
-  document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);if(n)gsel(0)}
+  <div style="margin-top:10px">${rich(full)}</div>${blocked?'':`<ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`}<div id="paysec">${form}</div>${canBuy?'<div class="bnw"><button class="bnb" onclick="buyNow()">Buy Now</button></div>':''}`,560);
+  document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);if(n)gsel(0);
+  const ps=$('#paysec'),bw=$('.bnw'),rt=$('.md');
+  if(ps&&bw&&rt&&'IntersectionObserver' in window)new IntersectionObserver(en=>bw.classList.toggle('hide',en[0].isIntersecting),{root:rt,threshold:.12}).observe(ps)}
+/* Buy Now: smooth-scroll the popup down to the payment form */
+function buyNow(){const e=$('#paysec');e&&e.scrollIntoView({behavior:'smooth',block:'start'})}
 function gsel(i){G.i=i;const m=$('#gm');if(m){m.classList.remove('in');void m.offsetWidth;m.src=G.imgs[i];m.classList.add('in')}
   const c=$('#gcn');if(c)c.textContent=(i+1)+' / '+G.imgs.length;
   document.querySelectorAll('.gt').forEach(t=>{const on=+t.dataset.i===i;t.classList.toggle('on',on);if(on&&t.scrollIntoView)t.scrollIntoView({block:'nearest',inline:'nearest'})})}
