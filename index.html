@@ -108,7 +108,7 @@ background:radial-gradient(ellipse 55% 80% at 82% 50%,#10305f99,transparent 70%)
 .im{display:grid;place-items:center;background:radial-gradient(circle,#173560,#050a12)}
 .pr .im{height:180px;font-size:76px;overflow:hidden}
 .pr .im img{width:100%;height:100%;object-fit:cover;display:block}
-.pr .tx{padding:14px 18px 18px}.pr .tx b{font:700 19px 'Chakra Petch';display:block}.pr .tx span{color:var(--gold);font-weight:700;font-size:18px}
+.pr .tx{padding:14px 18px 18px}.pr .tx b{font:700 19px 'Chakra Petch';display:block}.pr .tx .px{color:var(--ok);font-weight:700;font-size:18px}
 .pr .tx em{font-style:normal;float:right;font-size:13px;margin-top:5px;font-weight:600}
 .pr .tx em.okk{color:var(--ok)}.pr .tx em.low{color:var(--gold)}.pr .tx em.out{color:var(--red)}
 .cl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:4px 0 8px}
@@ -410,7 +410,7 @@ body.mo .cbw{display:none}
 .pr{border-radius:18px}
 .pr .tx{padding:10px 12px 14px}
 .pr .tx b{font-size:15px;line-height:1.2}
-.pr .tx span{font-size:16px}
+.pr .tx .px{font-size:16px}
 .pr .tx em{float:none;display:block;margin-top:2px;font-size:12px}
 .pr .tx .cl{-webkit-line-clamp:2;min-height:0;font-size:13px;margin:4px 0 8px}
 
@@ -443,6 +443,37 @@ input,select,textarea{border-radius:12px;padding:12px 14px}
 /* notifications drop in from the top like app banners */
 #toast{top:calc(66px + env(safe-area-inset-top));bottom:auto;left:12px;right:12px;max-width:none;border-radius:16px;z-index:70}
 }
+
+/* ---------- price color, currency tag, shop categories ---------- */
+.pg{color:var(--ok)}
+.px small.cc,.pg small.cc{font:600 11px 'Chakra Petch',sans-serif;letter-spacing:.6px;margin-left:6px;opacity:.7}
+.pr .im{position:relative}
+.pr{animation:prin .4s ease backwards;animation-delay:calc(var(--i,0)*35ms)}
+@keyframes prin{from{opacity:0;transform:translateY(12px)}}
+@media(prefers-reduced-motion:reduce){.pr{animation:none}}
+.tgs{position:absolute;left:10px;top:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}
+.tgs i{font:600 11px 'Chakra Petch',sans-serif;font-style:normal;letter-spacing:.7px;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:#050a12b8;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid #ffffff26;color:#fff}
+.ns{margin-top:8px;padding:10px 12px;border-radius:12px;background:#1a0a10;border:1px solid #ff546855;color:#ff8a98;font:700 12.5px/1.3 'Chakra Petch',sans-serif;letter-spacing:.7px;text-transform:uppercase;text-align:center}
+.cats{margin:0 0 20px;position:relative}
+.cbar{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 12px;scroll-snap-type:x proximity;scrollbar-width:none;
+-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent)}
+.cbar::-webkit-scrollbar{display:none}
+.cp{flex:none;scroll-snap-align:start;display:inline-flex;align-items:center;gap:9px;padding:9px 12px 9px 18px;border-radius:99px;clip-path:none;background:linear-gradient(180deg,#0e1b2f,#08111e);border:1px solid var(--line);color:var(--ink);font:600 14px 'Chakra Petch',sans-serif;letter-spacing:.4px;white-space:nowrap;
+transition:transform .25s cubic-bezier(.34,1.6,.5,1),border-color .2s,box-shadow .25s,background .25s,color .2s}
+.cp i{font-style:normal;font-size:12px;min-width:24px;height:24px;padding:0 7px;display:grid;place-items:center;border-radius:99px;background:#16294a;color:var(--mute);transition:background .25s,color .25s}
+.cp:hover{filter:none;border-color:var(--gold);transform:translateY(-2px)}
+.cp:active{transform:scale(.95)}
+.cp.on{background:linear-gradient(135deg,#ffd067,#f5b335 55%,#d98a1b);color:#201400;border-color:transparent;box-shadow:0 10px 24px -8px #f5b335b8;transform:translateY(-1px)}
+.cp.on i{background:#2014002e;color:#201400}
+/* admin: tag + category chips */
+.tgc{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.tc{display:inline-flex;align-items:center;gap:8px;padding:5px 6px 5px 14px;border-radius:99px;background:#0f1c30;border:1px solid var(--line);font:600 13px 'Chakra Petch',sans-serif}
+.tc small{font-size:12px}
+.tc.sg{padding:5px 14px;border-style:dashed;cursor:pointer;color:var(--mute);transition:color .2s,border-color .2s}
+.tc.sg:hover{color:var(--gold);border-color:var(--gold)}
+.tcx{padding:0;width:22px;height:22px;border-radius:50%;clip-path:none;background:#FF2400;color:#fff;font-size:11px;display:grid;place-items:center}
+.tcx:hover{background:#ff4a24;filter:none}
+@media(max-width:760px){.cats{margin:0 -14px 16px}.cbar{padding-left:14px;padding-right:14px}.cp{padding:8px 10px 8px 15px;font-size:13.5px}.ns{font-size:11px;padding:8px 8px}}
 </style>
 </head>
 <body>
@@ -486,12 +517,13 @@ let me=null,tmp={},codes={},bdg={},tab='badges',atab='players',CURC=null,RET='';
 
 /* ---------- caches (keeps Firebase downloads low) ---------- */
 const TTL=60000;
-let PC={},PA={t:0,d:{}},SK={t:0,d:[]},NEWS={t:0,d:[]},INV={t:0,d:{}},DC={};
+let PC={},PA={t:0,d:{}},SK={t:0,d:[]},NEWS={t:0,d:[]},INV={t:0,d:{}},CATS={t:0,d:{}},DC={};
 const invP=k=>{if(k)delete PC[k];else PC={};PA.t=0;SK.t=0};
 async function getProf(k,f){const c=PC[k];if(!f&&c&&Date.now()-c.t<300000)return c.d;const d=await api('profiles/'+k);PC[k]={t:Date.now(),d};return d}
 async function allProfs(){if(Date.now()-PA.t<90000)return PA.d;const d=await api('profiles')||{};PA={t:Date.now(),d};for(const k in d)PC[k]={t:Date.now(),d:d[k]};return d}
 async function profKeys(){if(Date.now()-SK.t<120000)return SK.d;SK={t:Date.now(),d:await skeys('profiles')};return SK.d}
 async function getNews(){if(Date.now()-NEWS.t<TTL)return NEWS.d;const o=await api('news?orderBy=%22$key%22&limitToLast=5')||{};NEWS={t:Date.now(),d:Object.entries(o).map(([id,v])=>({id,...v})).sort((a,b)=>b.t-a.t)};return NEWS.d}
+async function getCats(f){if(!f&&Date.now()-CATS.t<TTL)return CATS.d;CATS={t:Date.now(),d:await api('shopcats')||{}};return CATS.d}
 async function getInv(f){if(!f&&Date.now()-INV.t<TTL)return INV.d;INV={t:Date.now(),d:await api('inv')||{}};return INV.d}
 const getCodes=async()=>{codes=(await api('codes'))||{};bdg=(await api('badges'))||{};for(const k in bdg)DC[k]=bdg[k];for(const k in codes)if(!codes[k].badge)DC[k]=codes[k];return codes};
 /* badge definition: new badges live in /badges, old-style codes carry their own details */
@@ -502,20 +534,27 @@ function toast(t,fn){const e=$('#toast');e.textContent=t;e.onclick=fn?()=>{e.sty
 
 async function boot(){
   try{
-    if(!await api('auth/david')){
-      await api('auth/david','PUT',{hash:await sha('david'),email:'',role:'admin'});
-      await api('profiles/david','PUT',{name:'david',avatar:0,frame:'gold',public:true,created:Date.now()});
-    }
     if(!await api('codes/2026-F3DP-SUPPORTER-PROD'))
       await api('codes/2026-F3DP-SUPPORTER-PROD','PUT',{title:'F3DP Supporter',desc:'Backed Dafreta Network from the start.',icon:'🏅',rarity:'legendary'});
-    if(!await api('auth/test')){
-      await api('auth/test','PUT',{hash:await sha('test'),email:'test@example.com',role:'player'});
-      await api('profiles/test','PUT',{name:'test',avatar:1,frame:'neon',public:true,created:Date.now(),badges:{'2026-F3DP-SUPPORTER-PROD':Date.now()}});
-    }
     const s=JSON.parse(localStorage.dn_s||'null');
     if(s){const a=await api('auth/'+s.u);if(a&&a.hash===s.h)me={k:s.u,role:a.role,email:a.email||''}}
   }catch(e){return $('#app').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
+  await Promise.race([initLoc(),new Promise(r=>setTimeout(r,2500))]);
+  const had=LOC.ok;
   afterAuth();route();
+  if(me&&me.role==='admin')adminSync();
+  if(!had)initLoc().then(()=>{const e=$('#shop');if(e)e.outerHTML=shopHTML()});
+}
+/* Runs when an admin is logged in: flags admin profiles (so they are hidden from rankings/search) and removes the old demo accounts 'david' and 'test'.
+   It never deletes the account you are logged in with, so you can't lock yourself out. */
+async function adminSync(){
+  try{
+    const au=await api('auth')||{},pr=await allProfs(),o={};
+    const gone=['david','test'].filter(k=>au[k]&&k!==me.k);
+    gone.forEach(k=>{o['auth/'+k]=null;o['profiles/'+k]=null;o['inbox/'+k]=null;delete au[k]});
+    for(const k in au){const isA=au[k].role==='admin',f=!!(pr[k]&&pr[k].adm);if(pr[k]&&isA!==f)o[`profiles/${k}/adm`]=isA?true:null}
+    if(Object.keys(o).length){await mp(o);invP();if(gone.length)toast('Removed old demo accounts: '+gone.join(', '))}
+  }catch(e){}
 }
 function afterAuth(){inOK=false;IN=E0();nav();startIn();cwInit()}
 const unseen=()=>Object.values(IN.notes).filter(n=>n.t>(+IN.seen||0)).length;
@@ -552,7 +591,7 @@ function search(v){clearTimeout(st);const box=$('#sr');v=v.trim().toLowerCase();
   st=setTimeout(async()=>{
     try{const ks=(await profKeys()).filter(k=>k.includes(v)).slice(0,8);
     const ps=await Promise.all(ks.map(async k=>[k,await getProf(k)]));
-    const r=ps.filter(([k,p])=>p&&(p.public||(me&&me.role==='admin'))).slice(0,6);
+    const r=ps.filter(([k,p])=>p&&((me&&me.role==='admin')||(p.public&&!p.adm))).slice(0,6);
     box.innerHTML=r.length?r.map(([k,p])=>`<a href="#/char/${k}" onclick="$('#sr').style.display='none'">${av(p,32)}<span>${esc(p.name)}</span></a>`).join(''):'<a class="mut">No public players found</a>';
     box.style.display='block'}catch(e){}},300)}
 document.addEventListener('click',e=>{if(!e.target.closest('.sw'))$('#sr').style.display='none'});
@@ -564,8 +603,8 @@ const newsHTML=L=>`<section id="news"><div class="sec-h" style="margin-top:64px"
 const AWD={1:['#ffe27a','#c47f00','#f5b335','1ST','#2a1800'],2:['#d9b8ff','#7a2de0','#a24dff','2ND','#fff'],3:['#9cc8ff','#1f5fd1','#3b8bff','3RD','#fff']};
 const award=n=>{const [a,b,c,t,tc]=AWD[n];return `<div class="aw" style="--ac:${c}"><svg viewBox="0 0 80 100" role="img" aria-label="${t} place"><defs><linearGradient id="ag${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><path d="M20 50 L8 96 L26 86 L36 98 L44 52Z" fill="${b}"/><path d="M60 50 L72 96 L54 86 L44 98 L36 52Z" fill="${b}" opacity=".85"/><circle cx="40" cy="34" r="30" fill="url(#ag${n})" stroke="#fff" stroke-opacity=".6" stroke-width="2"/><circle cx="40" cy="34" r="23" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.5"/><text x="40" y="42" text-anchor="middle" font-family="Chakra Petch,sans-serif" font-weight="700" font-size="22" fill="${tc}" stroke="#0006" stroke-width="${n===1?0:2.5}" paint-order="stroke">${t}</text></svg></div>`};
 async function homeV(){
-  const [all,news]=await Promise.all([allProfs(),getNews(),getInv()]);
-  const pr=Object.values(all).filter(p=>p.public).sort((a,b)=>cnt(b)-cnt(a)).slice(0,12);
+  const [all,news]=await Promise.all([allProfs(),getNews(),getInv(),getCats()]);
+  const pr=Object.values(all).filter(p=>p.public&&!p.adm).sort((a,b)=>cnt(b)-cnt(a)).slice(0,12);
   const you=me?(await getProf(me.k)||{}):{avatar:0,frame:'gold'};
   const lk=p=>'#/char/'+p.name.toLowerCase(),top=pr.slice(0,3),rest=pr.slice(3);
   view(`<section class="heroW"><canvas id="pt"></canvas><div class="hero"><div><h1>Your name.<br>Your <em>badges.</em></h1>
@@ -615,7 +654,7 @@ async function doReg(){
 }
 async function charV(k){
   const p=k&&await getProf(k,true);
-  if(!p||(!p.public&&!(me&&(me.k===k||me.role==='admin'))))return view('<div class="box auth"><h2>Player not found</h2><p class="mut">This player does not exist or keeps their page private.</p></div>');
+  if(!p||((!p.public||p.adm)&&!(me&&(me.k===k||me.role==='admin'))))return view('<div class="box auth"><h2>Player not found</h2><p class="mut">This player does not exist or keeps their page private.</p></div>');
   await defs(Object.keys(p.badges||{}));
   const own=me&&(me.k===k);
   const by={};Object.keys(p.badges||{}).forEach(c=>{const r=def(c).rarity||'common';by[r]=(by[r]||0)+1});
@@ -716,15 +755,21 @@ async function adminV(){
     const [au,pr]=await Promise.all([api('auth').then(x=>x||{}),allProfs()]);
     body=`<table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
    return `<tr><td>${esc(p.name)}</td><td>${esc(au[k].email)}</td><td>${au[k].role}</td><td>${cnt(p)}</td><td>${p.public?'Public':'Private'}</td>
-   <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k==='david'?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`}).join('')}</table>`}
+   <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k===me.k?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`}).join('')}</table>`}
   else if(atab==='orders')body=await ordersHTML();
   else if(atab==='inv')body=await invHTML();
   else if(atab==='news')body=await newsAdminHTML();
   else{await getCodes();body=codesHTML()}
   view(`<h2 style="margin-bottom:14px">Admin</h2><div class="tabs">${AT.map(([k,l])=>`<div class="tab ${atab===k?'on':''}" onclick="atab='${k}';adminV()">${l}${k==='orders'&&pend?` (${pend})`:''}</div>`).join('')}</div><div class="box" style="overflow-x:auto">${body}</div>`);
-  if(atab==='inv')paintIP();
+  if(atab==='inv'){paintIP();paintTags()}
 }
-async function delUser(k){if(!confirm('Delete '+k+' and all their badges?'))return;await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');invP();toast('Deleted '+k);adminV()}
+async function delUser(k){
+  if(k===me.k)return toast("You can't delete the account you are logged in with");
+  if(!confirm('Delete '+k+' and all their badges?'))return;
+  try{const au=await api('auth')||{};
+    if(au[k]&&au[k].role==='admin'&&Object.values(au).filter(a=>a.role==='admin').length<=1)return toast('You need at least one admin account');
+    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');invP();toast('Deleted '+k);adminV()
+  }catch(e){toast(e.message)}}
 
 /* ---------- badge codes (admin) ---------- */
 let bimg='';
@@ -783,7 +828,7 @@ async function editV(k){
   if(!a||!p)return view('<div class="msg">Player not found.</div>');
   view(`<p><a href="#/admin">Back to players</a></p><h2 style="margin:8px 0 14px">Edit ${esc(p.name)}</h2><div id="m"></div>
   <div class="box"><div style="max-width:420px"><label>Email</label><input id="ee" value="${esc(a.email)}">
-  <label>Role</label><select id="er" ${k==='david'?'disabled':''}><option ${a.role==='player'?'selected':''}>player</option><option ${a.role==='admin'?'selected':''}>admin</option></select>
+  <label>Role</label><select id="er" ${k===me.k?'disabled':''}><option ${a.role==='player'?'selected':''}>player</option><option ${a.role==='admin'?'selected':''}>admin</option></select>
   <label>Set new password (leave empty to keep)</label><input id="ep" placeholder="New password"></div>
   <div style="margin:18px 0">${picker(p)}</div><div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Public page</span></div>
   <button onclick="saveUser('${k}')">Save changes</button></div>
@@ -791,10 +836,11 @@ async function editV(k){
   <div class="row" style="margin:10px 0"><select id="ac" style="max-width:380px">${badgeOpts()}</select><button onclick="giveBadge('${k}')">Add badge</button></div>${badgeGrid(p,{},true,k)}</div>`);
 }
 async function saveUser(k){
-  const d={email:$('#ee').value.trim()};if(k!=='david')d.role=$('#er').value;
+  const d={email:$('#ee').value.trim()};if(k!==me.k)d.role=$('#er').value;
   const np=$('#ep').value;if(np)d.hash=await sha(np);
   await api('auth/'+k,'PATCH',d);
-  await api('profiles/'+k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});invP(k);toast('Saved');
+  const isA=(k===me.k?me.role:d.role)==='admin';
+  await api('profiles/'+k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked,adm:isA?true:null});invP(k);toast('Saved');
 }
 async function giveBadge(k){const c=$('#ac').value;if(!c)return $('#m').innerHTML='<div class="msg">Create a badge first under Badge codes.</div>';
   await api(`profiles/${k}/badges/${c}`,'PUT',Date.now());invP(k);toast('Badge added');editV(k)}
@@ -802,16 +848,21 @@ async function rmBadge(k,c){if(confirm('Remove this badge?')){await api(`profile
 
 /* ---------- inventory (admin) ---------- */
 /* inv/{id} = name, desc, price, stock, thumb (small)  |  invimg/{id} = full images (only loaded when a product is opened) */
-const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],created:0});
+const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],tags:[],ph:false,created:0});
 let IF=newIF();
 async function invHTML(){
-  const inv=await getInv(true);
+  const [inv]=await Promise.all([getInv(true),getCats(true)]);
   const L=Object.entries(inv).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
+  const cs=allCats();
   return `<h3>${IF.id?'Edit product':'Add product'}</h3><div id="m"></div>
   <div class="f2" style="margin:8px 0">
    <div style="grid-column:1/-1"><label>Product name</label><input id="pn" maxlength="80" value="${esc(IF.name)}"></div>
-   <div><label>Price (₱)</label><input id="pp" type="number" min="0" step="any" value="${esc(IF.price)}"></div>
-   <div><label>Stocks available</label><input id="ps" type="number" min="0" step="1" value="${esc(IF.stock)}"></div></div>
+   <div><label>Price in PHP (₱) - shoppers see it converted to their own currency</label><input id="pp" type="number" min="0" step="any" value="${esc(IF.price)}"></div>
+   <div><label>Stocks available</label><input id="ps" type="number" min="0" step="1" value="${esc(IF.stock)}"></div>
+   <div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pph" type="checkbox" ${IF.ph?'checked':''}><span>Philippines only (buyers outside the Philippines see "${NOSHIP}" instead of the price and stock)</span></div></div>
+  <label>Tags (every tag automatically becomes a shop category)</label>
+  <div class="row" style="flex-wrap:nowrap;max-width:520px"><input id="ptg" maxlength="24" placeholder="Type a tag, then press Enter" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();addTag()}"><button class="s" onclick="addTag()">Add tag</button></div>
+  <div id="tgc" class="tgc"></div><div id="tgs" class="tgc" style="margin-top:0"></div>
   <label>Description (plain text, or paste HTML / CSS source code to design it freely)</label><textarea id="pd" maxlength="8000" style="min-height:130px;font-family:monospace;font-size:14px">${esc(IF.desc)}</textarea>
   <div class="row" style="margin-top:6px"><button class="g s" onclick="previewRich('pd')">Preview</button></div>
   <label>Product images (1 to 6, the first one is the shop cover)</label>
@@ -819,11 +870,37 @@ async function invHTML(){
   <input id="pif" type="file" accept="image/*" multiple hidden onchange="addPImgs(this)">
   <div id="ip" class="row" style="margin:10px 0"></div>
   <div class="row" style="margin:14px 0 26px"><button onclick="saveProd()">${IF.id?'Save changes':'Add to inventory'}</button>${IF.id?'<button class="g" onclick="IF=newIF();adminV()">Cancel edit</button>':''}</div>
+  <h3 style="margin-bottom:6px">Shop categories (${cs.length})</h3>
+  <p class="mut" style="margin-bottom:10px;font-size:14px">Tags you add to products appear here automatically. You can also create a category yourself, or remove any category (removing it also takes the tag off every product).</p>
+  <div class="row" style="flex-wrap:nowrap;max-width:520px"><input id="nc" maxlength="24" placeholder="New category name" onkeydown="event.key==='Enter'&&addCat()"><button onclick="addCat()">Add category</button></div>
+  <div class="tgc" style="margin:12px 0 26px">${cs.length?cs.map(c=>`<span class="tc">${esc(c.name)}<small class="mut">${c.n}</small><button class="tcx" data-k="${esc(c.k)}" onclick="rmCat(this.dataset.k)" aria-label="Remove category">✕</button></span>`).join(''):'<span class="mut" style="font-size:14px">No categories yet.</span>'}</div>
   <h3 style="margin-bottom:10px">Inventory (${L.length})</h3>
-  ${L.length?`<table><tr><th></th><th>Product</th><th>Price</th><th>Stock</th><th></th></tr>${L.map(([id,p])=>`<tr><td>${p.thumb?`<img src="${esc(p.thumb)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`:''}</td><td><b>${esc(p.name)}</b></td><td>${peso(p.price)}</td>
+  ${L.length?`<table><tr><th></th><th>Product</th><th>Price</th><th>Stock</th><th>PH only</th><th></th></tr>${L.map(([id,p])=>`<tr><td>${p.thumb?`<img src="${esc(p.thumb)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`:''}</td><td><b>${esc(p.name)}</b>${ptags(p).length?`<div class="mut" style="font-size:12px;margin-top:2px">${ptags(p).map(esc).join(' · ')}</div>`:''}</td><td>${peso(p.price)}</td>
    <td><input type="number" min="0" step="1" value="${+p.stock||0}" style="width:84px" onchange="setStock('${id}',this.value)"></td>
+   <td><input type="checkbox" ${p.ph?'checked':''} style="width:auto" onchange="setPH('${id}',this.checked)" aria-label="Philippines only"></td>
    <td class="row"><button class="s" onclick="editProd('${id}')">Edit</button><button class="d s" onclick="delProd('${id}')">Delete</button></td></tr>`).join('')}</table>`:'<p class="mut">No products yet. Add your first one above.</p>'}`;
 }
+function addTag(){const i=$('#ptg');if(!i)return;const parts=i.value.split(',');i.value='';
+  for(let raw of parts){raw=raw.trim().replace(/\s+/g,' ').slice(0,24);if(!raw)continue;const k=tkey(raw);
+    if(IF.tags.some(t=>tkey(t)===k))continue;
+    if(IF.tags.length>=6){toast('Maximum of 6 tags per product');break}
+    const ex=allCats().find(c=>c.k===k);IF.tags.push(ex?ex.name:raw)}
+  paintTags()}
+const addTagN=n=>{const i=$('#ptg');if(i){i.value=n;addTag()}};
+const rmTag=i=>{IF.tags.splice(i,1);paintTags()};
+function paintTags(){const e=$('#tgc'),g=$('#tgs');if(!e||!g)return;
+  e.innerHTML=IF.tags.length?IF.tags.map((t,i)=>`<span class="tc">${esc(t)}<button class="tcx" onclick="rmTag(${i})" aria-label="Remove tag">✕</button></span>`).join(''):'<span class="mut" style="font-size:13px">No tags yet</span>';
+  const sg=allCats().filter(c=>!IF.tags.some(t=>tkey(t)===c.k));
+  g.innerHTML=sg.length?'<span class="mut" style="font-size:13px">Existing categories:</span>'+sg.map(c=>`<span class="tc sg" data-n="${esc(c.name)}" onclick="addTagN(this.dataset.n)">+ ${esc(c.name)}</span>`).join(''):''}
+async function addCat(){const i=$('#nc'),name=i.value.trim().replace(/\s+/g,' ').slice(0,24);if(!name)return toast('Enter a category name');
+  const k=tkey(name);if(allCats().some(c=>c.k===k))return toast('That category already exists');
+  try{await api('shopcats/'+k.replace(/[.#$\[\]\/\s]+/g,'-'),'PUT',{name,created:Date.now()});CATS.t=0;toast('Category added');adminV()}catch(e){toast(e.message)}}
+async function rmCat(k){const c=allCats().find(x=>x.k===k);if(!c)return;
+  if(!confirm(`Remove the "${c.name}" category?`+(c.n?` It will also be removed from ${c.n} product${c.n>1?'s':''}.`:'')))return;
+  const o={};if(c.man)o['shopcats/'+c.man]=null;
+  Object.entries(INV.d).forEach(([id,p])=>{const t=ptags(p);if(t.some(x=>tkey(x)===k)){const nt=t.filter(x=>tkey(x)!==k);o[`inv/${id}/tags`]=nt.length?nt:null}});
+  try{await mp(o);if(SC===k)SC='all';INV.t=0;CATS.t=0;IF.tags=IF.tags.filter(x=>tkey(x)!==k);toast('Category removed');adminV()}catch(e){toast(e.message)}}
+async function setPH(id,on){try{await api(`inv/${id}/ph`,on?'PUT':'DELETE',on?true:undefined);if(INV.d[id]){if(on)INV.d[id].ph=true;else delete INV.d[id].ph}toast(on?'Set to Philippines only':'Now available worldwide')}catch(e){toast(e.message)}}
 function paintIP(){const e=$('#ip');if(!e)return;
   e.innerHTML=IF.imgs.map((d,i)=>`<div style="position:relative"><img src="${d}" alt="" style="height:76px;width:76px;object-fit:cover;border-radius:10px;border:2px solid ${i?'var(--line)':'var(--gold)'};display:block"><button class="xr s" style="position:absolute;top:-7px;right:-7px;padding:0 7px;font-size:12px" onclick="rmPImg(${i})" aria-label="Remove image">x</button></div>`).join('');
   const c=$('#ipc');if(c)c.textContent=IF.imgs.length+' / 6 images'}
@@ -834,8 +911,9 @@ async function addPImgs(i){const fs=[...i.files];i.value='';const room=6-IF.imgs
   paintIP()}
 function rmPImg(i){IF.imgs.splice(i,1);paintIP()}
 async function saveProd(){
+  addTag();
   const m=$('#m'),bad=t=>m.innerHTML=`<div class="msg">${t}</div>`;
-  const name=$('#pn').value.trim(),price=+$('#pp').value,stock=Math.floor(+$('#ps').value),desc=$('#pd').value.trim();
+  const name=$('#pn').value.trim(),price=+$('#pp').value,stock=Math.floor(+$('#ps').value),desc=$('#pd').value.trim(),ph=$('#pph').checked;
   if(!name)return bad('Product name is required.');
   if(!(price>=0)||$('#pp').value==='')return bad('Enter a valid price.');
   if(!(stock>=0)||$('#ps').value==='')return bad('Enter how many are in stock (0 or more).');
@@ -844,13 +922,13 @@ async function saveProd(){
     const id=IF.id||'p'+mid(),thumb=await thumbOf(IF.imgs[0],420,.7,true);
     await api('invimg/'+id,'PUT',IF.imgs);
     await api('invdesc/'+id,'PUT',desc||null);
-    await api('inv/'+id,'PUT',{name,desc:plain(desc).slice(0,160),price,stock,thumb,created:IF.created||Date.now()});
+    await api('inv/'+id,'PUT',{name,desc:plain(desc).slice(0,160),price,stock,thumb,created:IF.created||Date.now(),...(IF.tags.length?{tags:IF.tags}:{}),...(ph?{ph:true}:{})});
     INV.t=0;IF=newIF();toast('Product saved');adminV();
   }catch(e){bad(esc(e.message))}
 }
 async function editProd(id){
   try{const [p,im,dd]=await Promise.all([api('inv/'+id),api('invimg/'+id),api('invdesc/'+id)]);if(!p)return toast('Product not found');
-  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:dd!=null?dd:(p.desc||''),imgs:Object.values(im||[]),created:p.created||0};
+  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:dd!=null?dd:(p.desc||''),imgs:Object.values(im||[]),tags:ptags(p),ph:!!p.ph,created:p.created||0};
   await adminV();window.scrollTo(0,0)}catch(e){toast(e.message)}}
 async function setStock(id,v){const n=Math.max(0,Math.floor(+v)||0);
   try{await api(`inv/${id}/stock`,'PUT',n);if(INV.d[id])INV.d[id].stock=n;toast('Stock updated')}catch(e){toast(e.message)}}
@@ -920,6 +998,36 @@ function particles(){
   frame(performance.now()+16)
 }
 
+/* ---------- visitor country: currency + shipping ----------
+   Country comes from a free IP lookup (falls back to the browser timezone/language). Prices are stored in PHP and converted with free daily exchange rates. */
+const CCUR=Object.fromEntries('AE:AED AF:AFN AL:ALL AM:AMD AR:ARS AT:EUR AU:AUD AZ:AZN BA:BAM BD:BDT BE:EUR BG:BGN BH:BHD BN:BND BO:BOB BR:BRL BY:BYN CA:CAD CH:CHF CL:CLP CN:CNY CO:COP CR:CRC CY:EUR CZ:CZK DE:EUR DK:DKK DO:DOP DZ:DZD EC:USD EE:EUR EG:EGP ES:EUR ET:ETB FI:EUR FR:EUR GB:GBP GE:GEL GH:GHS GR:EUR GT:GTQ GU:USD HK:HKD HN:HNL HR:EUR HU:HUF ID:IDR IE:EUR IL:ILS IN:INR IQ:IQD IS:ISK IT:EUR JM:JMD JO:JOD JP:JPY KE:KES KH:KHR KR:KRW KW:KWD KZ:KZT LA:LAK LB:LBP LK:LKR LT:EUR LU:EUR LV:EUR MA:MAD MM:MMK MN:MNT MO:MOP MT:EUR MU:MUR MV:MVR MX:MXN MY:MYR NG:NGN NL:EUR NO:NOK NP:NPR NZ:NZD OM:OMR PA:USD PE:PEN PH:PHP PK:PKR PL:PLN PR:USD PT:EUR PY:PYG QA:QAR RO:RON RS:RSD RU:RUB SA:SAR SE:SEK SG:SGD SI:EUR SK:EUR SV:USD TH:THB TN:TND TR:TRY TW:TWD TZ:TZS UA:UAH UG:UGX US:USD UY:UYU UZ:UZS VE:VES VN:VND ZA:ZAR ZM:ZMW'.split(' ').map(x=>x.split(':')));
+const fetchT=(u,ms)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(u,{signal:c.signal}).finally(()=>clearTimeout(t))};
+let LOC={cc:'PH',cur:'PHP',rate:1,ph:true,ok:false},LP=null;
+const initLoc=()=>LP||(LP=locInit());
+function guessCC(){try{if(/Manila/i.test(Intl.DateTimeFormat().resolvedOptions().timeZone||''))return 'PH'}catch(e){}
+  for(const l of (navigator.languages||[navigator.language||''])){const m=/[-_]([A-Za-z]{2})$/.exec(l);if(m)return m[1].toUpperCase()}
+  return 'PH'}
+async function detectCC(){
+  try{const c=JSON.parse(localStorage.dn_cc||'null');if(c&&Date.now()-c.t<36e5&&/^[A-Z]{2}$/.test(c.cc))return c.cc}catch(e){}
+  const src=[['https://api.country.is/',j=>j.country],['https://get.geojs.io/v1/ip/country.json',j=>j.country],['https://ipapi.co/json/',j=>j.country_code]];
+  for(const [u,f] of src){try{const j=await(await fetchT(u,2500)).json(),cc=String(f(j)||'').toUpperCase();
+    if(/^[A-Z]{2}$/.test(cc)){try{localStorage.dn_cc=JSON.stringify({cc,t:Date.now()})}catch(e){}return cc}}catch(e){}}
+  return guessCC()}
+async function getRate(cur){
+  try{const c=JSON.parse(localStorage.dn_fx||'null');if(c&&Date.now()-c.t<432e5&&c.r[cur])return c.r[cur]}catch(e){}
+  try{const j=await(await fetchT('https://open.er-api.com/v6/latest/PHP',3000)).json();
+    if(j&&j.rates&&j.rates[cur]){try{localStorage.dn_fx=JSON.stringify({t:Date.now(),r:j.rates})}catch(e){}return j.rates[cur]}}catch(e){}
+  try{const j=await(await fetchT('https://api.frankfurter.app/latest?from=PHP&to='+cur,3000)).json();if(j&&j.rates&&j.rates[cur])return j.rates[cur]}catch(e){}
+  return 0}
+async function locInit(){
+  try{const cc=await detectCC(),cur=CCUR[cc]||'USD';let rate=1,use=cur;
+    if(cur!=='PHP'){rate=await getRate(cur);if(!rate){use='PHP';rate=1}}
+    LOC={cc,cur:use,rate,ph:cc==='PH',ok:true}}catch(e){}}
+function moneyS(php){const v=(+php||0)*LOC.rate;
+  try{return new Intl.NumberFormat(navigator.language||'en',{style:'currency',currency:LOC.cur,currencyDisplay:'narrowSymbol',minimumFractionDigits:LOC.cur==='PHP'&&Number.isInteger(v)?0:undefined}).format(v)}catch(e){return LOC.cur+' '+v.toFixed(2)}}
+const priceH=n=>`${esc(moneyS(n))}<small class="cc">${esc(LOC.cur)}</small>`;
+const NOSHIP='Currently not shipping to your country';
+
 /* ---------- shop ---------- */
 const IMG='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/payments/';
 const PAY={gcash:{n:'GCash',img:IMG+'gcash.png'},maya:{n:'Maya',img:IMG+'maya.png'}};
@@ -927,9 +1035,33 @@ const peso=n=>'₱'+Number(n).toLocaleString();
 const NOTES=['Delivered within 24 hours after your payment is verified','Sent to your email or by SMS','Message us if anything looks wrong'];
 let od={},G={imgs:[],i:0};
 const stk=n=>n<=0?'<em class="out">Sold out</em>':n<=5?`<em class="low">Only ${n} left</em>`:`<em class="okk">${n} in stock</em>`;
+let SC='all';
+const tkey=s=>String(s||'').trim().toLowerCase();
+const ptags=p=>Object.values((p&&p.tags)||[]).filter(Boolean);
+/* categories = categories the admin created + every tag used on a product */
+function allCats(){
+  const m=new Map();
+  Object.entries(CATS.d||{}).sort((a,b)=>(a[1].created||0)-(b[1].created||0)).forEach(([key,v])=>{if(v&&v.name)m.set(tkey(v.name),{name:v.name,n:0,man:key})});
+  Object.values(INV.d||{}).forEach(p=>ptags(p).forEach(t=>{const k=tkey(t),c=m.get(k)||{name:t,n:0,man:null};c.n++;m.set(k,c)}));
+  return [...m.entries()].map(([k,c])=>({k,...c}))}
+function catBar(){
+  const cs=allCats().filter(c=>c.n>0);if(!cs.length)return '';
+  if(SC!=='all'&&!cs.some(c=>c.k===SC))SC='all';
+  const pill=(k,l,n)=>`<button class="cp${SC===k?' on':''}" data-k="${esc(k)}" onclick="setCat(this.dataset.k)"><span>${esc(l)}</span><i>${n}</i></button>`;
+  return `<div class="cats"><div class="cbar" role="tablist" aria-label="Shop categories">${pill('all','All',Object.keys(INV.d).length)}${cs.map(c=>pill(c.k,c.name,c.n)).join('')}</div></div>`}
+function prCard(id,p,i){
+  const bl=!!p.ph&&!LOC.ph,st=+p.stock||0,tg=ptags(p).slice(0,2);
+  return `<div class="pr${bl||st<=0?' so':''}" style="--i:${Math.min(i,12)}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')"><div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}${tg.length?`<div class="tgs">${tg.map(t=>`<i>${esc(t)}</i>`).join('')}</div>`:''}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(plain(p.desc))}</p>${bl?`<div class="ns">${NOSHIP}</div>`:`<span class="px">${priceH(p.price)}</span>${stk(st)}`}</div></div>`}
+function shopGrid(){
+  if(!Object.keys(INV.d).length)return '<p class="mut">No products available yet. Check back soon.</p>';
+  let L=Object.entries(INV.d).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
+  if(SC!=='all')L=L.filter(([id,p])=>ptags(p).some(t=>tkey(t)===SC));
+  return L.length?`<div class="shop">${L.map(([id,p],i)=>prCard(id,p,i)).join('')}</div>`:'<p class="mut">No products in this category yet.</p>'}
+function setCat(k){SC=k;
+  document.querySelectorAll('#shop .cp').forEach(b=>{const on=b.dataset.k===k;b.classList.toggle('on',on);if(on&&b.scrollIntoView)b.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'})});
+  const g=$('#shopg');if(g)g.innerHTML=shopGrid()}
 function shopHTML(){
-  const L=Object.entries(INV.d).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
-  return `<section id="shop"><div class="sec-h" style="margin-top:64px"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div>${L.length?`<div class="shop">${L.map(([id,p])=>`<div class="pr${+p.stock>0?'':' so'}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')"><div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(plain(p.desc))}</p><span>${peso(p.price)}</span>${stk(+p.stock||0)}</div></div>`).join('')}</div>`:'<p class="mut">No products available yet. Check back soon.</p>'}</section>`}
+  return `<section id="shop"><div class="sec-h" style="margin-top:64px"><h2>Shop</h2><span class="mut">Pay with GCash or Maya</span></div>${catBar()}<div id="shopg">${shopGrid()}</div></section>`}
 function modal(h,w){let o=$('#ov');if(!o){o=document.createElement('div');o.id='ov';o.className='ov';o.onmousedown=e=>{if(e.target===o)closeM()};document.body.appendChild(o)}
   o.innerHTML=`<div class="md"${w?` style="--mw:${w}px"`:''}><button class="xx" onclick="closeM()" aria-label="Close">✕</button>${h}</div>`}
 const closeM=()=>{const o=$('#ov');o&&o.remove()};
@@ -942,14 +1074,15 @@ async function openProd(id){const p=INV.d[id];if(!p)return;
   if(!$('#ov')||od.id!==id)return;
   G={imgs:imgs.length?imgs:(p.thumb?[p.thumb]:[]),i:0};
   const full=dd!=null?dd:p.desc,n=G.imgs.length;
-  const form=stock>0?`<div id="m"></div>
+  const blocked=!!p.ph&&!LOC.ph;
+  const form=blocked?`<div class="ns">${NOSHIP}</div>`:stock>0?`<div id="m"></div>
   <div class="f2"><div><label>First name</label><input id="fn" autocomplete="given-name"></div><div><label>Last name</label><input id="ln" autocomplete="family-name"></div></div>
   <label>Email</label><input id="em" type="email" value="${esc(me?me.email:'')}"><label>Phone number</label><input id="ph" type="tel" placeholder="09XX XXX XXXX">
   <label>Choose payment method</label><div class="pay">${Object.entries(PAY).map(([k,v])=>`<button class="pm ${k}" onclick="pickPay('${k}')"><i class="lg">${k==='maya'?'m':'G'}</i>${v.n}</button>`).join('')}</div>`
   :'<div class="msg">This item is sold out right now.</div>';
   modal(`${n?`<div class="gw" id="gw" ontouchstart="G.x=event.touches[0].clientX" ontouchend="gswipe(event)"><img id="gm" class="gm" alt="">${n>1?`<button class="gn gp" onclick="gstep(-1)" aria-label="Previous image"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gn gx" onclick="gstep(1)" aria-label="Next image"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button><span class="gc" id="gcn"></span>`:''}</div>${n>1?`<div class="gts">${G.imgs.map((_,i)=>`<img class="gt" data-i="${i}" alt="" onclick="gsel(${i})">`).join('')}</div>`:''}`:''}
-  <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div><div class="row" style="align-items:baseline;gap:14px"><b style="font-size:20px">${peso(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div></div>
-  <div style="margin-top:10px">${rich(full)}</div><ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>${form}`,560);
+  <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div>${blocked?'':`<div class="row" style="align-items:baseline;gap:14px"><b class="pg" style="font-size:20px">${priceH(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div>`}</div>
+  <div style="margin-top:10px">${rich(full)}</div>${blocked?'':`<ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`}${form}`,560);
   document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);if(n)gsel(0)}
 function gsel(i){G.i=i;const m=$('#gm');if(m){m.classList.remove('in');void m.offsetWidth;m.src=G.imgs[i];m.classList.add('in')}
   const c=$('#gcn');if(c)c.textContent=(i+1)+' / '+G.imgs.length;
@@ -960,17 +1093,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#ov'))closeM();
   if($('#gw')&&(e.key==='ArrowLeft'||e.key==='ArrowRight')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))gstep(e.key==='ArrowLeft'?-1:1)});
 function pickPay(k){
   const v=id=>$(id).value.trim(),f={first:v('#fn'),last:v('#ln'),email:v('#em'),phone:v('#ph')},bad=t=>$('#m').innerHTML=`<div class="msg">${t}</div>`;
+  if(INV.d[od.id]&&INV.d[od.id].ph&&!LOC.ph)return bad(NOSHIP+'.');
   if(!f.first||!f.last)return bad('Enter your first and last name.');
   if(!/^\S+@\S+\.\S+$/.test(f.email))return bad('Enter a valid email.');
   if(f.phone.replace(/\D/g,'').length<10)return bad('Enter a valid phone number.');
   Object.assign(od,f,{method:k});const p=INV.d[od.id];
-  modal(`<div class="qr"><img src="${PAY[k].img}" alt="${PAY[k].n} QR code"></div><div class="mt">Upload proof of payment</div><p class="mut" style="margin:6px 0 14px">Pay ${peso(p.price)} with ${PAY[k].n}, then upload a screenshot of your receipt. We check it as soon as it arrives.</p>
+  modal(`<div class="qr"><img src="${PAY[k].img}" alt="${PAY[k].n} QR code"></div><div class="mt">Upload proof of payment</div><p class="mut" style="margin:6px 0 14px">Pay ${peso(p.price)}${LOC.cur!=='PHP'?` (about ${esc(moneyS(p.price))} ${esc(LOC.cur)})`:''} with ${PAY[k].n}, then upload a screenshot of your receipt. We check it as soon as it arrives.</p>
   <div id="m"></div>
   <div class="drop" id="dz" onclick="$('#pf').click()"><div style="font-size:34px">📤</div>Click to upload your screenshot<br><small>PNG or JPG</small></div>
   <input id="pf" type="file" accept="image/*" hidden onchange="sendProof(this)"><div style="margin-top:14px"><button class="g s" onclick="openProd(od.id)">Back</button></div>`)}
 async function sendProof(i){
   const f=i.files[0];if(!f)return;const dz=$('#dz');dz.textContent='Uploading...';
-  try{const p=INV.d[od.id],s=+await api(`inv/${od.id}/stock`);
+  try{const p=INV.d[od.id];if(p.ph&&!LOC.ph){dz.textContent='Click to upload your screenshot';return $('#m').innerHTML='<div class="msg">'+NOSHIP+'.</div>'}const s=+await api(`inv/${od.id}/stock`);
     if(!(s>0)){p.stock=0;dz.textContent='Click to upload your screenshot';return $('#m').innerHTML='<div class="msg">Sorry, this item just sold out.</div>'}
     const proof=await shrink(f,1000,.72);
     await api('orders','POST',{pid:od.id,product:p.name,price:p.price,method:od.method,first:od.first,last:od.last,email:od.email,phone:od.phone,user:me?me.k:'guest',proof,created:Date.now()});
@@ -1219,7 +1353,7 @@ function mnSuggest(){clearTimeout(mnT);mnT=setTimeout(async()=>{
   const m=i.value.slice(0,i.selectionStart).match(/@([a-z0-9_]*)$/i);if(!m){box.style.display='none';return}
   try{const ks=(await profKeys()).filter(k=>k.startsWith(m[1].toLowerCase())).slice(0,6);
   const ps=await Promise.all(ks.map(async k=>[k,await getProf(k).catch(()=>null)]));
-  const r=ps.filter(([k,p])=>p&&(p.public||k===me.k||me.role==='admin')).slice(0,5);
+  const r=ps.filter(([k,p])=>p&&(k===me.k||me.role==='admin'||(p.public&&!p.adm))).slice(0,5);
   box.innerHTML=r.map(([k,p])=>`<div class="mni" onmousedown="event.preventDefault();mnPick('${k}')">${av(p,28)}<span>${esc(p.name)}</span></div>`).join('');box.style.display=r.length?'block':'none'}catch(e){}},180)}
 function mnPick(k){const i=$('#cin');if(!i)return;const pos=i.selectionStart,b=i.value.slice(0,pos).replace(/@([a-z0-9_]*)$/i,'@'+k+' ');
   i.value=b+i.value.slice(pos);i.focus();i.setSelectionRange(b.length,b.length);$('#mnl').style.display='none'}
