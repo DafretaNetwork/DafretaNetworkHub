@@ -502,6 +502,14 @@ animation:sashp .8s ease-in-out infinite}
 .sash.s3 span::after{animation-duration:3.2s}
 .sash.sx span{background:linear-gradient(90deg,#2b3646,#4a5568 50%,#2b3646);animation:none;color:#c3cfdf}
 .sash.sx span::after{display:none}
+.sash.sf span{background:linear-gradient(90deg,#1f9d5f,#47d18c 50%,#1f9d5f);color:#04210f;text-shadow:none;animation:none;letter-spacing:1.6px;font-size:12.5px}
+.sash.sf span::after{animation-duration:2.6s}
+/* inventory drag-to-reorder */
+.dh{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:22px;line-height:1;color:var(--gold);padding:6px 8px;display:inline-block}
+.dh:active{cursor:grabbing}
+tr.drg{opacity:.4}
+tr.dt td{box-shadow:inset 0 3px 0 var(--gold)}
+tr.db td{box-shadow:inset 0 -3px 0 var(--gold)}
 @keyframes sashp{0%,100%{filter:brightness(1) saturate(1)}50%{filter:brightness(1.3) saturate(1.3);box-shadow:0 3px 18px #ff2400}}
 @keyframes sashw{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
 .sash.s1 span{animation:sashp .8s ease-in-out infinite,sashs 2.4s ease-in-out infinite}
@@ -585,7 +593,7 @@ async function boot(){
   }catch(e){return $('#app').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
   await Promise.race([initLoc(),new Promise(r=>setTimeout(r,2500))]);
   const had=LOC.ok;
-  afterAuth();route();
+  afterAuth();route();earlyCheck();
   if(me&&me.role==='admin')adminSync();
   if(!had)initLoc().then(()=>{const e=$('#shop');if(e)e.outerHTML=shopHTML()});
 }
@@ -598,6 +606,7 @@ async function adminSync(){
     gone.forEach(k=>{o['auth/'+k]=null;o['profiles/'+k]=null;o['inbox/'+k]=null;o['supportin/'+k]=null;delete au[k]});
     for(const k in au){const isA=au[k].role==='admin',f=!!(pr[k]&&pr[k].adm);if(pr[k]&&isA!==f)o[`profiles/${k}/adm`]=isA?true:null}
     if(Object.keys(o).length){await mp(o);invP();if(gone.length)toast('Removed old demo accounts: '+gone.join(', '))}
+    await autoEarly();
   }catch(e){}
 }
 function afterAuth(){inOK=false;IN=E0();SUP={};supOK=false;nav();startIn();cwInit()}
@@ -672,7 +681,7 @@ async function doLogin(){
   const k=$('#u').value.trim().toLowerCase(),h=await sha($('#p').value);
   try{const a=k&&await api('auth/'+k);
     if(!a||a.hash!==h)return $('#m').innerHTML='<div class="msg">Wrong username or password.</div>';
-    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};afterAuth();const r=RET||'#/';RET='';location.hash===r?route():location.hash=r;
+    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};afterAuth();earlyCheck();const r=RET||'#/';RET='';location.hash===r?route():location.hash=r;
   }catch(e){$('#m').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
 }
 function regV(){
@@ -692,7 +701,8 @@ async function doReg(){
   try{if(await api('auth/'+k))return bad('That username is taken.');
     const h=await sha(p);
     await api('auth/'+k,'PUT',{hash:h,email:e,role:'player'});
-    await api('profiles/'+k,'PUT',{name:n,avatar:Math.floor(Math.random()*AV.length),frame:'none',public:$('#pub').checked,created:Date.now()});
+    const now=Date.now(),ec=await api('config/early').catch(()=>null),eg=!!(ec&&ec.badge&&now<=ec.until);
+    await api('profiles/'+k,'PUT',{name:n,avatar:Math.floor(Math.random()*AV.length),frame:'none',public:$('#pub').checked,created:now,...(eg?{badges:{[ec.badge]:now},eb:true}:{})});
     invP();localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:'player',email:e};afterAuth();const r=RET||'#/';RET='';location.hash=r;
   }catch(x){bad(esc(x.message))}
 }
@@ -772,11 +782,11 @@ async function redeem(){
   if(!c)return;
   try{const d=await api('codes/'+c);
     if(!d)return m.innerHTML='<div class="msg">That code is not valid.</div>';
-    if(d.usedBy)return m.innerHTML='<div class="msg">This code has already been used.</div>';
+    if(d.usedBy&&!d.perm)return m.innerHTML='<div class="msg">This code has already been used.</div>';
     const id=d.badge||c;
     if(await api(`profiles/${me.k}/badges/${id}`))return m.innerHTML='<div class="msg">You already have this badge.</div>';
     await api(`profiles/${me.k}/badges/${id}`,'PUT',Date.now());
-    if(d.badge)await api('codes/'+c,'PATCH',{usedBy:me.k,usedAt:Date.now()});
+    if(d.badge&&!d.perm)await api('codes/'+c,'PATCH',{usedBy:me.k,usedAt:Date.now()});
     const b=d.badge?await api('badges/'+id):d;
     if(b)DC[id]=b;
     invP(me.k);toast('Badge added: '+((b||d).title||'Badge'));meV();
@@ -793,6 +803,49 @@ async function chPass(){
 
 /* ---------- admin ---------- */
 const AT=[['players','Players'],['codes','Badge codes'],['inv','Inventory'],['news','News'],['orders','Payments']];
+/* ---------- "I'm here since day 1!" auto badge ----------
+   config/early = {badge:<badge id>, until:<timestamp>}. It never touches badge codes, so code stock is unchanged.
+   New accounts get it at sign-up; older accounts get it once at their next login (profiles/{k}/eb marks "already handled"). */
+let EARLY=null;
+const EARLY_DEF=Date.parse('2027-01-01T23:59:59.999+08:00');
+const ymd=t=>new Date(t+288e5).toISOString().slice(0,10);
+async function earlyCheck(){
+  if(!me)return;
+  try{const p=await getProf(me.k);if(!p||p.eb)return;
+    const c=await api('config/early');if(!c||!c.badge||(+p.created||0)>c.until)return;
+    const o={[`profiles/${me.k}/eb`]:true};
+    if(!(p.badges&&p.badges[c.badge]))o[`profiles/${me.k}/badges/${c.badge}`]=+p.created||Date.now();
+    await mp(o);invP(me.k)}catch(e){}}
+async function earlyApply(c){
+  PA.t=0;const pr=await allProfs(),o={};let n=0;
+  for(const k in pr){const p=pr[k];if(!p||!p.name||p.eb||(+p.created||0)>c.until)continue;
+    o[`profiles/${k}/eb`]=true;if(!(p.badges&&p.badges[c.badge]))o[`profiles/${k}/badges/${c.badge}`]=+p.created||Date.now();n++}
+  const ks=Object.keys(o);for(let i=0;i<ks.length;i+=400){const ch={};ks.slice(i,i+400).forEach(x=>ch[x]=o[x]);await mp(ch)}
+  invP();return n}
+/* first admin login after this update: finds the "I'm here since day 1!" badge and switches the automation on */
+async function autoEarly(){
+  if(await api('config/early'))return;
+  const b=await api('badges')||{},id=Object.keys(b).find(k=>/since\s+day\s*(1|one)/i.test(String(b[k].title||'')));
+  if(!id)return;
+  const c={badge:id,until:EARLY_DEF};await api('config/early','PUT',c);EARLY=c;
+  const n=await earlyApply(c);toast('Day-1 badge is now automatic'+(n?` (given to ${n} existing account${n>1?'s':''})`:''))}
+function earlyHTML(){
+  const c=EARLY||{},ids=[...new Set([...Object.keys(bdg),...Object.entries(codes).filter(([k,d])=>!d.badge).map(x=>x[0])])];
+  return `<div class="bx2" style="margin-bottom:26px"><h3>Day-1 badge (given automatically)</h3>
+  <p class="mut" style="margin:6px 0 10px;font-size:14px">Every account created on or before the date below gets this badge by itself: new sign-ups instantly, older accounts at their next login (or press the button to give it to everyone now). It does not use any badge codes, so your code stock stays untouched.</p>
+  <div class="f2"><div><label>Badge to give</label><select id="eb"><option value="">Off (don't give any badge)</option>${ids.map(id=>`<option value="${id}"${c.badge===id?' selected':''}>${esc(def(id).title)}</option>`).join('')}</select></div>
+  <div><label>Last day an account can be created (Philippine time)</label><input id="ebd" type="date" value="${ymd(c.until||EARLY_DEF)}"></div></div>
+  <div class="row" style="margin-top:12px"><button onclick="saveEarly()">Save</button><button class="g" onclick="applyEarly()">Give to all existing accounts now</button></div></div>`}
+async function saveEarly(){
+  const b=$('#eb').value,d=$('#ebd').value;
+  if(b&&!/^\d{4}-\d{2}-\d{2}$/.test(d))return toast('Pick a valid date');
+  const c={badge:b,until:d?Date.parse(d+'T23:59:59.999+08:00'):EARLY_DEF};
+  try{await api('config/early','PUT',c);EARLY=c;toast(b?'Day-1 badge saved':'Day-1 badge turned off')}catch(e){toast(e.message)}}
+async function applyEarly(){
+  if(!$('#eb').value)return toast('Pick a badge first');
+  if(!confirm('Give this badge to every account created on or before that date?'))return;
+  await saveEarly();if(!EARLY||!EARLY.badge)return;
+  try{const n=await earlyApply(EARLY);toast(n?`Badge given to ${n} account${n>1?'s':''}`:'Everyone eligible already has it');adminV()}catch(e){toast(e.message)}}
 async function adminV(){
   let body='';
   if(atab==='players'){
@@ -803,7 +856,7 @@ async function adminV(){
   else if(atab==='orders')body=await ordersHTML();
   else if(atab==='inv')body=await invHTML();
   else if(atab==='news')body=await newsAdminHTML();
-  else{await getCodes();body=codesHTML()}
+  else{await getCodes();EARLY=await api('config/early').catch(()=>null);body=codesHTML()}
   view(`<h2 style="margin-bottom:14px">Admin</h2><div class="tabs">${AT.map(([k,l])=>`<div class="tab ${atab===k?'on':''}" onclick="atab='${k}';adminV()">${l}${k==='orders'&&pend?` (${pend})`:''}</div>`).join('')}</div><div class="box" style="overflow-x:auto">${body}</div>`);
   if(atab==='inv'){paintIP();paintTags()}
 }
@@ -819,9 +872,9 @@ async function delUser(k){
 let bimg='';
 const QO=[...Array(10)].map((_,i)=>`<option>${i+1}</option>`).join('');
 const gen=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=crypto.getRandomValues(new Uint8Array(12));return [...r].map(x=>A[x%A.length]).join('')};
-async function mkCodes(id,n){
-  n=Math.min(10,Math.max(1,+n||1));const o={};
-  while(Object.keys(o).length<n){const c=gen();if(!codes[c]&&!o[c])o[c]={badge:id,created:Date.now()}}
+async function mkCodes(id,n,perm){
+  n=perm?1:Math.min(10,Math.max(1,+n||1));const o={};
+  while(Object.keys(o).length<n){const c=gen();if(!codes[c]&&!o[c])o[c]={badge:id,created:Date.now(),...(perm?{perm:true}:{})}}
   await api('codes','PATCH',o);Object.assign(codes,o);return n}
 async function bImg(i){const f=i.files[0];if(!f)return;
   try{bimg=await shrinkPng(f,192);$('#bp').innerHTML=`<img src="${bimg}" alt="" style="height:56px;vertical-align:middle">`}catch(e){toast(e.message)}}
@@ -829,42 +882,46 @@ function codesHTML(){
   bimg='';
   const g={};Object.entries(codes).forEach(([c,d])=>{const id=d.badge||c;(g[id]=g[id]||[]).push([c,d])});
   const ids=[...new Set([...Object.keys(bdg),...Object.keys(g)])];
-  return `<h3>Create badge</h3><div id="m"></div>
+  return `${earlyHTML()}<h3>Create badge</h3><div id="m"></div>
   <div class="f2" style="margin:8px 0">
    <div><label>Badge title</label><input id="nt" placeholder="F3DP Supporter"></div>
    <div><label>Rarity</label><select id="nr">${Object.keys(RC).map(r=>`<option>${r}</option>`).join('')}</select></div>
    <div><label>Badge image (logo)</label><div class="row" style="align-items:center"><button class="s" onclick="$('#bf').click()">Upload image</button><span id="bp" class="mut">No image</span></div><input id="bf" type="file" accept="image/*" hidden onchange="bImg(this)"></div>
    <div><label>Fallback emoji (optional)</label><input id="ni" placeholder="🎖️"></div>
    <div><label>Short description (shown on the card)</label><input id="nd"></div>
-   <div><label>How many codes to generate? (1-10)</label><select id="nq">${QO}</select></div></div>
+   <div><label>Code type</label><select id="nk" onchange="kindTog('nk','nqw')"><option value="reg">Traditional (one-time codes)</option><option value="perm">Permanent Code (never expires, reusable)</option></select></div>
+   <div id="nqw"><label>How many codes to generate? (1-10)</label><select id="nq">${QO}</select></div></div>
   <label>Full description (shown when the badge is clicked)</label><textarea id="nf"></textarea>
   <div style="margin:14px 0 26px"><button onclick="addBadge()">Create badge and generate codes</button></div>
   <h3 style="margin-bottom:12px">Badges and codes</h3>${ids.length?'':'<p class="mut">No badges yet.</p>'}
   ${ids.map(id=>{const d=def(id),L=g[id]||[],leg=!bdg[id],used=L.filter(x=>x[1].usedBy).length;
-   return `<div class="bx2"><div class="row" style="align-items:center;gap:16px">${bi(d,56)}<div style="flex:1;min-width:180px"><b>${esc(d.title)}</b> <span style="color:${RC[d.rarity]||RC.common};font-size:13px;text-transform:uppercase">${esc(d.rarity)}</span><br><span class="mut">${esc(d.desc)}</span><br><span class="mut" style="font-size:13px">${leg?'Old-style reusable code':`${used} of ${L.length} codes used`}</span></div>
+   return `<div class="bx2"><div class="row" style="align-items:center;gap:16px">${bi(d,56)}<div style="flex:1;min-width:180px"><b>${esc(d.title)}</b> <span style="color:${RC[d.rarity]||RC.common};font-size:13px;text-transform:uppercase">${esc(d.rarity)}</span><br><span class="mut">${esc(d.desc)}</span><br><span class="mut" style="font-size:13px">${leg?'Old-style reusable code':`${used} of ${L.filter(x=>!x[1].perm).length} codes used${L.some(x=>x[1].perm)?' · '+L.filter(x=>x[1].perm).length+' permanent':''}`}</span></div>
    <div class="row">${leg?'':`<button class="s" onclick="moreM('${id}')">+ Codes</button>`}${leg?'':`<button class="d s" onclick="delBadge('${id}')">Delete badge</button>`}</div></div>
-   ${L.length?`<table><tr><th>Code</th><th>Status</th><th></th></tr>${L.map(([c,x])=>`<tr><td><code>${c}</code></td><td>${x.usedBy?`<b style="color:var(--red)">Used</b> <span class="mut">by ${esc(x.usedBy)} · ${fmt(x.usedAt)}</span>`:leg?'<span class="mut">Reusable</span>':'<b style="color:var(--ok)">Unused</b>'}</td><td class="row"><button class="g s" onclick="navigator.clipboard&&navigator.clipboard.writeText('${c}');toast('Code copied')">Copy</button><button class="d s" onclick="delCode('${c}')">Delete</button></td></tr>`).join('')}</table>`:''}</div>`}).join('')}`;
+   ${L.length?`<table><tr><th>Code</th><th>Status</th><th></th></tr>${L.map(([c,x])=>`<tr><td><code>${c}</code></td><td>${x.perm?'<b style="color:var(--gold)">Permanent</b> <span class="mut">never expires, reusable</span>':x.usedBy?`<b style="color:var(--red)">Used</b> <span class="mut">by ${esc(x.usedBy)} · ${fmt(x.usedAt)}</span>`:leg?'<span class="mut">Reusable</span>':'<b style="color:var(--ok)">Unused</b>'}</td><td class="row"><button class="g s" onclick="navigator.clipboard&&navigator.clipboard.writeText('${c}');toast('Code copied')">Copy</button><button class="d s" onclick="delCode('${c}')">Delete</button></td></tr>`).join('')}</table>`:''}</div>`}).join('')}`;
 }
 async function addBadge(){
   const t=$('#nt').value.trim(),ic=$('#ni').value.trim(),m=$('#m');
   if(!t)return m.innerHTML='<div class="msg">Badge title is required.</div>';
   if(!bimg&&!ic)return m.innerHTML='<div class="msg">Upload a badge image (or enter a fallback emoji).</div>';
   try{
-    const id='b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n=+$('#nq').value;
+    const id='b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n=+$('#nq').value,perm=$('#nk').value==='perm';
     await api('badges/'+id,'PUT',{title:t,rarity:$('#nr').value,desc:$('#nd').value.trim(),full:$('#nf').value.trim(),icon:ic||'🎖️',img:bimg||null,created:Date.now()});
-    await mkCodes(id,n);bimg='';toast(`Badge created with ${n} code${n>1?'s':''}`);adminV();
+    await mkCodes(id,n,perm);bimg='';toast(perm?'Badge created with a permanent code':`Badge created with ${n} code${n>1?'s':''}`);adminV();
   }catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}
 }
+const kindTog=(s,w)=>{const e=$('#'+w);if(e)e.style.display=$('#'+s).value==='perm'?'none':''};
 function moreM(id){
-  modal(`<div class="mt">Generate codes</div><p class="mut" style="margin:8px 0 12px">How many new codes for ${esc(def(id).title)}? (1-10)</p><select id="mq">${QO}</select>
+  modal(`<div class="mt">Generate codes</div><p class="mut" style="margin:8px 0 12px">New codes for ${esc(def(id).title)}</p>
+  <label>Code type</label><select id="mk" onchange="kindTog('mk','mqw')"><option value="reg">Traditional (one-time codes)</option><option value="perm">Permanent Code (never expires, reusable)</option></select>
+  <div id="mqw"><label>How many? (1-10)</label><select id="mq">${QO}</select></div>
   <div class="row" style="margin-top:18px"><button onclick="moreGo('${id}')">Generate</button><button class="g" onclick="closeM()">Cancel</button></div>`)}
-async function moreGo(id){const n=+$('#mq').value;closeM();try{await mkCodes(id,n);toast(n+' code'+(n>1?'s':'')+' generated')}catch(e){toast(e.message)}adminV()}
+async function moreGo(id){const perm=$('#mk').value==='perm',n=perm?1:+$('#mq').value;closeM();try{await mkCodes(id,n,perm);toast(perm?'Permanent code generated':n+' code'+(n>1?'s':'')+' generated')}catch(e){toast(e.message)}adminV()}
 async function delBadge(id){
   if(!confirm('Delete this badge, all its codes, and remove it from every player who earned it?'))return;
   const pr=await api('profiles')||{};
   for(const [k,p] of Object.entries(pr))if(p.badges&&p.badges[id])await api(`profiles/${k}/badges/${id}`,'DELETE');
   for(const [c,d] of Object.entries(codes))if(d.badge===id)await api('codes/'+c,'DELETE');
-  await api('badges/'+id,'DELETE');delete DC[id];invP();toast('Badge deleted');adminV()}
+  await api('badges/'+id,'DELETE');delete DC[id];{const ec=await api('config/early');if(ec&&ec.badge===id)await api('config/early','PATCH',{badge:''})}invP();toast('Badge deleted');adminV()}
 async function delCode(c){if(confirm('Delete code '+c+'? Players keep badges already earned.')){await api('codes/'+c,'DELETE');adminV()}}
 const badgeOpts=()=>[...new Set([...Object.keys(bdg),...Object.entries(codes).filter(([c,d])=>!d.badge).map(x=>x[0])])].map(id=>`<option value="${id}">${esc(def(id).title)}</option>`).join('');
 async function editV(k){
@@ -892,18 +949,20 @@ async function rmBadge(k,c){if(confirm('Remove this badge?')){await api(`profile
 
 /* ---------- inventory (admin) ---------- */
 /* inv/{id} = name, desc, price, stock, thumb (small)  |  invimg/{id} = full images (only loaded when a product is opened) */
+const invCmp=(a,b)=>{const x=a[1].order,y=b[1].order,hx=typeof x==='number',hy=typeof y==='number';if(hx&&hy)return x-y;if(hx)return -1;if(hy)return 1;return (b[1].created||0)-(a[1].created||0)};
+const nextOrd=()=>{const o=Object.values(INV.d||{}).map(p=>p.order).filter(x=>typeof x==='number');return o.length?Math.max(...o)+1:undefined};
 const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],tags:[],ph:false,free:false,flink:'',sash:false,created:0});
 let IF=newIF();
 async function invHTML(){
   const [inv]=await Promise.all([getInv(true),getCats(true)]);
-  const L=Object.entries(inv).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
+  const L=Object.entries(inv).sort(invCmp);
   const cs=allCats();
   return `<h3>${IF.id?'Edit product':'Add product'}</h3><div id="m"></div>
   <div class="f2" style="margin:8px 0">
    <div style="grid-column:1/-1"><label>Product name</label><input id="pn" maxlength="80" value="${esc(IF.name)}"></div>
    <div><label>Price in PHP (₱) - shoppers see it converted to their own currency</label><input id="pp" type="number" min="0" step="any" value="${esc(IF.price)}"${IF.free?' disabled':''}></div>
-   <div><label>Stocks available</label><input id="ps" type="number" min="0" step="1" value="${esc(IF.stock)}"></div>
-   <div style="grid-column:1/-1"><label>Stocks left display on the product card</label><select id="psm"><option value="normal"${IF.sash?'':' selected'}>Normal (small text beside the price)</option><option value="sash"${IF.sash?' selected':''}>Sash (urgent ribbon on the top right corner)</option></select></div><div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pfree" type="checkbox" ${IF.free?'checked':''} onchange="frTog()"><span>Free product (no payment methods; shoppers see a "Get now for free!" button instead)</span></div><div id="pflw" style="grid-column:1/-1;${IF.free?'':'display:none'}"><label>Link for the "Get now for free!" button (shoppers are sent here)</label><input id="pfl" type="url" maxlength="500" placeholder="https://..." value="${esc(IF.flink)}"></div><div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pph" type="checkbox" ${IF.ph?'checked':''}><span>Philippines only (buyers outside the Philippines see "${NOSHIP}" instead of the price and stock)</span></div></div>
+   <div id="psw"${IF.free?' style="display:none"':''}><label>Stocks available</label><input id="ps" type="number" min="0" step="1" value="${esc(IF.stock)}"></div>
+   <div style="grid-column:1/-1"><label>Stocks left display on the product card <small class="mut">(free products always show a green FREE ribbon and need no stock)</small></label><select id="psm"><option value="normal"${IF.sash?'':' selected'}>Normal (small text beside the price)</option><option value="sash"${IF.sash?' selected':''}>Sash (urgent ribbon on the top right corner)</option></select></div><div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pfree" type="checkbox" ${IF.free?'checked':''} onchange="frTog()"><span>Free product (no payment methods; shoppers see a "Get now for free!" button instead)</span></div><div id="pflw" style="grid-column:1/-1;${IF.free?'':'display:none'}"><label>Link for the "Get now for free!" button (shoppers are sent here)</label><input id="pfl" type="url" maxlength="500" placeholder="https://..." value="${esc(IF.flink)}"></div><div class="tg" style="grid-column:1/-1;margin:2px 0"><input id="pph" type="checkbox" ${IF.ph?'checked':''}><span>Philippines only (buyers outside the Philippines see "${NOSHIP}" instead of the price and stock)</span></div></div>
   <label>Tags (every tag automatically becomes a shop category)</label>
   <div class="row" style="flex-wrap:nowrap;max-width:520px"><input id="ptg" maxlength="24" placeholder="Type a tag, then press Enter" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();addTag()}"><button class="s" onclick="addTag()">Add tag</button></div>
   <div id="tgc" class="tgc"></div><div id="tgs" class="tgc" style="margin-top:0"></div>
@@ -918,13 +977,14 @@ async function invHTML(){
   <p class="mut" style="margin-bottom:10px;font-size:14px">Tags you add to products appear here automatically. You can also create a category yourself, or remove any category (removing it also takes the tag off every product).</p>
   <div class="row" style="flex-wrap:nowrap;max-width:520px"><input id="nc" maxlength="24" placeholder="New category name" onkeydown="event.key==='Enter'&&addCat()"><button onclick="addCat()">Add category</button></div>
   <div class="tgc" style="margin:12px 0 26px">${cs.length?cs.map(c=>`<span class="tc">${esc(c.name)}<small class="mut">${c.n}</small><button class="tcx" data-k="${esc(c.k)}" onclick="rmCat(this.dataset.k)" aria-label="Remove category">✕</button></span>`).join(''):'<span class="mut" style="font-size:14px">No categories yet.</span>'}</div>
-  <h3 style="margin-bottom:10px">Inventory (${L.length})</h3>
-  ${L.length?`<table><tr><th></th><th>Product</th><th>Price</th><th>Stock</th><th>PH only</th><th></th></tr>${L.map(([id,p])=>`<tr><td>${p.thumb?`<img src="${esc(p.thumb)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`:''}</td><td><b>${esc(p.name)}</b>${ptags(p).length?`<div class="mut" style="font-size:12px;margin-top:2px">${ptags(p).map(esc).join(' · ')}</div>`:''}</td><td>${p.free?'<b style="color:var(--ok)">FREE</b>':peso(p.price)}</td>
-   <td><input type="number" min="0" step="1" value="${+p.stock||0}" style="width:84px" onchange="setStock('${id}',this.value)"></td>
+  <div class="row" style="align-items:center;justify-content:space-between;margin-bottom:6px"><h3>Inventory (${L.length})</h3>${L.some(x=>typeof x[1].order==='number')?'<button class="g s" onclick="resetOrder()">Reset to newest first</button>':''}</div>
+  <p class="mut" style="margin-bottom:10px;font-size:14px">Drag the <b style="color:var(--gold)">⠿</b> handle to choose the shop order. The product at the top is the first one shoppers see.</p>
+  ${L.length?`<table id="invt"><tr><th>Order</th><th></th><th>Product</th><th>Price</th><th>Stock</th><th>PH only</th><th></th></tr>${L.map(([id,p],i)=>`<tr data-id="${id}"><td style="white-space:nowrap"><span class="dh" title="Drag to reorder" onpointerdown="dragStart(event)">⠿</span><span class="mut pos" style="font-size:12px">${i+1}</span></td><td>${p.thumb?`<img src="${esc(p.thumb)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`:''}</td><td><b>${esc(p.name)}</b>${ptags(p).length?`<div class="mut" style="font-size:12px;margin-top:2px">${ptags(p).map(esc).join(' · ')}</div>`:''}</td><td>${p.free?'<b style="color:var(--ok)">FREE</b>':peso(p.price)}</td>
+   <td>${p.free?'<span class="mut" title="Free products need no stock">-</span>':`<input type="number" min="0" step="1" value="${+p.stock||0}" style="width:84px" onchange="setStock('${id}',this.value)">`}</td>
    <td><input type="checkbox" ${p.ph?'checked':''} style="width:auto" onchange="setPH('${id}',this.checked)" aria-label="Philippines only"></td>
    <td class="row"><button class="s" onclick="editProd('${id}')">Edit</button><button class="d s" onclick="delProd('${id}')">Delete</button></td></tr>`).join('')}</table>`:'<p class="mut">No products yet. Add your first one above.</p>'}`;
 }
-function frTog(){const on=$('#pfree').checked,pp=$('#pp');$('#pflw').style.display=on?'':'none';pp.disabled=on;if(on)pp.value='0';else if(pp.value==='0')pp.value=''}
+function frTog(){const on=$('#pfree').checked,pp=$('#pp'),sw=$('#psw');if(sw)sw.style.display=on?'none':'';$('#pflw').style.display=on?'':'none';pp.disabled=on;if(on)pp.value='0';else if(pp.value==='0')pp.value=''}
 function addTag(){const i=$('#ptg');if(!i)return;const parts=i.value.split(',');i.value='';
   for(let raw of parts){raw=raw.trim().replace(/\s+/g,' ').slice(0,24);if(!raw)continue;const k=tkey(raw);
     if(IF.tags.some(t=>tkey(t)===k))continue;
@@ -958,24 +1018,48 @@ function rmPImg(i){IF.imgs.splice(i,1);paintIP()}
 async function saveProd(){
   addTag();
   const m=$('#m'),bad=t=>m.innerHTML=`<div class="msg">${t}</div>`;
-  const name=$('#pn').value.trim(),free=$('#pfree').checked,flink=$('#pfl').value.trim(),sash=$('#psm').value==='sash',price=free?0:+$('#pp').value,stock=Math.floor(+$('#ps').value),desc=$('#pd').value.trim(),ph=$('#pph').checked;
+  const name=$('#pn').value.trim(),free=$('#pfree').checked,flink=$('#pfl').value.trim(),sash=$('#psm').value==='sash',price=free?0:+$('#pp').value,stock=free?0:Math.floor(+$('#ps').value),desc=$('#pd').value.trim(),ph=$('#pph').checked;
   if(!name)return bad('Product name is required.');
   if(!free&&(!(price>=0)||$('#pp').value===''))return bad('Enter a valid price.');
   if(free&&!/^https?:\/\/\S+$/i.test(flink))return bad('Enter the link for the free button (it must start with https:// or http://).');
-  if(!(stock>=0)||$('#ps').value==='')return bad('Enter how many are in stock (0 or more).');
+  if(!free&&(!(stock>=0)||$('#ps').value===''))return bad('Enter how many are in stock (0 or more).');
   if(!IF.imgs.length)return bad('Add at least 1 image (up to 6).');
   try{
-    const id=IF.id||'p'+mid(),thumb=await thumbOf(IF.imgs[0],420,.7,true);
+    const id=IF.id||'p'+mid(),thumb=await thumbOf(IF.imgs[0],420,.7,true),ord=IF.id?((INV.d[IF.id]||{}).order??IF.order):nextOrd();
     await api('invimg/'+id,'PUT',IF.imgs);
     await api('invdesc/'+id,'PUT',desc||null);
-    await api('inv/'+id,'PUT',{name,desc:plain(desc).slice(0,160),price,stock,thumb,created:IF.created||Date.now(),...(IF.tags.length?{tags:IF.tags}:{}),...(ph?{ph:true}:{}),...(free?{free:true,flink}:{}),...(sash?{sash:true}:{})});
+    await api('inv/'+id,'PUT',{name,desc:plain(desc).slice(0,160),price,stock,thumb,created:IF.created||Date.now(),...(typeof ord==='number'?{order:ord}:{}),...(IF.tags.length?{tags:IF.tags}:{}),...(ph?{ph:true}:{}),...(free?{free:true,flink}:{}),...(sash?{sash:true}:{})});
     INV.t=0;IF=newIF();toast('Product saved');adminV();
   }catch(e){bad(esc(e.message))}
 }
 async function editProd(id){
   try{const [p,im,dd]=await Promise.all([api('inv/'+id),api('invimg/'+id),api('invdesc/'+id)]);if(!p)return toast('Product not found');
-  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:dd!=null?dd:(p.desc||''),imgs:Object.values(im||[]),tags:ptags(p),ph:!!p.ph,free:!!p.free,flink:p.flink||'',sash:!!p.sash,created:p.created||0};
+  IF={id,name:p.name||'',price:p.price,stock:p.stock,desc:dd!=null?dd:(p.desc||''),imgs:Object.values(im||[]),tags:ptags(p),ph:!!p.ph,free:!!p.free,flink:p.flink||'',sash:!!p.sash,created:p.created||0,order:p.order};
   await adminV();window.scrollTo(0,0)}catch(e){toast(e.message)}}
+/* drag a row by its handle; the new order is saved to inv/{id}/order in ONE request */
+let DR=null;
+const clrDrop=()=>document.querySelectorAll('#invt tr.dt,#invt tr.db').forEach(r=>r.classList.remove('dt','db'));
+function dragStart(e){
+  if(e.button>0)return;e.preventDefault();
+  const tr=e.currentTarget.closest('tr');DR={tr,t:null,b:false};tr.classList.add('drg');
+  document.addEventListener('pointermove',dragMove);document.addEventListener('pointerup',dragEnd);document.addEventListener('pointercancel',dragEnd)}
+function dragMove(e){
+  if(!DR)return;
+  if(e.clientY<70)window.scrollBy(0,-14);else if(e.clientY>innerHeight-70)window.scrollBy(0,14);
+  clrDrop();DR.t=null;
+  for(const r of document.querySelectorAll('#invt tr[data-id]')){if(r===DR.tr)continue;const b=r.getBoundingClientRect();
+    if(e.clientY>=b.top&&e.clientY<=b.bottom){DR.t=r;DR.b=e.clientY>=b.top+b.height/2;r.classList.add(DR.b?'db':'dt');break}}}
+async function dragEnd(){
+  document.removeEventListener('pointermove',dragMove);document.removeEventListener('pointerup',dragEnd);document.removeEventListener('pointercancel',dragEnd);
+  const d=DR;DR=null;if(!d)return;
+  d.tr.classList.remove('drg');clrDrop();if(!d.t)return;
+  d.t.parentNode.insertBefore(d.tr,d.b?d.t.nextSibling:d.t);
+  const rows=[...document.querySelectorAll('#invt tr[data-id]')],o={};
+  rows.forEach((r,i)=>{const s=r.querySelector('.pos');if(s)s.textContent=i+1;o[`inv/${r.dataset.id}/order`]=i});
+  try{await mp(o);rows.forEach((r,i)=>{if(INV.d[r.dataset.id])INV.d[r.dataset.id].order=i});INV.t=0;toast('Shop order saved')}catch(x){toast(x.message)}}
+async function resetOrder(){if(!confirm('Go back to showing the newest products first?'))return;
+  const o={};Object.keys(INV.d).forEach(id=>o[`inv/${id}/order`]=null);
+  try{await mp(o);INV.t=0;toast('Order reset: newest first');adminV()}catch(e){toast(e.message)}}
 async function setStock(id,v){const n=Math.max(0,Math.floor(+v)||0);
   try{await api(`inv/${id}/stock`,'PUT',n);if(INV.d[id])INV.d[id].stock=n;toast('Stock updated')}catch(e){toast(e.message)}}
 async function delProd(id){if(!confirm('Delete this product?'))return;
@@ -1080,7 +1164,7 @@ const PAY={gcash:{n:'GCash',img:IMG+'gcash.png'},maya:{n:'Maya',img:IMG+'maya.pn
 const peso=n=>'₱'+Number(n).toLocaleString();
 const NOTES=['Delivered within 24 hours after your payment is verified','Sent to your email or by SMS','Message us if anything looks wrong'];
 let od={},G={imgs:[],i:0};
-const sashH=n=>{const c=n<=0?'sx':n<=5?'s1':n<=15?'s2':'s3',t=n<=0?'Sold out':n<=5?`Only ${n} left!`:n<=15?`${n} left`:`${n} in stock`;return `<div class="sash ${c}" aria-label="${t}"><span>${t}</span></div>`};
+const sashH=(n,fr)=>{if(fr)return '<div class="sash sf" aria-label="Free"><span>FREE</span></div>';const c=n<=0?'sx':n<=5?'s1':n<=15?'s2':'s3',t=n<=0?'Sold out':n<=5?`Only ${n} left!`:n<=15?`${n} left`:`${n} in stock`;return `<div class="sash ${c}" aria-label="${t}"><span>${t}</span></div>`};
 const stk=n=>n<=0?'<em class="out">Sold out</em>':n<=5?`<em class="low">Only ${n} left</em>`:`<em class="okk">${n} in stock</em>`;
 let SC='all';
 const tkey=s=>String(s||'').trim().toLowerCase();
@@ -1098,10 +1182,10 @@ function catBar(){
   return `<div class="cats"><div class="cbar" role="tablist" aria-label="Shop categories">${pill('all','All',Object.keys(INV.d).length)}${cs.map(c=>pill(c.k,c.name,c.n)).join('')}</div></div>`}
 function prCard(id,p,i){
   const bl=!!p.ph&&!LOC.ph,st=+p.stock||0,tg=ptags(p).slice(0,2),fr=!!p.free,sh=!!p.sash&&!bl;
-  return `<div class="pr${bl||st<=0?' so':''}" style="--i:${Math.min(i,12)}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')">${sh?sashH(st):''}<div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}${tg.length?`<div class="tgs">${tg.map(t=>`<i>${esc(t)}</i>`).join('')}</div>`:''}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(plain(p.desc))}</p>${bl?`<div class="ns">${NOSHIP}</div>`:`<span class="px${fr?' fr':''}">${fr?'FREE':priceH(p.price)}</span>${sh?'':stk(st)}`}</div></div>`}
+  return `<div class="pr${bl||(!fr&&st<=0)?' so':''}" style="--i:${Math.min(i,12)}" tabindex="0" onclick="openProd('${id}')" onkeydown="event.key==='Enter'&&openProd('${id}')">${sh?sashH(st,fr):''}<div class="im">${p.thumb?`<img src="${esc(p.thumb)}" alt="">`:'🎁'}${tg.length?`<div class="tgs">${tg.map(t=>`<i>${esc(t)}</i>`).join('')}</div>`:''}</div><div class="tx"><b>${esc(p.name)}</b><p class="mut cl">${esc(plain(p.desc))}</p>${bl?`<div class="ns">${NOSHIP}</div>`:`<span class="px${fr?' fr':''}">${fr?'FREE':priceH(p.price)}</span>${sh||fr?'':stk(st)}`}</div></div>`}
 function shopGrid(){
   if(!Object.keys(INV.d).length)return '<p class="mut">No products available yet. Check back soon.</p>';
-  let L=Object.entries(INV.d).sort((a,b)=>(b[1].created||0)-(a[1].created||0));
+  let L=Object.entries(INV.d).sort(invCmp);
   if(SC!=='all')L=L.filter(([id,p])=>ptags(p).some(t=>tkey(t)===SC));
   return L.length?`<div class="shop">${L.map(([id,p],i)=>prCard(id,p,i)).join('')}</div>`:'<p class="mut">No products in this category yet.</p>'}
 function setCat(k){SC=k;
@@ -1121,7 +1205,7 @@ async function openProd(id){const p=INV.d[id];if(!p)return;
   if(!$('#ov')||od.id!==id)return;
   G={imgs:imgs.length?imgs:(p.thumb?[p.thumb]:[]),i:0};
   const full=dd!=null?dd:p.desc,n=G.imgs.length;
-  const blocked=!!p.ph&&!LOC.ph,fr=!!p.free,canBuy=!blocked&&!fr&&stock>0,canFree=!blocked&&fr&&stock>0;
+  const blocked=!!p.ph&&!LOC.ph,fr=!!p.free,canBuy=!blocked&&!fr&&stock>0,canFree=!blocked&&fr;
   const form0=blocked?`<div class="ns">${NOSHIP}</div>`:stock>0?`<div id="m"></div>
   <div class="f2"><div><label>First name</label><input id="fn" autocomplete="given-name"></div><div><label>Last name</label><input id="ln" autocomplete="family-name"></div></div>
   <label>Email</label><input id="em" type="email" value="${esc(me?me.email:'')}"><label>Phone number</label><input id="ph" type="tel" placeholder="09XX XXX XXXX">
@@ -1129,7 +1213,7 @@ async function openProd(id){const p=INV.d[id];if(!p)return;
   :'<div class="msg">This item is sold out right now.</div>';
   const form=canFree?`<div class="frw"><button class="frb" onclick="getFree()">🎁 Get now for free!</button><p class="mut" style="font-size:13px;margin-top:8px">You will be taken to the free link in a new tab.</p></div>`:form0;
   modal(`${n?`<div class="gw" id="gw" ontouchstart="G.x=event.touches[0].clientX" ontouchend="gswipe(event)"><img id="gm" class="gm" alt="">${n>1?`<button class="gn gp" onclick="gstep(-1)" aria-label="Previous image"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gn gx" onclick="gstep(1)" aria-label="Next image"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button><span class="gc" id="gcn"></span>`:''}</div>${n>1?`<div class="gts">${G.imgs.map((_,i)=>`<img class="gt" data-i="${i}" alt="" onclick="gsel(${i})">`).join('')}</div>`:''}`:''}
-  <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div>${blocked?'':`<div class="row" style="align-items:baseline;gap:14px"><b class="pg${fr?' fr':''}" style="font-size:20px">${fr?'FREE':priceH(p.price)}</b>${stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div>`}</div>
+  <div style="margin:16px 0 4px;padding-right:30px"><div class="mt">${esc(p.name)}</div>${blocked?'':`<div class="row" style="align-items:baseline;gap:14px"><b class="pg${fr?' fr':''}" style="font-size:20px">${fr?'FREE':priceH(p.price)}</b>${fr?'':stk(stock).replace('<em','<em style="font-style:normal;font-size:14px;font-weight:600;"')}</div>`}</div>
   <div style="margin-top:10px">${rich(full)}</div>${blocked||fr?'':`<ul class="mut" style="margin:12px 0 6px 18px">${NOTES.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`}<div id="paysec">${form}</div>${canBuy?'<div class="bnw"><button class="bnb" onclick="buyNow()">Buy Now</button></div>':canFree?'<div class="bnw"><button class="bnb" onclick="getFree()">Get now for free!</button></div>':''}`,560);
   document.querySelectorAll('.gt').forEach(t=>t.src=G.imgs[+t.dataset.i]);if(n)gsel(0);
   const ps=$('#paysec'),bw=$('.bnw'),rt=$('.md');
