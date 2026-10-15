@@ -505,7 +505,7 @@ const pair=(a,b)=>[a,b].sort().join('~');
 const hasImg=p=>/^(data:image\/|https:\/\/raw\.githubusercontent\.com\/)/.test((p&&p.img)||'');
 const FAV='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/dafreta-network-favicon.webp';
 /* system senders: announcements never show the real admin account */
-const SYS={'@mod':{name:'MODERATOR',img:FAV,frame:'gold'},'@news':{name:'News',img:FAV,frame:'neon'}};
+const SYS={'@mod':{name:'MODERATOR',img:FAV,frame:'gold'},'@news':{name:'News',img:FAV,frame:'neon'},'@support':{name:'Support',img:FAV,frame:'neon'}};
 const nm=k=>SYS[k]?SYS[k].name:k;
 const gp=k=>SYS[k]?Promise.resolve(SYS[k]):getProf(k);
 const ago=t=>{const s=(Date.now()-t)/1000;return s<60?'just now':s<3600?Math.floor(s/60)+'m':s<86400?Math.floor(s/3600)+'h':fmt(t)};
@@ -551,12 +551,12 @@ async function adminSync(){
   try{
     const au=await api('auth')||{},pr=await allProfs(),o={};
     const gone=['david','test'].filter(k=>au[k]&&k!==me.k);
-    gone.forEach(k=>{o['auth/'+k]=null;o['profiles/'+k]=null;o['inbox/'+k]=null;delete au[k]});
+    gone.forEach(k=>{o['auth/'+k]=null;o['profiles/'+k]=null;o['inbox/'+k]=null;o['supportin/'+k]=null;delete au[k]});
     for(const k in au){const isA=au[k].role==='admin',f=!!(pr[k]&&pr[k].adm);if(pr[k]&&isA!==f)o[`profiles/${k}/adm`]=isA?true:null}
     if(Object.keys(o).length){await mp(o);invP();if(gone.length)toast('Removed old demo accounts: '+gone.join(', '))}
   }catch(e){}
 }
-function afterAuth(){inOK=false;IN=E0();nav();startIn();cwInit()}
+function afterAuth(){inOK=false;IN=E0();SUP={};supOK=false;nav();startIn();cwInit()}
 const unseen=()=>Object.values(IN.notes).filter(n=>n.t>(+IN.seen||0)).length;
 function nav(){setTimeout(watch,0);
   const fc=me?Object.keys(IN.reqs).length+unseen():0;
@@ -768,7 +768,7 @@ async function delUser(k){
   if(!confirm('Delete '+k+' and all their badges?'))return;
   try{const au=await api('auth')||{};
     if(au[k]&&au[k].role==='admin'&&Object.values(au).filter(a=>a.role==='admin').length<=1)return toast('You need at least one admin account');
-    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');invP();toast('Deleted '+k);adminV()
+    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');await api('supportin/'+k,'DELETE');invP();toast('Deleted '+k);adminV()
   }catch(e){toast(e.message)}}
 
 /* ---------- badge codes (admin) ---------- */
@@ -1139,8 +1139,8 @@ let IN=E0(),es=null,inOK=false;
 function startIn(){stopIn();if(!me||document.hidden)return;
   es=new EventSource(`${DB}/inbox/${me.k}.json`);
   const h=e=>{try{onIn(e.type,JSON.parse(e.data))}catch(x){}};
-  es.addEventListener('put',h);es.addEventListener('patch',h)}
-function stopIn(){es&&es.close();es=null}
+  es.addEventListener('put',h);es.addEventListener('patch',h);startSup()}
+function stopIn(){es&&es.close();es=null;stopSup()}
 function setP(path,v){const s=path.split('/').filter(Boolean);if(!s.length)return;
   if(s.length===1&&v===null){IN[s[0]]=s[0]==='seen'?0:{};return}
   let o=IN;for(let i=0;i<s.length-1;i++){if(typeof o[s[i]]!=='object'||o[s[i]]===null){if(v===null)return;o[s[i]]={}}o=o[s[i]]}
@@ -1160,7 +1160,7 @@ function onIn(type,{path,data}){
 function ui(){nav();cwBadge();if(CH.open&&CH.with===null)chatList();fbtn();if(location.hash==='#/friends')friendsV(true)}
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){stopIn();closeStream()}
-  else if(me){startIn();if(CH.open&&CH.with&&CH.with!=='*all')chatStream(CH.with)}});
+  else if(me){startIn();if(CH.open&&CH.with&&CH.with!=='*all'&&CH.with!=='sup:')chatStream(CH.with)}});
 
 /* ---- friend actions (each one is a single multi-path write) ---- */
 function fbtnH(k){
@@ -1213,39 +1213,81 @@ async function friendsV(quiet){
 
 /* ---- chat ---- */
 let CH={open:false,with:null,es:null,msgs:{}};
+
+/* ---------- SUPPORT: every account can write to Support; admins answer as "Support" (their own name is never shown) ----------
+   chats/{@support~user}/{id} = {f:user | '@support', t, ts}    supportin/{user} = {t, p, u:1 while waiting for an admin reply} */
+let SUP={},supOK=false,ses=null;
+const supN=()=>me&&me.role==='admin'?Object.values(SUP).filter(x=>x&&x.u).length:0;
+function startSup(){stopSup();if(!me||me.role!=='admin'||document.hidden)return;
+  ses=new EventSource(`${DB}/supportin.json`);
+  const h=e=>{try{onSup(e.type,JSON.parse(e.data))}catch(x){}};
+  ses.addEventListener('put',h);ses.addEventListener('patch',h)}
+function stopSup(){ses&&ses.close();ses=null}
+function onSup(type,{path,data}){
+  const was=new Set(Object.keys(SUP).filter(k=>SUP[k]&&SUP[k].u)),pt=(path||'/').split('/').filter(Boolean);
+  const merge=(o,d)=>{for(const k in (d||{})){if(d[k]===null)delete o[k];else o[k]=d[k]}};
+  if(!pt.length){if(type==='put')SUP=data||{};else merge(SUP,data)}
+  else if(pt.length===1){if(type==='put'){if(data===null)delete SUP[pt[0]];else SUP[pt[0]]=data}else{const e=SUP[pt[0]]=SUP[pt[0]]||{};merge(e,data)}}
+  else{const e=SUP[pt[0]]=SUP[pt[0]]||{};if(type==='put'){if(data===null)delete e[pt[1]];else e[pt[1]]=data}else merge(e,data)}
+  for(const k of Object.keys(SUP))if(!SUP[k]||!Object.keys(SUP[k]).length)delete SUP[k];
+  const open=CH.open&&CH.with&&CH.with.startsWith('sup:')?CH.with.slice(4):'';
+  for(const k in SUP){if(SUP[k].u&&!was.has(k)){
+    if(k===open)markSup(k);else if(supOK)toast(`Support: new message from ${k}`,()=>openSup(k))}}
+  supOK=true;cwBadge();if(CH.open&&CH.with==='sup:')supInbox()}
+function markSup(k){if(SUP[k]&&SUP[k].u){delete SUP[k].u;cwBadge();api(`supportin/${k}/u`,'DELETE').catch(()=>{})}}
+async function supInbox(){
+  const p=$('#cp');if(!p||!me||me.role!=='admin')return;
+  CH.open=true;CH.with='sup:';closeStream();p.style.display='flex';
+  const L=Object.entries(SUP).filter(([k,v])=>v&&v.t).sort((a,b)=>b[1].t-a[1].t),ps={};
+  await Promise.all(L.map(async([k])=>{try{ps[k]=await getProf(k)}catch(e){}}));
+  if(!CH.open||CH.with!=='sup:')return;
+  p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button><b>Support inbox</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div><div class="cx-b">
+  ${L.length?L.map(([k,v])=>`<div class="cx-i" tabindex="0" data-k="${esc(k)}" onclick="openSup(this.dataset.k)" onkeydown="event.key==='Enter'&&openSup(this.dataset.k)">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${esc(v.p||'')}</small></div><small style="flex:none">${ago(v.t)}</small>${v.u?'<i class="ud"></i>':''}</div>`).join(''):'<p class="mut" style="padding:24px 20px;text-align:center">No support messages.<br>You are all caught up.</p>'}</div>`}
+async function openSup(U){
+  if(!me||me.role!=='admin')return;
+  cwInit();CH.open=true;CH.with='sup:'+U;CH.msgs={};closeStream();
+  const p=$('#cp');p.style.display='flex';
+  const pf=(await getProf(U).catch(()=>null))||{name:U};
+  if(CH.with!=='sup:'+U)return;
+  p.innerHTML=`<div class="cx-h"><button class="g s" onclick="supInbox()" aria-label="Back">←</button>${av(pf,34)}<b>${esc(pf.name)}</b><button class="g s" data-k="${esc(U)}" onclick="supDone(this.dataset.k)" title="Remove this conversation from the inbox">Done</button><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
+  <div class="cx-b" id="cxb"><p class="mut" style="padding:14px 18px 0;font-size:13px">You are replying as <b>Support</b>. Your admin name is not shown to the player.</p><div class="cx-m" id="cxm"></div></div>
+  <div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="Reply as Support" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`;
+  chatStream('sup:'+U);markSup(U);setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
+async function supDone(U){try{await api('supportin/'+U,'DELETE');delete SUP[U];cwBadge();supInbox()}catch(e){toast(e.message)}}
 function cwInit(){if(!me||$('#cw'))return;
   const d=document.createElement('div');d.id='cw';
   d.innerHTML=`<div class="cbw" id="cbw"><button id="cb" onclick="toggleChat()" aria-label="Open chat">💬</button><b class="cbd" id="cbd" hidden></b></div><div id="cp" role="dialog" aria-label="Chat"></div>`;
   document.body.appendChild(d);cwBadge()}
 function cwRemove(){closeStream();CH={open:false,with:null,es:null,msgs:{}};const d=$('#cw');d&&d.remove()}
-function cwBadge(){const b=$('#cbd');if(!b)return;const n=Object.keys(IN.unread).length;b.hidden=!n;b.textContent=n>9?'9+':n;$('#cbw').classList.toggle('has',n>0)}
-function toggleChat(){if(CH.open)closeChat();else{CH.open=true;CH.with?openChat(CH.with):chatList()}}
+function cwBadge(){const b=$('#cbd');if(!b)return;const n=Object.keys(IN.unread).length+supN();b.hidden=!n;b.textContent=n>9?'9+':n;$('#cbw').classList.toggle('has',n>0)}
+function toggleChat(){if(CH.open)closeChat();else{CH.open=true;const w=CH.with;!w?chatList():w==='sup:'?supInbox():w.startsWith('sup:')?openSup(w.slice(4)):openChat(w)}}
 function closeChat(){CH.open=false;closeStream();const p=$('#cp');if(p)p.style.display='none'}
 function closeStream(){CH.es&&CH.es.close();CH.es=null}
 function clearUnread(k){if(IN.unread[k]){delete IN.unread[k];cwBadge();api(`inbox/${me.k}/unread/${k}`,'DELETE').catch(()=>{})}}
 async function chatList(){
   const p=$('#cp');if(!p||!me)return;CH.open=true;CH.with=null;closeStream();p.style.display='flex';
-  const ks=[...new Set([...Object.keys(IN.fr),...Object.keys(IN.th)])];
+  const ks=[...new Set([...Object.keys(IN.fr),...Object.keys(IN.th)])].filter(k=>k!=='@support');
   ks.sort((a,b)=>((IN.unread[b]&&IN.unread[b].t)||IN.th[b]||0)-((IN.unread[a]&&IN.unread[a].t)||IN.th[a]||0));
   const ps={};await Promise.all(ks.map(async k=>{try{ps[k]=await gp(k)}catch(e){}}));
   if(!CH.open||CH.with!==null)return;
   const it=k=>{const u=IN.unread[k];return `<div class="cx-i" tabindex="0" onclick="openChat('${k}')" onkeydown="event.key==='Enter'&&openChat('${k}')">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${u?esc(u.p):(IN.fr[k]?'Tap to chat':(k[0]==='@'?'Announcements':'Message'))}</small></div>${u?'<i class="ud"></i>':''}</div>`};
   p.innerHTML=`<div class="cx-h"><b>Chat</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div><div class="cx-b">
   ${me.role==='admin'?`<div class="cx-i" tabindex="0" onclick="openChat('*all')" onkeydown="event.key==='Enter'&&openChat('*all')"><span style="font-size:30px;width:40px;text-align:center">📢</span><div style="flex:1"><b>Broadcast</b><small>Message every account</small></div></div>`:''}
-  ${ks.length?ks.map(it).join(''):'<p class="mut" style="padding:24px 20px;text-align:center">No chats yet.<br>Add a friend, then message them here.</p>'}</div>`}
+  ${me.role==='admin'?`<div class="cx-i" tabindex="0" onclick="supInbox()" onkeydown="event.key==='Enter'&&supInbox()"><span style="font-size:30px;width:40px;text-align:center">🛟</span><div style="flex:1"><b>Support inbox</b><small>${supN()?supN()+' waiting for a reply':'No new messages'}</small></div>${supN()?'<i class="ud"></i>':''}</div>`:`<div class="cx-i" tabindex="0" onclick="openChat('@support')" onkeydown="event.key==='Enter'&&openChat('@support')">${av(SYS['@support'],40)}<div style="flex:1;min-width:0"><b>Support</b><small>${IN.unread['@support']?esc(IN.unread['@support'].p):'Ask us anything'}</small></div>${IN.unread['@support']?'<i class="ud"></i>':''}</div>`}
+  ${ks.length?ks.map(it).join(''):'<p class="mut" style="padding:24px 20px;text-align:center">No friend chats yet.<br>Add a friend, then message them here.</p>'}</div>`}
 async function openChat(k){
   if(!me||(k==='*all'&&me.role!=='admin'))return;
   cwInit();CH.open=true;CH.with=k;CH.msgs={};closeStream();
   const p=$('#cp');p.style.display='flex';
-  const all=k==='*all',sys=k[0]==='@',pf=all?{name:'Broadcast'}:(await gp(k).catch(()=>null))||{name:k};
+  const all=k==='*all',sys=k[0]==='@'&&k!=='@support',pf=all?{name:'Broadcast'}:(await gp(k).catch(()=>null))||{name:k};
   if(CH.with!==k)return;
   p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button>${all?'<span style="font-size:26px">📢</span>':av(pf,34)}<b>${esc(pf.name)}</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
-  <div class="cx-b" id="cxb">${all?'<p class="mut" style="padding:16px 18px">Type <code>*admin/all</code> to send as MODERATOR, or <code>*admin/news</code> to send as News, then a space and your message. It is delivered to every other account.</p>':''}<div class="cx-m" id="cxm"></div></div>
-  ${sys?'<div class="cx-f"><p class="mut" style="font-size:14px;padding:4px 6px">This is an announcement channel. Replies are not available.</p></div>':`<div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="${all?'*admin/all your message':'Write a message'}" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`}`;
+  <div class="cx-b" id="cxb">${k==='@support'?'<p class="mut" style="padding:16px 18px 0;font-size:14px">Need help? Tell us your concern and our support team will reply right here.</p>':''}${all?'<p class="mut" style="padding:16px 18px">Type <code>*admin/all</code> to send as MODERATOR, or <code>*admin/news</code> to send as News, then a space and your message. It is delivered to every other account.</p>':''}<div class="cx-m" id="cxm"></div></div>
+  ${sys?'<div class="cx-f"><p class="mut" style="font-size:14px;padding:4px 6px">This is an announcement channel. Replies are not available.</p></div>':`<div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="${all?'*admin/all your message':k==='@support'?'Describe your concern':'Write a message'}" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`}`;
   if(!all){clearUnread(k);chatStream(k)}
   if(!sys)setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
 function chatStream(k){closeStream();CH.msgs={};
-  const e=new EventSource(`${DB}/chats/${pair(me.k,k)}.json?orderBy=%22$key%22&limitToLast=50`);CH.es=e;
+  const e=new EventSource(`${DB}/chats/${k.startsWith('sup:')?pair('@support',k.slice(4)):pair(me.k,k)}.json?orderBy=%22$key%22&limitToLast=50`);CH.es=e;
   const h=ev=>{try{const {path,data}=JSON.parse(ev.data);
     if(path==='/'){if(ev.type==='put')CH.msgs=data||{};else Object.assign(CH.msgs,data||{})}
     else if(ev.type==='put'){const id=path.split('/')[1];if(data===null)delete CH.msgs[id];else if(path.split('/').length===2)CH.msgs[id]=data}
@@ -1254,7 +1296,7 @@ function chatStream(k){closeStream();CH.msgs={};
   e.addEventListener('put',h);e.addEventListener('patch',h)}
 function paintMsgs(){const m=$('#cxm');if(!m)return;
   const L=Object.entries(CH.msgs).sort((a,b)=>a[0]<b[0]?-1:1);
-  m.innerHTML=L.length?L.map(([id,x])=>`<div class="mb ${x.f===me.k?'me':'th'}">${esc(x.t)}<small>${new Date(x.ts).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</small></div>`).join(''):'<p class="mut" style="text-align:center;margin-top:30px">Say hi 👋</p>';
+  m.innerHTML=L.length?L.map(([id,x])=>`<div class="mb ${(x.f===me.k||(x.f==='@support'&&String(CH.with).startsWith('sup:')))?'me':'th'}">${esc(x.t)}<small>${new Date(x.ts).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</small></div>`).join(''):`<p class="mut" style="text-align:center;margin-top:30px">${CH.with==='@support'?'No messages yet. Write your concern below.':'Say hi 👋'}</p>`;
   const b=$('#cxb');b.scrollTop=b.scrollHeight}
 async function sendChat(){
   const inp=$('#ci');if(!inp||!me)return;let t=inp.value.trim().slice(0,500);if(!t)return;
@@ -1270,6 +1312,14 @@ async function sendChat(){
       await mp(o);toast(`Sent as ${nm(from)} to ${us.length} account${us.length>1?'s':''}`);
       if(to==='*all'){const m=$('#cxm');if(m){m.insertAdjacentHTML('beforeend',`<div class="mb me">${esc(t)}<small>Sent as ${nm(from)} to ${us.length} account${us.length>1?'s':''}</small></div>`);const b=$('#cxb');b.scrollTop=b.scrollHeight}}
       return}
+    if(to==='@support'&&me.role!=='admin'){
+      inp.value='';const msg={f:me.k,t,ts};CH.msgs[id]=msg;paintMsgs();
+      await mp({[`chats/${pair(me.k,'@support')}/${id}`]:msg,[`supportin/${me.k}`]:{t:ts,p:t.slice(0,60),u:1}});
+      return}
+    if(String(to).startsWith('sup:')&&to.length>4){
+      const u=to.slice(4);inp.value='';const msg={f:'@support',t,ts};CH.msgs[id]=msg;paintMsgs();
+      await mp({[`chats/${pair('@support',u)}/${id}`]:msg,[`inbox/${u}/unread/@support`]:{t:ts,p:t.slice(0,60)},[`supportin/${u}/u`]:null});
+      if(SUP[u])delete SUP[u].u;cwBadge();return}
     if(to==='*all')return toast('Start with *admin/all or *admin/news, a space, then your message');
     if(to[0]==='@')return toast('Announcements cannot be replied to');
     if(!(IN.fr[to]||IN.th[to]))return toast('You can only chat with friends');
