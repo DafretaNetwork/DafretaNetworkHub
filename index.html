@@ -552,6 +552,14 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .ftb{grid-column:1/-1}
 #nl a[href="#/support"]::before{content:'🛟'}
 }
+/* ---- card game toggle ---- */
+.cg-tog{position:relative;display:inline-block;width:52px;height:28px;flex:none;cursor:pointer}
+.cg-tog input{opacity:0;width:0;height:0;position:absolute}
+.cg-sl{position:absolute;inset:0;background:#14243c;border-radius:14px;transition:.3s;border:1px solid var(--line)}
+.cg-sl:before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#7f93ad;border-radius:50%;transition:.3s}
+.cg-tog input:checked+.cg-sl{background:var(--ok);border-color:var(--ok)}
+.cg-tog input:checked+.cg-sl:before{transform:translateX(24px);background:#fff}
+
 </style>
 </head>
 <body>
@@ -626,6 +634,7 @@ async function boot(){
   }catch(e){return $('#app').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
   await Promise.race([initLoc(),new Promise(r=>setTimeout(r,2500))]);
   const had=LOC.ok;
+  try{const cgcfg=await api('config/cardgame');CGON=!!(cgcfg&&cgcfg.enabled)}catch(e){}
   afterAuth();route();earlyCheck();
   if(me&&me.role==='admin')adminSync();
   if(!had)initLoc().then(()=>{const e=$('#shop');if(e)e.outerHTML=shopHTML()});
@@ -646,7 +655,7 @@ function afterAuth(){inOK=false;IN=E0();SUP={};supOK=false;nav();startIn();cwIni
 const unseen=()=>Object.values(IN.notes).filter(n=>n.t>(+IN.seen||0)).length;
 function nav(){setTimeout(watch,0);
   const fc=me?Object.keys(IN.reqs).length+unseen():0;
-  $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goSec(\'shop\')">Shop</a><a class="l" href="#/news" onclick="return goSec(\'news\')">News</a><a class="l mo-only" href="#/support" onclick="openSupport();return false">Support</a>'+(me?`<a class="l" href="#/friends">Friends${fc?`<b class="dot">${fc}</b>`:''}</a><a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s lo" onclick="askLogout()">Log out</button>`
+  $('#nl').innerHTML='<a class="l" href="#/shop" onclick="return goSec(\'shop\')">Shop</a><a class="l" href="#/news" onclick="return goSec(\'news\')">News</a>'+'<a class="l mo-only" href="#/support" onclick="openSupport();return false">Support</a>'+(me?`<a class="l" href="#/friends">Friends${fc?`<b class="dot">${fc}</b>`:''}</a><a class="l" href="#/me">My account</a>${me.role==='admin'?`<a class="l" href="#/admin" onclick="atab=pend?'orders':atab">Admin${pend?`<b class="dot">${pend}</b>`:''}</a>`:''}<a class="l" href="#/char/${me.k}">My page</a><button class="g s lo" onclick="askLogout()">Log out</button>`
   :`<a class="l" href="#/login">Log in</a><button class="s" onclick="location.hash='#/register'">Create account</button>`);tabBar(fc)}
 function askLogout(){
   modal(`<div style="text-align:center;padding:10px 0 4px"><div style="font-size:54px">👋</div><div class="mt" style="margin-top:8px">Log out?</div>
@@ -665,6 +674,7 @@ async function route(){
     if(pg==='me')return me?meV():loginV();
     if(pg==='friends')return friendsV();
     if(pg==='admin')return me&&me.role==='admin'?(arg==='user'?editV(arg2):adminV()):view('<div class="msg">Admins only.</div>');
+    if(pg==='cardgame')return cardgameV();
     homeV();
   }catch(e){view(`<div class="msg">${esc(e.message)}</div>`)}
 }
@@ -697,6 +707,7 @@ async function homeV(){
   <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way.</p>
   <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}<button class="g" onclick="goSec('shop')">Visit shop</button></div></div>
   <div style="display:grid;place-items:center">${av(you,220)}</div></div></section>
+  ${(CGON||(me&&me.role==='admin'))?`<div class="box" style="margin:22px 0;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap"><div><h2 style="margin:0">Dafreta Card Battle</h2><p class="mut" style="margin:6px 0 0">4v4 card duel. Build your team and battle!${CGON?'':' (Admin preview — OFF for players)'}</p></div><button onclick="location.hash='#/cardgame'">▶ Play Now!</button></div>`:''}
   <div class="sec-h"><h2>Top collectors</h2><span class="mut">Most badges earned</span></div>
   ${pr.length?'':'<p class="mut">No public players yet.</p>'}
   <div class="pod">${top.map((p,i)=>`<a class="pc r${i+1}" href="${lk(p)}">${award(i+1)}${av(p,i?112:148)}<b>${esc(p.name)}</b><span class="mut">${cnt(p)} badges</span></a>`).join('')}</div>
@@ -837,7 +848,7 @@ async function chPass(){
   const h=await sha(np);await api('auth/'+me.k,'PATCH',{hash:h});localStorage.dn_s=JSON.stringify({u:me.k,h});toast('Password changed');meV()}
 
 /* ---------- admin ---------- */
-const AT=[['players','Players'],['codes','Badge codes'],['inv','Inventory'],['news','News'],['orders','Payments']];
+const AT=[['players','Players'],['codes','Badge codes'],['inv','Inventory'],['news','News'],['orders','Payments'],['cardgame','Dafreta Card Battle']];
 /* ---------- "I'm here since day 1!" auto badge ----------
    config/early = {badge:<badge id>, until:<timestamp>}. It never touches badge codes, so code stock is unchanged.
    New accounts get it at sign-up; older accounts get it once at their next login (profiles/{k}/eb marks "already handled"). */
@@ -893,10 +904,208 @@ async function adminV(){
   else if(atab==='orders')body=await ordersHTML();
   else if(atab==='inv')body=await invHTML();
   else if(atab==='news')body=await newsAdminHTML();
+  else if(atab==='cardgame')body=await cardgameAdminHTML();
   else{await getCodes();EARLY=await api('config/early').catch(()=>null);body=codesHTML();CNC.n=new Set([...Object.keys(bdg),...Object.entries(codes).map(([c,d])=>d.badge||c)]).size;CNC.t=Date.now()}
   const C=await adminCounts();pend=C.orders;nav();
   view(`<h2 style="margin-bottom:14px">Admin</h2><div class="tabs">${AT.map(([k,l])=>`<div class="tab ${atab===k?'on':''}" onclick="atab='${k}';adminV()">${l}<span class="tn${k==='orders'&&C.orders?' hot':''}">${C[k]}</span></div>`).join('')}</div><div class="box" style="overflow-x:auto">${body}</div>`);
   if(atab==='inv'){paintIP();paintTags()}
+}
+/* ---- Dafreta Card Battle admin ---- */
+const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[],equipment:[],buffs:[]});
+async function cardgameAdminHTML(){
+  let cfg=null;
+  try{cfg=await api('config/cardgame')}catch(e){}
+  CGON=!!(cfg&&cfg.enabled);
+  const heroes=await api('cardgame/heroes').catch(()=>null)||{};
+  const hList=Object.entries(heroes);
+  AILS=await api('cardgame/ailments').catch(()=>null)||{};
+  return `<div style="margin-bottom:28px">
+    <h3>Game Visibility</h3>
+    <p class="mut" style="margin:6px 0 14px;font-size:14px">When ON, the game appears on the homepage (Play Now!) and all players can access it. When OFF, it is only visible to admins.</p>
+    <div style="display:flex;align-items:center;gap:16px">
+      <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}">
+        <input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)">
+        <span class="cg-sl"></span>
+      </label>
+      <span id="cg-status" style="font-weight:700;color:${CGON?'var(--ok)':'var(--mute)'}">${CGON?'ON — Visible to all players':'OFF — Admin only'}</span>
+    </div>
+  </div>
+
+  <h3>${HF.id?'Edit Hero':'Add Hero'}</h3>
+  <div id="hm" style="margin:8px 0"></div>
+  <div class="f2" style="margin:10px 0">
+    <div><label>Hero Name</label><input id="hn" maxlength="40" value="${esc(HF.name)}" placeholder="e.g. Sir Aldric"></div>
+    <div><label>Class</label><select id="hcl" onchange="this.style.borderColor=HERO_COLORS[this.value];this.style.color=HERO_COLORS[this.value]" style="border-color:${HERO_COLORS[HF.class_]};color:${HERO_COLORS[HF.class_]};font-weight:700">${HERO_CLASSES.map(c=>`<option style="color:${HERO_COLORS[c]}"${HF.class_===c?' selected':''}>${c}</option>`).join('')}</select></div>
+    <div><label>Max HP</label><input id="hhp" type="number" min="1" max="9999" value="${HF.hp||100}"></div>
+    <div><label>Base ATK</label><input id="hatk" type="number" min="0" max="9999" value="${HF.atk||15}"></div>
+  </div>
+  <label>Hero Portrait <span class="mut" style="font-weight:400">(used as this hero's character in battle — PNG with transparent background looks best)</span></label>
+  <div class="row" style="align-items:center;margin:6px 0 4px;gap:10px">
+    <button class="s" onclick="$('#hif').click()">Upload portrait</button>
+    <span id="hpv">${HF.img?`<img src="${HF.img}" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`:''}</span>
+    ${HF.img?'<button class="g s" onclick="HF.img=\'\';document.querySelector(\'#hpv\').innerHTML=\'\';this.remove()">Remove</button>':''}
+  </div>
+  <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)">
+
+  <h4 style="margin:18px 0 8px">Cards</h4>
+  <p class="mut" style="margin-bottom:10px;font-size:14px">Define each card this hero can use — name, type, stat value, and which status effect it applies.</p>
+  <div id="hcards">${renderCardList()}</div>
+  <button class="s g" style="margin-top:8px" onclick="addCardSlot()">+ Add Card</button>
+
+  <h4 style="margin:18px 0 8px">Equipment</h4>
+  <p class="mut" style="margin-bottom:10px;font-size:14px">Define equipment items this hero can equip and their stat bonuses.</p>
+  <div id="hequip">${renderEquipList()}</div>
+  <button class="s g" style="margin-top:8px" onclick="addEquipSlot()">+ Add Equipment</button>
+
+  <h4 style="margin:18px 0 8px">Status Ailments (Buffs &amp; Debuffs)</h4>
+  <p class="mut" style="margin-bottom:10px;font-size:14px">Create buffs/debuffs with an uploaded PNG icon. They are shared by all heroes — assign them to cards above. Changes here save instantly.</p>
+  <div id="ailist">${renderAilList()}</div>
+  <div class="bx2" style="margin-top:8px"><div class="f2" style="margin:0;gap:8px">
+    <div><label>Name</label><input id="an" maxlength="30" placeholder="e.g. Burn"></div>
+    <div><label>Type</label><select id="aty"><option value="debuff">debuff</option><option value="buff">buff</option></select></div>
+    <div><label>Effect</label><select id="aef">${Object.entries(AIL_EFFECTS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>
+    <div><label>Value (dmg/heal per turn or %)</label><input id="av" type="number" min="0" value="5"></div>
+    <div style="grid-column:1/-1"><label>Description (optional)</label><input id="ads" maxlength="80" placeholder="e.g. Takes damage each turn"></div>
+  </div>
+  <div class="row" style="align-items:center;gap:10px;margin-top:8px"><button class="s" onclick="$('#aif').click()">Upload PNG icon</button><span id="aip"></span><button class="s" onclick="saveAil()">+ Add ailment</button></div>
+  <input id="aif" type="file" accept="image/png" hidden onchange="upAilIcon(this)"></div>
+
+  <div class="row" style="margin:22px 0 32px">
+    <button onclick="saveHero()">💾 ${HF.id?'Save changes':'Add hero'}</button>
+    ${HF.id?`<button class="g" onclick="HF=emptyHF();atab='cardgame';adminV()">Cancel</button>`:''}
+  </div>
+
+  <h3 style="margin-bottom:10px">Heroes (${hList.length})</h3>
+  ${hList.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">${hList.map(([id,h])=>heroCardHTML(id,h)).join('')}</div>`:'<p class="mut">No heroes yet. Add your first one above.</p>'}
+
+  <div style="margin-top:36px;padding-top:20px;border-top:1px solid var(--line)">
+    <h3>Play the game</h3>
+    <p class="mut" style="margin:6px 0 14px;font-size:14px">Open the game in a full-screen view. You can also share the <code>#/cardgame</code> link with players${CGON?'':' (currently OFF — only admins can access it)'}.</p>
+    <div class="row"><button onclick="location.hash='#/cardgame'">🎮 Open Card Battle</button></div>
+  </div>`;
+}
+
+function heroCardHTML(id,h){
+  const icon=HERO_ICONS[h.class_]||'⚔️',hc=HERO_COLORS[h.class_]||'var(--gold)';
+  return `<div class="box" style="padding:16px;display:flex;flex-direction:column;border-top:3px solid ${hc}">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      ${h.img?`<img src="${esc(h.img)}" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none">`:`<div style="width:72px;height:72px;background:#14243c;border-radius:8px;display:grid;place-items:center;font-size:34px;flex:none">${icon}</div>`}
+      <div style="min-width:0;flex:1">
+        <b style="font:700 17px 'Chakra Petch'">${esc(h.name||'Unnamed')}</b>
+        <div style="font-size:13px;margin:2px 0"><span style="background:${hc};color:#111;font-weight:700;padding:1px 8px;border-radius:99px">${esc(h.class_||'')}</span></div>
+        <div style="font-size:13px;color:var(--mute);margin-top:4px">❤️ <b style="color:var(--ink)">${+h.hp||0}</b> HP &nbsp; ⚔️ <b style="color:var(--ink)">${+h.atk||0}</b> ATK</div>
+        <div style="font-size:13px;color:var(--mute);margin-top:2px">🃏 <b style="color:var(--ink)">${(h.cards||[]).length}</b> cards &nbsp; 🛡️ <b style="color:var(--ink)">${(h.equipment||[]).length}</b> equipment</div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="s" onclick="editHero('${esc(id)}')">✏️ Edit</button>
+      <button class="d s" onclick="deleteHero('${esc(id)}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+function renderCardList(){
+  if(!HF.cards.length)return '<p class="mut" style="font-size:14px">No cards yet.</p>';
+  const types=['attack','heal','mana','buff','debuff','ultimate'];
+  return HF.cards.map((c,i)=>`<div class="bx2" style="margin-bottom:8px">
+    <div class="f2" style="margin:0;gap:8px">
+      <div><label>Card Name</label><input value="${esc(c.name||'')}" oninput="HF.cards[${i}].name=this.value" placeholder="e.g. Flame Strike"></div>
+      <div><label>Type</label><select onchange="HF.cards[${i}].type=this.value">${types.map(t=>`<option${(c.type||'attack')===t?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div><label>Value (dmg/heal/mana)</label><input type="number" min="0" value="${+c.value||0}" oninput="HF.cards[${i}].value=+this.value"></div>
+      <div><label>Mana Cost</label><input type="number" min="0" max="20" value="${+c.manaCost||0}" oninput="HF.cards[${i}].manaCost=+this.value"></div>
+      <div><label>Status ailment applied (optional)</label><select onchange="HF.cards[${i}].ail=this.value">
+        <option value="">None</option>
+        ${Object.entries(AILS).map(([k,a])=>`<option value="${k}"${c.ail===k?' selected':''}>${esc(a.name)} (${a.type})</option>`).join('')}
+      </select></div>
+      <div><label>Ailment duration (turns)</label><input type="number" min="1" max="9" value="${+c.dur||2}" oninput="HF.cards[${i}].dur=+this.value"></div>
+    </div>
+    <div style="margin-top:8px"><button class="d s" onclick="removeCard(${i})">Remove card</button></div>
+  </div>`).join('');}
+
+function renderEquipList(){
+  if(!HF.equipment.length)return '<p class="mut" style="font-size:14px">No equipment yet.</p>';
+  const slots=['weapon','armor','accessory'];
+  return HF.equipment.map((e,i)=>`<div class="bx2" style="margin-bottom:8px">
+    <div class="f2" style="margin:0;gap:8px">
+      <div><label>Equipment Name</label><input value="${esc(e.name||'')}" oninput="HF.equipment[${i}].name=this.value" placeholder="e.g. Dragon Sword"></div>
+      <div><label>Slot</label><select onchange="HF.equipment[${i}].slot=this.value">${slots.map(s=>`<option${(e.slot||'weapon')===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div><label>HP Bonus</label><input type="number" value="${+e.hp||0}" oninput="HF.equipment[${i}].hp=+this.value"></div>
+      <div><label>ATK Bonus</label><input type="number" value="${+e.atk||0}" oninput="HF.equipment[${i}].atk=+this.value"></div>
+      <div style="grid-column:1/-1"><label>Description / Effect</label><input value="${esc(e.desc||'')}" oninput="HF.equipment[${i}].desc=this.value" placeholder="e.g. +10 ATK, ignores armor"></div>
+    </div>
+    <div style="margin-top:8px"><button class="d s" onclick="removeEquip(${i})">Remove</button></div>
+  </div>`).join('');}
+
+function renderBuffList(){
+  return STATUS_EFFECTS.map(s=>{
+    const entry=HF.buffs.find(b=>b.effect===s)||{effect:s,icon:''};
+    return `<div><label>${STATUS_LABELS[s]} — custom icon (optional)</label>
+    <div class="row" style="gap:8px"><input maxlength="4" placeholder="default" value="${esc(entry.icon||'')}" style="max-width:120px" oninput="setBuffIcon('${s}',this.value)"><span class="mut" style="font-size:13px;align-self:center">Default: ${STATUS_LABELS[s].split(' ')[0]}</span></div></div>`;
+  }).join('');}
+
+function renderAilList(){const e=Object.entries(AILS);if(!e.length)return '<p class="mut" style="font-size:14px">No ailments yet.</p>';
+  return `<div style="display:flex;flex-wrap:wrap;gap:8px">${e.map(([k,a])=>`<div class="bx2" style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-left:3px solid ${a.type==='buff'?'#5be39b':'#ff5a5a'}">${a.icon?`<img src="${a.icon}" style="width:28px;height:28px;object-fit:contain">`:''}<div><b>${esc(a.name)}</b><div class="mut" style="font-size:12px">${a.type} · ${AIL_EFFECTS[a.effect]||a.effect} ${+a.value||''}</div></div><button class="d s" onclick="delAil('${esc(k)}')">✕</button></div>`).join('')}</div>`}
+let AIL_ICON='';
+async function upAilIcon(inp){const f=inp.files[0];if(!f)return;try{AIL_ICON=await shrinkPng(f,96);$('#aip').innerHTML=`<img src="${AIL_ICON}" style="width:32px;height:32px;object-fit:contain">`}catch(e){toast(e.message)}}
+async function saveAil(){const name=$('#an').value.trim();if(!name)return toast('Ailment name required');if(!AIL_ICON)return toast('Upload a PNG icon');
+  const id='a'+Date.now().toString(36);const a={name,type:$('#aty').value,effect:$('#aef').value,value:+$('#av').value||0,desc:$('#ads').value.trim(),icon:AIL_ICON};
+  try{await api('cardgame/ailments/'+id,'PUT',a);AILS[id]=a;AIL_ICON='';$('#an').value='';$('#ads').value='';$('#aip').innerHTML='';$('#ailist').innerHTML=renderAilList();const c=$('#hcards');if(c)c.innerHTML=renderCardList();toast('Ailment added')}catch(e){toast(e.message)}}
+async function delAil(id){if(!confirm('Delete this ailment?'))return;try{await api('cardgame/ailments/'+id,'DELETE');delete AILS[id];$('#ailist').innerHTML=renderAilList();const c=$('#hcards');if(c)c.innerHTML=renderCardList()}catch(e){toast(e.message)}}
+function setBuffIcon(effect,icon){const i=HF.buffs.findIndex(b=>b.effect===effect);if(i>=0)HF.buffs[i].icon=icon;else HF.buffs.push({effect,icon})}
+function addCardSlot(){HF.cards.push({name:'',type:'attack',value:0,manaCost:0,ail:'',dur:2});const e=$('#hcards');if(e)e.innerHTML=renderCardList()}
+function removeCard(i){HF.cards.splice(i,1);const e=$('#hcards');if(e)e.innerHTML=renderCardList()}
+function addEquipSlot(){HF.equipment.push({name:'',slot:'weapon',hp:0,atk:0,desc:''});const e=$('#hequip');if(e)e.innerHTML=renderEquipList()}
+function removeEquip(i){HF.equipment.splice(i,1);const e=$('#hequip');if(e)e.innerHTML=renderEquipList()}
+
+async function upHeroImg(inp){const f=inp.files[0];if(!f)return;try{HF.img=await shrinkPng(f,400);const e=$('#hpv');if(e)e.innerHTML=`<img src="${HF.img}" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`}catch(e){toast(e.message)}}
+
+async function saveHero(){
+  const m=$('#hm'),bad=t=>{m.innerHTML=`<div class="msg">${t}</div>`;m.scrollIntoView({behavior:'smooth',block:'nearest'})};
+  const name=$('#hn').value.trim(),cls=$('#hcl').value,hp=+$('#hhp').value,atk=+$('#hatk').value;
+  if(!name)return bad('Hero name is required.');
+  if(!(hp>0))return bad('HP must be greater than 0.');
+  const isEdit=!!HF.id;
+  try{
+    const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
+    let created=Date.now();
+    if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
+    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,cards:HF.cards,equipment:HF.equipment,buffs:HF.buffs,created,updated:Date.now()};
+    await api('cardgame/heroes/'+id,'PUT',data);
+    HF=emptyHF();
+    toast(isEdit?'Hero updated':'Hero added');atab='cardgame';adminV();
+  }catch(e){bad(esc(e.message))}
+}
+
+async function editHero(id){
+  try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
+    HF={id,name:h.name||'',class_:h.class_||'Knight',hp:h.hp||100,atk:h.atk||0,img:h.img||'',cards:h.cards||[],equipment:h.equipment||[],buffs:h.buffs||[]};
+    atab='cardgame';await adminV();window.scrollTo(0,0)
+  }catch(e){toast(e.message)}}
+
+async function deleteHero(id){if(!confirm('Delete this hero?'))return;
+  try{await api('cardgame/heroes/'+id,'DELETE');if(HF.id===id)HF=emptyHF();toast('Hero deleted');adminV()}catch(e){toast(e.message)}}
+
+async function toggleCG(el){
+  const on=el.checked;CGON=on;
+  try{await api('config/cardgame','PUT',{enabled:on,updated:Date.now()});
+    const s=$('#cg-status');if(s){s.textContent=on?'ON — Visible to all players':'OFF — Admin only';s.style.color=on?'var(--ok)':'var(--mute)'}
+    toast(on?'Game is now visible to all players':'Game is now admin-only');nav()
+  }catch(e){CGON=!on;el.checked=!on;toast(e.message)}}
+
+/* ---- Card Battle game view ---- */
+async function cardgameV(){
+  let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}
+  CGON=!!(cfg&&cfg.enabled);
+  if(!CGON&&!(me&&me.role==='admin')){
+    view(`<div class="box auth" style="text-align:center;padding:40px 24px">
+      <div style="font-size:64px;margin-bottom:14px">🃏</div>
+      <h2>Dafreta Card Battle</h2>
+      <p class="mut" style="margin:14px auto;max-width:36ch">The card battle game is not available yet. Check back soon!</p>
+      <button onclick="location.hash='#/'">← Back to Home</button>
+    </div>`);return;}
+  view(`<div style="margin:-30px -20px 0">
+    <iframe src="./Dafreta_card_battle.html" title="Dafreta Card Battle" style="width:100%;height:calc(100vh - 60px);border:none;display:block" allowfullscreen></iframe>
+  </div>`);
 }
 async function delUser(k){
   if(k===me.k)return toast("You can't delete the account you are logged in with");
@@ -991,6 +1200,15 @@ const invCmp=(a,b)=>{const x=a[1].order,y=b[1].order,hx=typeof x==='number',hy=t
 const nextOrd=()=>{const o=Object.values(INV.d||{}).map(p=>p.order).filter(x=>typeof x==='number');return o.length?Math.max(...o)+1:undefined};
 const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],tags:[],ph:false,free:false,flink:'',sash:false,created:0});
 let IF=newIF();
+let HF={id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[],equipment:[],buffs:[]};
+const HERO_CLASSES=['Defender','Mage','Healer','Attacker','Specialist'];
+const HERO_COLORS={'Defender':'#f5c451','Mage':'#5aa9ff','Healer':'#5be39b','Attacker':'#ff5a5a','Specialist':'#b07cff'};
+const HERO_ICONS={'Defender':'🛡️','Mage':'🧙','Healer':'🩺','Attacker':'⚔️','Specialist':'🎯'};
+const AIL_EFFECTS={dot:'Damage over time',hot:'Heal over time',atkup:'ATK up %',atkdown:'ATK down %',stun:'Stun (skip turn)',mark:'Marked (takes +% dmg)',shield:'Shield (absorbs dmg)'};
+let AILS={};
+const STATUS_EFFECTS=['burn','poison','stun','weak','attack_up','regen','marked'];
+const STATUS_LABELS={'burn':'🔥 Burn','poison':'☠️ Poison','stun':'⚡ Stun','weak':'💧 Weak','attack_up':'⚔️ Attack Up','regen':'💚 Regen','marked':'🎯 Marked'};
+let CGON=false;
 async function invHTML(){
   const [inv]=await Promise.all([getInv(true),getCats(true)]);
   const L=Object.entries(inv).sort(invCmp);
@@ -1662,9 +1880,9 @@ $('#fy').textContent=new Date().getFullYear();
 /* ---------- admin: tab totals + edit badge description ---------- */
 const CNC={t:0,n:0};
 async function adminCounts(){
-  const [pl,inv,nw,od,bd]=await Promise.all(['auth','inv','news','orders','badges'].map(p=>skeys(p).catch(()=>[])));
+  const [pl,inv,nw,od,bd,hh]=await Promise.all(['auth','inv','news','orders','badges','cardgame/heroes'].map(p=>skeys(p).catch(()=>[])));
   if(Date.now()-CNC.t>60000){try{const c=await api('codes')||{},ids=new Set(bd);for(const k in c)ids.add(c[k].badge||k);CNC.n=ids.size;CNC.t=Date.now()}catch(e){CNC.n=bd.length}}
-  return {players:pl.length,codes:CNC.n||bd.length,inv:inv.length,news:nw.length,orders:od.length}}
+  return {players:pl.length,codes:CNC.n||bd.length,inv:inv.length,news:nw.length,orders:od.length,cardgame:hh.length}}
 function editBadge(id){const d=def(id);
   modal(`<div class="mt" style="padding-right:40px">Edit description</div><p class="mut" style="margin:6px 0 4px">${esc(d.title)}</p><div id="m"></div>
   <label>Short description (shown on the card)</label><input id="ed1" maxlength="160" value="${esc(d.desc||'')}">
@@ -1679,5 +1897,6 @@ async function saveBadgeDesc(id){
   }catch(e){const m=$('#m');if(m)m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}}
 boot();
 </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
