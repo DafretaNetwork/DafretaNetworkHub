@@ -636,7 +636,7 @@ async function adminSync(){
   try{
     const au=await api('auth')||{},pr=await allProfs(),o={};
     const gone=['david','test'].filter(k=>au[k]&&k!==me.k);
-    gone.forEach(k=>{o['auth/'+k]=null;o['profiles/'+k]=null;o['inbox/'+k]=null;o['supportin/'+k]=null;o['presence/'+k]=null;delete au[k]});
+    gone.forEach(k=>{o['auth/'+k]=null;o['profiles/'+k]=null;o['inbox/'+k]=null;o['supportin/'+k]=null;o['supportin/m:'+k]=null;o['presence/'+k]=null;delete au[k]});
     for(const k in au){const isA=au[k].role==='admin',f=!!(pr[k]&&pr[k].adm);if(pr[k]&&isA!==f)o[`profiles/${k}/adm`]=isA?true:null}
     if(Object.keys(o).length){await mp(o);invP();if(gone.length)toast('Removed old demo accounts: '+gone.join(', '))}
     await autoEarly();
@@ -903,7 +903,7 @@ async function delUser(k){
   if(!confirm('Delete '+k+' and all their badges?'))return;
   try{const au=await api('auth')||{};
     if(au[k]&&au[k].role==='admin'&&Object.values(au).filter(a=>a.role==='admin').length<=1)return toast('You need at least one admin account');
-    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');await api('supportin/'+k,'DELETE');await api('presence/'+k,'DELETE');invP();toast('Deleted '+k);adminV()
+    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');await api('supportin/'+k,'DELETE');await api('supportin/m:'+k,'DELETE');await api('presence/'+k,'DELETE');invP();toast('Deleted '+k);adminV()
   }catch(e){toast(e.message)}}
 
 /* ---------- badge codes (admin) ---------- */
@@ -1409,19 +1409,19 @@ function onSup(type,{path,data}){
   else if(pt.length===1){if(type==='put'){if(data===null)delete SUP[pt[0]];else SUP[pt[0]]=data}else{const e=SUP[pt[0]]=SUP[pt[0]]||{};merge(e,data)}}
   else{const e=SUP[pt[0]]=SUP[pt[0]]||{};if(type==='put'){if(data===null)delete e[pt[1]];else e[pt[1]]=data}else merge(e,data)}
   for(const k of Object.keys(SUP))if(!SUP[k]||!Object.keys(SUP[k]).length)delete SUP[k];
-  const open=CH.open&&CH.with&&CH.with.startsWith('sup:')?CH.with.slice(4):'';
+  const open=CH.open&&CH.with?(CH.with.startsWith('sup:')?CH.with.slice(4):CH.with.startsWith('mod:')?'m:'+CH.with.slice(4):''):'';
   for(const k in SUP){if(SUP[k].u&&!was.has(k)){
-    if(k===open)markSup(k);else if(supOK)toast(`Support: new message from ${k}`,()=>openSup(k))}}
+    if(k===open)markSup(k);else if(supOK)toast(k.startsWith('m:')?`Moderator: reply from ${k.slice(2)}`:`Support: new message from ${k}`,()=>k.startsWith('m:')?openMod(k.slice(2)):openSup(k))}}
   supOK=true;cwBadge();if(CH.open&&CH.with==='sup:')supInbox()}
 function markSup(k){if(SUP[k]&&SUP[k].u){delete SUP[k].u;cwBadge();api(`supportin/${k}/u`,'DELETE').catch(()=>{})}}
 async function supInbox(){
   const p=$('#cp');if(!p||!me||me.role!=='admin')return;
   CH.open=true;CH.with='sup:';closeStream();p.style.display='flex';
   const L=Object.entries(SUP).filter(([k,v])=>v&&v.t).sort((a,b)=>b[1].t-a[1].t),ps={};
-  await Promise.all(L.map(async([k])=>{try{ps[k]=await getProf(k)}catch(e){}}));
+  await Promise.all(L.map(async([k])=>{try{ps[k]=await getProf(k.startsWith('m:')?k.slice(2):k)}catch(e){}}));
   if(!CH.open||CH.with!=='sup:')return;
   p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button><b>Support inbox</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div><div class="cx-b">
-  ${L.length?L.map(([k,v])=>`<div class="cx-i" tabindex="0" data-k="${esc(k)}" onclick="openSup(this.dataset.k)" onkeydown="event.key==='Enter'&&openSup(this.dataset.k)">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${esc(v.p||'')}</small></div><small style="flex:none">${ago(v.t)}</small>${v.u?'<i class="ud"></i>':''}</div>`).join(''):'<p class="mut" style="padding:24px 20px;text-align:center">No support messages.<br>You are all caught up.</p>'}</div>`}
+  ${L.length?L.map(([k,v])=>`<div class="cx-i" tabindex="0" data-k="${esc(k)}" onclick="openSupRow(this.dataset.k)" onkeydown="event.key==='Enter'&&openSupRow(this.dataset.k)">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}${k.startsWith('m:')?' <span class="tn" style="margin-left:4px">MODERATOR</span>':''}</b><small>${esc(v.p||'')}</small></div><small style="flex:none">${ago(v.t)}</small>${v.u?'<i class="ud"></i>':''}</div>`).join(''):'<p class="mut" style="padding:24px 20px;text-align:center">No support messages.<br>You are all caught up.</p>'}</div>`}
 async function openSup(U){
   if(!me||me.role!=='admin')return;
   cwInit();CH.open=true;CH.with='sup:'+U;CH.msgs={};closeStream();
@@ -1434,16 +1434,17 @@ async function openSup(U){
   chatStream('sup:'+U);markSup(U);setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
 async function supDone(U){try{await api('supportin/'+U,'DELETE');delete SUP[U];cwBadge();supInbox()}catch(e){toast(e.message)}}
 /* Admin > Players > Message: the player sees this as MODERATOR, never the admin account name */
+const openSupRow=k=>k.startsWith('m:')?openMod(k.slice(2)):openSup(k);
 async function openMod(U){
   if(!me||me.role!=='admin')return;
   cwInit();CH.open=true;CH.with='mod:'+U;CH.msgs={};closeStream();
   const p=$('#cp');p.style.display='flex';
   const pf=(await getProf(U).catch(()=>null))||{name:U};
   if(CH.with!=='mod:'+U)return;
-  p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button>${av(pf,34)}<b>${esc(pf.name)}</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
-  <div class="cx-b" id="cxb"><p class="mut" style="padding:14px 18px 0;font-size:13px">You are messaging as <b>MODERATOR</b>. Your admin name is not shown to ${esc(pf.name)}.</p><div class="cx-m" id="cxm"></div></div>
+  p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button>${av(pf,34)}<b>${esc(pf.name)}</b><button class="g s" data-k="${esc(U)}" onclick="supDone('m:'+this.dataset.k)" title="Remove this conversation from the inbox">Done</button><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
+  <div class="cx-b" id="cxb"><p class="mut" style="padding:14px 18px 0;font-size:13px">You are messaging as <b>MODERATOR</b>. Your admin name is not shown to ${esc(pf.name)}. Their replies arrive in your Support inbox.</p><div class="cx-m" id="cxm"></div></div>
   <div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="Message as MODERATOR" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`;
-  chatStream('mod:'+U);setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
+  chatStream('mod:'+U);markSup('m:'+U);setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
 function cwInit(){if(!me||$('#cw'))return;
   const d=document.createElement('div');d.id='cw';
   d.innerHTML=`<div class="cbw" id="cbw"><button id="cb" onclick="toggleChat()" aria-label="Open chat">💬</button><b class="cbd" id="cbd" hidden></b></div><div id="cp" role="dialog" aria-label="Chat"></div>`;
@@ -1461,7 +1462,7 @@ async function chatList(){
   const ps={};await Promise.all(ks.map(async k=>{try{ps[k]=await gp(k)}catch(e){}}));
   await loadPres(ks.filter(k=>k[0]!=='@'&&IN.fr[k])).catch(()=>{});
   if(!CH.open||CH.with!==null)return;
-  const it=k=>{const u=IN.unread[k];return `<div class="cx-i" tabindex="0" onclick="openChat('${k}')" onkeydown="event.key==='Enter'&&openChat('${k}')">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${u?esc(u.p):(IN.fr[k]?presH(k):(k[0]==='@'?'Announcements':'Message'))}</small></div>${u?'<i class="ud"></i>':''}</div>`};
+  const it=k=>{const u=IN.unread[k];return `<div class="cx-i" tabindex="0" onclick="openChat('${k}')" onkeydown="event.key==='Enter'&&openChat('${k}')">${av(ps[k],40)}<div style="flex:1;min-width:0"><b>${esc((ps[k]||{}).name||k)}</b><small>${u?esc(u.p):(IN.fr[k]?presH(k):(k==='@mod'?'Moderator · tap to reply':k[0]==='@'?'Announcements':'Message'))}</small></div>${u?'<i class="ud"></i>':''}</div>`};
   p.innerHTML=`<div class="cx-h"><b>Chat</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div><div class="cx-b">
   ${me.role==='admin'?`<div class="cx-i" tabindex="0" onclick="openChat('*all')" onkeydown="event.key==='Enter'&&openChat('*all')"><span style="font-size:30px;width:40px;text-align:center">📢</span><div style="flex:1"><b>Broadcast</b><small>Message every account</small></div></div>`:''}
   ${me.role==='admin'?`<div class="cx-i" tabindex="0" onclick="supInbox()" onkeydown="event.key==='Enter'&&supInbox()"><span style="font-size:30px;width:40px;text-align:center">🛟</span><div style="flex:1"><b>Support inbox</b><small>${supN()?supN()+' waiting for a reply':'No new messages'}</small></div>${supN()?'<i class="ud"></i>':''}</div>`:`<div class="cx-i" tabindex="0" onclick="openChat('@support')" onkeydown="event.key==='Enter'&&openChat('@support')">${av(SYS['@support'],40)}<div style="flex:1;min-width:0"><b>Support</b><small>${IN.unread['@support']?esc(IN.unread['@support'].p):'Ask us anything'}</small></div>${IN.unread['@support']?'<i class="ud"></i>':''}</div>`}
@@ -1470,11 +1471,11 @@ async function openChat(k){
   if(!me||(k==='*all'&&me.role!=='admin'))return;
   cwInit();CH.open=true;CH.with=k;CH.msgs={};closeStream();
   const p=$('#cp');p.style.display='flex';
-  const all=k==='*all',sys=k[0]==='@'&&k!=='@support',pf=all?{name:'Broadcast'}:(await gp(k).catch(()=>null))||{name:k};
+  const all=k==='*all',sys=k==='@news',pf=all?{name:'Broadcast'}:(await gp(k).catch(()=>null))||{name:k};
   if(CH.with!==k)return;
   p.innerHTML=`<div class="cx-h"><button class="g s" onclick="chatList()" aria-label="Back">←</button>${all?'<span style="font-size:26px">📢</span>':av(pf,34)}<b>${esc(pf.name)}</b><button class="xr s" onclick="closeChat()" aria-label="Close chat">✕</button></div>
   <div class="cx-b" id="cxb">${k==='@support'?'<p class="mut" style="padding:16px 18px 0;font-size:14px">Need help? Tell us your concern and our support team will reply right here.</p>':''}${all?'<p class="mut" style="padding:16px 18px">Type <code>*admin/all</code> to send as MODERATOR, or <code>*admin/news</code> to send as News, then a space and your message. It is delivered to every other account.</p>':''}<div class="cx-m" id="cxm"></div></div>
-  ${sys?'<div class="cx-f"><p class="mut" style="font-size:14px;padding:4px 6px">Replies are not available here. Need help? <a href="#/support" onclick="openChat(\'@support\');return false">Message Support</a></p></div>':`<div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="${all?'*admin/all your message':k==='@support'?'Describe your concern':'Write a message'}" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`}`;
+  ${sys?'<div class="cx-f"><p class="mut" style="font-size:14px;padding:4px 6px">Replies are not available here. Need help? <a href="#/support" onclick="openChat(\'@support\');return false">Message Support</a></p></div>':`<div class="cx-f"><input id="ci" maxlength="500" autocomplete="off" placeholder="${all?'*admin/all your message':k==='@support'?'Describe your concern':k==='@mod'?'Reply to Moderator':'Write a message'}" onkeydown="event.key==='Enter'&&sendChat()"><button onclick="sendChat()">Send</button></div>`}`;
   if(!all){clearUnread(k);chatStream(k)}
   if(!sys)setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
 function chatStream(k){closeStream();CH.msgs={};
@@ -1513,9 +1514,14 @@ async function sendChat(){
       if(SUP[u])delete SUP[u].u;cwBadge();return}
     if(String(to).startsWith('mod:')&&me.role==='admin'){
       const u=to.slice(4);inp.value='';const msg={f:'@mod',t,ts};CH.msgs[id]=msg;paintMsgs();
-      await mp({[`chats/${pair('@mod',u)}/${id}`]:msg,[`inbox/${u}/unread/@mod`]:{t:ts,p:t.slice(0,60)},[`inbox/${u}/th/@mod`]:ts});
+      await mp({[`chats/${pair('@mod',u)}/${id}`]:msg,[`inbox/${u}/unread/@mod`]:{t:ts,p:t.slice(0,60)},[`inbox/${u}/th/@mod`]:ts,[`supportin/m:${u}/u`]:null});
+      if(SUP['m:'+u])delete SUP['m:'+u].u;cwBadge();
       return}
     if(to==='*all')return toast('Start with *admin/all or *admin/news, a space, then your message');
+    if(to==='@mod'&&me.role!=='admin'){
+      inp.value='';const msg={f:me.k,t,ts};CH.msgs[id]=msg;paintMsgs();
+      await mp({[`chats/${pair(me.k,'@mod')}/${id}`]:msg,[`supportin/m:${me.k}`]:{t:ts,p:t.slice(0,60),u:1}});
+      return}
     if(to[0]==='@')return toast('Announcements cannot be replied to');
     if(!(IN.fr[to]||IN.th[to]))return toast('You can only chat with friends');
     inp.value='';
