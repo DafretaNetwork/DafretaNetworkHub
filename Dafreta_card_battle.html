@@ -114,7 +114,7 @@ const bm=S=>S.s.bx4?4:S.s.bx3?3:S.s.bx2?2:1,tk=S=>S.s.dx4?4:S.s.dx3?3:S.s.dx2?2:
  pw=S=>(S.s.atk?1.4:1)*(S.s.weak?.7:1)*bm(S)*(S.r&&S.r.e=='dmg_pct'?1+(+S.r.v||0)/100:1);
 const kc=s=>s.d?'atk':s.h||s.sh?'sup':'utl',art=s=>s.ic||(s.bomb?'💣':s.d?(s.ap?SD[s.ap[0]][0]:'⚔️'):s.ap?SD[s.ap[0]][0]:s.h?'💚':s.sh?'🛡️':s.dr?'🎴':s.en?'💎':s.me?SD[s.me[0]][0]:'✨');
 const desc=(s,a)=>[s.bomb&&'Bomb: explodes after '+s.bomb.t+' turn'+(s.bomb.t>1?'s':'')+', '+s.bomb.d+' dmg to all foes'+(s.bomb.ap?' + '+SD[s.bomb.ap[0]][0]+' '+SD[s.bomb.ap[0]][1]+' '+s.bomb.ap[1]:''),
- s.d&&(a?'Deal '+Math.round(a*s.d)+' dmg'+(s.x>1?' twice':''):'Deal '+s.d+'x ATK'+(s.x>1?' twice':'')),s.k&&(s.k=='a'?'Hits all foes':'Also hits the foe behind'),
+ s.d&&(a?'Deal '+Math.round(a*s.d)+' dmg'+(s.x>1?' x'+s.x:''):'Deal '+s.d+'x ATK'+(s.x>1?' x'+s.x:'')),s.k&&(s.k=='a'?'Hits all foes':'Also hits the foe behind'),
  s.sh&&'+'+s.sh+' shield'+(s.tm?' (whole team)':''),s.h&&'Heal '+s.h+(s.tm?' (whole team)':''),s.dr&&'Draw '+s.dr,s.en&&'+'+s.en+' energy',
  s.me&&SD[s.me[0]][0]+' '+(s.tm?'team':'ally')+': '+SD[s.me[0]][1]+' '+s.me[1],s.ap&&SD[s.ap[0]][0]+' foe: '+SD[s.ap[0]][1]+' '+s.ap[1]].filter(Boolean).join('. ');
 
@@ -229,7 +229,7 @@ setInterval(()=>{if(over||!P)return;M--;if(turn=='p'&&!busy){tt--;if(tt<=0){endT
 (async()=>{try{const DB='https://dafreta-network-default-rtdb.asia-southeast1.firebasedatabase.app';
 const [hs,as,rs,gs]=await Promise.all(['heroes','ailments','relics','general'].map(k=>fetch(DB+'/cardgame/'+k+'.json').then(r=>r.json()).catch(()=>null)));
 const COL={Defender:'#f5c451',Magic:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a',Specialist:'#b07cff'};
-const EK={dot:'burn',hot:'reg',atkup:'atk',atkdown:'weak',stun:'stun',mark:'mark'},MD={x2:2,x3:3,x4:4},AM={};
+const EK={dot:'burn',hot:'reg',atkup:'atk',atkdown:'weak',stun:'stun',mark:'mark',poison:'poi'},MD={x2:2,x3:3,x4:4},AM={};
 const ic=a=>a.icon?'<img src="'+a.icon+'" style="width:1.2em;height:1.2em;object-fit:contain;vertical-align:middle">':'';
 Object.entries(as||{}).forEach(([id,a])=>{if(!a)return;if(a.effect==='shield'){AM[id]={sh:+a.value||8};return}
  if(MD[a.effect]){const n=MD[a.effect],b=a.type==='buff',k=(b?'bx':'dx')+n;AM[id]={k};SD[k]=[ic(a)||'×'+n,a.name||(b?'Power ×':'Vulnerable ×')+n,a.desc||(b?'deals ×'+n+' damage':'takes ×'+n+' damage')];return}
@@ -244,20 +244,24 @@ Object.entries(gs||{}).forEach(([id,g])=>{if(!g||!g.name)return;const v=+g.value
  else if(fx=='bomb')s.bomb={t:Math.max(1,+g.delay||2),d:v,ap:d||undefined};else return;
  GEN.push({id,s})});
 const LH=Object.entries(hs||{}).map(([id,h],j)=>{if(!h)return null;const cl=h.class_==='Mage'?'Magic':(COL[h.class_]?h.class_:'Specialist'),col=COL[cl],at=Math.max(1,+h.atk||1),cs=(Array.isArray(h.cards)?h.cards:Object.values(h.cards||{})).filter(c=>c&&c.name);
- const o={id:'u'+j,cl,n:h.name||'Hero',col,hp:Math.max(1,+h.hp||50),atk:at,ap:null,img:h.img||ph(col),A:[],S:[],X:null};
- cs.forEach(c=>{const v=+c.value||0,m=AM[c.ail],d=dd(c.ail,c.dur),dmg=v>0?v/at:1;
+ const o={id:'u'+j,cl,n:h.name||'Hero',col,hp:Math.max(1,+h.hp||50),atk:at,ap:null,img:h.img||ph(col),A:[],S:[],X:null,cr:+h.created||0};
+ cs.forEach(c=>{const v=+c.value||0,m=AM[c.ail],d=dd(c.ail,c.dur),dmg=v>0?v/at:1,
+  ex=s=>{if(+c.shield)s.sh=(s.sh||0)+ +c.shield;if(+c.heal)s.h=(s.h||0)+ +c.heal;if(+c.draw)s.dr=+c.draw},
+  hit=s=>{if(+c.hits>1)s.x=Math.min(5,+c.hits);if(c.scope=='pierce')s.k='p';else if(c.scope=='all')s.k='a'};
   if(c.type==='ultimate'){if(o.X)return;const X={n:c.name},u=c.ult||'all';
    if(u=='all'||u=='front'){X.d=dmg;if(u=='all')X.k='a';if(d)X.ap=d;if(m&&m.sh)X.sh=m.sh}
+   else if(u=='ally'){if(v>0)X.h=v;if(d)X.me=d}
    else{if(u=='heal')X.h=v||10;else X.sh=v||10;X.tm=1;if(d)X.me=d}
-   o.X=X;return}
+   ex(X);if(!(X.d||X.h||X.sh||X.me||X.dr))return;o.X=X;return}
   const s={n:c.name,c:Math.max(0,+c.manaCost||0)};
   if(c.type==='heal'){s.h=v||5;if(d)s.me=d}
   else if(c.type==='mana')s.en=v||1;
+  else if(c.type==='draw')s.dr=v||1;
   else if(c.type==='buff'){if(m&&m.sh)s.sh=m.sh;else if(d)s.me=d;else s.sh=v||5}
-  else if(c.type==='debuff'){if(v>0)s.d=v/at;if(d)s.ap=d;if(!s.d&&!s.ap)return}
-  else{s.d=dmg;if(d)s.ap=d;if(m&&m.sh)s.sh=m.sh}
-  o.S.push(s)});
+  else if(c.type==='debuff'){if(v>0){s.d=v/at;hit(s)}if(d)s.ap=d;if(!s.d&&!s.ap)return}
+  else{s.d=dmg;hit(s);if(d)s.ap=d;if(m&&m.sh)s.sh=m.sh}
+  ex(s);o.S.push(s)});
  return o.S.length?o:null}).filter(Boolean);
-if(LH.length)HD.push(...LH);leg()}catch(e){console.warn(e)}menu()})();
+LH.sort((x,y)=>x.cr-y.cr);if(Object.keys(hs||{}).some(k=>k.startsWith('hd_'))&&LH.length>=4)HD.length=0;if(LH.length)HD.push(...LH);hi=[0,1,2,3].filter(i=>i<HD.length);leg()}catch(e){console.warn(e)}menu()})();
 </script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 </body></html>
