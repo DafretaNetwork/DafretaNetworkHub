@@ -74,7 +74,7 @@ const HD=[
 {id:'K',cl:'Defender',n:'Knight',col:'#f5c451',hp:75,atk:5,ap:['stun',1],A:['Slash','Shield Bash','Cleave','Rally Strike','Crushing Blow'],S:[{n:'Guard',c:1,sh:8},{n:'Fortify',c:2,sh:15},{n:'Battle Cry',c:1,me:['atk',2]}],X:{n:'Last Stand',sh:20,me:['atk',3]}},
 {id:'M',cl:'Magic',n:'Mage',col:'#5aa9ff',hp:43,atk:6,ap:['burn',3],A:['Spark','Fireball','Twin Bolt','Arcane Lance','Meteor'],S:[{n:'Mana Surge',c:0,en:2},{n:'Barrier',c:1,sh:7},{n:'Focus',c:1,me:['atk',2]}],X:{n:'Arcane Storm',d:4,k:'a',ap:['burn',3]}},
 {id:'H',cl:'Healer',n:'Priest',col:'#5be39b',hp:38,atk:5,ap:['weak',2],A:['Smite','Hex Touch','Twin Light','Radiant Beam','Judgement'],S:[{n:'Heal',c:2,h:14},{n:'Mend',c:1,me:['reg',3]},{n:'Blessing',c:1,sh:6,h:4}],X:{n:'Miracle',h:25,sh:10}},
-{id:'R',cl:'Damager',n:'Marksman',col:'#ff5a5a',hp:56,atk:6,ap:['mark',2],A:['Quick Shot','Aimed Shot','Double Tap','Piercing Arrow','Snipe'],S:[{n:'Take Aim',c:1,me:['atk',2]},{n:'Dodge Roll',c:1,sh:6},{n:'Reload',c:1,dr:2}],X:{n:'Headshot',d:5,ap:['mark',2]}},
+{id:'R',cl:'Attacker',n:'Marksman',col:'#ff5a5a',hp:56,atk:6,ap:['mark',2],A:['Quick Shot','Aimed Shot','Double Tap','Piercing Arrow','Snipe'],S:[{n:'Take Aim',c:1,me:['atk',2]},{n:'Dodge Roll',c:1,sh:6},{n:'Reload',c:1,dr:2}],X:{n:'Headshot',d:5,ap:['mark',2]}},
 {id:'V',cl:'Specialist',n:'Adventurer',col:'#b07cff',hp:57,atk:5,ap:['poi',3],A:['Stab','Venom Dagger','Flurry','Dirty Trick','Lucky Strike'],S:[{n:'Potion',c:1,h:10},{n:'Scavenge',c:1,dr:1,sh:4},{n:'Smoke Bomb',c:1,sh:9}],X:{n:'Treasure Strike',d:3.5,h:10}}];
 HD.forEach(h=>h.img=IMG[h.id]);
 const T=[{c:1,d:1.2},{c:2,d:1.6,a:1},{c:2,d:1,x:2},{c:2,d:2},{c:3,d:3}];
@@ -157,11 +157,11 @@ setInterval(()=>{if(over||!P)return;M--;if(turn=='p'&&!busy){tt--;if(tt<=0){endT
  if(M<=0){const r=T=>T.u.reduce((a,x)=>a+x.hp,0)/T.u.reduce((a,x)=>a+x.mhp,0),a=r(P),b=r(E);fin(a>b?'Time up. You lead: Victory!':a<b?'Time up. Foe leads: Defeat':'Time up: Draw');return}tick()},1000);
 (async()=>{try{const DB='https://dafreta-network-default-rtdb.asia-southeast1.firebasedatabase.app';
 const [hs,as]=await Promise.all(['heroes','ailments'].map(k=>fetch(DB+'/cardgame/'+k+'.json').then(r=>r.json()).catch(()=>null)));
-const COL={Defender:'#f5c451',Mage:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a',Specialist:'#b07cff'};
+const COL={Defender:'#f5c451',Magic:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a',Specialist:'#b07cff'};
 const EK={dot:'burn',hot:'reg',atkup:'atk',atkdown:'weak',stun:'stun',mark:'mark'};const AM={};
 Object.entries(as||{}).forEach(([id,a])=>{if(a.effect==='shield'){AM[id]={sh:+a.value||8};return}const k=EK[a.effect]||'burn';AM[id]={k};
  SD[k]=[a.icon?'<img src="'+a.icon+'" style="width:1.2em;height:1.2em;object-fit:contain;vertical-align:middle">':SD[k][0],a.name||SD[k][1],a.desc||SD[k][2]]});
-const L=Object.entries(hs||{}).map(([id,h],j)=>{const b=HD.find(x=>x.cl===({Mage:'Magic',Attacker:'Damager'}[h.class_]||h.class_))||HD[j%HD.length],at=Math.max(1,+h.atk||b.atk),cs=(h.cards||[]).filter(c=>c&&c.name);
+const L=Object.entries(hs||{}).map(([id,h],j)=>{if(h.class_==='Mage')h.class_='Magic';const b=HD.find(x=>x.cl===h.class_)||HD[j%HD.length],at=Math.max(1,+h.atk||b.atk),cs=(h.cards||[]).filter(c=>c&&c.name);
  const o={id:'u'+j,cl:h.class_||b.cl,n:h.name||b.n,col:COL[h.class_]||b.col,hp:+h.hp||b.hp,atk:at,ap:b.ap,img:h.img||b.img,A:b.A,S:b.S,X:b.X};
  if(cs.length){o.A=[];o.S=cs.filter(c=>c.type!=='ultimate').map(c=>{const v=+c.value||0,s={n:c.name,c:Math.max(0,+c.manaCost||0)},m=AM[c.ail],d=[c.ail&&m&&m.k?m.k:0,+c.dur||2];
   if(c.type==='heal')s.h=v||5;else if(c.type==='mana')s.en=v||1;else if(c.type==='buff'){if(m&&m.sh)s.sh=m.sh;else if(d[0])s.me=d;else s.sh=v||5}
