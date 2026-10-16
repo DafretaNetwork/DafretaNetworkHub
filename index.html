@@ -563,12 +563,12 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 </style>
 <style>
 .gcs{display:flex;flex-wrap:wrap;gap:16px;margin:8px 0 4px}
-.gc{--cc:#888;width:160px;min-height:178px;border-radius:12px;border:2px solid #f5e6c0;padding:14px 8px 8px;color:#fff;position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;background:linear-gradient(var(--cc),color-mix(in srgb,var(--cc) 30%,#000))}
-.gc .cs{position:absolute;left:-8px;top:-8px;width:26px;height:26px;border-radius:7px;background:#fff;color:#111;font:700 14px/26px system-ui;text-align:center}
-.gc .ty{font:700 10px system-ui;letter-spacing:.08em;text-transform:uppercase;background:#0006;border-radius:99px;padding:1px 8px}
-.gc b{font:700 15px 'Chakra Petch',system-ui}.gc .ds{font-size:12px;opacity:.95}.gc .ic{font-size:26px;min-height:30px}
-.gc .ba{display:flex;gap:6px;margin-top:auto;padding-top:6px}
-.gc.ult{border-color:#ffd966;box-shadow:0 0 14px #ffd96688}
+.cgc{--cc:#888;width:160px;min-height:178px;border-radius:12px;border:2px solid #f5e6c0;padding:14px 8px 8px;color:#fff;position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;background:linear-gradient(var(--cc),color-mix(in srgb,var(--cc) 30%,#000))}
+.cgc .cs{position:absolute;left:-8px;top:-8px;width:26px;height:26px;border-radius:7px;background:#fff;color:#111;font:700 14px/26px system-ui;text-align:center}
+.cgc .ty{font:700 10px system-ui;letter-spacing:.08em;text-transform:uppercase;background:#0006;border-radius:99px;padding:1px 8px}
+.cgc b{font:700 15px 'Chakra Petch',system-ui}.cgc .ds{font-size:12px;opacity:.95}.cgc .ic{font-size:26px;min-height:30px}
+.cgc .ba{display:flex;gap:6px;margin-top:auto;padding-top:6px}
+.cgc.ult{border-color:#ffd966;box-shadow:0 0 14px #ffd96688}
 </style>
 </head>
 <body>
@@ -920,15 +920,26 @@ async function adminV(){
   if(atab==='inv'){paintIP();paintTags()}
 }
 /* ---- Dafreta Card Battle admin ---- */
+const DEFAULT_HEROES=[{"key":"K","data":{"name":"Knight","class_":"Defender","hp":75,"atk":5,"img":"https://static.wikia.nocookie.net/myturn/images/f/fd/Squire_Full.png/revision/latest/scale-to-width-down/1000?cb=20191211152034","cards":[{"value":6,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Slash","type":"attack"},{"value":8,"manaCost":2,"ail":"d_stun","dur":1,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Shield Bash","type":"attack"},{"value":5,"manaCost":2,"ail":"","dur":2,"hits":2,"scope":"pierce","shield":0,"heal":0,"draw":0,"name":"Cleave","type":"attack"},{"value":10,"manaCost":2,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Rally Strike","type":"attack"},{"value":15,"manaCost":3,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Crushing Blow","type":"attack"},{"value":8,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Guard","type":"buff"},{"value":15,"manaCost":2,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Fortify","type":"buff"},{"value":0,"manaCost":1,"ail":"d_atkup","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Battle Cry","type":"buff"},{"value":0,"manaCost":0,"ail":"d_atkup","dur":3,"hits":1,"scope":"front","shield":20,"heal":0,"draw":0,"name":"Last Stand","type":"ultimate","ult":"ally"}]}},{"key":"M","data":{"name":"Mage","class_":"Magic","hp":43,"atk":6,"img":"https://static.wikia.nocookie.net/myturn/images/6/66/Apprentice.png/revision/latest?cb=20191208201141","cards":[{"value":7,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Spark","type":"attack"},{"value":10,"manaCost":2,"ail":"d_burn","dur":3,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Fireball","type":"attack"},{"value":6,"manaCost":2,"ail":"","dur":2,"hits":2,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Twin Bolt","type":"attack"},{"value":12,"manaCost":2,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Arcane Lance","type":"attack"},{"value":18,"manaCost":3,"ail":"","dur":2,"hits":1,"scope":"all","shield":0,"heal":0,"draw":0,"name":"Meteor","type":"attack"},{"value":2,"manaCost":0,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Mana Surge","type":"mana"},{"value":7,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Barrier","type":"buff"},{"value":0,"manaCost":1,"ail":"d_atkup","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Focus","type":"buff"},{"value":24,"manaCost":0,"ail":"d_burn","dur":3,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Arcane Storm","type":"ultimate","ult":"all"}]}},{"key":"H","data":{"name":"Priest","class_":"Healer","hp":38,"atk":5,"img":"https://static.wikia.nocookie.net/myturn/images/1/14/Priest.png/revision/latest/scale-to-width-down/1000?cb=20191208201245","cards":[{"value":6,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Smite","type":"attack"},{"value":8,"manaCost":2,"ail":"d_weak","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Hex Touch","type":"attack"},{"value":5,"manaCost":2,"ail":"","dur":2,"hits":2,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Twin Light","type":"attack"},{"value":10,"manaCost":2,"ail":"","dur":2,"hits":1,"scope":"pierce","shield":0,"heal":0,"draw":0,"name":"Radiant Beam","type":"attack"},{"value":15,"manaCost":3,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Judgement","type":"attack"},{"value":14,"manaCost":2,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Heal","type":"heal"},{"value":0,"manaCost":1,"ail":"d_regen","dur":3,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Mend","type":"buff"},{"value":4,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":6,"heal":0,"draw":0,"name":"Blessing","type":"heal"},{"value":25,"manaCost":0,"ail":"","dur":2,"hits":1,"scope":"front","shield":10,"heal":0,"draw":0,"name":"Miracle","type":"ultimate","ult":"ally"}]}},{"key":"R","data":{"name":"Marksman","class_":"Attacker","hp":56,"atk":6,"img":"https://static.wikia.nocookie.net/myturn/images/e/ea/Markswoman.png/revision/latest?cb=20191210075136","cards":[{"value":7,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Quick Shot","type":"attack"},{"value":10,"manaCost":2,"ail":"d_mark","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Aimed Shot","type":"attack"},{"value":6,"manaCost":2,"ail":"","dur":2,"hits":2,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Double Tap","type":"attack"},{"value":12,"manaCost":2,"ail":"","dur":2,"hits":1,"scope":"pierce","shield":0,"heal":0,"draw":0,"name":"Piercing Arrow","type":"attack"},{"value":18,"manaCost":3,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Snipe","type":"attack"},{"value":0,"manaCost":1,"ail":"d_atkup","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Take Aim","type":"buff"},{"value":6,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Dodge Roll","type":"buff"},{"value":2,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Reload","type":"draw"},{"value":30,"manaCost":0,"ail":"d_mark","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Headshot","type":"ultimate","ult":"front"}]}},{"key":"V","data":{"name":"Adventurer","class_":"Specialist","hp":57,"atk":5,"img":"https://static.wikia.nocookie.net/myturn/images/c/cc/Adventurer.png/revision/latest/scale-to-width-down/1000?cb=20191210073300","cards":[{"value":6,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Stab","type":"attack"},{"value":8,"manaCost":2,"ail":"d_poison","dur":3,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Venom Dagger","type":"attack"},{"value":5,"manaCost":2,"ail":"","dur":2,"hits":2,"scope":"pierce","shield":0,"heal":0,"draw":0,"name":"Flurry","type":"attack"},{"value":10,"manaCost":2,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Dirty Trick","type":"attack"},{"value":15,"manaCost":3,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Lucky Strike","type":"attack"},{"value":10,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Potion","type":"heal"},{"value":4,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":1,"name":"Scavenge","type":"buff"},{"value":9,"manaCost":1,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":0,"draw":0,"name":"Smoke Bomb","type":"buff"},{"value":18,"manaCost":0,"ail":"","dur":2,"hits":1,"scope":"front","shield":0,"heal":10,"draw":0,"name":"Treasure Strike","type":"ultimate","ult":"front"}]}}];
+const DEFAULT_AILS={d_stun:{name:'Stun',type:'debuff',effect:'stun',value:0,desc:'cannot play cards next turn',icon:''},d_burn:{name:'Burn',type:'debuff',effect:'dot',value:3,desc:'lose 3 HP each turn',icon:''},d_poison:{name:'Poison',type:'debuff',effect:'poison',value:2,desc:'lose 2 HP each turn, ignores shield',icon:''},d_weak:{name:'Weak',type:'debuff',effect:'atkdown',value:30,desc:'deals 30% less damage',icon:''},d_mark:{name:'Marked',type:'debuff',effect:'mark',value:50,desc:'takes 50% more damage',icon:''},d_atkup:{name:'Attack Up',type:'buff',effect:'atkup',value:40,desc:'deals 40% more damage',icon:''},d_regen:{name:'Regen',type:'buff',effect:'hot',value:3,desc:'heal 3 HP each turn',icon:''}};
+async function importDefaults(){
+  if(!confirm('Import the 5 built-in heroes (Knight, Mage, Priest, Marksman, Adventurer) so you can edit them?\n\nAfter this, the game uses the heroes stored here instead of its built-in copies. Heroes already imported are left untouched.'))return;
+  try{
+    const have=await api('cardgame/heroes').catch(()=>null)||{},ails=await api('cardgame/ailments').catch(()=>null)||{};
+    for(const [id,a] of Object.entries(DEFAULT_AILS))if(!ails[id])await api('cardgame/ailments/'+id,'PUT',a);
+    const t0=Date.now();
+    for(let i=0;i<DEFAULT_HEROES.length;i++){const d=DEFAULT_HEROES[i],id='hd_'+d.key;if(!have[id])await api('cardgame/heroes/'+id,'PUT',{...d.data,created:t0+i,updated:t0+i})}
+    toast('Default heroes imported. You can edit them below.');atab='cardgame';adminV()
+  }catch(e){toast(e.message)}}
 const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[]});
-const emptyCF=()=>({i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all'});
+const emptyCF=()=>({i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
 const emptyGF=()=>({id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:''});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
-const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
-const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
-const TYPE_ICON={attack:'⚔️',heal:'💚',mana:'💎',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
-const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team']];
+const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
+const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
+const TYPE_ICON={attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
+const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally']];
 const RELIC_FX={
  ex_turn:['Ultimate charge: +meter every turn','Gains {v} ultimate meter at the start of every turn'],
  ex_start:['Ultimate charge: starts battle with meter','Starts the battle with {v} ultimate meter'],
@@ -955,14 +966,17 @@ const GEN_FX={
 };
 const GEN_ICON={dmg:'💥',dmg_all:'🌋',heal:'💚',heal_all:'✨',shield:'🛡️',shield_all:'🏰',energy:'💎',draw:'🎴',bomb:'💣'};
 const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).replace('{d}',+g.delay||2)+(AILS[g.ail]?' + '+AILS[g.ail].name+' ('+(+g.dur||2)+'t)':'');
-function cardText(c){const v=+c.value||0,a=AILS[c.ail],ad=a?' + '+a.name+' ('+(+c.dur||2)+'t)':'';
+function cardText(c){const v=+c.value||0,a=AILS[c.ail],ad=a?' + '+a.name+' ('+(+c.dur||2)+'t)':'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (+foe behind)',all:' (all foes)'}[c.scope]||'';
+  const ex=[+c.shield?'+'+(+c.shield)+' shield':'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
   switch(c.type){
-    case 'heal':return 'Heal '+v+ad;
-    case 'mana':return 'Gain '+v+' energy';
-    case 'buff':return a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to an ally':'Gain '+v+' shield';
-    case 'debuff':return (v?'Deal '+v+' dmg + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)':'');
-    case 'ultimate':return ({all:'Deal '+v+' dmg to ALL foes',front:'Deal '+v+' dmg to the front foe',heal:'Heal the whole team for '+v,shield:'Shield the whole team for '+v}[c.ult||'all'])+ad;
-    default:return 'Deal '+v+' dmg'+ad}}
+    case 'heal':t='Heal '+v+ad;break;
+    case 'mana':t='Gain '+v+' energy';break;
+    case 'draw':t='Draw '+v+' card(s)';break;
+    case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to an ally':'Gain '+v+' shield';break;
+    case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)':'');break;
+    case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,ally:'One ally: '+[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean).join(', ')}[c.ult||'all']);break;
+    default:t='Deal '+v+' dmg'+hits+reach+ad}
+  return t+(ex?' · '+ex:'')}
 const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===t).map(([k,a])=>`<option value="${esc(k)}"${sel===k?' selected':''}>${esc(a.name)} — ${AIL_EFFECTS[a.effect]||a.effect}</option>`).join('');
   return '<option value="">None</option>'+(g('debuff')?`<optgroup label="Debuffs">${g('debuff')}</optgroup>`:'')+(g('buff')?`<optgroup label="Buffs">${g('buff')}</optgroup>`:'')};
 
@@ -1001,7 +1015,7 @@ async function cardgameAdminHTML(){
   <label>Hero Portrait <span class="mut" style="font-weight:400">(full-body PNG with transparent background — the game shows the upper half in the hero preview)</span></label>
   <div class="row" style="align-items:center;margin:6px 0 4px;gap:10px">
     <button class="s" onclick="$('#hif').click()">Upload portrait</button>
-    <span id="hpv">${HF.img?`<img src="${HF.img}" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`:''}</span>
+    <span id="hpv">${HF.img?`<img src="${HF.img}" referrerpolicy="no-referrer" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`:''}</span>
     ${HF.img?'<button class="g s" onclick="HF.img=\'\';document.querySelector(\'#hpv\').innerHTML=\'\';this.remove()">Remove</button>':''}
   </div>
   <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)">
@@ -1016,6 +1030,9 @@ async function cardgameAdminHTML(){
     ${HF.id?`<button class="g" onclick="HF=emptyHF();CF=emptyCF();atab='cardgame';adminV()">Cancel</button>`:''}
   </div>
 
+  ${(()=>{const miss=DEFAULT_HEROES.filter(d=>!heroes['hd_'+d.key]);return `<div class="bx2" style="border-left:4px solid var(--gold)"><b>Built-in heroes</b>
+    <p class="mut" style="margin:6px 0 10px;font-size:14px">${miss.length?`Knight, Mage, Priest, Marksman and Adventurer are built into the game. Import them to edit their stats, portraits and cards here like any other hero. ${miss.length<DEFAULT_HEROES.length?'('+miss.length+' not imported yet: '+miss.map(d=>d.data.name).join(', ')+')':''}`:'✓ All 5 built-in heroes are imported and editable in the list below.'}</p>
+    ${miss.length?'<button onclick="importDefaults()">📥 Import built-in heroes</button>':''}</div>`})()}
   <h3 style="margin-bottom:10px">Heroes (${hList.length})</h3>
   ${hList.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">${hList.map(([id,h])=>heroCardHTML(id,h)).join('')}</div>`:'<p class="mut">No heroes yet. Add your first one above.</p>'}
 
@@ -1052,7 +1069,7 @@ function heroCardHTML(id,h){
   const hasUlt=cs.some(c=>c&&c.type==='ultimate'),playable=cs.some(c=>c&&c.name&&c.type!=='ultimate');
   return `<div class="box" style="padding:16px;display:flex;flex-direction:column;border-top:3px solid ${hc}">
     <div style="display:flex;gap:12px;align-items:flex-start">
-      ${h.img?`<img src="${esc(h.img)}" alt="" style="width:72px;height:72px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line);flex:none">`:`<div style="width:72px;height:72px;background:#14243c;border-radius:8px;display:grid;place-items:center;font-size:34px;flex:none">${icon}</div>`}
+      ${h.img?`<img src="${esc(h.img)}" referrerpolicy="no-referrer" alt="" style="width:72px;height:72px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line);flex:none">`:`<div style="width:72px;height:72px;background:#14243c;border-radius:8px;display:grid;place-items:center;font-size:34px;flex:none">${icon}</div>`}
       <div style="min-width:0;flex:1">
         <b style="font:700 17px 'Chakra Petch'">${esc(h.name||'Unnamed')}</b>
         <div style="font-size:13px;margin:2px 0"><span style="background:${hc};color:#111;font-weight:700;padding:1px 8px;border-radius:99px">${esc(cls||'')}</span></div>
@@ -1073,7 +1090,7 @@ function renderCardList(){
   const col=HERO_COLORS[HF.class_]||'#888';
   if(!HF.cards.length)return '<p class="mut" style="font-size:14px">No cards yet. Build a card below and press “Save card”.</p>';
   return `<div class="gcs">${HF.cards.map((c,i)=>{const u=c.type==='ultimate',a=AILS[c.ail];
-    return `<div class="gc${u?' ult':''}" style="--cc:${col}">
+    return `<div class="cgc${u?' ult':''}" style="--cc:${col}">
       <span class="cs">${u?'✨':(+c.manaCost||0)}</span>
       <span class="ty">${esc(c.type||'attack')}</span>
       <div class="ic">${a&&a.icon?`<img src="${a.icon}" style="height:26px;object-fit:contain">`:(TYPE_ICON[c.type]||'🃏')}</div>
@@ -1093,6 +1110,10 @@ function renderCardForm(){
       :`<div><label>Mana Cost</label><input type="number" min="0" max="20" value="${+c.manaCost||0}" oninput="CF.manaCost=+this.value"></div>`}
     ${showAil?`<div><label>${c.type==='buff'?'Buff to apply (optional)':c.type==='debuff'?'Debuff to apply':'Status ailment applied (optional)'}</label><select onchange="CF.ail=this.value;refreshCF()">${ailOpts(c.ail)}</select></div>`:''}
     ${showAil&&c.ail?`<div><label>Ailment duration (turns)</label><input type="number" min="1" max="9" value="${+c.dur||2}" oninput="CF.dur=+this.value"></div>`:''}
+    ${(c.type==='attack'||c.type==='debuff')?`<div><label>Hits (times the damage is dealt)</label><input type="number" min="1" max="5" value="${+c.hits||1}" oninput="CF.hits=+this.value"></div><div><label>Reach</label><select onchange="CF.scope=this.value">${[['front','Front enemy only'],['pierce','Front enemy + the foe behind (70%)'],['all','All enemies']].map(([k,l])=>`<option value="${k}"${(c.scope||'front')===k?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
+    ${!['buff','draw','mana'].includes(c.type)?`<div><label>Bonus shield (optional)</label><input type="number" min="0" value="${+c.shield||0}" oninput="CF.shield=+this.value"></div>`:''}
+    ${!['heal','draw','mana'].includes(c.type)?`<div><label>Bonus heal (optional)</label><input type="number" min="0" value="${+c.heal||0}" oninput="CF.heal=+this.value"></div>`:''}
+    ${c.type!=='draw'?`<div><label>Also draw cards (optional)</label><input type="number" min="0" max="5" value="${+c.draw||0}" oninput="CF.draw=+this.value"></div>`:''}
    </div>
    ${u?'<p class="mut" style="font-size:13px;margin:8px 0 0">✨ An ultimate has no mana cost and is not shuffled into the deck. It can only be fired from the hero\u2019s EX button when the ultimate meter is full. One ultimate per hero.</p>':''}
    <div class="row" style="margin-top:10px"><button onclick="saveCard()">💾 Save card</button>${c.i!=null?'<button class="g" onclick="cancelCard()">Cancel</button>':''}</div>
@@ -1111,7 +1132,7 @@ async function saveCard(){
   if(!name)return toast('Card name is required');
   if(CF.type==='debuff'&&!CF.ail)return toast('Pick the debuff this card applies');
   if(CF.type==='ultimate'&&HF.cards.some((x,j)=>x.type==='ultimate'&&j!==CF.i))return toast('This hero already has an ultimate. Edit or remove it first.');
-  const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2};
+  const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',shield:Math.max(0,+CF.shield||0),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
   if(CF.type==='ultimate')card.ult=CF.ult||'all';
   const before=HF.cards.slice();
   if(CF.i!=null)HF.cards[CF.i]=card;else HF.cards.push(card);
@@ -1170,7 +1191,7 @@ async function delRelic(id){if(!confirm('Delete this relic?'))return;try{await a
 
 /* ---- general cards ---- */
 function genListHTML(){const e=Object.entries(GENS);if(!e.length)return '<p class="mut" style="font-size:14px">No general cards yet.</p>';
-  return `<div class="gcs">${e.map(([k,g])=>`<div class="gc" style="--cc:#8b93a7"><span class="cs">${+g.manaCost||0}</span><span class="ty">general</span>
+  return `<div class="gcs">${e.map(([k,g])=>`<div class="cgc" style="--cc:#8b93a7"><span class="cs">${+g.manaCost||0}</span><span class="ty">general</span>
     <div class="ic">${esc(g.icon||GEN_ICON[g.effect]||'🃏')}</div><b>${esc(g.name)}</b><div class="ds">${esc(g.desc||genText(g))}</div>
     <div class="ba"><button class="s" onclick="editGen('${esc(k)}')">Edit</button><button class="d s" onclick="delGen('${esc(k)}')">✕</button></div></div>`).join('')}</div>`}
 function genSecInner(){
@@ -1350,7 +1371,7 @@ let HF={id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[]};
 const HERO_CLASSES=['Defender','Magic','Healer','Attacker','Specialist'];
 const HERO_COLORS={'Defender':'#f5c451','Magic':'#5aa9ff','Healer':'#5be39b','Attacker':'#ff5a5a','Specialist':'#b07cff'};
 const HERO_ICONS={'Defender':'🛡️','Magic':'🧙','Healer':'🩺','Attacker':'⚔️','Specialist':'🎯'};
-const AIL_EFFECTS={dot:'Damage over time',hot:'Heal over time',atkup:'ATK up %',atkdown:'ATK down %',stun:'Stun (skip turn)',mark:'Marked (takes +% dmg)',shield:'Shield (absorbs dmg)',x2:'Damage ×2',x3:'Damage ×3',x4:'Damage ×4'};
+const AIL_EFFECTS={dot:'Damage over time',hot:'Heal over time',atkup:'ATK up %',atkdown:'ATK down %',stun:'Stun (skip turn)',mark:'Marked (takes +% dmg)',shield:'Shield (absorbs dmg)',poison:'Poison (ignores shield)',x2:'Damage ×2',x3:'Damage ×3',x4:'Damage ×4'};
 let AILS={};
 const STATUS_EFFECTS=['burn','poison','stun','weak','attack_up','regen','marked'];
 const STATUS_LABELS={'burn':'🔥 Burn','poison':'☠️ Poison','stun':'⚡ Stun','weak':'💧 Weak','attack_up':'⚔️ Attack Up','regen':'💚 Regen','marked':'🎯 Marked'};
