@@ -161,13 +161,13 @@ const COL={Defender:'#f5c451',Mage:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a'
 const EK={dot:'burn',hot:'reg',atkup:'atk',atkdown:'weak',stun:'stun',mark:'mark'};const AM={};
 Object.entries(as||{}).forEach(([id,a])=>{if(a.effect==='shield'){AM[id]={sh:+a.value||8};return}const k=EK[a.effect]||'burn';AM[id]={k};
  SD[k]=[a.icon?'<img src="'+a.icon+'" style="width:1.2em;height:1.2em;object-fit:contain;vertical-align:middle">':SD[k][0],a.name||SD[k][1],a.desc||SD[k][2]]});
-const L=Object.entries(hs||{}).map(([id,h],j)=>{const b=HD.find(x=>x.cl===h.class_)||HD[j%HD.length],at=Math.max(1,+h.atk||b.atk),cs=(h.cards||[]).filter(c=>c&&c.name);
+const L=Object.entries(hs||{}).map(([id,h],j)=>{const b=HD.find(x=>x.cl===({Mage:'Magic',Attacker:'Damager'}[h.class_]||h.class_))||HD[j%HD.length],at=Math.max(1,+h.atk||b.atk),cs=(h.cards||[]).filter(c=>c&&c.name);
  const o={id:'u'+j,cl:h.class_||b.cl,n:h.name||b.n,col:COL[h.class_]||b.col,hp:+h.hp||b.hp,atk:at,ap:b.ap,img:h.img||b.img,A:b.A,S:b.S,X:b.X};
  if(cs.length){o.A=[];o.S=cs.filter(c=>c.type!=='ultimate').map(c=>{const v=+c.value||0,s={n:c.name,c:Math.max(0,+c.manaCost||0)},m=AM[c.ail],d=[c.ail&&m&&m.k?m.k:0,+c.dur||2];
   if(c.type==='heal')s.h=v||5;else if(c.type==='mana')s.en=v||1;else if(c.type==='buff'){if(m&&m.sh)s.sh=m.sh;else if(d[0])s.me=d;else s.sh=v||5}
   else{s.d=Math.max(.5,Math.round(v/at*10)/10||1);if(d[0])s.ap=d;if(m&&m.sh)s.sh=m.sh}return s});
   const u=cs.find(c=>c.type==='ultimate');if(u)o.X=Object.assign({},b.X,{n:u.name});if(!o.S.length){o.A=b.A;o.S=b.S}}
  return o});
-if(L.length>=4)HD.splice(0,HD.length,...L);}catch(e){console.warn(e)}menu()})();
+if(L.length)HD.push(...L);}catch(e){console.warn(e)}menu()})();
 </script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 </body></html>
