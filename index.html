@@ -570,6 +570,26 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .cgc .ba{display:flex;gap:6px;margin-top:auto;padding-top:6px}
 .cgc.ult{border-color:#ffd966;box-shadow:0 0 14px #ffd96688}
 </style>
+<style>
+.cgh{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}.cgv{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cgpill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:#14243c;color:var(--mute);border:1px solid var(--line)}.cgpill.on{color:var(--ok);border-color:var(--ok)}
+.cgtabs{margin-bottom:16px}.cgn{background:#14243c;border-radius:10px;padding:0 7px;font-size:11px;margin-left:4px}
+.cgp{background:#0a1626;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}.cgp h4{margin:0 0 6px;font-size:17px}
+.cgph{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.cgts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px}
+.cgt{background:#0f1e33;border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:.15s}.cgt:hover{border-color:var(--gold)}.cgt .ic{font-size:22px}.cgt b{font:800 26px 'Chakra Petch'}.cgt span{font-size:13px}.cgt small{color:var(--mute)}
+.cgck{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #ffffff0d;font-size:14px}.cgck.ok>span{color:var(--ok)}.cgck.warn>span{color:var(--gold)}.cgck a{color:var(--gold);cursor:pointer;text-decoration:underline;white-space:nowrap}
+.cghg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-top:14px}
+.cgh2{display:flex;gap:12px;background:#0f1e33;border:1px solid var(--line);border-top:3px solid var(--hc);border-radius:10px;padding:12px}
+.cgh2t{width:70px;height:88px;flex:none;border-radius:8px;background:#14243c;display:grid;place-items:center;font-size:30px;overflow:hidden}.cgh2t img{width:100%;height:100%;object-fit:cover;object-position:top}
+.cgh2b{min-width:0;flex:1}.cgcl{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--hc);color:#111}.cgw{font-size:12px;color:var(--gold);margin-top:4px}
+.cgstep{border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:14px;background:#0c1a2d}.cgsh{display:flex;align-items:center;gap:10px}.cgsh span{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#111;font-weight:800;display:grid;place-items:center}
+.cgsave{position:sticky;bottom:0;display:flex;gap:10px;padding:14px 0 4px;margin-top:14px;background:linear-gradient(transparent,#0a1626 35%)}
+.evg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.evc{background:#0f1e33;border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px}.evt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.qrow{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.rklist{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:560px;overflow:auto}.rkrow{display:flex;gap:8px;align-items:center;background:#0f1e33;border:1px solid var(--line);border-radius:8px;padding:5px 8px}.rkrow input:not([type=file]){flex:1;min-width:0}.rkn{width:26px;text-align:center;color:var(--mute);font-weight:700}.rkp{width:44px;display:grid;place-items:center}
+.chk{display:flex;gap:8px;align-items:center;cursor:pointer;font-weight:400}.chk input{width:auto}
+</style>
 </head>
 <body>
 <nav>
@@ -929,12 +949,12 @@ async function importDefaults(){
     for(const [id,a] of Object.entries(DEFAULT_AILS))if(!ails[id])await api('cardgame/ailments/'+id,'PUT',a);
     const t0=Date.now();
     for(let i=0;i<DEFAULT_HEROES.length;i++){const d=DEFAULT_HEROES[i],id='hd_'+d.key;if(!have[id])await api('cardgame/heroes/'+id,'PUT',{...d.data,created:t0+i,updated:t0+i})}
-    toast('Default heroes imported. You can edit them below.');atab='cardgame';adminV()
+    toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
-const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[]});
+const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[],evo:{},open:false});
 const emptyCF=()=>({i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
-const emptyGF=()=>({id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:''});
+const emptyGF=()=>({id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
 const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
 const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
@@ -974,116 +994,221 @@ function cardText(c){const v=+c.value||0,a=AILS[c.ail],ad=a?' + '+a.name+' ('+(+
     case 'draw':t='Draw '+v+' card(s)';break;
     case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to an ally':'Gain '+v+' shield';break;
     case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)':'');break;
-    case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,ally:'One ally: '+[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean).join(', ')}[c.ult||'all']);break;
+    case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
     default:t='Deal '+v+' dmg'+hits+reach+ad}
   return t+(ex?' · '+ex:'')}
 const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===t).map(([k,a])=>`<option value="${esc(k)}"${sel===k?' selected':''}>${esc(a.name)} — ${AIL_EFFECTS[a.effect]||a.effect}</option>`).join('');
   return '<option value="">None</option>'+(g('debuff')?`<optgroup label="Debuffs">${g('debuff')}</optgroup>`:'')+(g('buff')?`<optgroup label="Buffs">${g('buff')}</optgroup>`:'')};
 
+/* ======================================================================
+   CARD BATTLE ADMIN  (organised into sections)
+   ====================================================================== */
+let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
+const emptyQF=()=>({id:null,title:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
+let QF=emptyQF();
+const defRanksA=()=>['Copper','Silver','Gold','Platinum','Emerald','Diamond'].flatMap(n=>['I','II','III','IV','V'].map(r=>({n:n+' '+r})));
+const EVN=['II','III','IV','Transcendence'];
+const MODE_TXT={any:'Standard or Ranked',std:'Standard only',rank:'Ranked only'};
+const cardsOf=h=>(Array.isArray(h&&h.cards)?h.cards:Object.values((h&&h.cards)||{})).filter(c=>c&&c.name);
+const isPlayable=h=>cardsOf(h).some(c=>c.type!=='ultimate');
+function cgGo(t){CGT=t;atab='cardgame';adminV()}
+
 async function cardgameAdminHTML(){
-  let cfg=null;
-  try{cfg=await api('config/cardgame')}catch(e){}
-  CGON=!!(cfg&&cfg.enabled);
-  const heroes=await api('cardgame/heroes').catch(()=>null)||{};
-  const hList=Object.entries(heroes);
-  AILS=await api('cardgame/ailments').catch(()=>null)||{};
-  RELS=await api('cardgame/relics').catch(()=>null)||{};
-  GENS=await api('cardgame/general').catch(()=>null)||{};
-  CF=emptyCF();RF=emptyRF();GF=emptyGF();
-  const sep='margin-top:34px;padding-top:20px;border-top:1px solid var(--line)';
-  return `<div style="margin-bottom:28px">
-    <h3>Game Visibility</h3>
-    <p class="mut" style="margin:6px 0 14px;font-size:14px">When ON, the game appears on the homepage (Play Now!) and all players can access it. When OFF, it is only visible to admins.</p>
-    <div style="display:flex;align-items:center;gap:16px">
-      <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}">
-        <input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)">
-        <span class="cg-sl"></span>
-      </label>
-      <span id="cg-status" style="font-weight:700;color:${CGON?'var(--ok)':'var(--mute)'}">${CGON?'ON — Visible to all players':'OFF — Admin only'}</span>
-    </div>
-  </div>
+  let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
+  const [heroes,ails,rels,gens,qs,rk,cf,lb]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb'].map(k=>api('cardgame/'+k).catch(()=>null)));
+  HLIST=heroes||{};AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
+  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
+  const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
+  CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();
+  const n=o=>Object.keys(o).length;
+  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['ranks','🏅','Ranks',RKS.length],['settings','⚙️','Settings']];
+  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
+  return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
+    <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
+      <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
+      <button class="s" onclick="location.hash='#/cardgame'">🎮 Open game</button></div></div>
+    <div class="tabs cgtabs">${tabs.map(([k,ic,l,c])=>`<div class="tab ${CGT===k?'on':''}" onclick="cgGo('${k}')">${ic} ${l}${c!==undefined?` <span class="cgn">${c}</span>`:''}</div>`).join('')}</div>
+    ${body()}`;
+}
 
-  <h3>${HF.id?'Edit Hero':'Add Hero'}</h3>
-  <p class="mut" style="margin:4px 0;font-size:14px">New heroes start with <b>no cards</b>. Create the hero, then build its cards below. A hero with no cards stays hidden from players until it has at least one.</p>
-  <div id="hm" style="margin:8px 0"></div>
-  <div class="f2" style="margin:10px 0">
+/* ---------------- overview ---------------- */
+function cgOverview(){
+  const hs=Object.values(HLIST),play=hs.filter(isPlayable).length,noCards=hs.filter(h=>!isPlayable(h)),noUlt=hs.filter(h=>isPlayable(h)&&!cardsOf(h).some(c=>c.type==='ultimate'));
+  const miss=DEFAULT_HEROES.filter(d=>!HLIST['hd_'+d.key]);
+  const tile=(ic,l,v,sub,t)=>`<div class="cgt" onclick="cgGo('${t}')"><span class="ic">${ic}</span><b>${v}</b><span>${l}</span><small>${sub}</small></div>`;
+  const chk=(ok,t,fix)=>`<div class="cgck ${ok?'ok':'warn'}"><span>${ok?'✓':'⚠'}</span><div>${t}${!ok&&fix?` <a onclick="cgGo('${fix}')">Fix →</a>`:''}</div></div>`;
+  return `<div class="cgp"><h4>At a glance</h4><div class="cgts">
+    ${tile('🛡️','Heroes',Object.keys(HLIST).length,`${play} playable`,'heroes')}${tile('✨','Buffs & Debuffs',Object.keys(AILS).length,'status effects','ails')}${tile('🔮','Relics',Object.keys(RELS).length,'equipment','relics')}
+    ${tile('🃏','General Cards',Object.keys(GENS).length,`${Object.values(GENS).filter(g=>g.locked).length} reward-only`,'gen')}${tile('📜','Quests',Object.keys(QSTS).length,'win-based','quests')}${tile('🏅','Ranks',RKS.length,RKSAVED?'custom saved':'defaults','ranks')}
+    <div class="cgt" style="cursor:default"><span class="ic">👥</span><b>${LBN}</b><span>Players who played</span><small>on the leaderboard</small></div></div></div>
+    <div class="cgp"><h4>Checklist</h4>
+      ${chk(play>=4,play>=4?`${play} playable heroes (players need at least 4)`:`Only ${play} playable hero(es). Players need at least 4.`,'heroes')}
+      ${chk(!noCards.length,noCards.length?`No cards yet (hidden from players): <b>${noCards.map(h=>esc(h.name)).join(', ')}</b>`:'Every hero has cards','heroes')}
+      ${chk(!noUlt.length,noUlt.length?`No ultimate yet: <b>${noUlt.map(h=>esc(h.name)).join(', ')}</b>`:'Every hero has an ultimate','heroes')}
+      ${chk(!miss.length,miss.length?`Built-in heroes not imported (${miss.map(d=>d.data.name).join(', ')}). The game still shows its own copies until you import them.`:'Built-in heroes are imported and editable','heroes')}
+      ${chk(Object.keys(QSTS).length>0,Object.keys(QSTS).length?`${Object.keys(QSTS).length} quest(s) active`:'No quests yet. Players will see an empty quest panel.','quests')}
+      ${chk(RKSAVED,RKSAVED?'Ranks are saved':'Using the default ranks (Copper I → Diamond V). Save them to customise.','ranks')}
+    </div>`;
+}
+
+/* ---------------- heroes ---------------- */
+function cgHeroes(){
+  if(HF.open)return heroEditorHTML();
+  const hl=Object.entries(HLIST),miss=DEFAULT_HEROES.filter(d=>!HLIST['hd_'+d.key]);
+  return `<div class="cgp"><div class="cgph"><div><h4>Heroes</h4><p class="mut" style="font-size:13px;margin:0">Click a hero to edit its stats, cards and evolutions.</p></div><button onclick="newHero()">＋ New hero</button></div>
+   ${miss.length?`<div class="bx2" style="border-left:4px solid var(--gold);margin:12px 0"><b>Built-in heroes</b><p class="mut" style="margin:6px 0 10px;font-size:14px">Knight, Mage, Priest, Marksman and Adventurer are built into the game. Import them to edit their stats, portraits, cards and evolutions here.${miss.length<DEFAULT_HEROES.length?' ('+miss.length+' not imported: '+miss.map(d=>d.data.name).join(', ')+')':''}</p><button onclick="importDefaults()">📥 Import built-in heroes</button></div>`:''}
+   ${hl.length?`<div class="cghg">${hl.map(([id,h])=>heroCardHTML(id,h)).join('')}</div>`:'<p class="mut" style="margin-top:14px">No heroes yet. Press “New hero” to add your first.</p>'}</div>`;
+}
+function newHero(){HF={...emptyHF(),open:true};CF=emptyCF();adminV()}
+function closeHero(){HF=emptyHF();CF=emptyCF();adminV()}
+function heroEditorHTML(){
+  const hc=HERO_COLORS[HF.class_]||'#888';
+  return `<div class="cgp"><div class="cgph"><div><button class="g s" onclick="closeHero()">← All heroes</button></div><h4 style="margin:0">${HF.id?'Editing: '+esc(HF.name||'hero'):'New hero'}</h4></div><div id="hm" style="margin:8px 0"></div>
+  <div class="cgstep"><div class="cgsh"><span>1</span><b>Basics</b></div>
+   <div class="f2" style="margin:10px 0">
     <div><label>Hero Name</label><input id="hn" maxlength="40" value="${esc(HF.name)}" oninput="HF.name=this.value" placeholder="e.g. Sir Aldric"></div>
-    <div><label>Class</label><select id="hcl" onchange="hClass(this)" style="border-color:${HERO_COLORS[HF.class_]};color:${HERO_COLORS[HF.class_]};font-weight:700">${HERO_CLASSES.map(c=>`<option style="color:${HERO_COLORS[c]}"${HF.class_===c?' selected':''}>${c}</option>`).join('')}</select></div>
-    <div><label>Max HP</label><input id="hhp" type="number" min="1" max="9999" value="${HF.hp||100}"></div>
-    <div><label>Base ATK</label><input id="hatk" type="number" min="0" max="9999" value="${HF.atk||15}"></div>
-  </div>
-  <label>Hero Portrait <span class="mut" style="font-weight:400">(full-body PNG with transparent background — the game shows the upper half in the hero preview)</span></label>
-  <div class="row" style="align-items:center;margin:6px 0 4px;gap:10px">
-    <button class="s" onclick="$('#hif').click()">Upload portrait</button>
-    <span id="hpv">${HF.img?`<img src="${HF.img}" referrerpolicy="no-referrer" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`:''}</span>
-    ${HF.img?'<button class="g s" onclick="HF.img=\'\';document.querySelector(\'#hpv\').innerHTML=\'\';this.remove()">Remove</button>':''}
-  </div>
-  <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)">
+    <div><label>Class</label><select id="hcl" onchange="hClass(this)" style="border-color:${hc};color:${hc};font-weight:700">${HERO_CLASSES.map(c=>`<option style="color:${HERO_COLORS[c]}"${HF.class_===c?' selected':''}>${c}</option>`).join('')}</select></div>
+    <div><label>Max HP</label><input id="hhp" type="number" min="1" max="9999" value="${HF.hp||100}" oninput="HF.hp=+this.value"></div>
+    <div><label>Base ATK</label><input id="hatk" type="number" min="0" max="9999" value="${HF.atk||0}" oninput="HF.atk=+this.value"></div></div>
+   <label>Portrait <span class="mut" style="font-weight:400">(full-body PNG, transparent background)</span></label>
+   <div class="row" style="align-items:center;margin:6px 0 0;gap:10px"><button class="s" onclick="$('#hif').click()">Upload portrait</button><span id="hpv">${HF.img?`<img src="${HF.img}" referrerpolicy="no-referrer" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`:''}</span>${HF.img?'<button class="g s" onclick="HF.img=\'\';document.querySelector(\'#hpv\').innerHTML=\'\';this.remove()">Remove</button>':''}</div>
+   <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)"></div>
+  <div class="cgstep"><div class="cgsh"><span>2</span><b>Cards</b></div>
+   <p class="mut" style="margin:8px 0;font-size:13px">Colored automatically by class. A hero needs at least one non-ultimate card to appear in the game.</p>
+   <div id="hcards">${renderCardList()}</div><div id="cform" style="margin-top:10px">${renderCardForm()}</div></div>
+  <div class="cgstep"><div class="cgsh"><span>3</span><b>Evolutions</b></div>
+   <p class="mut" style="margin:8px 0;font-size:13px">Each evolution can have its own name, image and a stat bonus (+N added to every card’s attack, heal, shield, etc.). Leave a field empty to use the default (<i>“${esc(HF.name||'Hero')} II”</i>, the base portrait, and the default bonus from Settings).</p>
+   <div id="evsec">${evoHTML()}</div></div>
+  <div class="cgsave"><button onclick="saveHero()">💾 ${HF.id?'Save changes':'Create hero'}</button><button class="g" onclick="closeHero()">Cancel</button></div></div>`;
+}
+function evoHTML(){
+  return `<div class="evg">${[1,2,3,4].map(i=>{const e=(HF.evo&&HF.evo[i])||{},need=i<4?`Lv ${CGC.maxLv} + ${CGC.frag[i-1]} fragments`:`Lv ${CGC.maxLv} + ${CGC.frag[3]} fragments + ${CGC.stone} stone`;
+   return `<div class="evc"><div class="evt"><b>${EVN[i-1]}</b><small class="mut">${need}</small></div>
+    <label>Name</label><input value="${esc(e.name||'')}" maxlength="40" placeholder="${esc(HF.name||'Hero')} ${EVN[i-1]}" oninput="evSet(${i},'name',this.value)">
+    <label>Stat bonus (+ to every card)</label><input type="number" min="0" max="999" value="${e.bonus===undefined||e.bonus===''||e.bonus===null?'':+e.bonus}" placeholder="default +${CGC.evoB[i-1]??0}" oninput="evSet(${i},'bonus',this.value)">
+    <label>Image</label><div class="row" style="align-items:center;gap:8px"><button class="s" onclick="$('#evf${i}').click()">Upload</button>${e.img?`<img src="${e.img}" referrerpolicy="no-referrer" style="height:46px;border-radius:6px;border:1px solid var(--line)"><button class="g s" onclick="evSet(${i},'img','');paintEvo()">✕</button>`:'<span class="mut" style="font-size:12px">base portrait</span>'}</div>
+    <input id="evf${i}" type="file" accept="image/*" hidden onchange="upEvoImg(${i},this)"></div>`}).join('')}</div>`;
+}
+const paintEvo=()=>{const e=$('#evsec');if(e)e.innerHTML=evoHTML()};
+function evSet(i,k,v){HF.evo=HF.evo||{};HF.evo[i]=HF.evo[i]||{};HF.evo[i][k]=v}
+async function upEvoImg(i,inp){const f=inp.files[0];if(!f)return;try{evSet(i,'img',await shrinkPng(f,400));paintEvo()}catch(e){toast(e.message)}}
 
-  <h4 style="margin:18px 0 6px">Hero Cards</h4>
-  <p class="mut" style="margin-bottom:8px;font-size:14px">Cards are colored automatically by the hero's class (Defender yellow, Magic blue, Healer green, Attacker red, Specialist purple).</p>
-  <div id="hcards">${renderCardList()}</div>
-  <div id="cform" style="margin-top:10px">${renderCardForm()}</div>
-
-  <div class="row" style="margin:22px 0 32px">
-    <button onclick="saveHero()">💾 ${HF.id?'Save changes':'Add hero'}</button>
-    ${HF.id?`<button class="g" onclick="HF=emptyHF();CF=emptyCF();atab='cardgame';adminV()">Cancel</button>`:''}
-  </div>
-
-  ${(()=>{const miss=DEFAULT_HEROES.filter(d=>!heroes['hd_'+d.key]);return `<div class="bx2" style="border-left:4px solid var(--gold)"><b>Built-in heroes</b>
-    <p class="mut" style="margin:6px 0 10px;font-size:14px">${miss.length?`Knight, Mage, Priest, Marksman and Adventurer are built into the game. Import them to edit their stats, portraits and cards here like any other hero. ${miss.length<DEFAULT_HEROES.length?'('+miss.length+' not imported yet: '+miss.map(d=>d.data.name).join(', ')+')':''}`:'✓ All 5 built-in heroes are imported and editable in the list below.'}</p>
-    ${miss.length?'<button onclick="importDefaults()">📥 Import built-in heroes</button>':''}</div>`})()}
-  <h3 style="margin-bottom:10px">Heroes (${hList.length})</h3>
-  ${hList.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">${hList.map(([id,h])=>heroCardHTML(id,h)).join('')}</div>`:'<p class="mut">No heroes yet. Add your first one above.</p>'}
-
-  <div style="${sep}">
-  <h3>Status Ailments (Buffs &amp; Debuffs)</h3>
-  <p class="mut" style="margin:6px 0 10px;font-size:14px">Create buffs/debuffs with an uploaded PNG icon. They are shared by all cards. Changes here save instantly.</p>
+/* ---------------- buffs & debuffs ---------------- */
+function cgAils(){
+  return `<div class="cgp"><h4>Buffs &amp; Debuffs</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Status effects used by cards. Upload a PNG icon for each. Changes save instantly.</p>
   <div id="ailist">${renderAilList()}</div>
-  <div class="bx2" style="margin-top:8px"><div class="f2" style="margin:0;gap:8px">
+  <div class="bx2" style="margin-top:12px"><b>➕ New buff / debuff</b><div class="f2" style="margin:8px 0 0;gap:8px">
     <div><label>Name</label><input id="an" maxlength="30" placeholder="e.g. Burn"></div>
     <div><label>Type</label><select id="aty"><option value="debuff">debuff</option><option value="buff">buff</option></select></div>
     <div><label>Effect</label><select id="aef">${Object.entries(AIL_EFFECTS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>
     <div><label>Value (dmg/heal per turn or %)</label><input id="av" type="number" min="0" value="5"></div>
-    <div style="grid-column:1/-1"><label>Description (optional)</label><input id="ads" maxlength="80" placeholder="e.g. Takes damage each turn"></div>
-  </div>
-  <p class="mut" style="font-size:13px;margin:8px 0 0">💥 <b>Damage ×2 / ×3 / ×4</b>: as a <b>buff</b> the holder deals that much damage; as a <b>debuff</b> the holder takes that much damage. (Value is ignored for these.)</p>
-  <div class="row" style="align-items:center;gap:10px;margin-top:8px"><button class="s" onclick="$('#aif').click()">Upload PNG icon</button><span id="aip"></span><button class="s" onclick="saveAil()">+ Add ailment</button></div>
-  <input id="aif" type="file" accept="image/png" hidden onchange="upAilIcon(this)"></div>
-  </div>
-
-  <div style="${sep}" id="relsec">${relicSecInner()}</div>
-  <div style="${sep}" id="gensec">${genSecInner()}</div>
-
-  <div style="${sep}">
-    <h3>Play the game</h3>
-    <p class="mut" style="margin:6px 0 14px;font-size:14px">Open the game in a full-screen view. You can also share the <code>#/cardgame</code> link with players${CGON?'':' (currently OFF — only admins can access it)'}.</p>
-    <div class="row"><button onclick="location.hash='#/cardgame'">🎮 Open Card Battle</button></div>
-  </div>`;
+    <div style="grid-column:1/-1"><label>Description (optional)</label><input id="ads" maxlength="80" placeholder="e.g. Takes damage each turn"></div></div>
+   <p class="mut" style="font-size:13px;margin:8px 0 0">💥 <b>Damage ×2 / ×3 / ×4</b>: as a <b>buff</b> the holder deals that much damage; as a <b>debuff</b> the holder takes that much damage. (Value is ignored for these.)</p>
+   <div class="row" style="align-items:center;gap:10px;margin-top:8px"><button class="s" onclick="$('#aif').click()">Upload PNG icon</button><span id="aip"></span><button class="s" onclick="saveAil()">+ Add</button></div>
+   <input id="aif" type="file" accept="image/png" hidden onchange="upAilIcon(this)"></div></div>`;
 }
 
+/* ---------------- quests ---------------- */
+const rwText=r=>{r=r||{};const a=Math.max(1,+r.amt||1);if(r.type==='frag')return `🧩 ${a} card fragments (${r.hero&&r.hero!=='random'&&HLIST[r.hero]?esc(HLIST[r.hero].name):'random hero'})`;if(r.type==='gen')return `🃏 General card: ${GENS[r.gen]?esc(GENS[r.gen].name):'(deleted)'}`;return `💠 ${a} Transcendence stone${a>1?'s':''}`};
+function questListHTML(){const e=Object.entries(QSTS).sort((a,b)=>(+a[1].created||0)-(+b[1].created||0));if(!e.length)return '<p class="mut" style="font-size:14px">No quests yet.</p>';
+  return e.map(([k,q])=>`<div class="bx2 qrow"><div style="flex:1;min-width:0"><b>${esc(q.title)}</b><div class="mut" style="font-size:13px">Win <b>${+q.wins||1}</b> · ${MODE_TXT[q.mode]||MODE_TXT.any}</div><div style="font-size:13px;margin-top:2px">Reward: ${rwText(q.reward)}</div></div><div class="row"><button class="s" onclick="editQuest('${esc(k)}')">Edit</button><button class="d s" onclick="delQuest('${esc(k)}')">✕</button></div></div>`).join('')}
+function questSecInner(){
+  const heroOpts=`<option value="random"${QF.hero==='random'?' selected':''}>Random hero</option>`+Object.entries(HLIST).map(([k,h])=>`<option value="${esc(k)}"${QF.hero===k?' selected':''}>${esc(h.name)}</option>`).join('');
+  const genOpts=`<option value="">— choose —</option>`+Object.entries(GENS).map(([k,g])=>`<option value="${esc(k)}"${QF.gen===k?' selected':''}>${esc(g.name)}${g.locked?' 🔒':''}</option>`).join('');
+  return `<h4>Quests</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">A quest is “win N games” in Standard and/or Ranked. Players see a progress meter on their Battle page and tap the reward to claim it.</p>
+  <div id="qlist">${questListHTML()}</div>
+  <div class="bx2" style="margin-top:12px"><b>${QF.id?'✏️ Edit quest':'➕ New quest'}</b>
+   <div class="f2" style="margin:8px 0 0;gap:8px">
+    <div><label>Quest title</label><input value="${esc(QF.title)}" maxlength="50" oninput="QF.title=this.value" placeholder="e.g. Win 3 Standard Games"></div>
+    <div><label>Counts wins in</label><select onchange="QF.mode=this.value">${Object.entries(MODE_TXT).map(([k,v])=>`<option value="${k}"${QF.mode===k?' selected':''}>${v}</option>`).join('')}</select></div>
+    <div><label>Wins needed to finish</label><input type="number" min="1" max="9999" value="${+QF.wins||1}" oninput="QF.wins=+this.value"></div>
+    <div><label>Reward</label><select onchange="QF.rtype=this.value;paintQuest()"><option value="frag"${QF.rtype==='frag'?' selected':''}>🧩 Card fragments</option><option value="gen"${QF.rtype==='gen'?' selected':''}>🃏 General card</option><option value="stone"${QF.rtype==='stone'?' selected':''}>💠 Transcendence stone</option></select></div>
+    ${QF.rtype==='frag'?`<div><label>Fragments of which hero</label><select onchange="QF.hero=this.value">${heroOpts}</select></div>`:''}
+    ${QF.rtype==='gen'?`<div><label>General card</label><select onchange="QF.gen=this.value">${genOpts}</select></div>`:''}
+    ${QF.rtype!=='gen'?`<div><label>Amount</label><input type="number" min="1" max="9999" value="${+QF.amt||1}" oninput="QF.amt=+this.value"></div>`:''}</div>
+   ${QF.rtype==='gen'?'<p class="mut" style="font-size:13px;margin:8px 0 0">Tip: mark the card “Reward-only” in General Cards so players can only get it from this quest.</p>':''}
+   <div class="row" style="margin-top:10px"><button onclick="saveQuest()">💾 Save quest</button>${QF.id?'<button class="g" onclick="QF=emptyQF();paintQuest()">Cancel</button>':''}</div></div>`}
+const paintQuest=()=>{const e=$('#questsec');if(e)e.innerHTML=questSecInner()};
+async function saveQuest(){
+  if(!QF.title.trim())return toast('Quest title is required');if(!(+QF.wins>=1))return toast('Wins needed must be at least 1');
+  if(QF.rtype==='gen'&&!QF.gen)return toast('Choose the general card to give');
+  const id=QF.id||'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
+  const reward=QF.rtype==='frag'?{type:'frag',hero:QF.hero||'random',amt:Math.max(1,+QF.amt||1)}:QF.rtype==='gen'?{type:'gen',gen:QF.gen,amt:1}:{type:'stone',amt:Math.max(1,+QF.amt||1)};
+  const d={title:QF.title.trim(),mode:QF.mode,wins:Math.max(1,Math.floor(+QF.wins)),reward,created:(QSTS[id]&&QSTS[id].created)||Date.now()};
+  try{await api('cardgame/quests/'+id,'PUT',d);QSTS[id]=d;QF=emptyQF();paintQuest();toast('Quest saved')}catch(e){toast(e.message)}}
+function editQuest(id){const q=QSTS[id];if(!q)return;const r=q.reward||{};QF={id,title:q.title||'',mode:q.mode||'any',wins:+q.wins||1,rtype:r.type||'frag',hero:r.hero||'random',gen:r.gen||'',amt:+r.amt||1};paintQuest();const e=$('#questsec');if(e)e.scrollIntoView({behavior:'smooth'})}
+async function delQuest(id){if(!confirm('Delete this quest? Players keep anything they already claimed.'))return;try{await api('cardgame/quests/'+id,'DELETE');delete QSTS[id];if(QF.id===id)QF=emptyQF();paintQuest()}catch(e){toast(e.message)}}
+
+/* ---------------- ranks ---------------- */
+const RKCOL=['#c27c3a','#c3ccd6','#ffd24a','#8fe3d8','#38d27c','#6cd4ff'],RKR=['I','II','III','IV','V'];
+const rkPrev=i=>RKS[i]&&RKS[i].img?`<img src="${RKS[i].img}" style="width:42px;height:42px;object-fit:contain">`:`<svg width="42" height="42" viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="${RKCOL[Math.min(5,Math.floor(i/5))]}" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">${RKR[i%5]}</text></svg>`;
+function rankSecInner(){
+  return `<h4>Ranked mode</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Players earn points by winning Ranked matches. Their rank is how many full “points per rank” they have, in the order of the list below (first = lowest).</p>
+  <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Points per rank</label><input id="rkstep" type="number" min="1" value="${CGC.rankStep}"></div><div><label>Points for a win</label><input id="rkwin" type="number" min="0" value="${CGC.rankWin}"></div><div><label>Points lost on a loss</label><input id="rkloss" type="number" min="0" value="${CGC.rankLoss}"></div></div>
+   <div class="row" style="margin-top:10px"><button class="s" onclick="saveRankCfg()">💾 Save ranked settings</button></div></div>
+  <h4 style="margin-top:18px">Rank names &amp; emblems ${RKSAVED?'':'<span class="cgpill">using defaults</span>'}</h4>
+  <div class="rklist">${RKS.map((r,i)=>`<div class="rkrow"><span class="rkn">${i+1}</span><span class="rkp" id="rkp${i}">${rkPrev(i)}</span><input value="${esc(r.n)}" maxlength="24" oninput="RKS[${i}].n=this.value"><button class="s" onclick="$('#rkf${i}').click()">Emblem</button>${r.img?`<button class="g s" onclick="RKS[${i}].img='';paintRanks()">✕</button>`:''}<input id="rkf${i}" type="file" accept="image/*" hidden onchange="upRkImg(${i},this)"></div>`).join('')}</div>
+  <div class="row" style="margin-top:10px"><button class="s" onclick="rkAdd()">＋ Add rank</button><button class="g s" onclick="rkDel()">Remove last</button><button class="g s" onclick="rkReset()">Reset to defaults</button><button onclick="saveRanks()">💾 Save ranks</button></div>`}
+const paintRanks=()=>{const e=$('#ranksec');if(e)e.innerHTML=rankSecInner()};
+async function upRkImg(i,inp){const f=inp.files[0];if(!f)return;try{RKS[i].img=await shrinkPng(f,96);paintRanks()}catch(e){toast(e.message)}}
+function rkAdd(){RKS.push({n:'New rank '+(RKS.length+1)});paintRanks()}
+function rkDel(){if(RKS.length<=1)return toast('Keep at least one rank');RKS.pop();paintRanks()}
+function rkReset(){if(!confirm('Reset all rank names and emblems to the defaults (Copper I – Diamond V)?'))return;RKS=defRanksA();paintRanks()}
+async function saveRanks(){const l=RKS.map(r=>({n:(r.n||'').trim()||'Rank',...(r.img?{img:r.img}:{})}));try{await api('cardgame/ranks','PUT',l);RKS=l;RKSAVED=true;paintRanks();toast('Ranks saved')}catch(e){toast(e.message)}}
+async function saveCfg(){await api('cardgame/config','PUT',CGC)}
+async function saveRankCfg(){const g=id=>+$('#'+id).value;if(!(g('rkstep')>=1))return toast('Points per rank must be at least 1');
+  CGC.rankStep=Math.floor(g('rkstep'));CGC.rankWin=Math.max(0,Math.floor(g('rkwin')));CGC.rankLoss=Math.max(0,Math.floor(g('rkloss')));try{await saveCfg();toast('Ranked settings saved')}catch(e){toast(e.message)}}
+
+/* ---------------- settings (progression) ---------------- */
+function settingsInner(){
+  return `<h4>Hero progression</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Heroes gain 1 level for every win. At the max level they can evolve by spending card fragments of that hero. Evolving resets the hero to level 1.</p>
+  <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Max hero level</label><input id="smax" type="number" min="1" value="${CGC.maxLv}"></div><div><label>Transcendence stones for the last evolution</label><input id="sstone" type="number" min="0" value="${CGC.stone}"></div></div></div>
+  <div class="bx2" style="margin-top:10px"><b>Card fragments needed</b><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>→ ${n}</label><input id="sfr${i}" type="number" min="0" value="${CGC.frag[i]??0}"></div>`).join('')}</div></div>
+  <div class="bx2" style="margin-top:10px"><b>Default stat bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to every card number (damage, heal, shield…). A hero can override this in its own Evolutions step.</p><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}</label><input id="sev${i}" type="number" min="0" value="${CGC.evoB[i]??0}"></div>`).join('')}</div></div>
+  <div class="row" style="margin-top:12px"><button onclick="saveSettings()">💾 Save settings</button></div>`}
+async function saveSettings(){const g=id=>Math.max(0,Math.floor(+$('#'+id).value||0));
+  if(!(g('smax')>=1))return toast('Max level must be at least 1');
+  CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));
+  try{await saveCfg();toast('Settings saved')}catch(e){toast(e.message)}}
+
+/* ---------------- hero list card ---------------- */
 function heroCardHTML(id,h){
-  const cls=h.class_==='Mage'?'Magic':h.class_;
-  const icon=HERO_ICONS[cls]||'⚔️',hc=HERO_COLORS[cls]||'var(--gold)';
-  const cs=Array.isArray(h.cards)?h.cards:Object.values(h.cards||{});
-  const hasUlt=cs.some(c=>c&&c.type==='ultimate'),playable=cs.some(c=>c&&c.name&&c.type!=='ultimate');
-  return `<div class="box" style="padding:16px;display:flex;flex-direction:column;border-top:3px solid ${hc}">
-    <div style="display:flex;gap:12px;align-items:flex-start">
-      ${h.img?`<img src="${esc(h.img)}" referrerpolicy="no-referrer" alt="" style="width:72px;height:72px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line);flex:none">`:`<div style="width:72px;height:72px;background:#14243c;border-radius:8px;display:grid;place-items:center;font-size:34px;flex:none">${icon}</div>`}
-      <div style="min-width:0;flex:1">
-        <b style="font:700 17px 'Chakra Petch'">${esc(h.name||'Unnamed')}</b>
-        <div style="font-size:13px;margin:2px 0"><span style="background:${hc};color:#111;font-weight:700;padding:1px 8px;border-radius:99px">${esc(cls||'')}</span></div>
-        <div style="font-size:13px;color:var(--mute);margin-top:4px">❤️ <b style="color:var(--ink)">${+h.hp||0}</b> HP &nbsp; ⚔️ <b style="color:var(--ink)">${+h.atk||0}</b> ATK</div>
-        <div style="font-size:13px;color:var(--mute);margin-top:2px">🃏 <b style="color:var(--ink)">${cs.length}</b> cards &nbsp; ✨ ${hasUlt?'ultimate set':'no ultimate'}</div>
-        ${playable?'':'<div style="font-size:12px;color:var(--gold);margin-top:4px">⚠ No cards yet — hidden from players</div>'}
-      </div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button class="s" onclick="editHero('${esc(id)}')">✏️ Edit / Cards</button>
-      <button class="d s" onclick="deleteHero('${esc(id)}')">Delete</button>
-    </div>
-  </div>`;
+  const cls=h.class_==='Mage'?'Magic':h.class_,icon=HERO_ICONS[cls]||'⚔️',hc=HERO_COLORS[cls]||'var(--gold)',cs=cardsOf(h),hasUlt=cs.some(c=>c.type==='ultimate'),playable=cs.some(c=>c.type!=='ultimate');
+  const evn=Object.values(h.evo||{}).filter(e=>e&&(e.name||e.img||(e.bonus!==undefined&&e.bonus!==''))).length;
+  return `<div class="cgh2" style="--hc:${hc}">
+    <div class="cgh2t">${h.img?`<img src="${esc(h.img)}" referrerpolicy="no-referrer" alt="">`:`<span>${icon}</span>`}</div>
+    <div class="cgh2b"><b>${esc(h.name||'Unnamed')}</b><span class="cgcl">${esc(cls||'')}</span>
+     <div class="mut" style="font-size:12px;margin-top:4px">❤️ ${+h.hp||0} · ⚔️ ${+h.atk||0} · 🃏 ${cs.length} · ✨ ${hasUlt?'ult':'no ult'} · ⬆ ${evn}/4 evo</div>
+     ${playable?'':'<div class="cgw">⚠ No cards: hidden from players</div>'}
+     <div class="row" style="margin-top:8px"><button class="s" onclick="editHero('${esc(id)}')">✏️ Edit</button><button class="d s" onclick="deleteHero('${esc(id)}')">Delete</button></div></div></div>`;
 }
+
+/* ---------------- hero save / edit / delete ---------------- */
+async function saveHero(){
+  const m=$('#hm'),bad=t=>{m.innerHTML=`<div class="msg">${t}</div>`;m.scrollIntoView({behavior:'smooth',block:'nearest'})};
+  const name=$('#hn').value.trim(),cls=$('#hcl').value,hp=+$('#hhp').value,atk=+$('#hatk').value;
+  if(!name)return bad('Hero name is required.');
+  if(!(hp>0))return bad('HP must be greater than 0.');
+  const isEdit=!!HF.id,evo={};
+  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);if(e.img)o.img=e.img;if(Object.keys(o).length)evo[i]=o});
+  try{
+    const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
+    let created=Date.now();
+    if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
+    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,cards:HF.cards,evo:Object.keys(evo).length?evo:null,created,updated:Date.now()};
+    await api('cardgame/heroes/'+id,'PUT',data);
+    HF=emptyHF();CF=emptyCF();
+    toast(isEdit?'Hero updated':'Hero created');atab='cardgame';CGT='heroes';adminV();
+  }catch(e){bad(esc(e.message))}
+}
+async function editHero(id){
+  try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
+    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,img:e.img||''}});
+    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',cards:cardsOf(h),evo};
+    CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0)
+  }catch(e){toast(e.message)}}
+async function deleteHero(id){if(!confirm('Delete this hero? Players who used it will lose it from their line-ups.'))return;
+  try{await api('cardgame/heroes/'+id,'DELETE');if(HF.id===id)HF=emptyHF();toast('Hero deleted');adminV()}catch(e){toast(e.message)}}
 
 /* ---- hero cards builder ---- */
 function renderCardList(){
@@ -1191,7 +1316,7 @@ async function delRelic(id){if(!confirm('Delete this relic?'))return;try{await a
 
 /* ---- general cards ---- */
 function genListHTML(){const e=Object.entries(GENS);if(!e.length)return '<p class="mut" style="font-size:14px">No general cards yet.</p>';
-  return `<div class="gcs">${e.map(([k,g])=>`<div class="cgc" style="--cc:#8b93a7"><span class="cs">${+g.manaCost||0}</span><span class="ty">general</span>
+  return `<div class="gcs">${e.map(([k,g])=>`<div class="cgc" style="--cc:#8b93a7"><span class="cs">${+g.manaCost||0}</span><span class="ty">${g.locked?'🔒 reward':'general'}</span>
     <div class="ic">${esc(g.icon||GEN_ICON[g.effect]||'🃏')}</div><b>${esc(g.name)}</b><div class="ds">${esc(g.desc||genText(g))}</div>
     <div class="ba"><button class="s" onclick="editGen('${esc(k)}')">Edit</button><button class="d s" onclick="delGen('${esc(k)}')">✕</button></div></div>`).join('')}</div>`}
 function genSecInner(){
@@ -1209,6 +1334,7 @@ function genSecInner(){
     ${GF.ail?`<div><label>Ailment duration (turns)</label><input type="number" min="1" max="9" value="${+GF.dur||2}" oninput="GF.dur=+this.value;gfTxt()"></div>`:''}
     <div><label>Icon emoji (optional)</label><input value="${esc(GF.icon)}" maxlength="4" oninput="GF.icon=this.value" placeholder="${GEN_ICON[GF.effect]||'🃏'}"></div>
     <div style="grid-column:1/-1"><label>Description (optional, auto-written if empty)</label><input value="${esc(GF.desc)}" maxlength="90" oninput="GF.desc=this.value"></div>
+    <div style="grid-column:1/-1"><label class="chk"><input type="checkbox" ${GF.locked?'checked':''} onchange="GF.locked=this.checked"> 🔒 Reward-only: players must earn this card from a quest (otherwise everyone can use it)</label></div>
    </div>
    <p class="mut" id="gftx" style="font-size:13px;margin:8px 0">Effect: ${esc(genText(GF))}</p>
    <div class="row"><button onclick="saveGen()">💾 Save general card</button>${GF.id?'<button class="g" onclick="GF=emptyGF();paintGen()">Cancel</button>':''}</div>
@@ -1218,7 +1344,7 @@ function gfTxt(){const e=$('#gftx');if(e)e.textContent='Effect: '+genText(GF)}
 async function saveGen(){
   if(!GF.name.trim())return toast('Card name is required');
   const id=GF.id||'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||0,delay:Math.max(1,+GF.delay||2),manaCost:Math.max(0,+GF.manaCost||0),ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),updated:Date.now()};
+  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||0,delay:Math.max(1,+GF.delay||2),manaCost:Math.max(0,+GF.manaCost||0),ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),locked:!!GF.locked,updated:Date.now()};
   try{await api('cardgame/general/'+id,'PUT',d);GENS[id]=d;GF=emptyGF();paintGen();toast('General card saved')}catch(e){toast(e.message)}}
 function editGen(id){const g=GENS[id];if(!g)return;GF={...emptyGF(),...g,id};paintGen();const e=$('#gensec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 async function delGen(id){if(!confirm('Delete this general card?'))return;try{await api('cardgame/general/'+id,'DELETE');delete GENS[id];if(GF.id===id)GF=emptyGF();paintGen()}catch(e){toast(e.message)}}
@@ -1226,36 +1352,10 @@ async function delGen(id){if(!confirm('Delete this general card?'))return;try{aw
 /* ---- hero save / edit / delete ---- */
 async function upHeroImg(inp){const f=inp.files[0];if(!f)return;try{HF.img=await shrinkPng(f,400);const e=$('#hpv');if(e)e.innerHTML=`<img src="${HF.img}" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`}catch(e){toast(e.message)}}
 
-async function saveHero(){
-  const m=$('#hm'),bad=t=>{m.innerHTML=`<div class="msg">${t}</div>`;m.scrollIntoView({behavior:'smooth',block:'nearest'})};
-  const name=$('#hn').value.trim(),cls=$('#hcl').value,hp=+$('#hhp').value,atk=+$('#hatk').value;
-  if(!name)return bad('Hero name is required.');
-  if(!(hp>0))return bad('HP must be greater than 0.');
-  const isEdit=!!HF.id;
-  try{
-    const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-    let created=Date.now();
-    if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
-    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,cards:HF.cards,created,updated:Date.now()};
-    await api('cardgame/heroes/'+id,'PUT',data);
-    HF=emptyHF();CF=emptyCF();
-    toast(isEdit?'Hero updated':'Hero added');atab='cardgame';adminV();
-  }catch(e){bad(esc(e.message))}
-}
-
-async function editHero(id){
-  try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
-    HF={id,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',cards:(Array.isArray(h.cards)?h.cards:Object.values(h.cards||{})).filter(Boolean)};
-    CF=emptyCF();atab='cardgame';await adminV();window.scrollTo(0,0)
-  }catch(e){toast(e.message)}}
-
-async function deleteHero(id){if(!confirm('Delete this hero?'))return;
-  try{await api('cardgame/heroes/'+id,'DELETE');if(HF.id===id)HF=emptyHF();toast('Hero deleted');adminV()}catch(e){toast(e.message)}}
-
 async function toggleCG(el){
   const on=el.checked;CGON=on;
   try{await api('config/cardgame','PUT',{enabled:on,updated:Date.now()});
-    const s=$('#cg-status');if(s){s.textContent=on?'ON — Visible to all players':'OFF — Admin only';s.style.color=on?'var(--ok)':'var(--mute)'}
+    const s=$('#cg-status');if(s){s.textContent=on?'● Live for all players':'○ Admin only';s.className='cgpill'+(on?' on':'')}
     toast(on?'Game is now visible to all players':'Game is now admin-only');nav()
   }catch(e){CGON=!on;el.checked=!on;toast(e.message)}}
 
@@ -1367,7 +1467,7 @@ const invCmp=(a,b)=>{const x=a[1].order,y=b[1].order,hx=typeof x==='number',hy=t
 const nextOrd=()=>{const o=Object.values(INV.d||{}).map(p=>p.order).filter(x=>typeof x==='number');return o.length?Math.max(...o)+1:undefined};
 const newIF=()=>({id:null,name:'',price:'',stock:'',desc:'',imgs:[],tags:[],ph:false,free:false,flink:'',sash:false,created:0});
 let IF=newIF();
-let HF={id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[]};
+let HF=emptyHF();
 const HERO_CLASSES=['Defender','Magic','Healer','Attacker','Specialist'];
 const HERO_COLORS={'Defender':'#f5c451','Magic':'#5aa9ff','Healer':'#5be39b','Attacker':'#ff5a5a','Specialist':'#b07cff'};
 const HERO_ICONS={'Defender':'🛡️','Magic':'🧙','Healer':'🩺','Attacker':'⚔️','Specialist':'🎯'};
@@ -1935,8 +2035,8 @@ const fades=()=>document.querySelectorAll('.nwp').forEach(w=>w.classList.toggle(
 const previewRich=id=>modal(`<div style="padding-top:22px">${rich($('#'+id).value)}</div>`,760);
 
 /* ---------- news posts: full view, comments, replies, @mentions ---------- */
-const noteTxt=n=>n.type==='acc'?'accepted your friend request':n.type==='den'?'declined your friend request':n.type==='men'?'mentioned you in a comment':'replied to your comment';
-const noteToast=n=>toast(`${n.from} ${noteTxt(n)}`,()=>n.p?openPost(n.p):location.hash='#/friends');
+const noteTxt=n=>n.type==='inv'?'invited you to play Dafreta Card Battle 🃏':n.type==='acc'?'accepted your friend request':n.type==='den'?'declined your friend request':n.type==='men'?'mentioned you in a comment':'replied to your comment';
+const noteToast=n=>toast(`${n.from} ${noteTxt(n)}`,()=>n.p?openPost(n.p):location.hash=(n.type==='inv'?'#/cardgame':'#/friends'));
 let CM={id:null,list:{},reply:null},mnT;
 async function getPost(id){const c=NEWS.d.find(x=>x.id===id);if(c)return c;const d=await api('news/'+id);return d?{id,...d}:null}
 const mention=t=>esc(t).replace(/(^|[^a-z0-9_])@([a-z0-9_]{3,16})/gi,(m,a,u)=>`${a}<a class="mn" href="#/char/${u.toLowerCase()}" onclick="closeM()">@${u}</a>`);
