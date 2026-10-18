@@ -831,6 +831,11 @@ const shrinkPng=(f,max)=>new Promise((ok,no)=>{const im=new Image(),u=URL.create
     c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
     URL.revokeObjectURL(u);ok(c.toDataURL('image/png'))};
   im.onerror=()=>no(new Error('Could not read that image.'));im.src=u});
+const shrinkJpg=(f,max,q)=>new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);
+  im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const g=c.getContext('2d');g.fillStyle='#000';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);
+    URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',q||.82))};
+  im.onerror=()=>no(new Error('Could not read that image.'));im.src=u});
 /* small JPEG copy of an existing data URL (shop card thumbnails) */
 const thumbOf=(src,max,q,sq)=>new Promise((ok,no)=>{const im=new Image();
   im.onload=()=>{const c=document.createElement('canvas'),g=c.getContext('2d');
@@ -951,8 +956,8 @@ async function importDefaults(){
     for(let i=0;i<DEFAULT_HEROES.length;i++){const d=DEFAULT_HEROES[i],id='hd_'+d.key;if(!have[id])await api('cardgame/heroes/'+id,'PUT',{...d.data,created:t0+i,updated:t0+i})}
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
-const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[],evo:{},open:false});
-const emptyCF=()=>({i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0});
+const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[],evo:{},open:false,locked:false,comments:[]});
+const emptyCF=()=>({i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:''});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
 const emptyGF=()=>({id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
@@ -989,11 +994,11 @@ const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).rep
 function cardText(c){const v=+c.value||0,a=AILS[c.ail],ad=a?' + '+a.name+' ('+(+c.dur||2)+'t)':'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (+foe behind)',all:' (all foes)'}[c.scope]||'';
   const ex=[+c.shield?'+'+(+c.shield)+' shield':'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
   switch(c.type){
-    case 'heal':t='Heal '+v+ad;break;
+    case 'heal':t='Heal '+v+ad+(c.target==='self'?' (self only)':'');break;
     case 'mana':t='Gain '+v+' energy';break;
     case 'draw':t='Draw '+v+' card(s)';break;
-    case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to an ally':'Gain '+v+' shield';break;
-    case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)':'');break;
+    case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+(c.target==='self'?' (self)':'');break;
+    case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)'+(c.target==='enemy'?' to any enemy':''):'');break;
     case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
     default:t='Deal '+v+' dmg'+hits+reach+ad}
   return t+(ex?' · '+ex:'')}
@@ -1003,7 +1008,7 @@ const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===
 /* ======================================================================
    CARD BATTLE ADMIN  (organised into sections)
    ====================================================================== */
-let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
+let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
 const emptyQF=()=>({id:null,title:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
 let QF=emptyQF();
 const defRanksA=()=>['Copper','Silver','Gold','Platinum','Emerald','Diamond'].flatMap(n=>['I','II','III','IV','V'].map(r=>({n:n+' '+r})));
@@ -1015,14 +1020,14 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb'].map(k=>api('cardgame/'+k).catch(()=>null)));
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};
   HLIST=heroes||{};AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
-  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
+  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();
   const n=o=>Object.keys(o).length;
-  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['ranks','🏅','Ranks',RKS.length],['settings','⚙️','Settings']];
-  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
+  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['ranks','🏅','Ranks',RKS.length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
+  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
   return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
     <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
       <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
@@ -1069,7 +1074,8 @@ function heroEditorHTML(){
     <div><label>Hero Name</label><input id="hn" maxlength="40" value="${esc(HF.name)}" oninput="HF.name=this.value" placeholder="e.g. Sir Aldric"></div>
     <div><label>Class</label><select id="hcl" onchange="hClass(this)" style="border-color:${hc};color:${hc};font-weight:700">${HERO_CLASSES.map(c=>`<option style="color:${HERO_COLORS[c]}"${HF.class_===c?' selected':''}>${c}</option>`).join('')}</select></div>
     <div><label>Max HP</label><input id="hhp" type="number" min="1" max="9999" value="${HF.hp||100}" oninput="HF.hp=+this.value"></div>
-    <div><label>Base ATK</label><input id="hatk" type="number" min="0" max="9999" value="${HF.atk||0}" oninput="HF.atk=+this.value"></div></div>
+    <div><label>Base ATK</label><input id="hatk" type="number" min="0" max="9999" value="${HF.atk||0}" oninput="HF.atk=+this.value"></div>
+    <div style="grid-column:1/-1"><label class="chk"><input type="checkbox" ${HF.locked?'checked':''} onchange="HF.locked=this.checked"> 🔒 Locked hero: players must collect ${CGC.unlock} card fragments of this hero to unlock it (otherwise everyone owns it from the start)</label></div></div>
    <label>Portrait <span class="mut" style="font-weight:400">(full-body PNG, transparent background)</span></label>
    <div class="row" style="align-items:center;margin:6px 0 0;gap:10px"><button class="s" onclick="$('#hif').click()">Upload portrait</button><span id="hpv">${HF.img?`<img src="${HF.img}" referrerpolicy="no-referrer" alt="portrait" style="height:64px;border-radius:8px;border:1px solid var(--line)">`:''}</span>${HF.img?'<button class="g s" onclick="HF.img=\'\';document.querySelector(\'#hpv\').innerHTML=\'\';this.remove()">Remove</button>':''}</div>
    <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)"></div>
@@ -1079,6 +1085,7 @@ function heroEditorHTML(){
   <div class="cgstep"><div class="cgsh"><span>3</span><b>Evolutions</b></div>
    <p class="mut" style="margin:8px 0;font-size:13px">Each evolution can have its own name, image and a stat bonus (+N added to every card’s attack, heal, shield, etc.). Leave a field empty to use the default (<i>“${esc(HF.name||'Hero')} II”</i>, the base portrait, and the default bonus from Settings).</p>
    <div id="evsec">${evoHTML()}</div></div>
+  ${HF.id?`<div class="cgstep"><div class="cgsh"><span>4</span><b>Player comments</b></div><div id="cmsec">${commentsAdminHTML()}</div></div>`:''}
   <div class="cgsave"><button onclick="saveHero()">💾 ${HF.id?'Save changes':'Create hero'}</button><button class="g" onclick="closeHero()">Cancel</button></div></div>`;
 }
 function evoHTML(){
@@ -1089,6 +1096,10 @@ function evoHTML(){
     <label>Image</label><div class="row" style="align-items:center;gap:8px"><button class="s" onclick="$('#evf${i}').click()">Upload</button>${e.img?`<img src="${e.img}" referrerpolicy="no-referrer" style="height:46px;border-radius:6px;border:1px solid var(--line)"><button class="g s" onclick="evSet(${i},'img','');paintEvo()">✕</button>`:'<span class="mut" style="font-size:12px">base portrait</span>'}</div>
     <input id="evf${i}" type="file" accept="image/*" hidden onchange="upEvoImg(${i},this)"></div>`}).join('')}</div>`;
 }
+const timeAgo=t=>{const d=(Date.now()-t)/1000;return d<60?'just now':d<3600?Math.floor(d/60)+'m ago':d<86400?Math.floor(d/3600)+'h ago':Math.floor(d/86400)+'d ago'};
+function commentsAdminHTML(){const c=HF.comments||[];if(!c.length)return '<p class="mut" style="font-size:13px;margin:8px 0 0">No comments yet. Players can comment on a hero from its details page in the game.</p>';
+  return `<p class="mut" style="font-size:13px;margin:8px 0">${c.length} comment(s), newest first. You can remove anything inappropriate.</p>`+c.slice(0,40).map(x=>`<div class="bx2 qrow" style="padding:8px 12px"><div style="flex:1;min-width:0"><b>${esc(x.n||x.u||'player')}</b> <span class="mut" style="font-size:12px">${timeAgo(x.ts||0)}</span><div style="font-size:14px;overflow-wrap:anywhere">${esc(x.t||'')}</div></div><button class="d s" onclick="delComment('${esc(x.k)}')">✕</button></div>`).join('')}
+async function delComment(k){if(!HF.id||!confirm('Delete this comment?'))return;try{await api('cardgame/comments/'+HF.id+'/'+k,'DELETE');HF.comments=HF.comments.filter(x=>x.k!==k);const e=$('#cmsec');if(e)e.innerHTML=commentsAdminHTML()}catch(e){toast(e.message)}}
 const paintEvo=()=>{const e=$('#evsec');if(e)e.innerHTML=evoHTML()};
 function evSet(i,k,v){HF.evo=HF.evo||{};HF.evo[i]=HF.evo[i]||{};HF.evo[i][k]=v}
 async function upEvoImg(i,inp){const f=inp.files[0];if(!f)return;try{evSet(i,'img',await shrinkPng(f,400));paintEvo()}catch(e){toast(e.message)}}
@@ -1159,16 +1170,29 @@ async function saveCfg(){await api('cardgame/config','PUT',CGC)}
 async function saveRankCfg(){const g=id=>+$('#'+id).value;if(!(g('rkstep')>=1))return toast('Points per rank must be at least 1');
   CGC.rankStep=Math.floor(g('rkstep'));CGC.rankWin=Math.max(0,Math.floor(g('rkwin')));CGC.rankLoss=Math.max(0,Math.floor(g('rkloss')));try{await saveCfg();toast('Ranked settings saved')}catch(e){toast(e.message)}}
 
+/* ---------------- appearance ---------------- */
+function lookInner(){
+  return `<h4>Battle page background</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Upload a photo or artwork. It becomes the background of the players’ Battle page, behind the big hero art. Wide images (16:9) work best; it is resized and compressed automatically.</p>
+  <div class="bx2"><div style="${APP.bg?'':'display:none;'}margin-bottom:10px"><img src="${APP.bg||''}" style="width:100%;max-width:560px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1px solid var(--line)" id="bgpv"></div>
+   ${APP.bg?'':'<p class="mut" style="margin:0 0 10px">No background set. Players see the default tavern gradient.</p>'}
+   <div class="row" style="gap:10px"><button class="s" onclick="$('#bgf').click()">${APP.bg?'Replace photo':'Upload photo'}</button>${APP.bg?'<button class="d s" onclick="removeBg()">Remove</button>':''}</div>
+   <input id="bgf" type="file" accept="image/*" hidden onchange="upBg(this)"></div>`}
+const paintLook=()=>{const e=$('#looksec');if(e)e.innerHTML=lookInner()};
+async function upBg(inp){const f=inp.files[0];if(!f)return;try{const d=await shrinkJpg(f,1600,.8);if(d.length>3.5e6)return toast('That image is still too large. Try a smaller one.');APP={...APP,bg:d};await api('cardgame/appearance','PUT',APP);paintLook();toast('Background saved')}catch(e){toast(e.message)}}
+async function removeBg(){if(!confirm('Remove the background?'))return;try{await api('cardgame/appearance','PUT',{});APP={};paintLook();toast('Background removed')}catch(e){toast(e.message)}}
+
 /* ---------------- settings (progression) ---------------- */
 function settingsInner(){
-  return `<h4>Hero progression</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Heroes gain 1 level for every win. At the max level they can evolve by spending card fragments of that hero. Evolving resets the hero to level 1.</p>
+  return `<h4>Hero progression</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">After a match every hero in the line-up earns EXP. When the bar fills, the hero levels up. At the max level they can evolve by spending card fragments of that hero. Evolving resets the hero to level 1.</p>
   <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Max hero level</label><input id="smax" type="number" min="1" value="${CGC.maxLv}"></div><div><label>Transcendence stones for the last evolution</label><input id="sstone" type="number" min="0" value="${CGC.stone}"></div></div></div>
+  <div class="bx2" style="margin-top:10px"><b>EXP</b><p class="mut" style="font-size:13px;margin:4px 0 0">With the defaults (100 EXP per level, 100 per win, 0 per loss) every win is exactly one level.</p><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>EXP needed per level</label><input id="sexl" type="number" min="1" value="${CGC.expLv}"></div><div><label>EXP for a win</label><input id="sexw" type="number" min="0" value="${CGC.expWin}"></div><div><label>EXP for a loss</label><input id="sexs" type="number" min="0" value="${CGC.expLoss}"></div></div></div>
+  <div class="bx2" style="margin-top:10px"><b>Unlocking locked heroes</b><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Card fragments needed to unlock a hero</label><input id="sunl" type="number" min="1" value="${CGC.unlock}"></div></div><p class="mut" style="font-size:13px;margin:6px 0 0">A hero is locked when you tick “Locked hero” in its editor. Players get fragments from quests.</p></div>
   <div class="bx2" style="margin-top:10px"><b>Card fragments needed</b><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>→ ${n}</label><input id="sfr${i}" type="number" min="0" value="${CGC.frag[i]??0}"></div>`).join('')}</div></div>
   <div class="bx2" style="margin-top:10px"><b>Default stat bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to every card number (damage, heal, shield…). A hero can override this in its own Evolutions step.</p><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}</label><input id="sev${i}" type="number" min="0" value="${CGC.evoB[i]??0}"></div>`).join('')}</div></div>
   <div class="row" style="margin-top:12px"><button onclick="saveSettings()">💾 Save settings</button></div>`}
 async function saveSettings(){const g=id=>Math.max(0,Math.floor(+$('#'+id).value||0));
   if(!(g('smax')>=1))return toast('Max level must be at least 1');
-  CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));
+  CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.expLv=Math.max(1,g('sexl'));CGC.expWin=g('sexw');CGC.expLoss=g('sexs');CGC.unlock=Math.max(1,g('sunl'));CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));
   try{await saveCfg();toast('Settings saved')}catch(e){toast(e.message)}}
 
 /* ---------------- hero list card ---------------- */
@@ -1177,7 +1201,7 @@ function heroCardHTML(id,h){
   const evn=Object.values(h.evo||{}).filter(e=>e&&(e.name||e.img||(e.bonus!==undefined&&e.bonus!==''))).length;
   return `<div class="cgh2" style="--hc:${hc}">
     <div class="cgh2t">${h.img?`<img src="${esc(h.img)}" referrerpolicy="no-referrer" alt="">`:`<span>${icon}</span>`}</div>
-    <div class="cgh2b"><b>${esc(h.name||'Unnamed')}</b><span class="cgcl">${esc(cls||'')}</span>
+    <div class="cgh2b"><b>${esc(h.name||'Unnamed')}</b><span class="cgcl">${esc(cls||'')}</span>${h.locked?' <span title="Players unlock this hero with fragments">🔒</span>':''}
      <div class="mut" style="font-size:12px;margin-top:4px">❤️ ${+h.hp||0} · ⚔️ ${+h.atk||0} · 🃏 ${cs.length} · ✨ ${hasUlt?'ult':'no ult'} · ⬆ ${evn}/4 evo</div>
      ${playable?'':'<div class="cgw">⚠ No cards: hidden from players</div>'}
      <div class="row" style="margin-top:8px"><button class="s" onclick="editHero('${esc(id)}')">✏️ Edit</button><button class="d s" onclick="deleteHero('${esc(id)}')">Delete</button></div></div></div>`;
@@ -1195,7 +1219,7 @@ async function saveHero(){
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
     if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
-    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,cards:HF.cards,evo:Object.keys(evo).length?evo:null,created,updated:Date.now()};
+    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,cards:HF.cards,evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
     await api('cardgame/heroes/'+id,'PUT',data);
     HF=emptyHF();CF=emptyCF();
     toast(isEdit?'Hero updated':'Hero created');atab='cardgame';CGT='heroes';adminV();
@@ -1204,7 +1228,8 @@ async function saveHero(){
 async function editHero(id){
   try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
     const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,img:e.img||''}});
-    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',cards:cardsOf(h),evo};
+    let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
+    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
     CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0)
   }catch(e){toast(e.message)}}
 async function deleteHero(id){if(!confirm('Delete this hero? Players who used it will lose it from their line-ups.'))return;
@@ -1235,6 +1260,8 @@ function renderCardForm(){
       :`<div><label>Mana Cost</label><input type="number" min="0" max="20" value="${+c.manaCost||0}" oninput="CF.manaCost=+this.value"></div>`}
     ${showAil?`<div><label>${c.type==='buff'?'Buff to apply (optional)':c.type==='debuff'?'Debuff to apply':'Status ailment applied (optional)'}</label><select onchange="CF.ail=this.value;refreshCF()">${ailOpts(c.ail)}</select></div>`:''}
     ${showAil&&c.ail?`<div><label>Ailment duration (turns)</label><input type="number" min="1" max="9" value="${+c.dur||2}" oninput="CF.dur=+this.value"></div>`:''}
+    ${c.type==='heal'||c.type==='buff'?`<div><label>Who can receive it?</label><select onchange="CF.target=this.value">${[['ally','Pick any ally (self or a teammate)'],['self','Self only (the hero playing the card)']].map(([k,l])=>`<option value="${k}"${((c.target||'ally')===k)?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
+    ${c.type==='debuff'?`<div><label>Who can it target?</label><select onchange="CF.target=this.value">${[['front','Front enemy only'],['enemy','Pick any enemy']].map(([k,l])=>`<option value="${k}"${((c.target||'front')===k)?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
     ${(c.type==='attack'||c.type==='debuff')?`<div><label>Hits (times the damage is dealt)</label><input type="number" min="1" max="5" value="${+c.hits||1}" oninput="CF.hits=+this.value"></div><div><label>Reach</label><select onchange="CF.scope=this.value">${[['front','Front enemy only'],['pierce','Front enemy + the foe behind (70%)'],['all','All enemies']].map(([k,l])=>`<option value="${k}"${(c.scope||'front')===k?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
     ${!['buff','draw','mana'].includes(c.type)?`<div><label>Bonus shield (optional)</label><input type="number" min="0" value="${+c.shield||0}" oninput="CF.shield=+this.value"></div>`:''}
     ${!['heal','draw','mana'].includes(c.type)?`<div><label>Bonus heal (optional)</label><input type="number" min="0" value="${+c.heal||0}" oninput="CF.heal=+this.value"></div>`:''}
@@ -1257,7 +1284,7 @@ async function saveCard(){
   if(!name)return toast('Card name is required');
   if(CF.type==='debuff'&&!CF.ail)return toast('Pick the debuff this card applies');
   if(CF.type==='ultimate'&&HF.cards.some((x,j)=>x.type==='ultimate'&&j!==CF.i))return toast('This hero already has an ultimate. Edit or remove it first.');
-  const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',shield:Math.max(0,+CF.shield||0),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
+  const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',target:(CF.type==='heal'||CF.type==='buff'||CF.type==='debuff')?(CF.target||''):'',shield:Math.max(0,+CF.shield||0),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
   if(CF.type==='ultimate')card.ult=CF.ult||'all';
   const before=HF.cards.slice();
   if(CF.i!=null)HF.cards[CF.i]=card;else HF.cards.push(card);
