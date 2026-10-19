@@ -601,6 +601,20 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .fcs{flex:1;min-width:220px;display:flex;flex-direction:column;gap:6px}.fcs input[type=range]{padding:0}
 </style>
 <style>
+.ccp{position:relative;flex:none;width:var(--pw,160px);aspect-ratio:1019/1543;container-type:inline-size;border-radius:3.6%/2.4%;overflow:hidden;color:#fff}
+.ccp::before{content:"";position:absolute;inset:0;background:var(--cb) center/100% 100% no-repeat}
+.ccp.gen::before{filter:grayscale(1) brightness(.92)}
+.ccp>*{position:absolute;z-index:1}
+.ccp .k{left:1%;top:1.1%;width:13.4%;height:8.9%;display:grid;place-items:center;color:#1a0d00;font:900 9.5cqw/1 Georgia,serif}
+.ccp .k.ex{font-size:5.8cqw;font-style:italic}
+.ccp .n{left:18.6%;right:7%;top:2.3%;height:7.1%;display:flex;align-items:center;color:#140a00;font:800 min(7.2cqw,calc(116cqw / var(--nl,12)))/1 Cinzel,Georgia,serif}
+.ccp .n span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ccp .a{left:8.64%;top:12.31%;width:82.73%;height:41.09%;display:grid;place-items:center;overflow:hidden}
+.ccp .a img{width:100%;height:100%;object-fit:cover;display:block}.ccp .a i{font-style:normal;font-size:23cqw;line-height:1}
+.ccp .d{left:7%;width:86%;top:58.6%;height:28.2%;display:flex;align-items:center;justify-content:center;text-align:center;font:600 6.4cqw/1.22 Barlow,system-ui,sans-serif;color:#fff;text-shadow:0 .3cqw .8cqw #000;overflow:hidden;overflow-wrap:anywhere}
+.cgcw{display:flex;flex-direction:column;align-items:center;gap:6px}.cgcw .ty{font:700 10px system-ui;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}.cgcw .ba{display:flex;gap:6px}
+.cgcw.ult .ccp{box-shadow:0 0 0 2px #ffd966,0 0 14px #ffd96688}
+.artb{margin-top:10px;border-left:4px solid #b07cff}
 .cpool{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.cpc{background:#14243c;border:1px solid var(--line);border-radius:20px;padding:3px 6px 3px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.cpc button{background:none;border:0;color:var(--mute);cursor:pointer;padding:0 4px;font-size:13px}.cpc button:hover{color:#ff6a6a}
 </style>
 </head>
@@ -707,7 +721,7 @@ function logout(){stopBeat(true);localStorage.removeItem('dn_s');stopIn();inOK=f
 const view=h=>{$('#app').innerHTML=h;window.scrollTo(0,0)};
 async function route(){
   const [,pg,arg,arg2]=location.hash.split('/');
-  CURC=null;setNav(false);tbSel=null;setTab();
+  CURC=null;setNav(false);tbSel=null;setTab();if(pg!=='cardgame')fsLeave();
   try{
     if(pg==='login')return loginV();
     if(pg==='register')return regV();
@@ -749,7 +763,7 @@ async function homeV(){
   <p>Create a character, redeem codes from events and supporters, and show off every badge on your public page. Games are on the way.</p>
   <div class="row">${me?`<button onclick="location.hash='#/char/${me.k}'">View my page</button>`:`<button onclick="location.hash='#/register'">Create account</button><button class="g" onclick="location.hash='#/login'">Log in</button>`}<button class="g" onclick="goSec('shop')">Visit shop</button></div></div>
   <div style="display:grid;place-items:center">${av(you,220)}</div></div></section>
-  ${(CGON||(me&&me.role==='admin'))?`<div class="box" style="margin:22px 0;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap"><div><h2 style="margin:0">Dafreta Card Battle</h2><p class="mut" style="margin:6px 0 0">4v4 card duel. Build your team and battle!${CGON?'':' (Admin preview — OFF for players)'}</p></div><button onclick="location.hash='#/cardgame'">▶ Play Now!</button></div>`:''}
+  ${(CGON||(me&&me.role==='admin'))?`<div class="box" style="margin:22px 0;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap"><div><h2 style="margin:0">Dafreta Card Battle</h2><p class="mut" style="margin:6px 0 0">4v4 card duel. Build your team and battle!${CGON?'':' (Admin preview — OFF for players)'}</p></div><button onclick="goCG()">▶ Play Now!</button></div>`:''}
   <div class="sec-h"><h2>Top collectors</h2><span class="mut">Most badges earned</span></div>
   ${pr.length?'':'<p class="mut">No public players yet.</p>'}
   <div class="pod">${top.map((p,i)=>`<a class="pc r${i+1}" href="${lk(p)}">${award(i+1)}${av(p,i?112:148)}<b>${esc(p.name)}</b><span class="mut">${cnt(p)} badges</span></a>`).join('')}</div>
@@ -970,9 +984,9 @@ async function importDefaults(){
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
 const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,cards:[],evo:{},open:false,locked:false,comments:[]});
-const emptyCF=()=>({id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:''});
+const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:''});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
-const emptyGF=()=>({id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
+const emptyGF=()=>({art:'',id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
 const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
 const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
@@ -1047,7 +1061,7 @@ async function cardgameAdminHTML(){
   return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
     <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
       <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
-      <button class="s" onclick="location.hash='#/cardgame'">🎮 Open game</button></div></div>
+      <button class="s" onclick="goCG()">🎮 Open game</button></div></div>
     <div class="tabs cgtabs">${tabs.map(([k,ic,l,c])=>`<div class="tab ${CGT===k?'on':''}" onclick="cgGo('${k}')">${ic} ${l}${c!==undefined?` <span class="cgn">${c}</span>`:''}</div>`).join('')}</div>
     ${body()}`;
 }
@@ -1097,7 +1111,7 @@ function heroEditorHTML(){
    <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)"><div id="fcsec">${faceEdHTML()}</div></div>
   <div class="cgstep"><div class="cgsh"><span>2</span><b>Cards</b></div>
    <p class="mut" style="margin:8px 0;font-size:13px">Colored automatically by class. A hero needs at least one non-ultimate card to appear in the game.</p>
-   <div id="hcards">${renderCardList()}</div><div id="cform" style="margin-top:10px">${renderCardForm()}</div></div>
+   <div id="hcards">${renderCardList()}</div><div id="cform" style="margin-top:10px" oninput="cfPrevU()" onchange="cfPrevU()">${renderCardForm()}</div></div>
   <div class="cgstep"><div class="cgsh"><span>3</span><b>Evolutions</b></div>
    <p class="mut" style="margin:8px 0;font-size:13px">Each evolution can have its own name, image and a stat bonus (+N added to every card’s attack, heal, shield, etc.). Leave a field empty to use the default (<i>“${esc(HF.name||'Hero')} II”</i>, the base portrait, and the default bonus from Settings).</p>
    <div id="evsec">${evoHTML()}</div></div>
@@ -1252,15 +1266,31 @@ async function deleteHero(id){if(!confirm('Delete this hero? Players who used it
   try{await api('cardgame/heroes/'+id,'DELETE');if(HF.id===id)HF=emptyHF();toast('Hero deleted');adminV()}catch(e){toast(e.message)}}
 
 /* ---- hero cards builder ---- */
+/* ---- card frame preview (same layout as the game) ---- */
+const CBASE='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/cards/';
+const cbOf=cls=>CBASE+({Defender:'defender',Magic:'magic',Mage:'magic',Healer:'healer',Attacker:'attacker',Specialist:'specialist'}[cls]||'defender')+'.webp';
+function cardPrev(o,w){const nm=String(o.name||'Card name'),cost=String(o.cost);
+  return `<div class="ccp${o.gen?' gen':''}" style="--cb:url(${cbOf(o.cls)});--pw:${w||160}px"><span class="k${cost.length>1?' ex':''}">${esc(cost)}</span><b class="n" style="--nl:${Math.max(11,nm.length)}"><span>${esc(nm)}</span></b><div class="a">${o.art?`<img src="${o.art}" alt="">`:`<i>${esc(o.icon||'🃏')}</i>`}</div><div class="d">${esc(o.desc||'')}</div></div>`}
+const heroCardPrev=(c,w)=>cardPrev({cls:HF.class_,name:c.name,cost:c.type==='ultimate'?'EX':(+c.manaCost||0),art:c.art,icon:TYPE_ICON[c.type],desc:cardText(c)},w);
+const genCardPrev=(g,w)=>cardPrev({gen:1,name:g.name,cost:+g.manaCost||0,art:g.art,icon:g.icon||GEN_ICON[g.effect],desc:g.desc||genText(g)},w);
+/* card graphics: cropped to exactly 843×634 (the art window of the card frame) */
+async function procCardArt(f){const url=URL.createObjectURL(f);try{const im=await loadImg(url),W=843,H=634,c=document.createElement('canvas');c.width=W;c.height=H;
+  const g=c.getContext('2d'),r=Math.max(W/im.naturalWidth,H/im.naturalHeight),w=im.naturalWidth*r,h=im.naturalHeight*r;g.imageSmoothingQuality='high';g.drawImage(im,(W-w)/2,(H-h)/2,w,h);
+  let u=c.toDataURL('image/webp',.88);if(!/^data:image\/webp/.test(u))u=c.toDataURL('image/jpeg',.88);return u}finally{URL.revokeObjectURL(url)}}
+function artBox(kind){const o=kind==='g'?GF:CF;
+  return `<div class="bx2 artb"><b>🎨 Card graphics</b><p class="mut" style="font-size:13px;margin:4px 0 8px">Upload the picture shown in the yellow window of the card. It is cropped to <b>843 × 634</b> px (4:3) so it never covers the card frame. Without a picture the card shows its icon.</p>
+   <div class="row" style="align-items:flex-start;gap:16px"><div id="${kind}fpv">${kind==='g'?genCardPrev(GF,170):heroCardPrev(CF,170)}</div>
+   <div class="row" style="flex-direction:column;align-items:flex-start;gap:8px"><button class="s" onclick="$('#${kind}af').click()">${o.art?'Replace picture':'Upload picture'}</button>${o.art?`<button class="d s" onclick="${kind==='g'?'GF':'CF'}.art='';${kind==='g'?'paintGen()':'refreshCF()'}">Remove picture</button>`:''}<span class="mut" style="font-size:12px">Saved together with the card.</span></div></div>
+   <input id="${kind}af" type="file" accept="image/*" hidden onchange="upCardArt('${kind}',this)"></div>`}
+async function upCardArt(kind,inp){const f=inp.files[0];inp.value='';if(!f)return;try{const u=await procCardArt(f);if(kind==='g'){GF.art=u;paintGen()}else{CF.art=u;refreshCF()}toast('Picture ready. Press Save to keep it.')}catch(e){toast(e.message)}}
+const cfPrevU=()=>{const e=$('#cfpv');if(e)e.innerHTML=heroCardPrev(CF,170)};
+const gfPrevU=()=>{const e=$('#gfpv');if(e)e.innerHTML=genCardPrev(GF,170)};
 function renderCardList(){
   const col=HERO_COLORS[HF.class_]||'#888';
   if(!HF.cards.length)return '<p class="mut" style="font-size:14px">No cards yet. Build a card below and press “Save card”.</p>';
   return `<div class="gcs">${HF.cards.map((c,i)=>{const u=c.type==='ultimate',a=AILS[c.ail];
-    return `<div class="cgc${u?' ult':''}" style="--cc:${col}">
-      <span class="cs">${u?'✨':(+c.manaCost||0)}</span>
-      <span class="ty">${esc(c.type||'attack')}${c.token?' · token':''}</span>
-      <div class="ic">${a&&a.icon?`<img src="${a.icon}" style="height:26px;object-fit:contain">`:(TYPE_ICON[c.type]||'🃏')}</div>
-      <b>${esc(c.name||'')}</b><div class="ds">${esc(cardText(c))}</div>
+    return `<div class="cgcw${u?' ult':''}">${heroCardPrev(c,150)}
+      <span class="ty">${esc(c.type||'attack')}${c.token?' · token':''}${c.art?' · 🎨':''}</span>
       <div class="ba"><button class="s" onclick="editCard(${i})">Edit</button><button class="d s" onclick="removeCard(${i})">✕</button></div></div>`}).join('')}</div>
     <p class="mut" style="font-size:13px;margin:4px 0 0">${HF.cards.length} card(s) on this hero</p>`;
 }
@@ -1284,6 +1314,7 @@ function renderCardForm(){
     ${c.type!=='draw'?`<div><label>Also draw cards (optional)</label><input type="number" min="0" max="5" value="${+c.draw||0}" oninput="CF.draw=+this.value"></div>`:''}
    </div>
    ${conjHTML()}
+   ${artBox('c')}
    ${!u?`<label class="chk" style="margin-top:10px"><input type="checkbox" ${c.token?'checked':''} onchange="CF.token=this.checked"> 🪙 Token card: not shuffled into the deck. It can only be added to a hand by other skills.</label>`:''}
    ${u?'<p class="mut" style="font-size:13px;margin:8px 0 0">✨ An ultimate has no mana cost and is not shuffled into the deck. It can only be fired from the hero\u2019s EX button when the ultimate meter is full. One ultimate per hero.</p>':''}
    <div class="row" style="margin-top:10px"><button onclick="saveCard()">💾 Save card</button>${c.i!=null?'<button class="g" onclick="cancelCard()">Cancel</button>':''}</div>
@@ -1326,7 +1357,7 @@ async function saveCard(){
   if(CF.cmode&&!CF.cpool.length)return toast('Add at least one card to the “Add cards to hand” list, or set the mode to None');
   const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',target:(CF.type==='heal'||CF.type==='buff'||CF.type==='debuff')?(CF.target||''):'',shield:Math.max(0,+CF.shield||0),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
   if(CF.type==='ultimate')card.ult=CF.ult||'all';
-  card.id=CF.id||newCid();if(CF.token&&CF.type!=='ultimate')card.token=true;
+  card.id=CF.id||newCid();if(CF.art)card.art=CF.art;if(CF.token&&CF.type!=='ultimate')card.token=true;
   if(CF.cmode&&CF.cpool.length)card.conj={mode:CF.cmode,n:Math.max(1,Math.min(5,+CF.cn||1)),cost:(CF.ccost===''||CF.ccost==null)?'':Math.max(0,+CF.ccost),pool:CF.cpool.slice()};
   const before=HF.cards.slice();
   if(CF.i!=null)HF.cards[CF.i]=card;else HF.cards.push(card);
@@ -1385,14 +1416,13 @@ async function delRelic(id){if(!confirm('Delete this relic?'))return;try{await a
 
 /* ---- general cards ---- */
 function genListHTML(){const e=Object.entries(GENS);if(!e.length)return '<p class="mut" style="font-size:14px">No general cards yet.</p>';
-  return `<div class="gcs">${e.map(([k,g])=>`<div class="cgc" style="--cc:#8b93a7"><span class="cs">${+g.manaCost||0}</span><span class="ty">${g.locked?'🔒 reward':'general'}</span>
-    <div class="ic">${esc(g.icon||GEN_ICON[g.effect]||'🃏')}</div><b>${esc(g.name)}</b><div class="ds">${esc(g.desc||genText(g))}</div>
+  return `<div class="gcs">${e.map(([k,g])=>`<div class="cgcw">${genCardPrev(g,150)}<span class="ty">${g.locked?'🔒 reward':'general'}${g.art?' · 🎨':''}</span>
     <div class="ba"><button class="s" onclick="editGen('${esc(k)}')">Edit</button><button class="d s" onclick="delGen('${esc(k)}')">✕</button></div></div>`).join('')}</div>`}
 function genSecInner(){
   return `<h3>General Cards</h3>
   <p class="mut" style="margin:6px 0 10px;font-size:14px">Cards that don't belong to any hero (like a Bomb). Before a duel each player picks <b>2 general cards</b> that get shuffled into their deck.</p>
   <div id="genlist">${genListHTML()}</div>
-  <div class="bx2" style="margin-top:10px"><b>${GF.id?'✏️ Edit general card':'➕ New general card'}</b>
+  <div class="bx2" style="margin-top:10px" oninput="gfPrevU()" onchange="gfPrevU()"><b>${GF.id?'✏️ Edit general card':'➕ New general card'}</b>
    <div class="f2" style="margin:8px 0 0;gap:8px">
     <div><label>Card Name</label><input value="${esc(GF.name)}" maxlength="30" oninput="GF.name=this.value" placeholder="e.g. Bomb"></div>
     <div><label>Effect</label><select onchange="GF.effect=this.value;paintGen()">${Object.entries(GEN_FX).map(([k,v])=>`<option value="${k}"${GF.effect===k?' selected':''}>${v[0]}</option>`).join('')}</select></div>
@@ -1406,6 +1436,7 @@ function genSecInner(){
     <div style="grid-column:1/-1"><label class="chk"><input type="checkbox" ${GF.locked?'checked':''} onchange="GF.locked=this.checked"> 🔒 Reward-only: players must earn this card from a quest (otherwise everyone can use it)</label></div>
    </div>
    <p class="mut" id="gftx" style="font-size:13px;margin:8px 0">Effect: ${esc(genText(GF))}</p>
+   ${artBox('g')}
    <div class="row"><button onclick="saveGen()">💾 Save general card</button>${GF.id?'<button class="g" onclick="GF=emptyGF();paintGen()">Cancel</button>':''}</div>
   </div>`}
 function paintGen(){const e=$('#gensec');if(e)e.innerHTML=genSecInner()}
@@ -1413,7 +1444,7 @@ function gfTxt(){const e=$('#gftx');if(e)e.textContent='Effect: '+genText(GF)}
 async function saveGen(){
   if(!GF.name.trim())return toast('Card name is required');
   const id=GF.id||'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||0,delay:Math.max(1,+GF.delay||2),manaCost:Math.max(0,+GF.manaCost||0),ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),locked:!!GF.locked,updated:Date.now()};
+  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||0,delay:Math.max(1,+GF.delay||2),manaCost:Math.max(0,+GF.manaCost||0),ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),locked:!!GF.locked,art:GF.art||null,updated:Date.now()};
   try{await api('cardgame/general/'+id,'PUT',d);GENS[id]=d;GF=emptyGF();paintGen();toast('General card saved')}catch(e){toast(e.message)}}
 function editGen(id){const g=GENS[id];if(!g)return;GF={...emptyGF(),...g,id};paintGen();const e=$('#gensec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 async function delGen(id){if(!confirm('Delete this general card?'))return;try{await api('cardgame/general/'+id,'DELETE');delete GENS[id];if(GF.id===id)GF=emptyGF();paintGen()}catch(e){toast(e.message)}}
@@ -1489,6 +1520,14 @@ async function toggleCG(el){
     toast(on?'Game is now visible to all players':'Game is now admin-only');nav()
   }catch(e){CGON=!on;el.checked=!on;toast(e.message)}}
 
+/* ---- Card Battle: open in full screen on phones (must run inside the tap, so it is called from the Play button) ---- */
+const isMob=()=>matchMedia('(pointer:coarse)').matches;
+function goCG(){
+  if(isMob()&&!(document.fullscreenElement||document.webkitFullscreenElement)){const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;
+    if(f)try{const pr=f.call(d,{navigationUI:'hide'});if(pr&&pr.then)pr.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}}
+  location.hash='#/cardgame'}
+function fsLeave(){try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}
+  try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{})}catch(e){}}
 /* ---- Card Battle game view ---- */
 async function cardgameV(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}
@@ -2164,7 +2203,7 @@ const previewRich=id=>modal(`<div style="padding-top:22px">${rich($('#'+id).valu
 
 /* ---------- news posts: full view, comments, replies, @mentions ---------- */
 const noteTxt=n=>n.type==='inv'?'invited you to play Dafreta Card Battle 🃏':n.type==='acc'?'accepted your friend request':n.type==='den'?'declined your friend request':n.type==='men'?'mentioned you in a comment':'replied to your comment';
-const noteToast=n=>toast(`${n.from} ${noteTxt(n)}`,()=>n.p?openPost(n.p):location.hash=(n.type==='inv'?'#/cardgame':'#/friends'));
+const noteToast=n=>toast(`${n.from} ${noteTxt(n)}`,()=>n.p?openPost(n.p):n.type==='inv'?goCG():location.hash='#/friends');
 let CM={id:null,list:{},reply:null},mnT;
 async function getPost(id){const c=NEWS.d.find(x=>x.id===id);if(c)return c;const d=await api('news/'+id);return d?{id,...d}:null}
 const mention=t=>esc(t).replace(/(^|[^a-z0-9_])@([a-z0-9_]{3,16})/gi,(m,a,u)=>`${a}<a class="mn" href="#/char/${u.toLowerCase()}" onclick="closeM()">@${u}</a>`);
