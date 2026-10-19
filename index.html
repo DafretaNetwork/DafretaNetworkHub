@@ -590,6 +590,9 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .rklist{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:560px;overflow:auto}.rkrow{display:flex;gap:8px;align-items:center;background:#0f1e33;border:1px solid var(--line);border-radius:8px;padding:5px 8px}.rkrow input:not([type=file]){flex:1;min-width:0}.rkn{width:26px;text-align:center;color:var(--mute);font-weight:700}.rkp{width:44px;display:grid;place-items:center}
 .chk{display:flex;gap:8px;align-items:center;cursor:pointer;font-weight:400}.chk input{width:auto}
 </style>
+<style>
+.cpool{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.cpc{background:#14243c;border:1px solid var(--line);border-radius:20px;padding:3px 6px 3px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.cpc button{background:none;border:0;color:var(--mute);cursor:pointer;padding:0 4px;font-size:13px}.cpc button:hover{color:#ff6a6a}
+</style>
 </head>
 <body>
 <nav>
@@ -957,14 +960,14 @@ async function importDefaults(){
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
 const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',cards:[],evo:{},open:false,locked:false,comments:[]});
-const emptyCF=()=>({i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:''});
+const emptyCF=()=>({id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:''});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
 const emptyGF=()=>({id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
-const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
-const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
-const TYPE_ICON={attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
-const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally']];
+const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
+const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
+const TYPE_ICON={attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',conjure:'📜',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
+const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally'],['none','No direct effect (use only “Add cards to hand”)']];
 const RELIC_FX={
  ex_turn:['Ultimate charge: +meter every turn','Gains {v} ultimate meter at the start of every turn'],
  ex_start:['Ultimate charge: starts battle with meter','Starts the battle with {v} ultimate meter'],
@@ -996,12 +999,13 @@ function cardText(c){const v=+c.value||0,a=AILS[c.ail],ad=a?' + '+a.name+' ('+(+
   switch(c.type){
     case 'heal':t='Heal '+v+ad+(c.target==='self'?' (self only)':'');break;
     case 'mana':t='Gain '+v+' energy';break;
+    case 'conjure':t='Add cards to hand';break;
     case 'draw':t='Draw '+v+' card(s)';break;
     case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+(c.target==='self'?' (self)':'');break;
     case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)'+(c.target==='enemy'?' to any enemy':''):'');break;
-    case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
+    case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,none:'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
     default:t='Deal '+v+' dmg'+hits+reach+ad}
-  return t+(ex?' · '+ex:'')}
+  const cj=c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?' · adds '+(c.conj.mode==='random'?(+c.conj.n||1)+' random':Object.keys(c.conj.pool).length)+' card(s) to hand':'';return t+(ex?' · '+ex:'')+cj+(c.token?' · token':'')}
 const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===t).map(([k,a])=>`<option value="${esc(k)}"${sel===k?' selected':''}>${esc(a.name)} — ${AIL_EFFECTS[a.effect]||a.effect}</option>`).join('');
   return '<option value="">None</option>'+(g('debuff')?`<optgroup label="Debuffs">${g('debuff')}</optgroup>`:'')+(g('buff')?`<optgroup label="Buffs">${g('buff')}</optgroup>`:'')};
 
@@ -1021,7 +1025,9 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
   const [heroes,ails,rels,gens,qs,rk,cf,lb,apr]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};
-  HLIST=heroes||{};AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
+  HLIST=heroes||{};
+  for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
+  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
   if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();
@@ -1219,7 +1225,7 @@ async function saveHero(){
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
     if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
-    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,cards:HF.cards,evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
+    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,cards:HF.cards.map(c=>c.conj?{...c,conj:{...c.conj,pool:c.conj.pool.map(r=>String(r).replace(/^@self::/,id+'::'))}}:c),evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
     await api('cardgame/heroes/'+id,'PUT',data);
     HF=emptyHF();CF=emptyCF();
     toast(isEdit?'Hero updated':'Hero created');atab='cardgame';CGT='heroes';adminV();
@@ -1242,20 +1248,20 @@ function renderCardList(){
   return `<div class="gcs">${HF.cards.map((c,i)=>{const u=c.type==='ultimate',a=AILS[c.ail];
     return `<div class="cgc${u?' ult':''}" style="--cc:${col}">
       <span class="cs">${u?'✨':(+c.manaCost||0)}</span>
-      <span class="ty">${esc(c.type||'attack')}</span>
+      <span class="ty">${esc(c.type||'attack')}${c.token?' · token':''}</span>
       <div class="ic">${a&&a.icon?`<img src="${a.icon}" style="height:26px;object-fit:contain">`:(TYPE_ICON[c.type]||'🃏')}</div>
       <b>${esc(c.name||'')}</b><div class="ds">${esc(cardText(c))}</div>
       <div class="ba"><button class="s" onclick="editCard(${i})">Edit</button><button class="d s" onclick="removeCard(${i})">✕</button></div></div>`}).join('')}</div>
     <p class="mut" style="font-size:13px;margin:4px 0 0">${HF.cards.length} card(s) on this hero</p>`;
 }
 function renderCardForm(){
-  const c=CF,u=c.type==='ultimate',col=HERO_COLORS[HF.class_]||'#888',showAil=c.type!=='mana';
+  const c=CF,u=c.type==='ultimate',col=HERO_COLORS[HF.class_]||'#888',showAil=c.type!=='mana'&&c.type!=='conjure';
   return `<div class="bx2" style="border-left:4px solid ${col};margin-bottom:0">
    <b>${c.i!=null?'✏️ Editing card':'➕ New card'}</b> <span class="mut" style="font-size:13px">— ${esc(HF.name||'this hero')} · ${esc(HF.class_)} card</span>
    <div class="f2" style="margin:8px 0 0;gap:8px">
     <div><label>Card Name</label><input value="${esc(c.name)}" oninput="CF.name=this.value" maxlength="30" placeholder="e.g. Flame Strike"></div>
     <div><label>Type</label><select onchange="cfType(this.value)">${CARD_TYPES.map(([k,l])=>`<option value="${k}"${c.type===k?' selected':''}>${l}</option>`).join('')}</select></div>
-    <div><label>${CV_LABEL[c.type]}</label><input type="number" min="0" value="${+c.value||0}" oninput="CF.value=+this.value"></div>
+    ${c.type==='conjure'?'':`<div><label>${CV_LABEL[c.type]}</label><input type="number" min="0" value="${+c.value||0}" oninput="CF.value=+this.value"></div>`}
     ${u?`<div><label>Ultimate effect</label><select onchange="CF.ult=this.value">${ULT_FX.map(([k,l])=>`<option value="${k}"${(c.ult||'all')===k?' selected':''}>${l}</option>`).join('')}</select></div>`
       :`<div><label>Mana Cost</label><input type="number" min="0" max="20" value="${+c.manaCost||0}" oninput="CF.manaCost=+this.value"></div>`}
     ${showAil?`<div><label>${c.type==='buff'?'Buff to apply (optional)':c.type==='debuff'?'Debuff to apply':'Status ailment applied (optional)'}</label><select onchange="CF.ail=this.value;refreshCF()">${ailOpts(c.ail)}</select></div>`:''}
@@ -1267,6 +1273,8 @@ function renderCardForm(){
     ${!['heal','draw','mana'].includes(c.type)?`<div><label>Bonus heal (optional)</label><input type="number" min="0" value="${+c.heal||0}" oninput="CF.heal=+this.value"></div>`:''}
     ${c.type!=='draw'?`<div><label>Also draw cards (optional)</label><input type="number" min="0" max="5" value="${+c.draw||0}" oninput="CF.draw=+this.value"></div>`:''}
    </div>
+   ${conjHTML()}
+   ${!u?`<label class="chk" style="margin-top:10px"><input type="checkbox" ${c.token?'checked':''} onchange="CF.token=this.checked"> 🪙 Token card: not shuffled into the deck. It can only be added to a hand by other skills.</label>`:''}
    ${u?'<p class="mut" style="font-size:13px;margin:8px 0 0">✨ An ultimate has no mana cost and is not shuffled into the deck. It can only be fired from the hero\u2019s EX button when the ultimate meter is full. One ultimate per hero.</p>':''}
    <div class="row" style="margin-top:10px"><button onclick="saveCard()">💾 Save card</button>${c.i!=null?'<button class="g" onclick="cancelCard()">Cancel</button>':''}</div>
    <p class="mut" style="font-size:12px;margin:6px 0 0">${HF.id?'Saving writes the card to this hero right away.':'This hero is not created yet. Saved cards stay in the draft until you press “Add hero”.'}</p>
@@ -1275,17 +1283,41 @@ function renderCardForm(){
 function paintCards(){const a=$('#hcards'),b=$('#cform');if(a)a.innerHTML=renderCardList();if(b)b.innerHTML=renderCardForm()}
 function refreshCF(){const b=$('#cform');if(b)b.innerHTML=renderCardForm()}
 function hClass(el){HF.class_=el.value;el.style.borderColor=HERO_COLORS[HF.class_];el.style.color=HERO_COLORS[HF.class_];paintCards()}
-function cfType(v){CF.type=v;if(v==='ultimate')CF.manaCost=0;else if(!CF.manaCost)CF.manaCost=1;if(v==='mana')CF.ail='';refreshCF()}
+function cfType(v){CF.type=v;if(v==='ultimate')CF.manaCost=0;else if(!CF.manaCost)CF.manaCost=1;if(v==='mana'||v==='conjure')CF.ail='';if(v==='conjure'&&!CF.cmode)CF.cmode='specific';refreshCF()}
+const newCid=()=>'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function refCard(ref){const [a,b]=String(ref).split('::');if(a==='g'){const g=GENS[b];return g?{n:g.name,h:'General'}:null}
+  if(a==='@self'||a===HF.id){const c=HF.cards.find(x=>x.id===b);return c?{n:c.name,h:HF.name||'this hero'}:null}
+  const h=HLIST[a],c=h&&cardsOf(h).find(x=>x.id===b);return c?{n:c.name,h:h.name}:null}
+function conjOpts(){const me=HF.id||'@self',own=HF.cards.filter(c=>c.id&&c.type!=='ultimate'&&c.id!==CF.id);
+  const mine=own.length?`<optgroup label="${esc(HF.name||'This hero')} (this hero)">${own.map(c=>`<option value="${esc(me)}::${esc(c.id)}">${esc(c.name)}${c.token?' (token)':''}</option>`).join('')}</optgroup>`:'';
+  const others=Object.entries(HLIST).filter(([k])=>k!==HF.id).map(([k,h])=>{const cs=cardsOf(h).filter(c=>c.id&&c.type!=='ultimate');return cs.length?`<optgroup label="${esc(h.name)}">${cs.map(c=>`<option value="${esc(k)}::${esc(c.id)}">${esc(h.name)} › ${esc(c.name)}${c.token?' (token)':''}</option>`).join('')}</optgroup>`:''}).join('');
+  const gens=Object.entries(GENS).length?`<optgroup label="General cards">${Object.entries(GENS).map(([k,g])=>`<option value="g::${esc(k)}">${esc(g.name)}</option>`).join('')}</optgroup>`:'';
+  return mine+others+gens||'<option value="">(no cards available yet. Save some cards first)</option>'}
+function conjHTML(){const c=CF,m=c.cmode;
+  return `<div class="bx2" style="margin-top:10px;border-left:4px solid var(--gold)"><b>📜 Add cards to hand (optional)</b>
+   <p class="mut" style="font-size:13px;margin:4px 0 0">For skills like “Add 3 different Element Scrolls to your hand”. Added cards vanish after they are played. Mark helper cards as <b>Token</b> so they never get into the normal deck.</p>
+   <div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Mode</label><select onchange="CF.cmode=this.value;refreshCF()"><option value="">None</option><option value="specific"${m==='specific'?' selected':''}>Specific cards (adds every card in the list)</option><option value="random"${m==='random'?' selected':''}>Random cards picked from the list</option></select></div>
+    ${m==='random'?`<div><label>How many cards to add</label><input type="number" min="1" max="5" value="${+c.cn||1}" oninput="CF.cn=+this.value"></div>`:''}
+    ${m?`<div><label>Set their mana cost to (optional)</label><input type="number" min="0" max="9" value="${c.ccost===''||c.ccost==null?'':+c.ccost}" placeholder="keep original" oninput="CF.ccost=this.value===''?'':+this.value"></div>`:''}</div>
+   ${m?`<div style="margin-top:8px"><label>${m==='random'?'Pool to pick from':'Cards that get added'}</label><div class="cpool">${c.cpool.length?c.cpool.map((r,i)=>{const o=refCard(r);return `<span class="cpc">${o?esc(o.h)+' › '+esc(o.n):'(missing card)'}<button onclick="cpRm(${i})" aria-label="Remove">✕</button></span>`}).join(''):'<span class="mut" style="font-size:13px">Nothing added yet.</span>'}</div>
+     <div class="row" style="gap:8px;align-items:center"><select id="cpsel" style="flex:1;min-width:0">${conjOpts()}</select><button class="s" onclick="cpAdd()">+ Add to list</button></div></div>`:''}</div>`}
+function cpAdd(){const v=$('#cpsel').value;if(!v)return;CF.cpool.push(v);refreshCF()}
+function cpRm(i){CF.cpool.splice(i,1);refreshCF()}
+const conjToCF=c=>{const q=c.conj||{};return{cmode:q.mode||'',cn:q.n||1,ccost:q.cost===undefined?'':q.cost,cpool:Object.values(q.pool||{}),token:!!c.token,id:c.id||''}}
 function cancelCard(){CF=emptyCF();refreshCF()}
-function editCard(i){CF={...emptyCF(),...HF.cards[i],i};refreshCF();const b=$('#cform');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})}
+function editCard(i){CF={...emptyCF(),...HF.cards[i],...conjToCF(HF.cards[i]),i};refreshCF();const b=$('#cform');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})}
 async function persistCards(){if(HF.id)await api('cardgame/heroes/'+HF.id+'/cards','PUT',HF.cards)}
 async function saveCard(){
   const name=(CF.name||'').trim();
   if(!name)return toast('Card name is required');
   if(CF.type==='debuff'&&!CF.ail)return toast('Pick the debuff this card applies');
   if(CF.type==='ultimate'&&HF.cards.some((x,j)=>x.type==='ultimate'&&j!==CF.i))return toast('This hero already has an ultimate. Edit or remove it first.');
+  if(CF.type==='conjure'&&!(CF.cmode&&CF.cpool.length))return toast('Choose the cards this skill adds to the hand');
+  if(CF.cmode&&!CF.cpool.length)return toast('Add at least one card to the “Add cards to hand” list, or set the mode to None');
   const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',target:(CF.type==='heal'||CF.type==='buff'||CF.type==='debuff')?(CF.target||''):'',shield:Math.max(0,+CF.shield||0),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
   if(CF.type==='ultimate')card.ult=CF.ult||'all';
+  card.id=CF.id||newCid();if(CF.token&&CF.type!=='ultimate')card.token=true;
+  if(CF.cmode&&CF.cpool.length)card.conj={mode:CF.cmode,n:Math.max(1,Math.min(5,+CF.cn||1)),cost:(CF.ccost===''||CF.ccost==null)?'':Math.max(0,+CF.ccost),pool:CF.cpool.slice()};
   const before=HF.cards.slice();
   if(CF.i!=null)HF.cards[CF.i]=card;else HF.cards.push(card);
   try{await persistCards();toast(HF.id?'Card saved to '+(HF.name||'hero'):'Card added to the new hero. Press “Add hero” to finish.')}
@@ -1397,9 +1429,7 @@ async function cardgameV(){
       <p class="mut" style="margin:14px auto;max-width:36ch">The card battle game is not available yet. Check back soon!</p>
       <button onclick="location.hash='#/'">← Back to Home</button>
     </div>`);return;}
-  view(`<div style="margin:-30px -20px 0">
-    <iframe src="./Dafreta_card_battle.html" title="Dafreta Card Battle" style="width:100%;height:calc(100vh - 60px);border:none;display:block" allow="autoplay; fullscreen" allowfullscreen></iframe>
-  </div>`);
+  view(`<iframe src="./Dafreta_card_battle.html" title="Dafreta Card Battle" style="position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;border:0;display:block;z-index:300;background:#000" allow="autoplay; fullscreen" allowfullscreen></iframe>`);
 }
 async function delUser(k){
   if(k===me.k)return toast("You can't delete the account you are logged in with");
