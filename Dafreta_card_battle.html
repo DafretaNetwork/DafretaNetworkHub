@@ -221,6 +221,7 @@ body.sel #hand,body.sel #top,body.sel #lg,body.sel #log,body.sel #en,body.sel #e
 /* ===== face tiles + deck block ===== */
 .zf{position:relative;overflow:hidden;background:#1a2133}
 .zf>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 4%;transform:scale(1.85);transform-origin:50% 11%}
+.zf>img.fz{inset:auto;left:50%;top:50%;width:auto;height:calc(var(--z)*100%);max-width:none;object-fit:fill;transform:translate(calc(var(--fx)*-100%),calc(var(--fy)*-100%))}
 .zf.gr>img,.big.gr{filter:grayscale(1) brightness(.6)}
 .lvb{position:absolute;left:3px;bottom:3px;z-index:2;background:linear-gradient(#f3e6c4,#b8a070);color:#2b1b0c;font:800 11px system-ui;border-radius:4px;padding:1px 6px;border:1px solid #0006;line-height:1.2}.lvb small{font-size:8px;margin-left:2px}
 .stb{position:absolute;left:3px;top:7px;z-index:2;background:#1a1204;color:#ffd24a;border:1px solid #ffd24a;border-radius:4px;font:800 9px Cinzel,serif;padding:0 4px}
@@ -385,7 +386,7 @@ body.sel #bat #stage::after{background:rgba(3,6,20,.66)}
 #bat .unit{position:relative;flex:1 1 0;min-width:0;max-width:calc(100cqw/7.4);width:auto;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;padding:0 1px;border-radius:0;background:none}
 #bat .unit.tg{z-index:4;cursor:pointer}
 #bat .fw{flex:1;min-height:0;contain:size;width:100%;display:flex;align-items:flex-end;justify-content:center;position:relative}
-#bat .fig{position:absolute;left:-17%;right:-17%;bottom:0;margin:0 auto;height:100%;width:134%;max-width:none;object-fit:contain;object-position:50% 100%;transform-origin:50% 100%}
+#bat .fig{position:absolute;left:calc(50% - 67%*var(--bw,1)*var(--bm,1));right:auto;bottom:0;margin:0;height:calc(100%*var(--bm,1));width:calc(134%*var(--bw,1)*var(--bm,1));max-width:none;object-fit:contain;object-position:50% 100%;transform-origin:50% 100%}
 #bat .unit.foe .fig{scale:-1 1}
 #bat .chips{position:absolute;right:2%;bottom:calc(var(--info) + 4px);display:flex;flex-direction:column;gap:2px;align-items:flex-end;z-index:3;min-height:0}
 #bat .stc{font-size:calc(var(--info)*.28);padding:0 3px;background:#000a;border-radius:8px;line-height:1.3}
@@ -659,7 +660,7 @@ function tile(S,m,i){const h=S.h,es=ea(S),sc=Math.max(S.mhp,S.hp+S.sh),sp=psp(),
  chips=Object.keys(S.s).map(k=>'<span class="stc" title="'+SD[k][1]+': '+SD[k][2]+'">'+SD[k][0]+'<sub>'+S.s[k]+'</sub></span>').join(''),
  dl=-(((performance.now()/1000)+i*.7+(m?0:.35))%3.2).toFixed(2);
  return '<div class="unit'+(S.hp<=0?' dead':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+'" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
- '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+'<img class="fig" src="'+h.img+'" alt="'+h.n+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s"></div><div class="chips">'+chips+'</div>'+
+ '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+'<img class="fig" src="'+h.img+'" alt="'+h.n+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s;'+figSz(h)+'"></div><div class="chips">'+chips+'</div>'+
  '<div class="info" style="--c:'+h.col+'"><div class="nr"><i class="ci">'+(CI[h.cl]||'')+'</i><b class="nm">'+h.n+'</b>'+(S.r?'<span class="rlc" title="'+S.r.n+': '+S.r.t+'">'+rIc(S.r)+'</span>':'')+'<span class="at">⚔'+es+'</span></div>'+
  '<div class="hb"><i class="hpf" style="width:'+S.hp/sc*100+'%"></i><i class="shf" style="left:'+S.hp/sc*100+'%;width:'+S.sh/sc*100+'%"></i><span>'+S.hp+(S.sh?'<u>+'+S.sh+'</u>':'')+'<small>/'+S.mhp+'</small></span></div><div class="xv2"><i style="width:'+S.ex+'%"></i></div></div></div>'}
 function flush(){fx.splice(0).forEach(f=>{const el=$('#'+f.id);if(!el)return;const s=document.createElement('b');s.className='fl';s.textContent=f.x;s.style.color=f.c;el.appendChild(s);if(f.x[0]=='-')el.classList.add('hurt');setTimeout(()=>s.remove(),1100)})}
@@ -743,7 +744,7 @@ const needGen=()=>Math.min(2,GEN.filter(gAvail).length);
 const dd=(id,dur)=>{const m=AM[id];return m&&m.k?[m.k,+dur||2]:null};
 function buildHero(h,fid,b,name,img){b=+b||0;const cl=h.class_==='Mage'?'Magic':(COL[h.class_]?h.class_:'Specialist'),col=COL[cl],at=Math.max(1,+h.atk||1),
  cs=(Array.isArray(h.cards)?h.cards:Object.values(h.cards||{})).filter(c=>c&&c.name),up=n=>(+n>0?+n+b:0);
- const o={id:'u'+fid,fid,cl,n:name||h.name||'Hero',bn:h.name||'Hero',col,hp:Math.max(1,+h.hp||50),atk:at,ap:null,img:img||h.img||ph(col),A:[],S:[],X:null,cr:+h.created||0,src:h,st:0,byId:{}};
+ const o={id:'u'+fid,fid,cl,n:name||h.name||'Hero',bn:h.name||'Hero',col,hp:Math.max(1,+h.hp||50),atk:at,ap:null,img:img||h.img||ph(col),A:[],S:[],X:null,cr:+h.created||0,src:h,st:0,byId:{},face:nFace(h.face),ar:+h.ar||0,bs:+h.bs||100};
  cs.forEach(c=>{const v0=+c.value||0,m=AM[c.ail],d=dd(c.ail,c.dur),
   ex=s=>{const sh=up(c.shield),hl=up(c.heal);if(sh)s.sh=(s.sh||0)+sh;if(hl)s.h=(s.h||0)+hl;if(+c.draw)s.dr=+c.draw},
   hit=s=>{if(+c.hits>1)s.x=Math.min(5,+c.hits);if(c.scope=='pierce')s.k='p';else if(c.scope=='all')s.k='a'},
@@ -765,7 +766,7 @@ function buildHero(h,fid,b,name,img){b=+b||0;const cl=h.class_==='Mage'?'Magic':
   ex(s);reg(s);if(c.token)return;o.S.push(s)});
  return o.S.length?o:null}
 function evH(h){const e=hs(h).ev|0;if(!e||!h.src)return h;const ev=(h.src.evo&&h.src.evo[e])||{},b=(ev.bonus===undefined||ev.bonus===''||ev.bonus===null)?(CFG.evoB[e-1]||0):+ev.bonus;
- const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;return o}
+ const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;if(ev.img){o.face=nFace(ev.face);o.ar=+ev.ar||0}else{o.face=h.face;o.ar=h.ar}return o}
 const evNeed=e=>({fr:CFG.frag[e]||0,st:e===3?CFG.stone:0});
 function evolve(k){const h=HD.find(x=>hk(x)===k);if(!h)return;const s=PD.hs[k]||{lv:1,ev:0},e=s.ev|0;if(e>=4)return;const n=evNeed(e);
  if(s.lv<CFG.maxLv)return toast('Reach level '+CFG.maxLv+' first');if((PD.fr[k]||0)<n.fr)return toast('Not enough card fragments');if(PD.st<n.st)return toast('You need a Transcendence stone');
@@ -798,13 +799,17 @@ function validLU(l){const ids=((l&&l.h)||[]).map(hidx);if(ids.length!=4||ids.som
  if(((l.g||[]).filter(id=>gAvail(GEN.find(g=>g.id===id)))).length<needGen())return 'Pick '+needGen()+' general cards.';return ''}
 function deckHTML(l,edit){
  const hsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em"'+(edit?' data-slot="'+j+'"':'')+'>＋</div>';const x=evH(HD[i]),s=hs(HD[i]);
-  return '<div class="dh zf'+(edit&&rt===i?' sel':'')+'" style="--c:'+x.col+'"'+(edit?' data-dh="'+i+'" data-j="'+j+'"':'')+' title="'+esc(x.n)+'"><img src="'+x.img+'" alt="" referrerpolicy="no-referrer"><b class="lvb">'+s.lv+'</b>'+(s.ev?'<span class="stb">'+STG[s.ev]+'</span>':'')+(j===0?'<em class="frt">Front</em>':'')+'</div>'};
+  return '<div class="dh zf'+(edit&&rt===i?' sel':'')+'" style="--c:'+x.col+'"'+(edit?' data-dh="'+i+'" data-j="'+j+'"':'')+' title="'+esc(x.n)+'">'+faceImg(x)+'<b class="lvb">'+s.lv+'</b>'+(s.ev?'<span class="stb">'+STG[s.ev]+'</span>':'')+(j===0?'<em class="frt">Front</em>':'')+'</div>'};
  const rsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em dim"></div>';const r=REL.find(q=>q.id===(l.r||{})[k]);return r?'<div class="dr'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+' title="'+esc(r.n)+'">'+rIc(r)+'<small>'+esc(r.n)+'</small></div>':'<div class="em'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+'>'+(edit?'＋':'')+'</div>'};
  const gsl=n=>{const g=GEN.find(x=>x.id===(l.g||[])[n]);return g?'<div class="dg"'+(edit?' data-dg="'+n+'"':'')+' title="'+esc(g.s.n)+'"><i>'+art(g.s)+'</i><small>'+esc(g.s.n)+'</small></div>':(n<needGen()||edit&&n<2&&GEN.length>n?'<div class="em"'+(edit?' data-dg="'+n+'"':'')+'>'+(edit?'＋':'')+'</div>':'<div class="em dim"></div>')};
  const hh=[0,1,2,3].map(j=>(l.h||[])[j]);
  return '<div class="dk">'+gsl(0)+hh.map((k,j)=>hsl(k,j)).join('')+gsl(1)+hh.map((k,j)=>rsl(k,j)).join('')+'</div>'}
 const bufLU=()=>{const l={h:hi.map(i=>hk(HD[i])),r:{},g:GS.slice()};hi.forEach(i=>{if(RL[i])l.r[hk(HD[i])]=RL[i]});return l};
-const faceImg=x=>'<img src="'+x.img+'" alt="" referrerpolicy="no-referrer">';
+/* face tiles: centre on the face found by the admin panel (falls back to the old top-centre crop) */
+const nFace=f=>f&&isFinite(+f.x)&&isFinite(+f.y)?{x:+f.x,y:+f.y,z:+f.z||3}:null;
+const faceImg=x=>x.face?'<img class="fz" src="'+x.img+'" alt="" referrerpolicy="no-referrer" style="--fx:'+x.face.x+';--fy:'+x.face.y+';--z:'+x.face.z+'">':'<img src="'+x.img+'" alt="" referrerpolicy="no-referrer">';
+/* battle figure size: wide poses (sword out, cape) get more room so they stand as tall as the others; admin "Size in battle" scales on top */
+const figSz=h=>{const a=+h.ar||0,bw=a?Math.min(1.75,Math.max(1,a*1.2)):1;return '--bw:'+bw.toFixed(3)+';--bm:'+((+h.bs||100)/100)};
 
 /* ================= DASHBOARD ================= */
 const modeTxt={any:'Win in Standard or Ranked',std:'Win in Standard',rank:'Win in Ranked'};
@@ -944,7 +949,7 @@ $('#hd').addEventListener('click',async e=>{
 
 /* ================= START A MATCH: VS intro -> battle ================= */
 let itm=[],intro=0;
-const vsP=(h,i)=>'<div class="vp" style="--c:'+h.col+';--i:'+i+'"><div class="vpi"><img src="'+h.img+'" alt="" referrerpolicy="no-referrer">'+(h.st?'<span class="vst">'+STG[h.st]+'</span>':'')+'<div class="vlb"><span>'+h.cl+'</span><b>'+esc(h.n)+'</b></div></div></div>';
+const vsP=(h,i)=>'<div class="vp" style="--c:'+h.col+';--i:'+i+'"><div class="vpi"><img src="'+h.img+'" alt="" referrerpolicy="no-referrer"'+(h.face?' style="object-position:'+(h.face.x*100).toFixed(1)+'% 5%"':'')+'>'+(h.st?'<span class="vst">'+STG[h.st]+'</span>':'')+'<div class="vlb"><span>'+h.cl+'</span><b>'+esc(h.n)+'</b></div></div></div>';
 function showIntro(ps,es){$('#vl').innerHTML=ps.slice().reverse().map((h,i)=>vsP(h,i)).join('');$('#vr').innerHTML=es.map((h,i)=>vsP(h,es.length-1-i)).join('');
  $('#va1').innerHTML=avH(PROF,70);$('#vn1').textContent=myName();$('#va2').src=es[0].img;const v=$('#vsx');v.className='';v.hidden=false;$('#menu').hidden=true;$('#hd').hidden=true;$('#home').hidden=true;hidePop();SND.music(null);
  intro=1;itm=[setTimeout(SND.whoosh,60),setTimeout(SND.whoosh,200),setTimeout(SND.clash,1000),setTimeout(SND.clash,1150),setTimeout(go2,8300)]}
@@ -1086,6 +1091,7 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
  QUESTS=Object.entries(qs||{}).map(([id,q])=>({id,t:q.title||'Quest',mode:q.mode||'any',wins:Math.max(1,+q.wins||1),rw:q.reward||{},ord:+q.created||0})).sort((a,b)=>a.ord-b.ord);
  const LH=Object.entries(hsr||{}).map(([id,h])=>h?buildHero(h,id,0,h.name,h.img):null).filter(Boolean);
  LH.sort((x,y)=>x.cr-y.cr);if(Object.keys(hsr||{}).some(k=>k.startsWith('hd_'))&&LH.length>=4)HD.length=0;if(LH.length)HD.push(...LH);
+ HD.forEach(h=>{if(!h.ar&&h.img){const im=new Image();im.onload=()=>{h.ar=im.naturalWidth/im.naturalHeight};im.src=h.img}});
 }catch(e){console.warn(e)}
  if(!RANKS.length)RANKS=defRanks();
  await loadPD();
