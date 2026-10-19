@@ -545,6 +545,48 @@ body.sel .sdim{opacity:1}
 @keyframes exbl{0%,100%{opacity:1}50%{opacity:.35}}
 @media(prefers-reduced-motion:reduce){#endx.go h1,#endx.go .exr,#endx.go .exs,#endx.go .exc{animation:exdi .2s forwards}}
 @container (max-height:520px){.mds{padding:3px;gap:3px}.md{min-width:64px;padding:5px 8px 4px;font-size:10px;gap:1px}.md i svg{width:18px;height:18px}.msoon{font-size:7px;padding:1px 4px}}
+
+/* ===================== HERO DETAILS: fixed screen, only the skill list scrolls ===================== */
+#hd{display:flex;flex-direction:column;overflow:hidden;overscroll-behavior:none}
+#hd .hdt{position:relative;flex:none}
+#hd .hdw{flex:1;min-height:0;display:flex;flex-wrap:nowrap;align-items:stretch;justify-content:stretch;gap:14px;padding:10px 12px 12px 0}
+#hd .hdl{position:relative;flex:1 1 46%;min-width:0;min-height:0;padding:0;display:block;overflow:hidden;border:2px solid #8a5a32;border-left:0;border-radius:0 16px 16px 0;
+ background:radial-gradient(60% 55% at 50% 34%,color-mix(in srgb,var(--c) 42%,transparent),transparent 72%),repeating-conic-gradient(from 0deg at 50% 30%,#ffffff07 0 6deg,transparent 6deg 18deg),linear-gradient(#3d2716,#160c05);box-shadow:inset 0 0 70px #000b,0 10px 30px #0008}
+#hd .hdl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(transparent,#120a05f0);pointer-events:none;z-index:1}
+#hd .hdl .big{position:absolute;left:50%;top:calc(24% - var(--fy,.1)*180%);height:180%;width:auto;max-width:none;max-height:none;transform:translateX(calc(var(--fx,.5)*-100%));filter:drop-shadow(0 12px 22px #000c);animation:hdin .45s cubic-bezier(.2,.8,.3,1)}
+#hd .hdl .big.gr{filter:grayscale(1) brightness(.55) drop-shadow(0 12px 22px #000c)}
+@keyframes hdin{from{opacity:0;translate:-36px 0}}
+#hd .rib{left:0;top:12px;z-index:3}
+#hd .nv{z-index:3;top:50%;translate:0 -50%;width:42px;height:42px;box-shadow:0 4px 10px #000a}#hd .nv.l{left:10px}#hd .nv.r{right:10px}
+#hd .hdact{bottom:16px;z-index:3}
+#hd .hdr{flex:1 1 54%;max-width:none;min-width:0;min-height:0;display:flex;gap:0;align-items:stretch}
+#hd .hdp{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;color:#f3e3c8;background:linear-gradient(#2e1d10,#1a1007);border:2px solid #a8703c;border-radius:16px 0 16px 16px;box-shadow:0 10px 30px #0009,inset 0 1px 0 #ffe3a333}
+#hd .hdh{flex:none;gap:12px;padding:10px 14px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 40%,#2e1d10),#2e1d10 75%);border-bottom:2px solid #a8703c}
+#hd .hdh b{color:#fff;font:800 22px Cinzel,serif;text-shadow:0 2px 4px #000a}#hd .hdh small{color:#ffe2bd;font:700 11px system-ui;letter-spacing:.12em}
+#hd .hda{flex:none;gap:10px;padding:10px 14px;background:#0000002e;border-bottom:1px solid #ffffff14}
+#hd .lvbox{background:linear-gradient(#ffcf6a,#c4790f);border:2px solid #ffe3a3;border-radius:10px;padding:2px 12px;box-shadow:0 3px 0 #6a3a08}#hd .lvbox b{color:#3a1d04}#hd .lvbox small{color:#5a2e06}
+#hd .hst{gap:8px;font:800 15px system-ui}#hd .hst span{background:#0006;border:1px solid #ffffff1c;border-radius:20px;padding:3px 11px}#hd .hst b{color:#fff}
+#hd .xpb{border-color:#000;background:#150c06;border-radius:20px}#hd .xpb i{border-radius:20px}
+#hd .evr,#hd .unl{color:#e7c99b}
+#hd .skh{flex:none;display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:9px 14px 5px;background:none;font:800 15px Cinzel,serif;color:#ffd48a;letter-spacing:.06em}#hd .skh small{font:600 11px system-ui;color:#bfa57a;letter-spacing:0}
+#hd .hds{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:4px 10px 12px;scrollbar-width:thin;scrollbar-color:#a8703c transparent}
+#hd .hds::-webkit-scrollbar{width:6px}#hd .hds::-webkit-scrollbar-thumb{background:#a8703c;border-radius:6px}
+#hd .sk{margin:0 0 7px;padding:8px 10px;gap:10px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 18%,#33200f),#24160b);border:1px solid #6a4526;border-left:4px solid var(--c);border-radius:10px;box-shadow:0 3px 6px #0007}
+#hd .sk:has(.skc.ex){background:linear-gradient(90deg,#5a3a08,#2a190b);border-color:#c99a3a;border-left-color:#ffd24a;box-shadow:0 0 12px #ffc23a44}
+#hd .ski{width:44px;height:44px;border-radius:10px;border:2px solid #c9a55a;background:radial-gradient(#3d5a85,#10203a)}
+#hd .skt b{font:800 15px system-ui;color:#fff}#hd .skt small{color:#e7d3a8;font-size:12.5px;line-height:1.3}
+#hd .ski-i{width:30px;height:30px;border-radius:50%;background:linear-gradient(#ffd77a,#c4790f);color:#3a1d04;box-shadow:0 2px 0 #6a3a08}
+#hd .soon{color:#e7c99b}
+#hd .cmw{max-height:none;overflow:visible;padding:4px 2px}#hd .cm{background:#ffffff0d;border:1px solid #ffffff12}#hd .cmx p{color:#f3e3c8}#hd .cmx small,#hd .dk2{color:#c9a47a}#hd .cmx b{color:#fff}
+#hd .cmi textarea{background:#140b05;color:#f3e3c8;border-color:#8a5a32}
+#hd .hdn{gap:6px}#hd .hdn button{background:linear-gradient(#3a2414,#1f1209);border:1px solid #6a4526;border-left:0;border-radius:0 10px 10px 0;color:#e7c99b}
+#hd .hdn button.on{background:linear-gradient(#ffd77a,#c4790f);color:#3a1d04;border-right:0;border-color:#ffe3a3;box-shadow:0 0 12px #ffa83a66}
+@container (max-height:520px){
+ #hd .hdw{padding:6px 8px 8px 0;gap:8px}
+ #hd .hdl{flex:1 1 42%}#hd .rib{top:8px}#hd .nv{width:34px;height:34px}#hd .hdact{bottom:10px}
+ #hd .hdh{padding:6px 10px}#hd .hdh b{font-size:16px}#hd .hda{padding:6px 10px;gap:7px}#hd .hst{font-size:12px}#hd .hst span{padding:2px 8px}
+ #hd .skh{padding:6px 10px 3px;font-size:12px}#hd .hds{padding:3px 6px 8px}#hd .sk{padding:5px 8px;margin-bottom:5px}#hd .ski{width:34px;height:34px}#hd .skt b{font-size:13px}#hd .skt small{font-size:11px}#hd .ski-i{width:26px;height:26px}
+}
 #gw img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .dh img{pointer-events:none}
 </style></head><body>
@@ -880,7 +922,7 @@ function validLU(l){const ids=((l&&l.h)||[]).map(hidx);if(ids.length!=4||ids.som
  if(new Set(ids.map(i=>HD[i].cl)).size!=4)return 'A deck can only have 1 hero per class.';
  if(((l.g||[]).filter(id=>gAvail(GEN.find(g=>g.id===id)))).length<needGen())return 'Pick '+needGen()+' general cards.';return ''}
 function deckHTML(l,edit){
- const hsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em"'+(edit?' data-slot="'+j+'"':'')+'>＋</div>';const x=evH(HD[i]),s=hs(HD[i]);
+ const hsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em"'+(edit?' data-slot="'+j+'"':' data-go="1" title="Add a hero"')+'>＋</div>';const x=evH(HD[i]),s=hs(HD[i]);
   return '<div class="dh zf'+(edit&&rt===i?' sel':'')+'" style="--c:'+x.col+'"'+(edit?' data-dh="'+i+'" data-j="'+j+'"':'')+' title="'+esc(x.n)+'">'+faceImg(x)+'<b class="lvb">'+s.lv+'</b>'+(s.ev?'<span class="stb">'+STG[s.ev]+'</span>':'')+(j===0?'<em class="frt">Front</em>':'')+'</div>'};
  const rsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em dim"></div>';const r=REL.find(q=>q.id===(l.r||{})[k]);return r?'<div class="dr'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+' title="'+esc(r.n)+'">'+rIc(r)+'<small>'+esc(r.n)+'</small></div>':'<div class="em'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+'>'+(edit?'＋':'')+'</div>'};
  const gsl=n=>{const g=GEN.find(x=>x.id===(l.g||[])[n]);return g?'<div class="dg"'+(edit?' data-dg="'+n+'"':'')+' title="'+esc(g.s.n)+'"><i>'+art(g.s)+'</i><small>'+esc(g.s.n)+'</small></div>':(n<needGen()||edit&&n<2&&GEN.length>n?'<div class="em"'+(edit?' data-dg="'+n+'"':'')+'>'+(edit?'＋':'')+'</div>':'<div class="em dim"></div>')};
@@ -911,7 +953,7 @@ function pgBattle(){const l=PD.lineups[PD.sel]||{h:[],r:{},g:[]},dh=dispHero(),d
  return `<div class="bp">${APPR.bg?`<img class="bbg" src="${APPR.bg}" alt=""><div class="bsh"></div>`:''}
  ${dx?`<div class="bartw"><img class="bart" src="${dx.img}" alt="" referrerpolicy="no-referrer"></div><button class="rcy" id="rcy" title="Change display hero" aria-label="Change display hero">${RCY}</button>`:''}
  <div class="qs pnl"><h3>Quests</h3>${QUESTS.length?QUESTS.map(qH).join(''):'<p class="sub">No quests right now. Check back soon!</p>'}</div>
- <div class="bb"><div class="lu pnl"><div class="lt">${tabs}</div><div class="lg">${deckHTML(l,false)}${bad?`<p class="sub warn">⚠ ${bad} Tap “Edit Line-up”.</p>`:''}</div></div>
+ <div class="bb"><div class="lu pnl"><div class="lt">${tabs}</div><div class="lg">${deckHTML(l,false)}</div></div>
  <div class="mp"><div class="mds">${md.map(([k,n,ic])=>`<button class="md${PD.mode===k?' on':''}" data-m="${k}"><i>${ic}</i><span>${n}</span>${k==='story'?'<em class="msoon">Soon</em>':''}</button>`).join('')}</div><button class="play" id="play">Play</button></div></div></div>`}
 async function pgFriends(){if(!ME)return '<div class="pnl pad"><h3>Friends</h3><p class="sub">Log in on Dafreta Network to see your friends here.</p></div>';
  const fr=Object.keys(await fb('inbox/'+ME+'/fr').catch(()=>null)||{}),lb=await ensureLB(),pr=await Promise.all(fr.map(k=>fb('profiles/'+k).catch(()=>null)));
@@ -937,7 +979,7 @@ $('#home').addEventListener('click',e=>{
  if(e.target.closest('#exit')){exitGame();return}
  const sb=e.target.closest('.sbn');if(sb){pgNow=sb.dataset.pg;SND.click();renderHome();return}
  const pt=e.target.closest('.pt[data-p]');if(pt){PD.sel=+pt.dataset.p;saveP('sel');SND.click();renderHome();return}
- if(e.target.closest('#el')){openEd(PD.sel);return}
+ if(e.target.closest('#el')||e.target.closest('[data-go]')){openEd(PD.sel);return}
  if(e.target.closest('#rcy')){openPick();return}
  const md=e.target.closest('.md');if(md){PD.mode=md.dataset.m;saveP('mode');SND.click();renderHome();return}
  if(e.target.closest('#play')){playGame();return}
@@ -997,16 +1039,16 @@ function hdRender(){const b=HD[hdi],x=evH(b),s=hs(b),own=owned(b),e=s.ev|0,k=hk(
  const rows=hdSk.map((it,j)=>`<div class="sk"><span class="skc${it.ex?' ex':''}">${it.ex?'EX':it.s.c}</span><span class="ski">${it.s.art?`<img src="${it.s.art}" alt="" style="width:100%;height:100%;object-fit:cover">`:art(it.s)}</span><div class="skt"><b>${esc(it.s.n)}</b><small>${desc(it.s,x.atk)}</small></div><button class="ski-i" data-sk="${j}" aria-label="Card details">i</button></div>`).join('');
  const tabs=[['info','📄','Info'],['skin','👕','Skin'],['cm','💬','Comments']];
  let body;
- if(hdTab==='info')body=`<div class="hda"><div class="lvbox"><b>${s.lv}</b><small>Level</small></div><div class="hst"><span>❤️ <b>${x.hp}</b></span><span>⚔️ <b>${x.atk}</b></span></div><div class="xpb"><i style="width:${s.lv>=CFG.maxLv?100:xp/CFG.expLv*100}%"></i><span>${s.lv>=CFG.maxLv?'MAX':xp+'/'+CFG.expLv}</span></div><div class="evw">${evBtn}</div></div><div class="skh">Skill</div>${rows}`;
- else if(hdTab==='skin')body='<div class="soon"><span>👕</span><b>Skins are coming soon</b><small>Cosmetic looks for your heroes will arrive here.</small></div>';
- else body=`<div class="cmw"><div id="cmb"><p class="sub dk2">Loading comments…</p></div>${ME?`<div class="cmi"><textarea id="cmt" maxlength="200" placeholder="Say something about ${esc(b.n)}…"></textarea><button id="cmp">Post</button></div>`:'<p class="sub dk2">Log in on Dafreta Network to comment.</p>'}</div>`;
+ if(hdTab==='info')body=`<div class="hda"><div class="lvbox"><b>${s.lv}</b><small>Level</small></div><div class="hst"><span>❤️ <b>${x.hp}</b></span><span>⚔️ <b>${x.atk}</b></span></div><div class="xpb"><i style="width:${s.lv>=CFG.maxLv?100:xp/CFG.expLv*100}%"></i><span>${s.lv>=CFG.maxLv?'MAX':xp+'/'+CFG.expLv}</span></div><div class="evw">${evBtn}</div></div><div class="skh"><span>Skills</span><small>${hdSk.length} cards · tap ⓘ for details</small></div><div class="hds">${rows}</div>`;
+ else if(hdTab==='skin')body='<div class="hds"><div class="soon"><span>👕</span><b>Skins are coming soon</b><small>Cosmetic looks for your heroes will arrive here.</small></div></div>';
+ else body=`<div class="hds"><div class="cmw"><div id="cmb"><p class="sub dk2">Loading comments…</p></div>${ME?`<div class="cmi"><textarea id="cmt" maxlength="200" placeholder="Say something about ${esc(b.n)}…"></textarea><button id="cmp">Post</button></div>`:'<p class="sub dk2">Log in on Dafreta Network to comment.</p>'}</div></div>`;
  const lst=visHeroes(),pos=lst.indexOf(hdi);
  $('#hd').innerHTML=`<div class="hdt"><button class="g" id="hdb">←</button><h2>Hero Details</h2><div class="ers">${resH()}</div></div>
- <div class="hdw"><div class="hdl"><div class="rib" style="--c:${x.col}"><i>${CI[x.cl]||'⚔️'}</i>${x.cl}</div>
-  <img class="big${own?'':' gr'}" src="${x.img}" alt="" referrerpolicy="no-referrer">
+ <div class="hdw"><div class="hdl" style="--c:${x.col}"><div class="rib" style="--c:${x.col}"><i>${CI[x.cl]||'⚔️'}</i>${x.cl}</div>
+  <img class="big${own?'':' gr'}" src="${x.img}" alt="" referrerpolicy="no-referrer" style="--fx:${x.face?x.face.x:.5};--fy:${x.face?x.face.y:.1}">
   ${lst.length>1?'<button class="nv l" data-nav="-1" aria-label="Previous hero">◀</button><button class="nv r" data-nav="1" aria-label="Next hero">▶</button>':''}
   <div class="hdact">${own?`<button class="hdadd${inDeck?' rm':''}" id="hdadd">${inDeck?'Remove from line-up':'Add to line-up'}</button>`:(fr>=CFG.unlock?'<button class="hdadd rdy" id="hdunl">🔓 Unlock hero</button>':`<button class="hdadd" disabled>Need ${CFG.unlock} fragments</button>`)}</div></div>
- <div class="hdr"><div class="hdp"><div class="hdh">${embH(e)}<div><b>${esc(x.n)}</b><small>${esc(x.cl).toUpperCase()}${e?' · '+esc(b.n)+' evolved':''}</small></div></div>${body}</div>
+ <div class="hdr"><div class="hdp" style="--c:${x.col}"><div class="hdh">${embH(e)}<div><b>${esc(x.n)}</b><small>${esc(x.cl).toUpperCase()}${e?' · '+esc(b.n)+' evolved':''}</small></div></div>${body}</div>
  <nav class="hdn">${tabs.map(([t,ic,l])=>`<button data-tab="${t}" class="${hdTab===t?'on':''}"><i>${ic}</i>${l}</button>`).join('')}</nav></div></div>`;
  if(hdTab==='cm')cmLoad(k)}
 function showCardDetail(j){const it=hdSk[j];if(!it)return;const s=it.s,x=evH(HD[hdi]),o={h:{cl:x.cl,col:x.col,n:x.n,st:x.st},atk:x.atk,s:{}};
