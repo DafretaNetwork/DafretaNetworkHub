@@ -672,9 +672,20 @@ const RC={common:'#7f93ad',rare:'#2f8bff',epic:'#a24dff',legendary:'#ff8a1f'};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* api: path may carry a query string, e.g. 'news?orderBy=%22$key%22&limitToLast=6'. api('', 'PATCH', {...}) = multi-path update in ONE request */
-const api=async(p,m='GET',b)=>{const [a,q]=p.split('?');const r=await fetch(`${DB}/${a}.json${q?'?'+q:''}`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return r.json()};
+/* ---------- Firebase Authentication: each player signs in for real; every database request carries their login token ---------- */
+const FBK='AIzaSyC8LZNIUsV_DySPviZLOOseesnmmBsglAQ',ALIAS=k=>k+'@users.dafretanetwork.com';
+let TOK=null;
+const fbPass=async(k,p)=>'Dn!'+(await sha('fb:'+k+':'+p)).slice(0,40);
+async function idt(m,b){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+m+'?key='+FBK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...b,returnSecureToken:true})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||'AUTH_ERROR');return j}
+function setTok(j,k){TOK={it:j.idToken||j.id_token,rt:j.refreshToken||j.refresh_token,uid:j.localId||j.user_id,exp:Date.now()+((+(j.expiresIn||j.expires_in)||3600)-180)*1000,u:k};localStorage.dn_s=JSON.stringify(TOK)}
+let tokP=null;
+async function tok(){if(!TOK)return null;if(Date.now()<TOK.exp)return TOK.it;if(tokP)return tokP;
+  tokP=(async()=>{try{const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+FBK,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(TOK.rt)});const j=await r.json();if(!r.ok)throw 0;setTok(j,TOK.u);return TOK.it}catch(e){TOK=null;localStorage.removeItem('dn_s');return null}finally{tokP=null}})();return tokP}
+const aq=()=>TOK&&TOK.it?'auth='+encodeURIComponent(TOK.it):'';
+setInterval(()=>{if(TOK)tok()},240000);
+const api=async(p,m='GET',b)=>{const [a,q0]=p.split('?');const t=await tok(),q=[q0,t?'auth='+encodeURIComponent(t):''].filter(Boolean).join('&');const r=await fetch(`${DB}/${a}.json${q?'?'+q:''}`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return r.json()};
 const mp=o=>api('','PATCH',o);
-const skeys=async p=>{const r=await fetch(`${DB}/${p}.json?shallow=true`);if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return Object.keys(await r.json()||{})};
+const skeys=async p=>{const t=await tok();const r=await fetch(`${DB}/${p}.json?shallow=true${t?'&auth='+encodeURIComponent(t):''}`);if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return Object.keys(await r.json()||{})};
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('dafreta:'+s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const mid=()=>Date.now().toString(36).padStart(9,'0')+Math.random().toString(36).slice(2,5);
 const pair=(a,b)=>[a,b].sort().join('~');
@@ -710,10 +721,9 @@ function toast(t,fn){const e=$('#toast');e.textContent=t;e.onclick=fn?()=>{e.sty
 
 async function boot(){
   try{
-    if(!await api('codes/2026-F3DP-SUPPORTER-PROD'))
-      await api('codes/2026-F3DP-SUPPORTER-PROD','PUT',{title:'F3DP Supporter',desc:'Backed Dafreta Network from the start.',icon:'🏅',rarity:'legendary'});
     const s=JSON.parse(localStorage.dn_s||'null');
-    if(s){const a=await api('auth/'+s.u);if(a&&a.hash===s.h)me={k:s.u,role:a.role,email:a.email||''}}
+    if(s&&s.rt&&s.u){TOK=s;if(await tok()){const a=await api('auth/'+s.u).catch(()=>null);if(a)me={k:s.u,role:a.role,email:a.email||'',uid:TOK.uid}}}
+    else if(s)localStorage.removeItem('dn_s');
   }catch(e){return $('#app').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
   await Promise.race([initLoc(),new Promise(r=>setTimeout(r,2500))]);
   const had=LOC.ok;
@@ -744,7 +754,7 @@ function askLogout(){
   modal(`<div style="text-align:center;padding:10px 0 4px"><div style="font-size:54px">👋</div><div class="mt" style="margin-top:8px">Log out?</div>
   <p class="mut" style="margin:10px 0 24px">Are you sure you want to log out?</p>
   <div class="row" style="justify-content:center"><button class="d" onclick="closeM();logout()">Yes, proceed logout</button><button class="g" onclick="closeM()">No</button></div></div>`)}
-function logout(){stopBeat(true);localStorage.removeItem('dn_s');stopIn();inOK=false;IN=E0();cwRemove();me=null;nav();location.hash='#/'; route()}
+function logout(){stopBeat(true);localStorage.removeItem('dn_s');TOK=null;stopIn();inOK=false;IN=E0();cwRemove();me=null;nav();location.hash='#/'; route()}
 const view=h=>{$('#app').innerHTML=h;window.scrollTo(0,0)};
 async function route(){
   const [,pg,arg,arg2]=location.hash.split('/');
@@ -804,12 +814,22 @@ function loginV(){
   <label>Username</label><input id="u" autocomplete="username"><label>Password</label><input id="p" type="password" autocomplete="current-password" onkeydown="event.key==='Enter'&&doLogin()">
   <div class="row" style="margin-top:18px"><button onclick="doLogin()">Log in</button><button class="g" onclick="location.hash='#/register'">Create account</button></div></div>`);
 }
+const AUTHMSG={EMAIL_NOT_FOUND:'Wrong username or password.',INVALID_PASSWORD:'Wrong username or password.',INVALID_LOGIN_CREDENTIALS:'Wrong username or password.',USER_DISABLED:'This account has been disabled.',TOO_MANY_ATTEMPTS_TRY_LATER:'Too many tries. Please wait a few minutes and try again.'};
+const amsg=e=>AUTHMSG[String(e.message).split(' ')[0]]||e.message;
 async function doLogin(){
-  const k=$('#u').value.trim().toLowerCase(),h=await sha($('#p').value);
-  try{const a=k&&await api('auth/'+k);
-    if(!a||a.hash!==h)return $('#m').innerHTML='<div class="msg">Wrong username or password.</div>';
-    localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:a.role,email:a.email||''};afterAuth();earlyCheck();const r=RET||'#/';RET='';location.hash===r?route():location.hash=r;if(SUPGO){SUPGO=false;setTimeout(openSupport,700)}
-  }catch(e){$('#m').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
+  const k=$('#u').value.trim().toLowerCase(),pw=$('#p').value,bad=t=>$('#m').innerHTML=`<div class="msg">${esc(t)}</div>`;
+  if(!k||!pw)return bad('Enter your username and password.');
+  try{const fp=await fbPass(k,pw);let j=null;
+    try{j=await idt('signInWithPassword',{email:ALIAS(k),password:fp})}catch(e){if(!/EMAIL_NOT_FOUND|INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message))throw e}
+    if(!j){/* first login since the upgrade: check the old password, then move the account to Firebase Authentication */
+      TOK=null;const old=await api('auth/'+k).catch(()=>null),h=await sha(pw);
+      if(!old||!old.hash||old.hash!==h)return bad('Wrong username or password.');
+      try{j=await idt('signUp',{email:ALIAS(k),password:fp})}catch(e){if(/EMAIL_EXISTS/.test(e.message))return bad('Wrong username or password.');throw e}
+      setTok(j,k);await mp({['owners/'+k]:TOK.uid,['migproof/'+TOK.uid]:h});await mp({['uids/'+TOK.uid]:k,['migproof/'+TOK.uid]:null,['auth/'+k+'/hash']:null})}
+    else setTok(j,k);
+    const a=await api('auth/'+k)||{};
+    me={k,role:a.role||'player',email:a.email||'',uid:TOK.uid};afterAuth();earlyCheck();const r=RET||'#/';RET='';location.hash===r?route():location.hash=r;if(SUPGO){SUPGO=false;setTimeout(openSupport,700)}
+  }catch(e){TOK=null;localStorage.removeItem('dn_s');bad(amsg(e))}
 }
 function regV(){
   view(`<div class="auth box"><h2>Create account</h2><div id="m"></div>
@@ -826,13 +846,14 @@ async function doReg(){
   if(!/^\S+@\S+\.\S+$/.test(e))return bad('Enter a valid email.');
   if(p.length<4)return bad('Password needs at least 4 characters.');
   if(p!==$('#p2').value)return bad('Passwords do not match.');
-  try{if(await api('auth/'+k))return bad('That username is taken.');
-    const h=await sha(p);
-    await api('auth/'+k,'PUT',{hash:h,email:e,role:'player'});
+  try{if(await api('owners/'+k)||await api('auth/'+k).catch(()=>null))return bad('That username is taken.');
+    let j;try{j=await idt('signUp',{email:ALIAS(k),password:await fbPass(k,p)})}catch(x){if(/EMAIL_EXISTS/.test(x.message))return bad('That username is not available.');throw x}
+    setTok(j,k);await api('owners/'+k,'PUT',TOK.uid);await api('uids/'+TOK.uid,'PUT',k);
+    await api('auth/'+k,'PUT',{email:e,role:'player'});
     const now=Date.now(),ec=await api('config/early').catch(()=>null),eg=!!(ec&&ec.badge&&now<=ec.until);
     await api('profiles/'+k,'PUT',{name:n,avatar:Math.floor(Math.random()*AV.length),frame:'none',public:$('#pub').checked,created:now,...(eg?{badges:{[ec.badge]:now},eb:true}:{})});
-    invP();localStorage.dn_s=JSON.stringify({u:k,h});me={k,role:'player',email:e};afterAuth();const r=RET||'#/';RET='';location.hash=r;if(SUPGO){SUPGO=false;setTimeout(openSupport,700)}
-  }catch(x){bad(esc(x.message))}
+    invP();me={k,role:'player',email:e,uid:TOK.uid};afterAuth();const r=RET||'#/';RET='';location.hash=r;if(SUPGO){SUPGO=false;setTimeout(openSupport,700)}
+  }catch(x){bad(esc(amsg(x)))}
 }
 async function charV(k){
   const p=k&&await getProf(k,true);
@@ -900,7 +921,7 @@ const thumbOf=(src,max,q,sq)=>new Promise((ok,no)=>{const im=new Image();
 async function upImg(i){const f=i.files[0];if(!f)return;try{tmp.img=await shrink(f,192,.85,true);paint()}catch(e){toast(e.message)}}
 /* ---------- my account ---------- */
 async function meV(){
-  const p=await getProf(me.k,true);await defs(Object.keys(p.badges||{}));
+  const p=await getProf(me.k,true);await defs(Object.keys(p.badges||{}));if(!me)return;
   const T=[['badges','Badges'],['char','Character'],['sec','Account']];
   let body='';
   if(tab==='badges')body=`<h3>Redeem a code</h3><p class="mut">Enter the 12-character code you received</p><div id="m"></div>
@@ -930,10 +951,10 @@ async function saveChar(){await api('profiles/'+me.k,'PATCH',{avatar:tmp.avatar,
 async function chEmail(){const e=$('#ne').value.trim();if(!/^\S+@\S+\.\S+$/.test(e))return $('#m').innerHTML='<div class="msg">Enter a valid email.</div>';
   await api('auth/'+me.k,'PATCH',{email:e});me.email=e;toast('Email changed');meV()}
 async function chPass(){
-  const a=await api('auth/'+me.k),np=$('#np').value;
-  if(a.hash!==await sha($('#op').value))return $('#m').innerHTML='<div class="msg">Current password is wrong.</div>';
-  if(np.length<4)return $('#m').innerHTML='<div class="msg">New password needs at least 4 characters.</div>';
-  const h=await sha(np);await api('auth/'+me.k,'PATCH',{hash:h});localStorage.dn_s=JSON.stringify({u:me.k,h});toast('Password changed');meV()}
+  const np=$('#np').value,m=$('#m');
+  if(np.length<4)return m.innerHTML='<div class="msg">New password needs at least 4 characters.</div>';
+  try{await idt('signInWithPassword',{email:ALIAS(me.k),password:await fbPass(me.k,$('#op').value)})}catch(e){return m.innerHTML='<div class="msg">Current password is wrong.</div>'}
+  try{const j=await idt('update',{idToken:await tok(),password:await fbPass(me.k,np)});setTok(j,me.k);toast('Password changed');meV()}catch(e){m.innerHTML=`<div class="msg">${esc(amsg(e))}</div>`}}
 
 /* ---------- admin ---------- */
 const AT=[['players','Players'],['codes','Badge codes'],['inv','Inventory'],['news','News'],['orders','Payments'],['cardgame','Dafreta Card Battle']];
@@ -986,7 +1007,9 @@ async function adminV(){
     const [au,pr]=await Promise.all([api('auth').then(x=>x||{}),allProfs()]);
     await loadPres(Object.keys(au),true).catch(()=>{});
     const nOn=Object.keys(au).filter(isOn).length;
-    body=`<p class="mut" style="margin-bottom:12px">${Object.keys(au).length} accounts · <span class="pres on"><i></i>${nOn} active now</span></p><table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th>Activity</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
+    const own=await api('owners').catch(()=>null)||{},nMig=Object.keys(au).filter(k=>own[k]&&own[k]!=='reserved').length,locked=!!(await api('config/authLocked').catch(()=>null));
+    body=`<div class="bx2" style="border-left:4px solid var(--gold)"><b>🔐 Account security upgrade</b><p class="mut" style="font-size:13px;margin:4px 0 8px">${nMig} of ${Object.keys(au).length} accounts have moved to Firebase Authentication (they move automatically when they log in). ${locked?'<b>Old passwords are locked.</b> Accounts that never moved are reserved; those players must contact Support.':'When most players have moved (about 2 weeks), lock the old password list.'}</p>${locked?'':'<button class="d s" onclick="lockOldAuth()">🔒 Lock old passwords now</button>'}</div>
+    <p class="mut" style="margin-bottom:12px">${Object.keys(au).length} accounts · <span class="pres on"><i></i>${nOn} active now</span></p><table><tr><th>Player</th><th>Email</th><th>Role</th><th>Badges</th><th>Page</th><th>Activity</th><th></th></tr>${Object.keys(au).map(k=>{const p=pr[k]||{name:k};
    return `<tr><td>${esc(p.name)}</td><td>${esc(au[k].email)}</td><td>${au[k].role}</td><td>${cnt(p)}</td><td>${p.public?'Public':'Private'}</td><td style="white-space:nowrap">${presH(k)}</td>
    <td class="row"><button class="g s" onclick="location.hash='#/char/${k}'">View</button><button class="s" onclick="location.hash='#/admin/user/${k}'">Edit</button>${k===me.k?'':`<button class="s" onclick="openMod('${k}')">💬 Message</button>`}${k===me.k?'':`<button class="d s" onclick="delUser('${k}')">Delete</button>`}</td></tr>`}).join('')}</table>`}
   else if(atab==='orders')body=await ordersHTML();
@@ -1654,12 +1677,17 @@ async function cardgameV(){
     </div>`);return;}
   view(`<iframe src="./Dafreta_card_battle.html" title="Dafreta Card Battle" style="position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;border:0;display:block;z-index:300;background:#000" allow="autoplay; fullscreen" allowfullscreen></iframe>`);
 }
+async function lockOldAuth(){
+  if(!confirm('Lock the old password list now?\n\nAccounts that have not logged in since the upgrade will be reserved and can no longer log in by themselves (they will need help from Support). This cannot be undone from here.'))return;
+  try{const au=await api('auth')||{},own=await api('owners').catch(()=>null)||{},o={};
+    for(const k in au){if(au[k]&&au[k].hash)o['auth/'+k+'/hash']=null;if(!own[k])o['owners/'+k]='reserved'}
+    o['config/authLocked']=true;await mp(o);toast('Old passwords locked');adminV()}catch(e){toast(e.message)}}
 async function delUser(k){
   if(k===me.k)return toast("You can't delete the account you are logged in with");
   if(!confirm('Delete '+k+' and all their badges?'))return;
   try{const au=await api('auth')||{};
     if(au[k]&&au[k].role==='admin'&&Object.values(au).filter(a=>a.role==='admin').length<=1)return toast('You need at least one admin account');
-    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');await api('supportin/'+k,'DELETE');await api('supportin/m:'+k,'DELETE');await api('presence/'+k,'DELETE');invP();toast('Deleted '+k);adminV()
+    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');await api('supportin/'+k,'DELETE');await api('supportin/m:'+k,'DELETE');await api('presence/'+k,'DELETE');{const uid=await api('owners/'+k).catch(()=>null);if(uid&&uid!=='reserved')await mp({['uids/'+uid]:null,['admins/'+uid]:null}).catch(()=>{})}await api('owners/'+k,'DELETE').catch(()=>{});invP();toast('Deleted '+k);adminV()
   }catch(e){toast(e.message)}}
 
 /* ---------- badge codes (admin) ---------- */
@@ -1724,7 +1752,7 @@ async function editV(k){
   view(`<p><a href="#/admin">Back to players</a></p><h2 style="margin:8px 0 14px">Edit ${esc(p.name)}</h2><div id="m"></div>
   <div class="box"><div style="max-width:420px"><label>Email</label><input id="ee" value="${esc(a.email)}">
   <label>Role</label><select id="er" ${k===me.k?'disabled':''}><option ${a.role==='player'?'selected':''}>player</option><option ${a.role==='admin'?'selected':''}>admin</option></select>
-  <label>Set new password (leave empty to keep)</label><input id="ep" placeholder="New password"></div>
+  <p class="mut" style="font-size:13px;margin-top:10px">Passwords are now protected by Firebase Authentication. Players change their own password under My account.</p></div>
   <div style="margin:18px 0">${picker(p)}</div><div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Public page</span></div>
   <button onclick="saveUser('${k}')">Save changes</button></div>
   <div class="box" style="margin-top:20px"><h3>Badges (${cnt(p)})</h3>
@@ -1732,8 +1760,8 @@ async function editV(k){
 }
 async function saveUser(k){
   const d={email:$('#ee').value.trim()};if(k!==me.k)d.role=$('#er').value;
-  const np=$('#ep').value;if(np)d.hash=await sha(np);
   await api('auth/'+k,'PATCH',d);
+  if(d.role){const uid=await api('owners/'+k).catch(()=>null);if(uid&&uid!=='reserved')await api('admins/'+uid,d.role==='admin'?'PUT':'DELETE',d.role==='admin'?true:undefined).catch(()=>toast('Role saved, but database admin rights need the player to log in once first'))}
   const isA=(k===me.k?me.role:d.role)==='admin';
   await api('profiles/'+k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked,adm:isA?true:null});invP(k);toast('Saved');
 }
@@ -2080,9 +2108,9 @@ async function delOrder(id){if(!confirm('Delete this payment record from the dat
 const E0=()=>({fr:{},reqs:{},out:{},notes:{},unread:{},th:{},seen:0});
 let IN=E0(),es=null,inOK=false;
 function startIn(){stopIn();if(!me||document.hidden)return;
-  es=new EventSource(`${DB}/inbox/${me.k}.json`);
+  es=new EventSource(`${DB}/inbox/${me.k}.json?${aq()}`);
   const h=e=>{try{onIn(e.type,JSON.parse(e.data))}catch(x){}};
-  es.addEventListener('put',h);es.addEventListener('patch',h);startSup()}
+  es.addEventListener('put',h);es.addEventListener('patch',h);es.addEventListener('auth_revoked',()=>{tok().then(()=>startIn())});startSup()}
 function stopIn(){es&&es.close();es=null;stopSup()}
 function setP(path,v){const s=path.split('/').filter(Boolean);if(!s.length)return;
   if(s.length===1&&v===null){IN[s[0]]=s[0]==='seen'?0:{};return}
@@ -2163,9 +2191,9 @@ let CH={open:false,with:null,es:null,msgs:{}};
 let SUP={},supOK=false,ses=null;
 const supN=()=>me&&me.role==='admin'?Object.values(SUP).filter(x=>x&&x.u).length:0;
 function startSup(){stopSup();if(!me||me.role!=='admin'||document.hidden)return;
-  ses=new EventSource(`${DB}/supportin.json`);
+  ses=new EventSource(`${DB}/supportin.json?${aq()}`);
   const h=e=>{try{onSup(e.type,JSON.parse(e.data))}catch(x){}};
-  ses.addEventListener('put',h);ses.addEventListener('patch',h)}
+  ses.addEventListener('put',h);ses.addEventListener('patch',h);ses.addEventListener('auth_revoked',()=>{tok().then(()=>startSup())})}
 function stopSup(){ses&&ses.close();ses=null}
 function onSup(type,{path,data}){
   const was=new Set(Object.keys(SUP).filter(k=>SUP[k]&&SUP[k].u)),pt=(path||'/').split('/').filter(Boolean);
@@ -2244,7 +2272,7 @@ async function openChat(k){
   if(!all){clearUnread(k);chatStream(k)}
   if(!sys)setTimeout(()=>{const i=$('#ci');i&&i.focus()},50)}
 function chatStream(k){closeStream();CH.msgs={};
-  const e=new EventSource(`${DB}/chats/${k.startsWith('sup:')?pair('@support',k.slice(4)):k.startsWith('mod:')?pair('@mod',k.slice(4)):pair(me.k,k)}.json?orderBy=%22$key%22&limitToLast=50`);CH.es=e;
+  const e=new EventSource(`${DB}/chats/${k.startsWith('sup:')?pair('@support',k.slice(4)):k.startsWith('mod:')?pair('@mod',k.slice(4)):pair(me.k,k)}.json?orderBy=%22$key%22&limitToLast=50&${aq()}`);CH.es=e;e.addEventListener('auth_revoked',()=>{tok().then(()=>{if(CH.with===k)chatStream(k)})});
   const h=ev=>{try{const {path,data}=JSON.parse(ev.data);
     if(path==='/'){if(ev.type==='put')CH.msgs=data||{};else Object.assign(CH.msgs,data||{})}
     else if(ev.type==='put'){const id=path.split('/')[1];if(data===null)delete CH.msgs[id];else if(path.split('/').length===2)CH.msgs[id]=data}
@@ -2400,7 +2428,7 @@ $('#sr').addEventListener('click',e=>{if(e.target.closest('a[href]'))document.bo
 matchMedia('(min-width:761px)').addEventListener('change',e=>{if(e.matches)document.body.classList.remove('mo','ms')});
 /* ---------- activity: "Active now" / "Last active ...", written as presence/{user} = {t, on} ---------- */
 let hbT=0,PRS={};
-const beat=on=>{if(!me)return;try{fetch(`${DB}/presence/${me.k}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:Date.now(),on:on?1:0}),keepalive:true}).catch(()=>{})}catch(e){}};
+const beat=on=>{if(!me)return;try{fetch(`${DB}/presence/${me.k}.json?${aq()}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:Date.now(),on:on?1:0}),keepalive:true}).catch(()=>{})}catch(e){}};
 function startBeat(){stopBeat();if(!me)return;if(!document.hidden)beat(true);hbT=setInterval(()=>{if(!document.hidden&&me)beat(true)},90000)}
 function stopBeat(off){clearInterval(hbT);hbT=0;if(off)beat(false)}
 document.addEventListener('visibilitychange',()=>{if(me)beat(!document.hidden)});
