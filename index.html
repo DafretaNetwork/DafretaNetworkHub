@@ -615,6 +615,8 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .cgcw{display:flex;flex-direction:column;align-items:center;gap:6px}.cgcw .ty{font:700 10px system-ui;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}.cgcw .ba{display:flex;gap:6px}
 .cgcw.ult .ccp{box-shadow:0 0 0 2px #ffd966,0 0 14px #ffd96688}
 .artb{margin-top:10px;border-left:4px solid #b07cff}
+.pzg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:8px}.pzc{display:flex;gap:10px;align-items:flex-start;background:#0f1e33;border:1px solid var(--line);border-radius:10px;padding:10px}
+.pzp{flex:none;width:84px;height:110px;border-radius:8px;display:grid;place-items:center;background:repeating-conic-gradient(#1a2a42 0 25%,#13203a 0 50%) 0 0/14px 14px;overflow:hidden;font-size:11px;text-align:center}.pzp img{width:100%;height:100%;object-fit:contain}
 .cpool{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.cpc{background:#14243c;border:1px solid var(--line);border-radius:20px;padding:3px 6px 3px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.cpc button{background:none;border:0;color:var(--mute);cursor:pointer;padding:0 4px;font-size:13px}.cpc button:hover{color:#ff6a6a}
 </style>
 </head>
@@ -983,7 +985,7 @@ async function importDefaults(){
     for(let i=0;i<DEFAULT_HEROES.length;i++){const d=DEFAULT_HEROES[i],id='hd_'+d.key;if(!have[id])await api('cardgame/heroes/'+id,'PUT',{...d.data,created:t0+i,updated:t0+i})}
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
-const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,cards:[],evo:{},open:false,locked:false,comments:[]});
+const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,atkImg:'',atkFace:null,exImg:'',exFace:null,cards:[],evo:{},open:false,locked:false,comments:[]});
 const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:''});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
 const emptyGF=()=>({art:'',id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
@@ -1108,7 +1110,7 @@ function heroEditorHTML(){
     <div style="grid-column:1/-1"><label class="chk"><input type="checkbox" ${HF.locked?'checked':''} onchange="HF.locked=this.checked"> 🔒 Locked hero: players must collect ${CGC.unlock} card fragments of this hero to unlock it (otherwise everyone owns it from the start)</label></div></div>
    <label>Portrait <span class="mut" style="font-weight:400">(full-body PNG, transparent background, uploaded at full resolution)</span></label>
    <div class="row" style="align-items:center;margin:6px 0 0;gap:10px"><button class="s" onclick="$('#hif').click()">Upload portrait</button><span id="hpst" class="mut" style="font-size:13px"></span></div>
-   <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)"><div id="fcsec">${faceEdHTML()}</div></div>
+   <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)"><div id="fcsec">${faceEdHTML()}</div><div id="posesec">${poseHTML()}</div></div>
   <div class="cgstep"><div class="cgsh"><span>2</span><b>Cards</b></div>
    <p class="mut" style="margin:8px 0;font-size:13px">Colored automatically by class. A hero needs at least one non-ultimate card to appear in the game.</p>
    <div id="hcards">${renderCardList()}</div><div id="cform" style="margin-top:10px" oninput="cfPrevU()" onchange="cfPrevU()">${renderCardForm()}</div></div>
@@ -1118,13 +1120,25 @@ function heroEditorHTML(){
   ${HF.id?`<div class="cgstep"><div class="cgsh"><span>4</span><b>Player comments</b></div><div id="cmsec">${commentsAdminHTML()}</div></div>`:''}
   <div class="cgsave"><button onclick="saveHero()">💾 ${HF.id?'Save changes':'Create hero'}</button><button class="g" onclick="closeHero()">Cancel</button></div></div>`;
 }
+/* battle poses: shown for a moment when the hero attacks / charges its EX, then the normal portrait comes back */
+const POSES=[['atk','⚔️ Attack pose','Shown for a moment every time this hero plays a damage card (with a lunge + slash effect).'],['ex','🌟 EX pose','Shown while the hero charges its ultimate, right before the EX splash art.']];
+function poseHTML(){
+  return `<div class="bx2" style="margin-top:12px"><b>Battle poses <span class="mut" style="font-weight:400">(optional, full-body PNG with transparent background, same style as the portrait)</span></b>
+  <div class="pzg">${POSES.map(([k,l,d])=>{const im=HF[k+'Img'];return `<div class="pzc"><div class="pzp">${im?`<img src="${esc(im)}" alt="">`:'<span class="mut">No image</span>'}</div><div><b>${l}</b><p class="mut" style="font-size:12px;margin:2px 0 8px">${d}</p>
+   <div class="row" style="gap:6px"><button class="s" onclick="$('#pz${k}').click()">${im?'Replace':'Upload'}</button>${im?`<button class="d s" onclick="HF.${k}Img='';HF.${k}Face=null;paintPose()">Remove</button>`:''}</div>
+   <input id="pz${k}" type="file" accept="image/*" hidden onchange="upPose('${k}',this)"></div></div>`}).join('')}</div>
+  <p class="mut" style="font-size:12px;margin:8px 0 0">Without a pose image the hero still lunges and glows, it just keeps its normal picture. Evolutions with their own portrait can have their own poses (step 3).</p></div>`}
+const paintPose=()=>{const e=$('#posesec');if(e)e.innerHTML=poseHTML()};
+async function upPose(k,inp){const f=inp.files[0];inp.value='';if(!f)return;try{toast('Processing image…');const r=await procHeroImg(f);HF[k+'Img']=r.img;HF[k+'Face']=r.face;paintPose();toast('Pose ready ('+r.w+'×'+r.h+'). Press Save to keep it.')}catch(e){toast(e.message)}}
+async function upEvoPose(i,k,inp){const f=inp.files[0];inp.value='';if(!f)return;try{toast('Processing image…');const r=await procHeroImg(f);evSet(i,k+'Img',r.img);evSet(i,k+'Face',r.face);paintEvo();toast('Pose ready')}catch(e){toast(e.message)}}
 function evoHTML(){
   return `<div class="evg">${[1,2,3,4].map(i=>{const e=(HF.evo&&HF.evo[i])||{},need=i<4?`Lv ${CGC.maxLv} + ${CGC.frag[i-1]} fragments`:`Lv ${CGC.maxLv} + ${CGC.frag[3]} fragments + ${CGC.stone} stone`;
    return `<div class="evc"><div class="evt"><b>${EVN[i-1]}</b><small class="mut">${need}</small></div>
     <label>Name</label><input value="${esc(e.name||'')}" maxlength="40" placeholder="${esc(HF.name||'Hero')} ${EVN[i-1]}" oninput="evSet(${i},'name',this.value)">
     <label>Stat bonus (+ to every card)</label><input type="number" min="0" max="999" value="${e.bonus===undefined||e.bonus===''||e.bonus===null?'':+e.bonus}" placeholder="default +${CGC.evoB[i-1]??0}" oninput="evSet(${i},'bonus',this.value)">
     <label>Image</label><div class="row" style="align-items:center;gap:8px"><button class="s" onclick="$('#evf${i}').click()">Upload</button>${e.img?`<div class="zf" style="width:64px;height:46px;border-radius:6px;border:1px solid var(--line)">${faceTag(e.img,e.face)}</div><button class="g s" onclick="evSet(${i},'img','');evSet(${i},'face',null);paintEvo()">✕</button>`:'<span class="mut" style="font-size:12px">base portrait</span>'}</div>
-    <input id="evf${i}" type="file" accept="image/*" hidden onchange="upEvoImg(${i},this)"></div>`}).join('')}</div>`;
+    <input id="evf${i}" type="file" accept="image/*" hidden onchange="upEvoImg(${i},this)">
+    ${e.img?`<label>Battle poses for this look</label><div class="row" style="gap:6px;flex-wrap:wrap">${POSES.map(([k,l])=>`<button class="${e[k+'Img']?'':'g '}s" onclick="$('#evp${k}${i}').click()">${e[k+'Img']?'✓ ':''}${l.split(' ').slice(1).join(' ')}</button>${e[k+'Img']?`<button class="d s" onclick="evSet(${i},'${k}Img','');evSet(${i},'${k}Face',null);paintEvo()">✕</button>`:''}<input id="evp${k}${i}" type="file" accept="image/*" hidden onchange="upEvoPose(${i},'${k}',this)">`).join('')}</div>`:''}</div>`}).join('')}</div>`;
 }
 const timeAgo=t=>{const d=(Date.now()-t)/1000;return d<60?'just now':d<3600?Math.floor(d/60)+'m ago':d<86400?Math.floor(d/3600)+'h ago':Math.floor(d/86400)+'d ago'};
 function commentsAdminHTML(){const c=HF.comments||[];if(!c.length)return '<p class="mut" style="font-size:13px;margin:8px 0 0">No comments yet. Players can comment on a hero from its details page in the game.</p>';
@@ -1244,12 +1258,12 @@ async function saveHero(){
   if(!name)return bad('Hero name is required.');
   if(!(hp>0))return bad('HP must be greater than 0.');
   const isEdit=!!HF.id,evo={};
-  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);if(e.img){o.img=e.img;if(e.face)o.face=e.face;if(+e.ar)o.ar=+e.ar}if(Object.keys(o).length)evo[i]=o});
+  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);if(e.img){o.img=e.img;if(e.face)o.face=e.face;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face']}})}if(Object.keys(o).length)evo[i]=o});
   try{
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
     if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
-    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,face:HF.img&&HF.face?HF.face:null,ar:HF.img&&+HF.ar?+HF.ar:null,bs:+HF.bs&&+HF.bs!==100?+HF.bs:null,cards:HF.cards.map(c=>c.conj?{...c,conj:{...c.conj,pool:c.conj.pool.map(r=>String(r).replace(/^@self::/,id+'::'))}}:c),evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
+    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,face:HF.img&&HF.face?HF.face:null,ar:HF.img&&+HF.ar?+HF.ar:null,bs:+HF.bs&&+HF.bs!==100?+HF.bs:null,atkImg:HF.atkImg||null,atkFace:HF.atkImg&&HF.atkFace?HF.atkFace:null,exImg:HF.exImg||null,exFace:HF.exImg&&HF.exFace?HF.exFace:null,cards:HF.cards.map(c=>c.conj?{...c,conj:{...c.conj,pool:c.conj.pool.map(r=>String(r).replace(/^@self::/,id+'::'))}}:c),evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
     await api('cardgame/heroes/'+id,'PUT',data);
     HF=emptyHF();CF=emptyCF();
     toast(isEdit?'Hero updated':'Hero created');atab='cardgame';CGT='heroes';adminV();
@@ -1257,9 +1271,9 @@ async function saveHero(){
 }
 async function editHero(id){
   try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
-    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,img:e.img||'',face:e.face||null,ar:+e.ar||0}});
+    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,img:e.img||'',face:e.face||null,ar:+e.ar||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,exImg:e.exImg||'',exFace:e.exFace||null}});
     let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
-    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
+    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,exImg:h.exImg||'',exFace:h.exFace||null,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
     CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0);autoFaceMissing()
   }catch(e){toast(e.message)}}
 async function deleteHero(id){if(!confirm('Delete this hero? Players who used it will lose it from their line-ups.'))return;
