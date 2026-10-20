@@ -732,6 +732,28 @@ body.sel .sdim{opacity:1}
 .xbd{min-height:2.1em;display:flex;align-items:flex-end;justify-content:center;font-size:clamp(9px,1cqw,14px)}
 .xbd .evbd.tc{font-size:.85em}
 .xc .xn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* ---- Transcendent ornaments: jewel caps on both ends + extra glitter ---- */
+.evbd.tc{padding:0 .55em}
+.evbd.tc .gm{position:absolute;top:50%;width:1.05em;aspect-ratio:1;z-index:2;font-style:normal;rotate:45deg;translate:0 -50%;
+ background:radial-gradient(circle at 32% 30%,#fff 0 10%,#fff3c4 22%,#ffc93a 48%,#c47f00 75%,#6a3a04);border:.11em solid #ffe9a0;border-radius:.14em;
+ box-shadow:0 0 0 .07em #5a3204,0 0 .45em #ffb300,inset 0 0 .2em #fff8;overflow:hidden}
+.evbd.tc .gm.l{left:0}.evbd.tc .gm.r{right:0}
+.evbd.tc .gm::before{content:"";position:absolute;inset:22%;border:.06em solid #fff9;border-radius:.06em}
+.evbd.tc .gm::after{content:"";position:absolute;inset:-40%;background:linear-gradient(90deg,transparent 40%,#fffffff0 50%,transparent 60%);animation:tcgl 2.4s ease-in-out infinite}
+.evbd.tc .gm.r::after{animation-delay:1.2s}
+@keyframes tcgl{0%,60%{translate:-70% 0}100%{translate:70% 0}}
+.evbd.tc .gm.l+.tcr{margin-left:0}
+.evbd.tc .s3,.evbd.tc .s4,.evbd.tc .s5,.evbd.tc .s6{width:.38em}
+.evbd.tc .s3{left:-.2em;top:-.45em;animation-delay:.5s;animation-duration:1.8s}
+.evbd.tc .s4{right:-.15em;top:-.4em;animation-delay:1.6s;animation-duration:2s}
+.evbd.tc .s5{left:40%;bottom:-.4em;animation-delay:.9s;animation-duration:1.6s}
+.evbd.tc .s6{right:32%;top:-.42em;animation-delay:2s;animation-duration:2.2s}
+.evbd.tc .gd{position:absolute;inset:-.5em -.2em;pointer-events:none;font-style:normal;z-index:3;
+ background:radial-gradient(circle,#fff 0 .06em,transparent .09em) 0 0/1.7em 1.3em,radial-gradient(circle,#ffe9a0 0 .05em,transparent .08em) .8em .6em/2.1em 1.5em;
+ -webkit-mask:radial-gradient(ellipse 55% 60% at 50% 50%,#000 30%,transparent 72%);mask:radial-gradient(ellipse 55% 60% at 50% 50%,#000 30%,transparent 72%);opacity:.0;animation:tcgd 2.8s linear infinite}
+@keyframes tcgd{0%{opacity:0;background-position:0 0,.55em .45em}25%{opacity:.9}50%{opacity:.25}75%{opacity:.8}100%{opacity:0;background-position:1.1em -.9em,-.75em 1.45em}}
+@media(prefers-reduced-motion:reduce){.evbd.tc .gm::after,.evbd.tc .gd{animation:none}}
 #gw img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .dh img{pointer-events:none}
 </style></head><body>
@@ -939,7 +961,7 @@ function setPose(S,k,ms){if(!uKey(S))return;S.pose={k,t:performance.now(),d:ms};
 async function exPose(S){if(!uKey(S))return;setPose(S,'ex',1000);SND.mana();ui();await sl(1000)}
 /* evolution badge (shown above the health bar and on the VS screen) */
 const WING='<svg viewBox="0 0 44 22" aria-hidden="true"><defs><linearGradient id="wgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#ffd24a"/><stop offset=".55" stop-color="#c47f00"/><stop offset="1" stop-color="#ffe08a"/></linearGradient></defs><path fill="url(#wgG)" d="M44 12C34 3 18 0 1 3c8 2 13 3 18 6C10 8 5 9 0 13c9 0 15 0 20 1-7 2-11 4-15 8 13-1 27-3 39-10z"/></svg>';
-const evBadge=st=>!st?'':st>=4?'<span class="evbd tc"><i class="wg l">'+WING+'</i><span class="tcr"><b>TRANSCENDENT</b></span><i class="wg r">'+WING+'</i><i class="sp s1"></i><i class="sp s2"></i></span>':'<span class="evbd e'+st+'"><i class="st">'+'★'.repeat(st)+'</i><b>'+['','II','III','IV'][st]+'</b></span>';
+const evBadge=st=>!st?'':st>=4?'<span class="evbd tc"><i class="gm l"></i><span class="tcr"><b>TRANSCENDENT</b></span><i class="gm r"></i><i class="sp s1"></i><i class="sp s2"></i><i class="sp s3"></i><i class="sp s4"></i><i class="sp s5"></i><i class="sp s6"></i><i class="gd"></i></span>':'<span class="evbd e'+st+'"><i class="st">'+'★'.repeat(st)+'</i><b>'+['','II','III','IV'][st]+'</b></span>';
 function hbar(S,sc){const nb=S.s.burn&&S.hp>0?3:0,np=S.s.poi&&S.hp>0?2:0,ab=Math.min(S.sh,nb),sh1=S.sh-ab,hl=Math.min(S.hp,nb-ab+np),hp1=S.hp-hl,p=v=>(v/sc*100).toFixed(2)+'%',r=S.hp/S.mhp;
  return '<div class="hb'+(r<=.25?' low':r<=.5?' mid':'')+(hl||ab?' dot':'')+'" style="--tk:'+Math.min(100,1000/sc).toFixed(2)+'%"><i class="hpf" style="width:'+p(hp1)+'"></i>'+(hl?'<i class="dtf" style="left:'+p(hp1)+';width:'+p(hl)+'"></i>':'')+
   '<i class="shf" style="left:'+p(S.hp)+';width:'+p(sh1)+'"></i>'+(ab?'<i class="dtf" style="left:'+p(S.hp+sh1)+';width:'+p(ab)+'"></i>':'')+'<i class="hgl"></i><span>'+S.hp+(S.sh?'<u>+'+S.sh+'</u>':'')+'</span></div>'}
