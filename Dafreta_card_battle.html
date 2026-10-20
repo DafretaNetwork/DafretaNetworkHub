@@ -756,6 +756,24 @@ body.sel .sdim{opacity:1}
 @media(prefers-reduced-motion:reduce){.evbd.tc .gm::after,.evbd.tc .gd{animation:none}}
 #gw img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .dh img{pointer-events:none}
+
+/* ===================== QUEST SCROLL v2 + active-quest light ===================== */
+.qs.qbd{align-items:center}
+.qsi{position:relative;flex:none;width:112px;margin-right:-30px;z-index:3;pointer-events:none;animation:qsf 3.4s ease-in-out infinite}
+.qsi{height:calc(112px*1.0825)}.qsi img{position:absolute;left:-21.53%;top:-4%;height:105.86%;width:auto;max-width:none;display:block;filter:drop-shadow(0 6px 8px #000b)}
+.qsi.on img{filter:drop-shadow(0 0 6px #ffd24acc) drop-shadow(0 0 16px #ffb30088) drop-shadow(0 6px 8px #000b)}
+.qsi em{position:absolute;top:4px;right:6px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:#e0302a;color:#fff;font:800 12px/18px system-ui;font-style:normal;text-align:center;border:2px solid #fff;box-shadow:0 2px 4px #0009;animation:pu .7s infinite alternate}
+@keyframes qsf{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+.qs.qbd .qbx{margin-left:0;padding-left:36px;border-left:2px solid #c9893a;border-radius:14px}
+@property --qa{syntax:'<angle>';initial-value:0deg;inherits:false}
+.qs.qbd .qr.act{isolation:isolate;border-color:#ffd24a33;background:linear-gradient(90deg,#3a2414,#24150b)}
+.qgl{position:absolute;inset:-2px;border-radius:12px;pointer-events:none;z-index:2;filter:drop-shadow(0 0 3px #ffb300) drop-shadow(0 0 7px #ffd24a)}
+.qgl::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2.5px;background:conic-gradient(from var(--qa),transparent 0 55%,#ff9a1f 72%,#fff6c8 82%,#ffd24a 88%,transparent 97%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:qspin 2.4s linear infinite}
+@keyframes qspin{to{--qa:360deg}}
+.qdn{color:#8fe3a0;font:700 13px system-ui;padding:6px 2px 10px}
+.qpok{align-self:center;text-align:center;font:700 13px system-ui;color:#5a3a1a;background:#ffffff66;border-radius:10px;padding:8px 14px}
+@container (max-height:520px){.qsi{width:76px;height:calc(76px*1.0825);margin-right:-20px}.qs.qbd .qbx{padding-left:22px}.qsi em{min-width:18px;height:18px;font-size:10px;line-height:14px}}
+@media(prefers-reduced-motion:reduce){.qsi,.qgl::before{animation:none}}
 /* ===================== RANK EMBLEM EFFECTS (glow / radiant ring / glitter) ===================== */
 .rkw{position:relative;display:inline-grid;place-items:center;width:var(--rs);height:var(--rs);flex:none;isolation:isolate}
 .rkw .rke2{position:relative;z-index:2;width:100%;height:100%;display:grid;place-items:center;filter:drop-shadow(0 3px 4px #000a)}
@@ -1245,14 +1263,14 @@ function result(win){const R={win,heroes:[],rank:null,quests:[]};if(!PD||!curTea
   R.heroes.push({h,b,a:{lv:s.lv,xp:s.xp},gain:wasMax?0:gain,ups,max:wasMax})});
  if(win)PD.w++;else PD.l++;
  if(curMode==='rank'){const b=rkI(PD.pts);PD.pts=Math.max(0,PD.pts+(win?CFG.rankWin:-CFG.rankLoss));const a=rkI(PD.pts);R.rank={d:win?CFG.rankWin:-CFG.rankLoss,a,up:a>b,down:a<b}}
- if(win)QUESTS.forEach(q=>{if(q.mode!=='any'&&q.mode!==curMode)return;const p=PD.qp[q.id]=PD.qp[q.id]||{w:0};if(p.c||p.w>=q.wins)return;p.w++;R.quests.push({t:q.t,w:p.w,n:q.wins})});
+ if(win)QUESTS.forEach(q=>{if(q.mode!=='any'&&q.mode!==curMode)return;const p=PD.qp[q.id]=PD.qp[q.id]||{w:0};if(p.c||p.w>=q.wins)return;p.w++;R.quests.push({t:q.t,w:p.w,n:q.wins,rw:p.w>=q.wins?claim(q.id,1):''})});
  {const td=new Date().toLocaleDateString('en-CA');if(PD.ld!==td){PD.ld=td;PD.days=(PD.days|0)+1}}
  saveP('played','w','l','hs','pts','qp','days','ld');lbUpd();return R}
-function claim(id){const q=QUESTS.find(x=>x.id===id);if(!q)return;const p=PD.qp[id]||{w:0};if(p.c||p.w<q.wins)return;const r=q.rw||{},amt=Math.max(1,+r.amt||1);let txt;
+function claim(id,quiet){const q=QUESTS.find(x=>x.id===id);if(!q)return;const p=PD.qp[id]||{w:0};if(p.c||p.w<q.wins)return;const r=q.rw||{},amt=Math.max(1,+r.amt||1);let txt;
  if(r.type==='frag'){let h=r.hero&&r.hero!=='random'?HD.find(x=>hk(x)===String(r.hero).replace(/^hd_/,'')):null;if(!h)h=HD[Math.random()*HD.length|0];PD.fr[hk(h)]=(PD.fr[hk(h)]||0)+amt;txt=amt+' '+h.n+' card fragments'}
  else if(r.type==='gen'){const g=GEN.find(x=>x.id===r.gen);PD.gc[r.gen]=true;txt='the general card '+(g?g.s.n:'')}
  else{PD.st+=amt;txt=amt+' Transcendence stone'+(amt>1?'s':'')}
- p.c=Date.now();PD.qp[id]=p;saveP('fr','gc','st','qp');SND.heal();toast('Quest complete! You received '+txt+'.');renderHome()}
+ p.c=Date.now();PD.qp[id]=p;saveP('fr','gc','st','qp');if(quiet)return txt;SND.heal();toast('Quest complete! You received '+txt+'.');renderHome()}
 async function invite(k,btn){const key='dfinv_'+k,t=+localStorage[key]||0;if(Date.now()-t<864e5)return toast('You already invited them today');
  try{await fb('','PATCH',{['inbox/'+k+'/notes/'+mid()]:{type:'inv',from:ME,t:Date.now()}});localStorage[key]=Date.now();toast('Invite sent! They will get a notification.');if(btn){btn.disabled=true;btn.textContent='Invited ✓'}}catch(e){toast('Could not send the invite')}}
 
@@ -1293,8 +1311,9 @@ const modeTxt={any:'Win in Standard or Ranked',std:'Win in Standard',rank:'Win i
 const qIc=q=>(q.rw||{}).type==='frag'?'🧩':(q.rw||{}).type==='gen'?'🃏':'💠';
 const qMI=q=>q.mode==='rank'?'👑':q.mode==='std'?'⚔️':'🎯';
 function qH(q){const p=PD.qp[q.id]||{w:0},w=Math.min(q.wins,p.w||0),done=w>=q.wins,cl=!!p.c,r=q.rw||{},amt=Math.max(1,+r.amt||1);
- return `<div class="qr${cl?' cl':''}${done&&!cl?' rd':''}" data-qo="${esc(q.id)}" role="button" tabindex="0"><span class="qic">${qMI(q)}</span><div class="qm"><b>${esc(q.t)}</b><div class="qb"><i style="width:${w/q.wins*100}%"></i><span>${w}/${q.wins}</span></div><small>${cl?'Completed ✓':done?'Ready to claim!':modeTxt[q.mode]||modeTxt.any}</small></div>
+ return `<div class="qr act" data-qo="${esc(q.id)}" role="button" tabindex="0"><i class="qgl"></i><span class="qic">${qMI(q)}</span><div class="qm"><b>${esc(q.t)}</b><div class="qb"><i style="width:${w/q.wins*100}%"></i><span>${w}/${q.wins}</span></div><small>${modeTxt[q.mode]||modeTxt.any}</small></div>
   <button class="qw${done&&!cl?' go':''}" data-q="${esc(q.id)}" ${done&&!cl?'':'disabled'} title="${done&&!cl?'Tap to claim':cl?'Claimed':'Reward'}"><i>${qIc(q)}</i><small>${cl?'✓':(r.type==='gen'?'×1':amt)}</small></button></div>`}
+const qAct=()=>QUESTS.filter(q=>!(PD.qp[q.id]||{}).c);
 const qReady=()=>QUESTS.filter(q=>{const p=PD.qp[q.id]||{};return !p.c&&(p.w||0)>=q.wins}).length;
 function rwInfo(q){const r=q.rw||{},a=Math.max(1,+r.amt||1);
  if(r.type==='frag'){const h=r.hero&&r.hero!=='random'?HD.find(x=>hk(x)===String(r.hero).replace(/^hd_/,'')):null;return['🧩',a+' Card fragments',h?'For '+h.n:'For a random hero']}
@@ -1302,13 +1321,14 @@ function rwInfo(q){const r=q.rw||{},a=Math.max(1,+r.amt||1);
  return['💠',a+' Transcendence stone'+(a>1?'s':''),'Needed for the final evolution']}
 function openQuest(id){const q=QUESTS.find(x=>x.id===id);if(!q)return;const p=PD.qp[q.id]||{w:0},w=Math.min(q.wins,p.w||0),done=w>=q.wins,cl=!!p.c,rw=rwInfo(q),
  mn=q.mode==='rank'?'Ranked':q.mode==='std'?'Standard':'Standard or Ranked',
- steps=['Build a line-up of 4 heroes (one per class) on the Battle page.','Select <b>'+mn+'</b> mode and press <b>Play</b>.','Win <b>'+q.wins+'</b> match'+(q.wins>1?'es':'')+'. Only wins count, losses don’t reset your progress.','Come back here and tap <b>Claim reward</b>.'];
+ steps=['Build a line-up of 4 heroes (one per class) on the Battle page.','Select <b>'+mn+'</b> mode and press <b>Play</b>.','Win <b>'+q.wins+'</b> match'+(q.wins>1?'es':'')+'. Only wins count, losses don’t reset your progress.','The reward is sent to you automatically and the quest disappears from your list.'];
  openMdl(`<div class="qpop"><div class="qph"><span class="qpi">📜</span><div><small>${esc(modeTxt[q.mode]||modeTxt.any)}</small><h3 class="mdh">${esc(q.t)}</h3></div></div>
   <div class="qpb"><i style="width:${w/q.wins*100}%"></i><span>${cl?'Completed':w+' / '+q.wins+' wins'}</span></div>
   ${q.desc?`<h4>Instructions</h4><p class="qpd">${esc(q.desc).replace(/\n/g,'<br>')}</p>`:''}
   <h4>How to complete</h4><ol class="qps">${steps.map(t=>'<li><span>'+t+'</span></li>').join('')}</ol>
   <h4>Reward</h4><div class="qprw"><i>${rw[0]}</i><div><b>${esc(rw[1])}</b><small>${esc(rw[2])}</small></div></div>
-  <button class="qpcl${done&&!cl?' go':''}" data-qc="${esc(q.id)}" ${done&&!cl?'':'disabled'}>${cl?'Claimed ✓':done?'Claim reward':'In progress · '+w+'/'+q.wins}</button></div>`)}
+  <p class="qpok">${cl?'Completed ✓ Reward received':'In progress · '+w+' / '+q.wins+' wins · reward is given automatically'}</p></div>`)}
+const QSCROLL='<img src="https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Stylized%20Worn%20Parchment%20Scroll%20Icon.png" alt="" referrerpolicy="no-referrer">';
 function tbH(){const ri=rkI(PD.pts),tl=HD.reduce((a,h)=>{const s=hs(h);return a+s.lv+s.ev*CFG.maxLv},0);
  const st=Math.max(1,CFG.rankStep),into=(PD.pts|0)%st;
  return `<div class="tb"><button class="pf2" id="pfb" title="Open player info"><span class="pfav">${avH(PROF,'var(--pfs)')}<b class="pflv">Lv ${tl}</b></span>
@@ -1323,7 +1343,7 @@ function pgBattle(){const l=PD.lineups[PD.sel]||{h:[],r:{},g:[]},dh=dispHero(),d
  const md=[['std','Standard',MIC.std],['story','Story',MIC.story],['rank','Ranked',MIC.rank]],bad=validLU(l);
  return `<div class="bp">${APPR.bg?`<img class="bbg" src="${APPR.bg}" alt=""><div class="bsh"></div>`:''}
  ${dx?`<div class="bartw"><img class="bart" src="${dx.img}" alt="" referrerpolicy="no-referrer"></div><button class="rcy" id="rcy" title="Change display hero" aria-label="Change display hero">${RCY}</button>`:''}
- <div class="qs qbd"><div class="qsc" aria-hidden="true"><i class="qseal">✦</i><b>QUESTS</b>${qReady()?`<em>${qReady()}</em>`:''}</div><div class="qbx"><div class="qhd"><h3>Quests</h3><small>${QUESTS.length?'Tap a quest for details':''}</small></div>${QUESTS.length?QUESTS.map(qH).join(''):'<p class="qemp">No quests right now. Check back soon!</p>'}</div></div>
+ <div class="qs qbd"><div class="qsi${qAct().length?' on':''}" aria-hidden="true">${QSCROLL}${qAct().length?`<em>${qAct().length}</em>`:''}</div><div class="qbx"><div class="qhd"><h3>Quests</h3><small>${qAct().length?'Tap a quest for details':''}</small></div>${qAct().length?qAct().map(qH).join(''):QUESTS.length?'<p class="qdn">✓ All quests complete! New ones are on the way.</p>':'<p class="qemp">No quests right now. Check back soon!</p>'}</div></div>
  <div class="bb"><div class="lu pnl"><div class="lt">${tabs}</div><div class="lg">${deckHTML(l,false)}</div></div>
  <div class="mp"><div class="mds">${md.map(([k,n,ic])=>`<button class="md${PD.mode===k?' on':''}" data-m="${k}"><i>${ic}</i><span>${n}</span>${k==='story'?'<em class="msoon">Soon</em>':''}</button>`).join('')}</div><button class="play" id="play">Play</button></div></div></div>`}
 async function pgFriends(){if(!ME)return '<div class="pnl pad"><h3>Friends</h3><p class="sub">Log in on Dafreta Network to see your friends here.</p></div>';
@@ -1510,7 +1530,7 @@ async function animXp(i){const o=RSV.heroes[i],c=$('#xc'+i);if(!c)return;const f
  bar(o.a.xp/need*100,.9);tx.textContent=o.a.xp+'/'+need}
 function renderExp(){rsStage=2;const R=RSV;$('#rmd').textContent='Hero EXP';$('#rlg').hidden=true;
  const lines=[];if(R.rank)lines.push(`<li>Ranked: <b>${R.rank.d>0?'+':''}${R.rank.d} pts</b> · ${rkE(R.rank.a,18)} ${esc((RANKS[R.rank.a]||{}).n||'')}${R.rank.up?' · <b>RANK UP!</b>':R.rank.down?' · rank down':''}</li>`);
- R.quests.forEach(q=>lines.push(`<li>Quest <b>${esc(q.t)}</b>: ${q.w}/${q.n}${q.w>=q.n?' · complete! Claim it on the Battle page':''}</li>`));
+ R.quests.forEach(q=>lines.push(`<li>Quest <b>${esc(q.t)}</b>: ${q.w}/${q.n}${q.w>=q.n?' · complete! You received <b>'+esc(q.rw||'')+'</b>':''}</li>`));
  R.heroes.forEach(o=>{if(!o.max&&o.a.lv>=CFG.maxLv&&o.ups.length)lines.push(`<li><b>${esc(o.h.bn||o.h.n)}</b> is at max level and ready to evolve!</li>`)});
  $('#rst').innerHTML=`<div class="xg2">${R.heroes.map(xcard).join('')}</div>${lines.length?`<ul class="rsl">${lines.join('')}</ul>`:''}`;
  R.heroes.forEach((o,i)=>setTimeout(()=>animXp(i),500+i*350))}
@@ -1623,6 +1643,7 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
  if(!RANKS.length)RANKS=defRanks();
  await loadPD();
  if(!PD.lineups[0]){const f=[],u=new Set();HD.forEach(h=>{if(owned(h)&&f.length<4&&!u.has(h.cl)){u.add(h.cl);f.push(hk(h))}});if(f.length==4)PD.lineups[0]={h:f,r:{},g:GEN.filter(gAvail).slice(0,needGen()).map(g=>g.id)}}
+ {const got=QUESTS.filter(q=>{const p=PD.qp[q.id]||{};return !p.c&&(p.w||0)>=q.wins}).map(q=>claim(q.id,1)).filter(Boolean);if(got.length)setTimeout(()=>toast('Quest reward received: '+got.join(', ')),900)}
  leg();renderHome()})();
 
 
