@@ -1062,7 +1062,7 @@ const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===
 /* ======================================================================
    CARD BATTLE ADMIN  (organised into sections)
    ====================================================================== */
-let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
+let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0,turnSec:30},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
 const emptyQF=()=>({id:null,title:'',desc:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
 let QF=emptyQF();
 const defRanksA=()=>['Copper','Silver','Gold','Platinum','Emerald','Diamond'].flatMap(n=>['I','II','III','IV','V'].map(r=>({n:n+' '+r})));
@@ -1078,7 +1078,7 @@ async function cardgameAdminHTML(){
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
   AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
-  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
+  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();
   const n=o=>Object.keys(o).length;
@@ -1269,6 +1269,8 @@ async function removeBg(){if(!confirm('Remove the background?'))return;try{await
 function settingsInner(){
   return `<h4>Hero progression</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">After a match every hero in the line-up earns EXP. When the bar fills, the hero levels up. At the max level they can evolve by spending card fragments of that hero. Evolving resets the hero to level 1.</p>
   <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Max hero level</label><input id="smax" type="number" min="1" value="${CGC.maxLv}"></div><div><label>Transcendence stones for the last evolution</label><input id="sstone" type="number" min="0" value="${CGC.stone}"></div></div></div>
+  <div class="bx2" style="margin-top:10px;border-left:4px solid var(--gold)"><b>⏱ Battle turn timer</b><p class="mut" style="font-size:13px;margin:4px 0 0">How long a player has to act each turn before it ends automatically. <b>Current: ${tsTxt(+CGC.turnSec||30)} per turn.</b> Allowed: 5 seconds to 10 minutes.</p>
+   <div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Minutes</label><input id="stm" type="number" min="0" max="10" value="${Math.floor((+CGC.turnSec||30)/60)}"></div><div><label>Seconds</label><input id="sts" type="number" min="0" max="59" value="${(+CGC.turnSec||30)%60}"></div></div></div>
   <div class="bx2" style="margin-top:10px"><b>EXP</b><p class="mut" style="font-size:13px;margin:4px 0 0">With the defaults (100 EXP per level, 100 per win, 0 per loss) every win is exactly one level.</p><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>EXP needed per level</label><input id="sexl" type="number" min="1" value="${CGC.expLv}"></div><div><label>EXP for a win</label><input id="sexw" type="number" min="0" value="${CGC.expWin}"></div><div><label>EXP for a loss</label><input id="sexs" type="number" min="0" value="${CGC.expLoss}"></div></div></div>
   <div class="bx2" style="margin-top:10px"><b>Unlocking locked heroes</b><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Card fragments needed to unlock a hero</label><input id="sunl" type="number" min="1" value="${CGC.unlock}"></div></div><p class="mut" style="font-size:13px;margin:6px 0 0">A hero is locked when you tick “Locked hero” in its editor. Players get fragments from quests.</p></div>
   <div class="bx2" style="margin-top:10px"><b>Card fragments needed</b><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>→ ${n}</label><input id="sfr${i}" type="number" min="0" value="${CGC.frag[i]??0}"></div>`).join('')}</div></div>
@@ -1276,10 +1278,12 @@ function settingsInner(){
   <div class="bx2" style="margin-top:10px"><b>Default hero HP / ATK bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to the hero's base HP and ATK at that evolution (not added up between stages). Higher ATK makes every damage card and the ultimate hit proportionally harder. A hero can override these in its own Evolutions step.</p>
   <div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}: ❤️ HP / ⚔️ ATK</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input id="shp${i}" type="number" min="0" value="${CGC.evoHp[i]??0}"><input id="sat${i}" type="number" min="0" value="${CGC.evoAtk[i]??0}"></div></div>`).join('')}</div></div>
   <div class="row" style="margin-top:12px"><button onclick="saveSettings()">💾 Save settings</button></div>`}
+const tsTxt=v=>{const m=Math.floor(v/60),s=v%60;return [m?m+' minute'+(m>1?'s':''):'',s?s+' second'+(s>1?'s':''):''].filter(Boolean).join(' ')||'0 seconds'};
 async function saveSettings(){const g=id=>Math.max(0,Math.floor(+$('#'+id).value||0));
+  const ts=g('stm')*60+Math.min(59,g('sts'));if(ts<5||ts>600)return toast('Turn time must be between 5 seconds and 10 minutes');CGC.turnSec=ts;
   if(!(g('smax')>=1))return toast('Max level must be at least 1');
   CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.expLv=Math.max(1,g('sexl'));CGC.expWin=g('sexw');CGC.expLoss=g('sexs');CGC.unlock=Math.max(1,g('sunl'));CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));CGC.evoHp=EVN.map((_,i)=>g('shp'+i));CGC.evoAtk=EVN.map((_,i)=>g('sat'+i));
-  try{await saveCfg();toast('Settings saved')}catch(e){toast(e.message)}}
+  try{await saveCfg();toast('Settings saved · turn time '+tsTxt(CGC.turnSec));const e=$('#setsec');if(e)e.innerHTML=settingsInner()}catch(e){toast(e.message)}}
 
 /* ---------------- hero list card ---------------- */
 function heroCardHTML(id,h){
