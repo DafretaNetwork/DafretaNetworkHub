@@ -1121,7 +1121,7 @@ function cutin(S,mine){return new Promise(r=>{const c=$('#cut');$('#cim').src=S.
 async function ult(T,S,t,me){busy=1;pend=null;ui();await exPose(S);await cutin(S,T===P);exu(T,S,t,me);if(T===P)busy=0;ui();chk()}
 async function aiTurn(){start(E);ui();if(chk())return;turnBanner(false);await sl(1500);
  for(let n=0;n<14;n++){if(over)return;const o=best();if(!o)break;if(o.x){await exPose(o.x);await cutin(o.x,false);exu(E,o.x,o.t,0)}else play(E,o.c,o.t,0);ui();if(chk())return;await sl(850)}
- if(over)return;endT(E);turn='p';tt=30;start(P);busy=0;ui();turnBanner(true);chk()}
+ if(over)return;endT(E);turn='p';tt=turnLen();start(P);busy=0;ui();turnBanner(true);chk()}
 async function endTurn(){if(over||turn!='p'||busy)return;busy=1;pend=null;endT(P);turn='e';ui();await aiTurn()}
 const psp=()=>pend?(pend.c?pend.c.s:pend.o.h.X):null;
 function tile(S,m,i){const h=S.h,es=ea(S),now=performance.now(),pz=S.pose&&now-S.pose.t<S.pose.d?S.pose:null,ps=pz?(pz.k=='atk'?h.atkImg:h.exImg):'',pf=pz?(pz.k=='atk'?h.atkFace:h.exFace):null,sc=Math.max(S.mhp,S.hp+S.sh),sp=psp(),nd=sp&&need(sp),
@@ -1191,7 +1191,8 @@ function ui(){if(!P)return;document.body.classList.toggle('sel',!!(pend&&need(ps
   xd.innerHTML='<div class="exc">'+cardH({...X,c:'EX'},'','',O)+'</div><div class="exi"><small>Ultimate · choose a target</small><b>'+cHtml(X.n)+'</b><ul>'+dparts(X,ea(O)).map(t=>'<li>'+t+'</li>').join('')+'</ul><em>'+(need(X)=='a'?'Tap a glowing ally':'Tap a glowing enemy')+' · tap elsewhere to cancel</em></div>'}xd.hidden=false}else{xd.hidden=true;xd.dataset.k=''}}
  $('#end').disabled=turn!='p'||busy;$('#end').innerHTML=turn=='p'?'END<br>TURN':'ENEMY<br>TURN';{const w=$('#endw'),my=turn=='p'&&!busy&&!over;w.classList.toggle('dis',!my);w.classList.toggle('nudge',my&&!P.hand.some(c=>ok(P,c))&&!P.u.some(xr))}flush();tick()}
 const bb=(T,w)=>T.bombs.length?'   💣 '+w+': '+T.bombs.map(b=>b.n+' ('+b.t+')').join(', '):'';
-const tick=()=>{$('#tm').textContent='⏱ '+Math.floor(M/60)+':'+String(M%60).padStart(2,'0');$('#tn').textContent=turn=='p'?'Your turn '+tt+'s':'Foe turn'};
+const turnLen=()=>Math.max(5,Math.min(600,Math.round(+CFG.turnSec||30))),fmtT=v=>v>=60?Math.floor(v/60)+':'+String(v%60).padStart(2,'0'):v+'s';
+const tick=()=>{$('#tm').textContent='⏱ '+Math.floor(M/60)+':'+String(M%60).padStart(2,'0');$('#tn').textContent=turn=='p'?'Your turn '+fmtT(tt):'Foe turn'};
 const leg=()=>{const e=$('#lg');if(e)e.innerHTML=Object.values(SD).map(v=>'<span>'+v[0]+' '+v[1]+': '+v[2]+'</span>').join('')};leg();
 document.addEventListener('click',e=>{
  if(e.target.id=='again'){inB=0;$('#ov').hidden=true;$('#bat').hidden=true;$('#home').hidden=false;SND.music('menu');renderHome();return}
@@ -1218,7 +1219,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toast=m=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{t.hidden=true},3400)};
 let ME=null,PROF=null,PD=null,LBD=null,LBt=0,AM={},QUESTS=[],RANKS=[],APPR={},curMode='std',curTeam=[],pgNow='battle',ed=0,rtok=0,efl='',rt=-1,hdi=-1,hdTab='info',hdSk=[],RSV=null,rsStage=1,cmT=0;
-const CFG={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0};
+const CFG={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0,turnSec:30};
 const COL={Defender:'#f5c451',Magic:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a',Specialist:'#b07cff'};
 const CI={Defender:'🛡️',Healer:'➕',Magic:'✦',Attacker:'⚔️',Specialist:'★'};
 try{const s=JSON.parse(localStorage.dn_s||'null');if(s&&s.u)ME=s.u}catch(e){}
@@ -1533,7 +1534,7 @@ function showIntro(ps,es){$('#vl').innerHTML=ps.slice().reverse().map((h,i)=>vsP
  $('#va1').innerHTML=avH(PROF,70);$('#vn1').textContent=myName();$('#va2').src=es[0].img;const v=$('#vsx');v.className='';v.hidden=false;$('#menu').hidden=true;$('#hd').hidden=true;$('#home').hidden=true;hidePop();SND.music(null);
  intro=1;itm=[setTimeout(SND.whoosh,60),setTimeout(SND.whoosh,200),setTimeout(SND.clash,1000),setTimeout(SND.clash,1150),setTimeout(go2,8300)]}
 function go2(){if(!intro)return;intro=0;itm.forEach(clearTimeout);const v=$('#vsx');v.classList.add('out');setTimeout(()=>{v.hidden=true},400);beginBattle()}
-function beginBattle(){headMed();turn='p';over=0;busy=0;pend=null;M=600;tt=30;L=['Duel start: 4 vs 4!'];hist=[];zoomHide();inB=0;start(P);inB=1;document.body.classList.add('inbat');$('#bat').hidden=false;ui();SND.music('battle');SND.deal(6);turnBanner(true)}
+function beginBattle(){headMed();turn='p';over=0;busy=0;pend=null;M=600;tt=turnLen();L=['Duel start: 4 vs 4!'];hist=[];zoomHide();inB=0;start(P);inB=1;document.body.classList.add('inbat');$('#bat').hidden=false;ui();SND.music('battle');SND.deal(6);turnBanner(true)}
 
 function pickFoe(){const all=shuf(HD.slice()),out=[],used=new Set();all.forEach(h=>{if(out.length<4&&!used.has(h.cl)){used.add(h.cl);out.push(h)}});all.forEach(h=>{if(out.length<4&&!out.includes(h))out.push(h)});return shuf(out)}
 function playGame(){mobFS();const m=PD.mode;if(m==='story')return toast('Story mode is coming soon!');
@@ -1657,7 +1658,7 @@ setInterval(()=>{if(over||!P)return;M--;if(turn=='p'&&!busy){tt--;if(tt<=0){endT
 HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
 (async()=>{try{
  const [hsr,as,rs,gs,qs,rk,cf,ap]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','appearance'].map(k=>fb('cardgame/'+k).catch(()=>null)));
- if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CFG[k]=+cf[k]});
+ if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CFG[k]=+cf[k]});
   ['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CFG[k]=a}})}
  APPR=ap||{};
  RANKS=(rk?Object.values(rk):[]).filter(r=>r&&r.n);if(!RANKS.length)RANKS=defRanks();
