@@ -1075,7 +1075,7 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
   AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
@@ -1094,6 +1094,12 @@ async function cardgameAdminHTML(){
 }
 
 /* ---------------- overview ---------------- */
+let FLAGS={};
+const FLAGWHY={memory:'Game values changed in memory (e.g. Cheat Engine). Restored automatically.','save-edited':'Saved data was edited outside the game.',battle:'Battle values changed by an outside program. Match gave no rewards.','too-fast':'Won a match impossibly fast. Match gave no rewards.'};
+function flagsHTML(){const e=Object.entries(FLAGS);if(!e.length)return '<div class="cgck ok"><span>✓</span><div>No suspicious activity detected.</div></div>';
+  return e.map(([k,v])=>{const ev=Object.entries(v||{}).map(([t,w])=>({t:+String(t).slice(1)||0,w})).sort((a,b)=>b.t-a.t);
+   return `<div class="bx2 qrow"><div style="flex:1;min-width:0"><b>🚩 ${esc(k)}</b> <span class="mut" style="font-size:12px">${ev.length} event${ev.length>1?'s':''} · last ${ev[0]?new Date(ev[0].t).toLocaleString():''}</span>${[...new Set(ev.map(x=>x.w))].map(w=>`<div class="mut" style="font-size:13px">• ${esc(FLAGWHY[w]||w)}</div>`).join('')}</div><div class="row"><button class="g s" onclick="location.hash='#/char/${esc(k)}'">View</button><button class="s" onclick="clearFlag('${esc(k)}')">Clear</button></div></div>`}).join('')}
+async function clearFlag(k){if(!confirm('Clear the flags for '+k+'?'))return;try{await api('cardgame/flags/'+k,'DELETE');delete FLAGS[k];const e=$('#flagsec');if(e)e.innerHTML=flagsHTML()}catch(e){toast(e.message)}}
 function cgOverview(){
   const hs=Object.values(HLIST),play=hs.filter(isPlayable).length,noCards=hs.filter(h=>!isPlayable(h)),noUlt=hs.filter(h=>isPlayable(h)&&!cardsOf(h).some(c=>c.type==='ultimate'));
   const miss=DEFAULT_HEROES.filter(d=>!HLIST['hd_'+d.key]);
@@ -1103,6 +1109,7 @@ function cgOverview(){
     ${tile('🛡️','Heroes',Object.keys(HLIST).length,`${play} playable`,'heroes')}${tile('✨','Buffs & Debuffs',Object.keys(AILS).length,'status effects','ails')}${tile('🔮','Relics',Object.keys(RELS).length,'equipment','relics')}
     ${tile('🃏','General Cards',Object.keys(GENS).length,`${Object.values(GENS).filter(g=>g.locked).length} reward-only`,'gen')}${tile('📜','Quests',Object.keys(QSTS).length,'win-based','quests')}${tile('🏅','Ranks',RKS.length,RKSAVED?'custom saved':'defaults','ranks')}
     <div class="cgt" style="cursor:default"><span class="ic">👥</span><b>${LBN}</b><span>Players who played</span><small>on the leaderboard</small></div></div></div>
+    <div class="cgp"><h4>🚩 Suspicious activity <span class="cgn">${Object.keys(FLAGS).length}</span></h4><p class="mut" style="font-size:13px;margin:0 0 8px">Accounts the game caught using cheat tools or edited save data. Their changes were already undone; review and clear when handled.</p><div id="flagsec">${flagsHTML()}</div></div>
     <div class="cgp"><h4>Checklist</h4>
       ${chk(play>=4,play>=4?`${play} playable heroes (players need at least 4)`:`Only ${play} playable hero(es). Players need at least 4.`,'heroes')}
       ${chk(!noCards.length,noCards.length?`No cards yet (hidden from players): <b>${noCards.map(h=>esc(h.name)).join(', ')}</b>`:'Every hero has cards','heroes')}
@@ -1634,6 +1641,7 @@ function goCG(){
 function fsLeave(){try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}
   try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{})}catch(e){}}
 /* ---- Card Battle game view ---- */
+['contextmenu','keydown'].forEach(ev=>document.addEventListener(ev,e=>{if(!/^#\/cardgame/.test(location.hash))return;if(ev==='contextmenu'){e.preventDefault();return}const k=(e.key||'').toLowerCase(),m=e.ctrlKey||e.metaKey;if(k==='f12'||(m&&e.shiftKey&&['i','j','c','k','m'].includes(k))||(m&&!e.shiftKey&&['u','s','p'].includes(k))||(e.metaKey&&e.altKey&&['i','j','c','u'].includes(k)))e.preventDefault()},true));
 async function cardgameV(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}
   CGON=!!(cfg&&cfg.enabled);
