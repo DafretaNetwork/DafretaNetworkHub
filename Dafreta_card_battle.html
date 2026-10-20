@@ -671,19 +671,14 @@ body.sel .sdim{opacity:1}
 .evbd.e1{background:linear-gradient(#9ff0b0,#2f9a57 55%,#1d6a39)}
 .evbd.e2{background:linear-gradient(#a8d4ff,#2f74d8 55%,#1a4a96)}
 .evbd.e3{background:linear-gradient(#e2b8ff,#8a3fe0 55%,#55229a);box-shadow:0 0 10px #b07cff}
-.evbd.tc{padding:.24em .95em .22em;color:#3a1d04;background:linear-gradient(#fff6c8,#ffd24a 40%,#d9900f 60%,#ffcf6a);border:1px solid #fff3c4;border-radius:.35em;text-shadow:0 1px 0 #fff8;box-shadow:0 0 0 1px #8a4a00,0 0 12px #ffc23acc;overflow:visible;animation:tcg 1.8s ease-in-out infinite alternate}
-.evbd.tc::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 35%,#ffffffcc 50%,transparent 65%);background-size:250% 100%;animation:tcs 2.4s linear infinite;pointer-events:none}
-.evbd.tc .wg{position:absolute;top:50%;width:1.9em;translate:0 -55%;font-style:normal;filter:drop-shadow(0 0 3px #ffb300)}
-.evbd.tc .wg svg{display:block;width:100%;fill:url(#wgg);fill:#ffd24a;stroke:#8a4a00;stroke-width:1.2}
-.evbd.tc .wg.l{right:calc(100% - .35em)}.evbd.tc .wg.r{left:calc(100% - .35em);scale:-1 1}
 @keyframes tcg{from{box-shadow:0 0 0 1px #8a4a00,0 0 8px #ffc23a99}to{box-shadow:0 0 0 1px #8a4a00,0 0 18px #ffd24a}}
 @keyframes tcs{from{background-position:150% 0}to{background-position:-100% 0}}
-#bat .info>.evbd{position:absolute;left:50%;top:0;translate:-50% -92%;z-index:4;font-size:calc(var(--info)*.2)}
+#bat .info>.evbd{position:absolute;left:50%;top:0;width:max-content;translate:-50% -100%;z-index:4;font-size:calc(var(--info)*.16)}
+#bat .info>.evbd.tc{font-size:calc(var(--info)*.15);translate:-50% -112%}
 #bat .unit.evo .chips{bottom:calc(var(--info) + 14px)}
 #bat .unit.evo .exb{bottom:calc(var(--info)*1.25 + 4px)}
 #vsx .vlb .evbd{order:0;font-size:clamp(11px,10cqw,17px);margin-bottom:4px}
-#vsx .vlb .evbd.tc{font-size:clamp(8px,7.6cqw,13px);margin-bottom:6px}
-@media(prefers-reduced-motion:reduce){.evbd.tc,.evbd.tc::after{animation:none}}
+#vsx .vlb .evbd.tc{font-size:clamp(7px,6.2cqw,10.5px);margin-bottom:6px}#vsx .evbd.tc .tcr b{letter-spacing:.08em;padding:.36em .75em .3em}
 /* ===================== ATTACK / EX POSES ===================== */
 #bat .unit.pz-atk{z-index:8!important}
 #bat .unit.pz-atk .fgw{animation:lunge .72s cubic-bezier(.3,.7,.3,1) var(--pd,0ms) both}
@@ -714,6 +709,29 @@ body.sel .sdim{opacity:1}
 .lupi{width:64px;height:64px;display:grid;place-items:center;font-size:30px;border-radius:50%;background:radial-gradient(#fff3c4,#d9900f);border:3px solid #8a4a00;box-shadow:0 4px 0 #6a3a08}
 .lup p{margin:0;max-width:420px;font:500 15px/1.4 system-ui;color:#3a2410}.lup small{color:#8a5a2a}
 .lupb{display:flex;gap:10px;margin-top:6px}.lupb button{border:0;border-radius:8px;padding:11px 22px;font:800 15px system-ui;cursor:pointer;color:#fff;background:linear-gradient(#ffb43a,#d9780f);box-shadow:0 3px 0 #8a4308}.lupb button.g{background:linear-gradient(#8a6a4a,#5a3f26);box-shadow:0 3px 0 #33200f}
+
+/* ---- TRANSCENDENT: dark plate, gold lettering, wings, light running around the frame ---- */
+.evbd.tc{padding:0;filter:drop-shadow(0 0 .35em #ffb30099) drop-shadow(0 .15em .2em #000c)}
+.evbd.tc .tcr{position:relative;display:block;font:inherit;letter-spacing:0;text-transform:none;color:inherit;background:none;white-space:nowrap;padding:.13em;border-radius:.45em;overflow:hidden;isolation:isolate}
+.evbd.tc .tcr::before{content:"";position:absolute;left:50%;top:50%;width:300%;aspect-ratio:1;translate:-50% -50%;z-index:-1;
+ background:conic-gradient(from 0deg,#7a4a08 0deg,#c47f00 60deg,#ffe9a0 95deg,#ffffff 110deg,#ffe9a0 125deg,#c47f00 160deg,#7a4a08 200deg,#c47f00 260deg,#ffe9a0 285deg,#fff 295deg,#ffe9a0 305deg,#c47f00 330deg,#7a4a08 360deg);animation:tcspin 2.4s linear infinite}
+.evbd.tc .tcr b{position:relative;display:block;padding:.38em 1.1em .32em;border-radius:.34em;font:900 1em/1 Cinzel,Georgia,serif;letter-spacing:.16em;
+ background:radial-gradient(120% 140% at 50% 0,#4a2a06,#160a02 70%);box-shadow:inset 0 0 0 1px #ffe9a055,inset 0 .2em .4em #ffd24a33}
+.evbd.tc .tcr b{color:#ffd24a;background-image:linear-gradient(#fff6c8,#ffd24a 45%,#c98a12 56%,#ffe9a0),radial-gradient(120% 140% at 50% 0,#4a2a06,#160a02 70%);-webkit-background-clip:text,padding-box;background-clip:text,padding-box;-webkit-text-fill-color:transparent}
+.evbd.tc .wg{position:absolute;top:50%;width:3.2em;translate:0 -62%;font-style:normal;z-index:-1}
+.evbd.tc .wg svg{display:block;width:100%;stroke:#5a3204;stroke-width:1;filter:drop-shadow(0 0 .15em #ffb300)}
+.evbd.tc .wg.l{right:calc(100% - .7em)}.evbd.tc .wg.r{left:calc(100% - .7em);scale:-1 1}
+.evbd.tc .wg svg{animation:tcwing 2.4s ease-in-out infinite}
+.evbd.tc .sp{position:absolute;width:.55em;aspect-ratio:1;font-style:normal;pointer-events:none;background:radial-gradient(circle,#fff 0 18%,transparent 22%),conic-gradient(from 45deg,transparent 0 40deg,#fff 45deg,transparent 50deg 130deg,#fff 135deg,transparent 140deg 220deg,#fff 225deg,transparent 230deg 310deg,#fff 315deg,transparent 320deg);opacity:0;animation:tcsp 2.4s ease-in-out infinite}
+.evbd.tc .s1{left:12%;top:-.25em}.evbd.tc .s2{right:10%;bottom:-.25em;animation-delay:1.2s}
+@keyframes tcspin{to{rotate:360deg}}
+@keyframes tcwing{0%,100%{rotate:0deg}50%{rotate:-6deg}}
+@keyframes tcsp{0%,100%{opacity:0;scale:.3;rotate:0deg}45%{opacity:1;scale:1.2;rotate:45deg}60%{opacity:0;scale:.6}}
+@media(prefers-reduced-motion:reduce){.evbd.tc .tcr::before,.evbd.tc .wg svg,.evbd.tc .sp{animation:none}}
+/* result screen: badge sits above the portrait, name stays on one line */
+.xbd{min-height:2.1em;display:flex;align-items:flex-end;justify-content:center;font-size:clamp(9px,1cqw,14px)}
+.xbd .evbd.tc{font-size:.85em}
+.xc .xn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 #gw img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .dh img{pointer-events:none}
 </style></head><body>
@@ -920,8 +938,8 @@ function slK(S){const c=S&&S.h&&S.h.cl;return c=='Magic'||c=='Healer'?'mg':c=='A
 function setPose(S,k,ms){if(!uKey(S))return;S.pose={k,t:performance.now(),d:ms};clearTimeout(S.pt);S.pt=setTimeout(()=>{S.pose=null;if(inB&&P)ui()},ms)}
 async function exPose(S){if(!uKey(S))return;setPose(S,'ex',1000);SND.mana();ui();await sl(1000)}
 /* evolution badge (shown above the health bar and on the VS screen) */
-const WING='<svg viewBox="0 0 44 22" aria-hidden="true"><path d="M44 12C34 3 18 0 1 3c8 2 13 3 18 6C10 8 5 9 0 13c9 0 15 0 20 1-7 2-11 4-15 8 13-1 27-3 39-10z"/></svg>';
-const evBadge=st=>!st?'':st>=4?'<span class="evbd tc"><i class="wg l">'+WING+'</i><b>TRANSCENDENT</b><i class="wg r">'+WING+'</i></span>':'<span class="evbd e'+st+'"><i class="st">'+'★'.repeat(st)+'</i><b>'+['','II','III','IV'][st]+'</b></span>';
+const WING='<svg viewBox="0 0 44 22" aria-hidden="true"><defs><linearGradient id="wgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#ffd24a"/><stop offset=".55" stop-color="#c47f00"/><stop offset="1" stop-color="#ffe08a"/></linearGradient></defs><path fill="url(#wgG)" d="M44 12C34 3 18 0 1 3c8 2 13 3 18 6C10 8 5 9 0 13c9 0 15 0 20 1-7 2-11 4-15 8 13-1 27-3 39-10z"/></svg>';
+const evBadge=st=>!st?'':st>=4?'<span class="evbd tc"><i class="wg l">'+WING+'</i><span class="tcr"><b>TRANSCENDENT</b></span><i class="wg r">'+WING+'</i><i class="sp s1"></i><i class="sp s2"></i></span>':'<span class="evbd e'+st+'"><i class="st">'+'★'.repeat(st)+'</i><b>'+['','II','III','IV'][st]+'</b></span>';
 function hbar(S,sc){const nb=S.s.burn&&S.hp>0?3:0,np=S.s.poi&&S.hp>0?2:0,ab=Math.min(S.sh,nb),sh1=S.sh-ab,hl=Math.min(S.hp,nb-ab+np),hp1=S.hp-hl,p=v=>(v/sc*100).toFixed(2)+'%',r=S.hp/S.mhp;
  return '<div class="hb'+(r<=.25?' low':r<=.5?' mid':'')+(hl||ab?' dot':'')+'" style="--tk:'+Math.min(100,1000/sc).toFixed(2)+'%"><i class="hpf" style="width:'+p(hp1)+'"></i>'+(hl?'<i class="dtf" style="left:'+p(hp1)+';width:'+p(hl)+'"></i>':'')+
   '<i class="shf" style="left:'+p(S.hp)+';width:'+p(sh1)+'"></i>'+(ab?'<i class="dtf" style="left:'+p(S.hp+sh1)+';width:'+p(ab)+'"></i>':'')+'<i class="hgl"></i><span>'+S.hp+(S.sh?'<u>+'+S.sh+'</u>':'')+'</span></div>'}
@@ -1268,7 +1286,7 @@ function showResult(win,m){RSV=result(win);rsStage=1;const r=$('#res');r.hidden=
  <div class="rlg" id="rlg"><span class="d">Damage</span><span class="h">Heal</span><span class="s">Shield</span></div><button class="rcb" id="rcont">Continue</button>`;
  setTimeout(()=>{r.querySelectorAll('.rbs').forEach((b,i)=>setTimeout(()=>{if(!b.classList.contains('z'))b.style.height=b.dataset.p+'%';const n=b.querySelector('.rn');if(n)countUp(n,+n.dataset.n,1400)},i*90))},450)}
 function countUp(el,to,ms){const t0=performance.now(),f=t=>{const p=Math.min(1,(t-t0)/ms);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
-function xcard(o,i){const x=o.h,need=CFG.expLv;return `<div class="xc" id="xc${i}"><div class="xt zf" style="--c:${x.col}">${faceImg(x)}<div class="xfl"></div><span class="lvu">LEVEL UP!</span></div><b class="xn">${esc(x.n)}</b><div class="xl">Lv <i>${o.b.lv}</i></div><div class="xb"><i class="xf" style="width:${o.max?100:o.b.xp/need*100}%"></i><span>${o.max?'MAX':o.b.xp+'/'+need}</span></div><small class="xg">${o.max?'Max level':'+'+o.gain+' EXP'}</small></div>`}
+function xcard(o,i){const x=o.h,need=CFG.expLv;return `<div class="xc" id="xc${i}"><div class="xbd">${evBadge(x.st)}</div><div class="xt zf" style="--c:${x.col}">${faceImg(x)}<div class="xfl"></div><span class="lvu">LEVEL UP!</span></div><b class="xn">${esc(x.bn||x.n)}</b><div class="xl">Lv <i>${o.b.lv}</i></div><div class="xb"><i class="xf" style="width:${o.max?100:o.b.xp/need*100}%"></i><span>${o.max?'MAX':o.b.xp+'/'+need}</span></div><small class="xg">${o.max?'Max level':'+'+o.gain+' EXP'}</small></div>`}
 async function animXp(i){const o=RSV.heroes[i],c=$('#xc'+i);if(!c)return;const f=c.querySelector('.xf'),lv=c.querySelector('.xl i'),tx=c.querySelector('.xb span'),need=CFG.expLv;
  const bar=(p,t)=>{f.style.transition=t?'width '+t+'s ease-out':'none';f.style.width=p+'%'};
  if(o.max||(!o.gain&&!o.ups.length))return;await wait(300);
