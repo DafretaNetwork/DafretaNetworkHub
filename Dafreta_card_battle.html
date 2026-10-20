@@ -1385,7 +1385,12 @@ document.addEventListener('click',e=>{
 $('#end').onclick=endTurn;
 /* ================= ACCOUNT + PLAYER DATA (Dafreta Network login is read from the site's own session) ================= */
 const FB='https://dafreta-network-default-rtdb.asia-southeast1.firebasedatabase.app';
-const fb=(p,m,b)=>fetch(FB+'/'+p+'.json',{method:m||'GET',headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)}).then(r=>{if(!r.ok)throw new Error('db '+r.status);return r.json()});
+/* login token shared with the website (same browser storage); refreshed when it expires */
+const FBK='AIzaSyC8LZNIUsV_DySPviZLOOseesnmmBsglAQ';let TKP=null;
+async function gtok(){let s=null;try{s=JSON.parse(localStorage.dn_s||'null')}catch(e){}if(!s||!s.rt)return null;if(Date.now()<s.exp)return s.it;if(TKP)return TKP;
+ TKP=(async()=>{try{const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+FBK,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(s.rt)});const j=await r.json();if(!r.ok)return null;
+  const n={...s,it:j.id_token,rt:j.refresh_token,uid:j.user_id,exp:Date.now()+((+j.expires_in||3600)-180)*1000};localStorage.dn_s=JSON.stringify(n);return n.it}catch(e){return null}finally{TKP=null}})();return TKP}
+const fb=async(p,m,b)=>{const t=await gtok();return fetch(FB+'/'+p+'.json'+(t?'?auth='+encodeURIComponent(t):''),{method:m||'GET',headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)}).then(r=>{if(!r.ok)throw new Error('db '+r.status);return r.json()})};
 const mid=()=>Date.now().toString(36).padStart(9,'0')+Math.random().toString(36).slice(2,5);
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1394,7 +1399,7 @@ let ME=null,PROF=null,PD=null,LBD=null,LBt=0,AM={},QUESTS=[],RANKS=[],APPR={},cu
 const CFG={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0,turnSec:30};
 const COL={Defender:'#f5c451',Magic:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a',Specialist:'#b07cff'};
 const CI={Defender:'🛡️',Healer:'➕',Magic:'✦',Attacker:'⚔️',Specialist:'★'};
-try{const s=JSON.parse(localStorage.dn_s||'null');if(s&&s.u)ME=s.u}catch(e){}
+try{const s=JSON.parse(localStorage.dn_s||'null');if(s&&s.u&&s.rt)ME=s.u}catch(e){}
 const defPD=()=>({played:false,sel:0,mode:'std',lineups:{},hs:{},fr:{},st:0,gc:{},own:{},disp:'',w:0,l:0,pts:0,qp:{},days:0,ld:'',bio:''});
 async function loadPD(){let d=null;
  if(ME){try{d=await fb('cardgame/players/'+ME)}catch(e){}try{PROF=await fb('profiles/'+ME)}catch(e){}}
