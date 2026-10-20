@@ -618,6 +618,30 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .pzg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:8px}.pzc{display:flex;gap:10px;align-items:flex-start;background:#0f1e33;border:1px solid var(--line);border-radius:10px;padding:10px}
 .pzp{flex:none;width:84px;height:110px;border-radius:8px;display:grid;place-items:center;background:repeating-conic-gradient(#1a2a42 0 25%,#13203a 0 50%) 0 0/14px 14px;overflow:hidden;font-size:11px;text-align:center}.pzp img{width:100%;height:100%;object-fit:contain}
 .cpool{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.cpc{background:#14243c;border:1px solid var(--line);border-radius:20px;padding:3px 6px 3px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.cpc button{background:none;border:0;color:var(--mute);cursor:pointer;padding:0 4px;font-size:13px}.cpc button:hover{color:#ff6a6a}
+/* ===================== RANK EMBLEM EFFECTS (glow / radiant ring / glitter) ===================== */
+.rkw{position:relative;display:inline-grid;place-items:center;width:var(--rs);height:var(--rs);flex:none;isolation:isolate}
+.rkw .rke2{position:relative;z-index:2;width:100%;height:100%;display:grid;place-items:center;filter:drop-shadow(0 3px 4px #000a)}
+.rkw .rke2>img,.rkw .rke2>svg{width:100%;height:100%;object-fit:contain;display:block}
+.rkw.hs .rke2{filter:drop-shadow(0 0 2px var(--c3)) drop-shadow(0 0 7px var(--c3)) drop-shadow(0 3px 4px #000a)}
+.rfg{position:absolute;inset:-32%;z-index:0;border-radius:50%;pointer-events:none;background:radial-gradient(circle,var(--c1) 0,color-mix(in srgb,var(--c1) 55%,transparent) 30%,transparent 68%);filter:blur(4px);animation:rfg 2.4s ease-in-out infinite}
+@keyframes rfg{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}
+.rfr{position:absolute;inset:-54%;z-index:1;border-radius:50%;pointer-events:none;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--c2) 90%,transparent) 0 5deg,transparent 5deg 22deg);-webkit-mask:radial-gradient(circle,#000 20%,transparent 66%);mask:radial-gradient(circle,#000 20%,transparent 66%);animation:rfspin 8s linear infinite}
+.rfr::after{content:"";position:absolute;inset:14%;border-radius:50%;background:repeating-conic-gradient(from 11deg,color-mix(in srgb,var(--c2) 60%,transparent) 0 3deg,transparent 3deg 30deg);animation:rfspin 4s linear infinite reverse}
+@keyframes rfspin{to{transform:rotate(360deg)}}
+.rfs{position:absolute;inset:-12%;z-index:3;pointer-events:none;filter:drop-shadow(0 0 3px var(--c3)) drop-shadow(0 0 6px var(--c3));animation:rfspin 7s linear infinite}
+.rfs b{position:absolute;width:24%;aspect-ratio:1;background:radial-gradient(circle,#fff 0 22%,var(--c3) 60%);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:rftw 1.8s ease-in-out infinite;opacity:0}
+.rfs b:nth-child(1){top:-6%;left:38%}.rfs b:nth-child(2){top:38%;right:-6%;animation-delay:.45s}.rfs b:nth-child(3){bottom:-6%;left:38%;animation-delay:.9s}.rfs b:nth-child(4){top:38%;left:-6%;animation-delay:1.35s}
+.rfs b:nth-child(5){top:8%;right:8%;width:15%;animation-delay:.7s;animation-duration:1.4s}.rfs b:nth-child(6){bottom:8%;left:8%;width:15%;animation-delay:1.1s;animation-duration:1.5s}
+@keyframes rftw{0%,100%{transform:scale(0) rotate(0);opacity:0}45%{transform:scale(1.1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:.6}}
+.rfh{position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 40%,color-mix(in srgb,var(--c3) 35%,#fff) 50%,transparent 60%) 0 0/300% 100% no-repeat;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;mix-blend-mode:screen;animation:rfsh 2.6s ease-in-out infinite}
+@keyframes rfsh{0%{background-position:100% 0}60%,100%{background-position:0 0}}
+@media(prefers-reduced-motion:reduce){.rfg,.rfr,.rfr::after,.rfs,.rfs b,.rfh{animation:none}.rfs b{opacity:1;transform:scale(.8)}}
+
+.rkrow{flex-wrap:wrap}.rkp{width:64px!important;height:56px;overflow:visible}
+.rkfx{flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;padding:2px 0 4px 34px}
+.rkfx label{display:flex;flex-direction:column;gap:2px;margin:0;font-size:12px;color:var(--mute)}
+.rkfx select{width:auto;min-width:110px;padding:5px 8px;font-size:13px}
+.fxdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -1039,7 +1063,7 @@ const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===
    CARD BATTLE ADMIN  (organised into sections)
    ====================================================================== */
 let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
-const emptyQF=()=>({id:null,title:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
+const emptyQF=()=>({id:null,title:'',desc:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
 let QF=emptyQF();
 const defRanksA=()=>['Copper','Silver','Gold','Platinum','Emerald','Diamond'].flatMap(n=>['I','II','III','IV','V'].map(r=>({n:n+' '+r})));
 const EVN=['II','III','IV','Transcendence'];
@@ -1167,7 +1191,7 @@ function cgAils(){
 /* ---------------- quests ---------------- */
 const rwText=r=>{r=r||{};const a=Math.max(1,+r.amt||1);if(r.type==='frag')return `🧩 ${a} card fragments (${r.hero&&r.hero!=='random'&&HLIST[r.hero]?esc(HLIST[r.hero].name):'random hero'})`;if(r.type==='gen')return `🃏 General card: ${GENS[r.gen]?esc(GENS[r.gen].name):'(deleted)'}`;return `💠 ${a} Transcendence stone${a>1?'s':''}`};
 function questListHTML(){const e=Object.entries(QSTS).sort((a,b)=>(+a[1].created||0)-(+b[1].created||0));if(!e.length)return '<p class="mut" style="font-size:14px">No quests yet.</p>';
-  return e.map(([k,q])=>`<div class="bx2 qrow"><div style="flex:1;min-width:0"><b>${esc(q.title)}</b><div class="mut" style="font-size:13px">Win <b>${+q.wins||1}</b> · ${MODE_TXT[q.mode]||MODE_TXT.any}</div><div style="font-size:13px;margin-top:2px">Reward: ${rwText(q.reward)}</div></div><div class="row"><button class="s" onclick="editQuest('${esc(k)}')">Edit</button><button class="d s" onclick="delQuest('${esc(k)}')">✕</button></div></div>`).join('')}
+  return e.map(([k,q])=>`<div class="bx2 qrow"><div style="flex:1;min-width:0"><b>${esc(q.title)}</b><div class="mut" style="font-size:13px">Win <b>${+q.wins||1}</b> · ${MODE_TXT[q.mode]||MODE_TXT.any}</div><div style="font-size:13px;margin-top:2px">Reward: ${rwText(q.reward)}</div>${q.desc?`<div class="mut cl" style="font-size:12px;margin:2px 0 0">📝 ${esc(q.desc)}</div>`:''}</div><div class="row"><button class="s" onclick="editQuest('${esc(k)}')">Edit</button><button class="d s" onclick="delQuest('${esc(k)}')">✕</button></div></div>`).join('')}
 function questSecInner(){
   const heroOpts=`<option value="random"${QF.hero==='random'?' selected':''}>Random hero</option>`+Object.entries(HLIST).map(([k,h])=>`<option value="${esc(k)}"${QF.hero===k?' selected':''}>${esc(h.name)}</option>`).join('');
   const genOpts=`<option value="">— choose —</option>`+Object.entries(GENS).map(([k,g])=>`<option value="${esc(k)}"${QF.gen===k?' selected':''}>${esc(g.name)}${g.locked?' 🔒':''}</option>`).join('');
@@ -1181,7 +1205,8 @@ function questSecInner(){
     <div><label>Reward</label><select onchange="QF.rtype=this.value;paintQuest()"><option value="frag"${QF.rtype==='frag'?' selected':''}>🧩 Card fragments</option><option value="gen"${QF.rtype==='gen'?' selected':''}>🃏 General card</option><option value="stone"${QF.rtype==='stone'?' selected':''}>💠 Transcendence stone</option></select></div>
     ${QF.rtype==='frag'?`<div><label>Fragments of which hero</label><select onchange="QF.hero=this.value">${heroOpts}</select></div>`:''}
     ${QF.rtype==='gen'?`<div><label>General card</label><select onchange="QF.gen=this.value">${genOpts}</select></div>`:''}
-    ${QF.rtype!=='gen'?`<div><label>Amount</label><input type="number" min="1" max="9999" value="${+QF.amt||1}" oninput="QF.amt=+this.value"></div>`:''}</div>
+    ${QF.rtype!=='gen'?`<div><label>Amount</label><input type="number" min="1" max="9999" value="${+QF.amt||1}" oninput="QF.amt=+this.value"></div>`:''}
+    <div style="grid-column:1/-1"><label>Detailed instructions (shown when a player taps the quest; optional)</label><textarea maxlength="600" style="min-height:80px" oninput="QF.desc=this.value" placeholder="e.g. Use a line-up with a Healer and win 3 Standard matches this week. Step-by-step instructions are added automatically below this text.">${esc(QF.desc||'')}</textarea></div></div>
    ${QF.rtype==='gen'?'<p class="mut" style="font-size:13px;margin:8px 0 0">Tip: mark the card “Reward-only” in General Cards so players can only get it from this quest.</p>':''}
    <div class="row" style="margin-top:10px"><button onclick="saveQuest()">💾 Save quest</button>${QF.id?'<button class="g" onclick="QF=emptyQF();paintQuest()">Cancel</button>':''}</div></div>`}
 const paintQuest=()=>{const e=$('#questsec');if(e)e.innerHTML=questSecInner()};
@@ -1190,27 +1215,35 @@ async function saveQuest(){
   if(QF.rtype==='gen'&&!QF.gen)return toast('Choose the general card to give');
   const id=QF.id||'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
   const reward=QF.rtype==='frag'?{type:'frag',hero:QF.hero||'random',amt:Math.max(1,+QF.amt||1)}:QF.rtype==='gen'?{type:'gen',gen:QF.gen,amt:1}:{type:'stone',amt:Math.max(1,+QF.amt||1)};
-  const d={title:QF.title.trim(),mode:QF.mode,wins:Math.max(1,Math.floor(+QF.wins)),reward,created:(QSTS[id]&&QSTS[id].created)||Date.now()};
+  const d={title:QF.title.trim(),desc:(QF.desc||'').trim().slice(0,600)||null,mode:QF.mode,wins:Math.max(1,Math.floor(+QF.wins)),reward,created:(QSTS[id]&&QSTS[id].created)||Date.now()};
   try{await api('cardgame/quests/'+id,'PUT',d);QSTS[id]=d;QF=emptyQF();paintQuest();toast('Quest saved')}catch(e){toast(e.message)}}
-function editQuest(id){const q=QSTS[id];if(!q)return;const r=q.reward||{};QF={id,title:q.title||'',mode:q.mode||'any',wins:+q.wins||1,rtype:r.type||'frag',hero:r.hero||'random',gen:r.gen||'',amt:+r.amt||1};paintQuest();const e=$('#questsec');if(e)e.scrollIntoView({behavior:'smooth'})}
+function editQuest(id){const q=QSTS[id];if(!q)return;const r=q.reward||{};QF={id,title:q.title||'',desc:q.desc||'',mode:q.mode||'any',wins:+q.wins||1,rtype:r.type||'frag',hero:r.hero||'random',gen:r.gen||'',amt:+r.amt||1};paintQuest();const e=$('#questsec');if(e)e.scrollIntoView({behavior:'smooth'})}
 async function delQuest(id){if(!confirm('Delete this quest? Players keep anything they already claimed.'))return;try{await api('cardgame/quests/'+id,'DELETE');delete QSTS[id];if(QF.id===id)QF=emptyQF();paintQuest()}catch(e){toast(e.message)}}
 
 /* ---------------- ranks ---------------- */
 const RKCOL=['#c27c3a','#c3ccd6','#ffd24a','#8fe3d8','#38d27c','#6cd4ff'],RKR=['I','II','III','IV','V'];
-const rkPrev=i=>RKS[i]&&RKS[i].img?`<img src="${RKS[i].img}" style="width:42px;height:42px;object-fit:contain">`:`<svg width="42" height="42" viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="${RKCOL[Math.min(5,Math.floor(i/5))]}" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">${RKR[i%5]}</text></svg>`;
+const GCA={white:'#ffffff',blue:'#4aa8ff',purple:'#b36bff',gold:'#ffc83a',green:'#3ee07a'};
+const FXK=[['g','✨ Glow (behind)'],['r','☀️ Radiant ring'],['s','💎 Glitter (edges)']];
+const fxOpts=v=>'<option value="">None</option>'+Object.keys(GCA).map(c=>`<option value="${c}"${v===c?' selected':''}>${c[0].toUpperCase()+c.slice(1)}</option>`).join('');
+const rkPrev=i=>{const r=RKS[i]||{},f=r.fx||{},g=GCA[f.g],ry=GCA[f.r],sp=GCA[f.s];
+  return `<span class="rkw${sp?' hs':''}" style="--rs:48px${g?';--c1:'+g:''}${ry?';--c2:'+ry:''}${sp?';--c3:'+sp:''}">${g?'<i class="rfg"></i>':''}${ry?'<i class="rfr"></i>':''}<span class="rke2">${rkPrev0(i)}</span>${sp?'<i class="rfs">'+'<b></b>'.repeat(6)+'</i>'+(r.img?`<i class="rfh" style="-webkit-mask-image:url('${r.img}');mask-image:url('${r.img}')"></i>`:''):''}</span>`};
+function rkFxSet(i,k,v){RKS[i].fx={...(RKS[i].fx||{}),[k]:v};const e=$('#rkp'+i);if(e)e.innerHTML=rkPrev(i)}
+function rkTier(i){const t=Math.floor(i/5)*5,e=Math.min(t+5,RKS.length),f={...(RKS[i].fx||{})};for(let j=t;j<e;j++)RKS[j].fx={...f};paintRanks();toast(`Effects copied to ranks ${t+1}–${e}. Press Save ranks to keep them.`)}
+const rkPrev0=i=>RKS[i]&&RKS[i].img?`<img src="${RKS[i].img}" style="width:42px;height:42px;object-fit:contain">`:`<svg width="42" height="42" viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="${RKCOL[Math.min(5,Math.floor(i/5))]}" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">${RKR[i%5]}</text></svg>`;
 function rankSecInner(){
   return `<h4>Ranked mode</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Players earn points by winning Ranked matches. Their rank is how many full “points per rank” they have, in the order of the list below (first = lowest).</p>
   <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Points per rank</label><input id="rkstep" type="number" min="1" value="${CGC.rankStep}"></div><div><label>Points for a win</label><input id="rkwin" type="number" min="0" value="${CGC.rankWin}"></div><div><label>Points lost on a loss</label><input id="rkloss" type="number" min="0" value="${CGC.rankLoss}"></div></div>
    <div class="row" style="margin-top:10px"><button class="s" onclick="saveRankCfg()">💾 Save ranked settings</button></div></div>
+  <div class="bx2" style="margin-top:14px;border-left:4px solid var(--gold)"><b>Emblem effects</b><p class="mut" style="font-size:13px;margin:4px 0 0">Each rank can use up to 3 animated effects behind and around its emblem, in white, blue, purple, gold or green: <b>Glow</b> (soft pulsing light from behind), <b>Radiant ring</b> (rays circling behind the emblem) and <b>Glitter</b> (sparkles orbiting the edges plus a shine across the emblem). Mix 1, 2 or all 3. The preview updates live; press <b>Save ranks</b> to publish.</p></div>
   <h4 style="margin-top:18px">Rank names &amp; emblems ${RKSAVED?'':'<span class="cgpill">using defaults</span>'}</h4>
-  <div class="rklist">${RKS.map((r,i)=>`<div class="rkrow"><span class="rkn">${i+1}</span><span class="rkp" id="rkp${i}">${rkPrev(i)}</span><input value="${esc(r.n)}" maxlength="24" oninput="RKS[${i}].n=this.value"><button class="s" onclick="$('#rkf${i}').click()">Emblem</button>${r.img?`<button class="g s" onclick="RKS[${i}].img='';paintRanks()">✕</button>`:''}<input id="rkf${i}" type="file" accept="image/*" hidden onchange="upRkImg(${i},this)"></div>`).join('')}</div>
+  <div class="rklist">${RKS.map((r,i)=>`<div class="rkrow"><span class="rkn">${i+1}</span><span class="rkp" id="rkp${i}">${rkPrev(i)}</span><input value="${esc(r.n)}" maxlength="24" oninput="RKS[${i}].n=this.value"><button class="s" onclick="$('#rkf${i}').click()">Emblem</button>${r.img?`<button class="g s" onclick="RKS[${i}].img='';paintRanks()">✕</button>`:''}<input id="rkf${i}" type="file" accept="image/*" hidden onchange="upRkImg(${i},this)"><div class="rkfx">${FXK.map(([k,l])=>`<label>${l}<select onchange="rkFxSet(${i},'${k}',this.value)">${fxOpts((r.fx||{})[k])}</select></label>`).join('')}<button class="g s" onclick="rkTier(${i})" title="Use these effects for every rank in this tier (e.g. Gold I–V)">Copy to tier</button></div></div>`).join('')}</div>
   <div class="row" style="margin-top:10px"><button class="s" onclick="rkAdd()">＋ Add rank</button><button class="g s" onclick="rkDel()">Remove last</button><button class="g s" onclick="rkReset()">Reset to defaults</button><button onclick="saveRanks()">💾 Save ranks</button></div>`}
 const paintRanks=()=>{const e=$('#ranksec');if(e)e.innerHTML=rankSecInner()};
 async function upRkImg(i,inp){const f=inp.files[0];if(!f)return;try{RKS[i].img=await shrinkPng(f,96);paintRanks()}catch(e){toast(e.message)}}
 function rkAdd(){RKS.push({n:'New rank '+(RKS.length+1)});paintRanks()}
 function rkDel(){if(RKS.length<=1)return toast('Keep at least one rank');RKS.pop();paintRanks()}
 function rkReset(){if(!confirm('Reset all rank names and emblems to the defaults (Copper I – Diamond V)?'))return;RKS=defRanksA();paintRanks()}
-async function saveRanks(){const l=RKS.map(r=>({n:(r.n||'').trim()||'Rank',...(r.img?{img:r.img}:{})}));try{await api('cardgame/ranks','PUT',l);RKS=l;RKSAVED=true;paintRanks();toast('Ranks saved')}catch(e){toast(e.message)}}
+async function saveRanks(){const l=RKS.map(r=>{const f=r.fx||{},fx={};['g','r','s'].forEach(k=>{if(GCA[f[k]])fx[k]=f[k]});return {n:(r.n||'').trim()||'Rank',...(r.img?{img:r.img}:{}),...(Object.keys(fx).length?{fx}:{})}});try{await api('cardgame/ranks','PUT',l);RKS=l;RKSAVED=true;paintRanks();toast('Ranks saved')}catch(e){toast(e.message)}}
 async function saveCfg(){await api('cardgame/config','PUT',CGC)}
 async function saveRankCfg(){const g=id=>+$('#'+id).value;if(!(g('rkstep')>=1))return toast('Points per rank must be at least 1');
   CGC.rankStep=Math.floor(g('rkstep'));CGC.rankWin=Math.max(0,Math.floor(g('rkwin')));CGC.rankLoss=Math.max(0,Math.floor(g('rkloss')));try{await saveCfg();toast('Ranked settings saved')}catch(e){toast(e.message)}}
