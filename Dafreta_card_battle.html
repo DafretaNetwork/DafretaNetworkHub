@@ -216,7 +216,7 @@ body.sel #hand,body.sel #top,body.sel #lg,body.sel #log,body.sel #en,body.sel #e
 .vlb{left:7%;right:7%;bottom:17%;padding:7px 4px 6px;background:linear-gradient(#0b1226dd,#0b1226f5);border:1px solid color-mix(in srgb,var(--c) 60%,#000);border-top:3px solid var(--c);border-radius:6px;gap:1px;text-shadow:none}
 .vlb span{font:800 clamp(9px,9.5cqw,15px) system-ui;letter-spacing:.07em;text-transform:uppercase;color:var(--c);white-space:normal;line-height:1.1}
 .vlb b{font:800 clamp(11px,12cqw,19px) Cinzel,serif;color:#fff;white-space:normal;overflow-wrap:anywhere;line-height:1.12}
-.vpi img{animation:vz 8s ease-in-out .9s both}@keyframes vz{from{scale:1}to{scale:1.07}}
+.vpi img{animation:vz 8s ease-in-out .9s both}@keyframes vz{from{scale:1}to{scale:1.03}}
 .vst{position:absolute;left:9%;top:16%;z-index:2;width:clamp(20px,22cqw,30px);aspect-ratio:1;border-radius:50%;background:#1a1204;color:#ffd24a;border:2px solid #ffd24a;font:800 clamp(8px,8cqw,11px) Cinzel,serif;display:grid;place-items:center}
 /* ===== face tiles + deck block ===== */
 .zf{position:relative;overflow:hidden;background:#1a2133}
@@ -612,10 +612,10 @@ body.sel .sdim{opacity:1}
 #vsx .vteam.r .vst{right:auto;left:18%}
 #vsx .vlb{position:absolute;left:4%;right:18%;bottom:5%;top:auto;padding:0;background:none;border:0;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:2px;text-shadow:0 2px 4px #000}
 #vsx .vteam.r .vlb{left:18%;right:4%}
-#vsx .vlb span{font:800 clamp(8px,7.5cqw,12px)/1.2 system-ui;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--c);padding:1px 8px;border-radius:20px;white-space:nowrap;text-shadow:0 1px 2px #0008}
-#vsx .vlb b{display:block;max-width:100%;font:800 min(13cqw,calc(122cqw / var(--nl,10)))/1.1 Cinzel,Georgia,serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em}
+#vsx .vlb .vcl{font:800 clamp(8px,7.5cqw,12px)/1.2 system-ui;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--c);padding:1px 8px;border-radius:20px;white-space:nowrap;text-shadow:0 1px 2px #0008}
+#vsx .vlb .vnm{display:block;max-width:100%;font:800 min(13cqw,calc(122cqw / var(--nl,10)))/1.1 Cinzel,Georgia,serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em}
 #vsx .vlb::before{content:"";display:block;width:60%;height:2px;margin-bottom:3px;background:linear-gradient(90deg,transparent,var(--c),transparent);order:1}
-#vsx .vlb b{order:2}
+#vsx .vlb .vnm{order:2}
 @container (max-height:520px){#vsx .vn{padding:4px 30px 4px 4px}#vsx .vn.r{padding:4px 4px 4px 30px}#vsx .vn b{font-size:15px}#vsx .vp{height:min(72cqh,560px)}#vsx .vci{width:24px;font-size:12px}}
 /* ===================== HEALTH BAR v2 ===================== */
 #bat .info{background:linear-gradient(#24170cf2,#100904f5);box-shadow:0 0 0 1px #c9a55a44,0 4px 8px #000a}
@@ -661,6 +661,59 @@ body.sel .sdim{opacity:1}
 @media(prefers-reduced-motion:reduce){#bat #end::after,#bat .endw.nudge,#bat .endw.nudge .endr{animation:none}}
 /* ---- main menu: Play as wide as the mode picker ---- */
 .mp{align-items:stretch;flex:0 0 auto}.mp .play{width:100%;padding-left:16px;padding-right:16px}
+
+/* ===================== EVOLUTION BADGES ===================== */
+.evbd{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:2px;white-space:nowrap;line-height:1;pointer-events:none}
+.evbd b{font:900 1em/1 Cinzel,Georgia,serif;letter-spacing:.06em;white-space:nowrap;overflow-wrap:normal;color:inherit;text-transform:none}
+#vsx .vlb .evbd{letter-spacing:0;text-transform:none;white-space:nowrap;background-clip:border-box}
+.evbd.e1,.evbd.e2,.evbd.e3{padding:.22em .9em .2em;clip-path:polygon(0 50%,9% 0,91% 0,100% 50%,91% 100%,9% 100%);color:#fff;text-shadow:0 1px 2px #000a}
+.evbd .st{font-style:normal;font-size:.62em;margin-right:.35em;letter-spacing:-.05em;color:#fff6c8;text-shadow:0 0 4px #ffd24a}
+.evbd.e1{background:linear-gradient(#9ff0b0,#2f9a57 55%,#1d6a39)}
+.evbd.e2{background:linear-gradient(#a8d4ff,#2f74d8 55%,#1a4a96)}
+.evbd.e3{background:linear-gradient(#e2b8ff,#8a3fe0 55%,#55229a);box-shadow:0 0 10px #b07cff}
+.evbd.tc{padding:.24em .95em .22em;color:#3a1d04;background:linear-gradient(#fff6c8,#ffd24a 40%,#d9900f 60%,#ffcf6a);border:1px solid #fff3c4;border-radius:.35em;text-shadow:0 1px 0 #fff8;box-shadow:0 0 0 1px #8a4a00,0 0 12px #ffc23acc;overflow:visible;animation:tcg 1.8s ease-in-out infinite alternate}
+.evbd.tc::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 35%,#ffffffcc 50%,transparent 65%);background-size:250% 100%;animation:tcs 2.4s linear infinite;pointer-events:none}
+.evbd.tc .wg{position:absolute;top:50%;width:1.9em;translate:0 -55%;font-style:normal;filter:drop-shadow(0 0 3px #ffb300)}
+.evbd.tc .wg svg{display:block;width:100%;fill:url(#wgg);fill:#ffd24a;stroke:#8a4a00;stroke-width:1.2}
+.evbd.tc .wg.l{right:calc(100% - .35em)}.evbd.tc .wg.r{left:calc(100% - .35em);scale:-1 1}
+@keyframes tcg{from{box-shadow:0 0 0 1px #8a4a00,0 0 8px #ffc23a99}to{box-shadow:0 0 0 1px #8a4a00,0 0 18px #ffd24a}}
+@keyframes tcs{from{background-position:150% 0}to{background-position:-100% 0}}
+#bat .info>.evbd{position:absolute;left:50%;top:0;translate:-50% -92%;z-index:4;font-size:calc(var(--info)*.2)}
+#bat .unit.evo .chips{bottom:calc(var(--info) + 14px)}
+#bat .unit.evo .exb{bottom:calc(var(--info)*1.25 + 4px)}
+#vsx .vlb .evbd{order:0;font-size:clamp(11px,10cqw,17px);margin-bottom:4px}
+#vsx .vlb .evbd.tc{font-size:clamp(8px,7.6cqw,13px);margin-bottom:6px}
+@media(prefers-reduced-motion:reduce){.evbd.tc,.evbd.tc::after{animation:none}}
+/* ===================== ATTACK / EX POSES ===================== */
+#bat .unit.pz-atk{z-index:8!important}
+#bat .unit.pz-atk .fgw{animation:lunge .72s cubic-bezier(.3,.7,.3,1) var(--pd,0ms) both}
+#bat .unit.foe.pz-atk .fgw{animation-name:lungeF}
+@keyframes lunge{0%{translate:0 0}18%{translate:-7% 0}42%{translate:22% -2%}70%{translate:20% 0}100%{translate:0 0}}
+@keyframes lungeF{0%{translate:0 0}18%{translate:7% 0}42%{translate:-22% -2%}70%{translate:-20% 0}100%{translate:0 0}}
+#bat .unit.pz-atk .fig{filter:brightness(1.12) drop-shadow(0 0 10px #fff8)}
+#bat .unit.pz-ex{z-index:8!important}
+#bat .unit.pz-ex .fgw{animation:expw 1s ease-out var(--pd,0ms) both}
+@keyframes expw{0%{scale:1;filter:none}30%{scale:1.1;filter:brightness(1.5) drop-shadow(0 0 18px #ffd24a)}70%{scale:1.12;filter:brightness(1.3) drop-shadow(0 0 26px #ffb300)}100%{scale:1.05;filter:brightness(1.2) drop-shadow(0 0 14px #ffd24a)}}
+#bat .unit.pz-ex .fw::before{content:"";position:absolute;left:50%;bottom:0;width:90%;height:120%;translate:-50% 0;z-index:0;border-radius:50% 50% 10% 10%;background:radial-gradient(ellipse at 50% 100%,#fff6c8 0,#ffd24a 25%,#ff9a1f55 55%,transparent 72%);animation:expil 1s ease-out var(--pd,0ms) both;pointer-events:none}
+@keyframes expil{0%{opacity:0;scale:.4 .2}40%{opacity:1;scale:1 1}100%{opacity:.6;scale:1.1 1.1}}
+/* hit effects: sw = sword slash, sh = shot, mg = magic burst */
+.slh{position:absolute;left:50%;top:40%;z-index:6;pointer-events:none;translate:-50% -50%}
+.slh.sw{width:110%;aspect-ratio:1;border-radius:50%;border-top:clamp(4px,1.2cqh,9px) solid #fff;border-left:clamp(2px,.5cqh,4px) solid transparent;border-right:clamp(2px,.5cqh,4px) solid transparent;filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px #ffd24a) drop-shadow(0 0 18px #ff8a00);animation:slsw .5s ease-out forwards}
+.slh.sw::after{content:"";position:absolute;inset:14%;border-radius:50%;border-top:clamp(2px,.6cqh,5px) solid #ffe9a6;rotate:12deg}
+.slh.sw.flip{scale:-1 1}
+@keyframes slsw{0%{opacity:0;rotate:-70deg;width:60%}20%{opacity:1}100%{opacity:0;rotate:40deg;width:125%}}
+.slh.sh{top:38%;left:-30%;width:90%;height:clamp(3px,.8cqh,6px);translate:0 -50%;border-radius:4px;background:linear-gradient(90deg,transparent,#fff5,#fff 80%,#ffd24a);box-shadow:0 0 10px #ffd24a;animation:slsh .4s ease-out forwards}
+.slh.sh.flip{scale:-1 1;left:40%}
+@keyframes slsh{0%{opacity:0;translate:-60% -50%}30%{opacity:1}70%{opacity:1;translate:40% -50%}100%{opacity:0;translate:60% -50%}}
+.slh.mg{width:30%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff 0,#bfe8ff 25%,#4aa8ff 45%,transparent 70%);box-shadow:0 0 30px #4aa8ff;animation:slmg .55s ease-out forwards}
+@keyframes slmg{0%{opacity:0;scale:.2}30%{opacity:1}100%{opacity:0;scale:3.2}}
+.slh.big{filter:drop-shadow(0 0 8px #fff) drop-shadow(0 0 22px #ffb300)}.slh.sw.big{width:150%}
+@media(prefers-reduced-motion:reduce){#bat .unit.pz-atk .fgw,#bat .unit.pz-ex .fgw{animation:none}.slh{animation-duration:.01s}}
+/* ===================== line-up not ready popup ===================== */
+.lup{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 6px 2px}
+.lupi{width:64px;height:64px;display:grid;place-items:center;font-size:30px;border-radius:50%;background:radial-gradient(#fff3c4,#d9900f);border:3px solid #8a4a00;box-shadow:0 4px 0 #6a3a08}
+.lup p{margin:0;max-width:420px;font:500 15px/1.4 system-ui;color:#3a2410}.lup small{color:#8a5a2a}
+.lupb{display:flex;gap:10px;margin-top:6px}.lupb button{border:0;border-radius:8px;padding:11px 22px;font:800 15px system-ui;cursor:pointer;color:#fff;background:linear-gradient(#ffb43a,#d9780f);box-shadow:0 3px 0 #8a4308}.lupb button.g{background:linear-gradient(#8a6a4a,#5a3f26);box-shadow:0 3px 0 #33200f}
 #gw img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .dh img{pointer-events:none}
 </style></head><body>
@@ -795,7 +848,7 @@ const CARDB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/
 const cHtml=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dfs=n=>Math.max(3.6,Math.min(8.2,Math.sqrt(4300/Math.max(1,n)))).toFixed(2);
 const cardH=(s,cls,at,o)=>{const b=o&&bufS(s,o),cl=(o&&o.h&&o.h.cl)||'General',d=desc(s,o&&(o.atk*(o.s?pw(o):1)),b),pl=d.replace(/<[^>]*>/g,'').length,nm=String(s.n||''),cs=String(s.c);
- return '<div class="card cl'+cl+cls+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw">'+d+'</small></div>'};
+ return '<div class="card cl'+cl+cls+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw">'+d+'</small></div>'};
 let P,E,turn,over=1,uid=0,M,tt,busy,L=[],fx=[],hi=[0,1,2,3],pend=null,RL={},GS=[],pcur=null,ppin=0;
 const log=m=>{L.push(m);L=L.slice(-3)},xr=S=>S.h.X&&S.ex>=100&&S.hp>0&&!S.s.stun,ea=S=>Math.round(S.atk*pw(S)),alive=T=>T.u.filter(x=>x.hp>0),
  need=s=>s.tm||s.self?0:s.d?(s.k=='a'?0:'e'):s.ap?'e':s.h||s.sh||s.me?'a':0;
@@ -810,12 +863,12 @@ function hurt(O,d,pierce){const ab=pierce?0:Math.min(O.sh,d);O.sh-=ab;O.hp=Math.
 function use(T,S,sp,t){let a=sp.self?S:t;
  if(sp.bomb){T.bombs.push({n:sp.n,t:sp.bomb.t,d:sp.bomb.d,ap:sp.bomb.ap,o:S});return}
  if(sp.d||sp.ap){const F=T===P?E:P,fu=alive(F),ts=sp.k=='a'?fu:sp.k=='p'?[t,fu[fu.indexOf(t)+1]].filter(Boolean):[t];
-  ts.forEach((x,j)=>{if(sp.d){const m=j&&sp.k=='p'?.7:1;for(let i=0;i<(sp.x||1);i++){const cr=rn()<.1,dm=Math.max(1,Math.round(S.atk*sp.d*m*pw(S)*(x.s.mark?1.5:1)*tk(x)*(cr?1.5:1)));const rl=Math.min(dm,x.hp+x.sh);hurt(x,dm);S.stt.d+=rl;SND.hit(dm,cr,i+j)}}if(sp.ap&&x.hp>0)x.s[sp.ap[0]]=sp.ap[1]});a=S}
+  ts.forEach((x,j)=>{if(sp.d){const uk=uKey(x);if(uk)fx.push({id:uk,sl:slK(S),big:sp===S.h.X});const m=j&&sp.k=='p'?.7:1;for(let i=0;i<(sp.x||1);i++){const cr=rn()<.1,dm=Math.max(1,Math.round(S.atk*sp.d*m*pw(S)*(x.s.mark?1.5:1)*tk(x)*(cr?1.5:1)));const rl=Math.min(dm,x.hp+x.sh);hurt(x,dm);S.stt.d+=rl;SND.hit(dm,cr,i+j)}}if(sp.ap&&x.hp>0)x.s[sp.ap[0]]=sp.ap[1]});a=S}
  (sp.tm?alive(T):a?[a]:[]).forEach(u=>{if(sp.sh){u.sh+=sp.sh;S.stt.s+=sp.sh;fl(u,'+'+sp.sh,'#fff')}if(sp.h){const n=Math.min(sp.h,u.mhp-u.hp);u.hp+=n;S.stt.h+=n;fl(u,'+'+n,'#5be39b')}if(sp.me)u.s[sp.me[0]]=sp.me[1]});
  if(sp.sh)SND.shield();if(sp.h)SND.heal();if(sp.en)SND.mana();
  if(sp.cj)conjure(T,S,sp.cj);if(sp.dr)draw(T,sp.dr);if(sp.en)T.en+=sp.en}
 const ok=(T,c)=>T.en>=c.s.c&&c.o.hp>0&&!c.o.s.stun;
-function play(T,c,t,me){T.en-=c.s.c;T.hand=T.hand.filter(x=>x!==c);if(!c.tmp)T.disc.push(c);hist.push({s:c.s,o:c.o,mine:T===P});if(hist.length>14)hist.shift();c.o.ex=Math.min(100,c.o.ex+c.s.c*6+4);use(T,c.o,c.s,t);log((me?'You: ':'Foe: ')+c.o.h.n+' uses '+c.s.n+(t&&t!==c.o&&t.h?' on '+t.h.n:''))}
+function play(T,c,t,me){if(c.s.d&&uKey(c.o)){setPose(c.o,'atk',720);SND.whoosh()}T.en-=c.s.c;T.hand=T.hand.filter(x=>x!==c);if(!c.tmp)T.disc.push(c);hist.push({s:c.s,o:c.o,mine:T===P});if(hist.length>14)hist.shift();c.o.ex=Math.min(100,c.o.ex+c.s.c*6+4);use(T,c.o,c.s,t);log((me?'You: ':'Foe: ')+c.o.h.n+' uses '+c.s.n+(t&&t!==c.o&&t.h?' on '+t.h.n:''))}
 function exu(T,S,t,me){S.ex=0;SND.ult();hist.push({s:{...S.h.X,c:'EX'},o:S,mine:T===P,ex:1});if(hist.length>14)hist.shift();use(T,S,S.h.X,t);const r=S.r;
  if(r){const v=+r.v||0,F=T===P?E:P;
   if(r.e=='ult_freeze')alive(F).forEach(x=>{x.s.stun=Math.max(x.s.stun||0,Math.max(1,v));fl(x,'❄️','#9fe')});
@@ -846,21 +899,29 @@ function best(){let b=null,bs=1;const al=alive(E),en=alive(P);
  E.hand.forEach(c=>{if(ok(E,c)){const r=est(c.o,c.s);if(r.v>bs){bs=r.v;b={c,t:r.t}}}});return b}
 function cutin(S,mine){return new Promise(r=>{const c=$('#cut');$('#cim').src=S.h.img;$('#cnm').textContent=S.h.n;$('#ctx').textContent=S.h.X.n;c.className=mine?'':'foe';c.hidden=false;void c.offsetWidth;c.classList.add('go');SND.whoosh();
  setTimeout(()=>{c.hidden=true;c.classList.remove('go');r()},matchMedia('(prefers-reduced-motion:reduce)').matches?300:1300)})}
-async function ult(T,S,t,me){busy=1;pend=null;ui();await cutin(S,T===P);exu(T,S,t,me);if(T===P)busy=0;ui();chk()}
+async function ult(T,S,t,me){busy=1;pend=null;ui();await exPose(S);await cutin(S,T===P);exu(T,S,t,me);if(T===P)busy=0;ui();chk()}
 async function aiTurn(){start(E);ui();if(chk())return;turnBanner(false);await sl(1500);
- for(let n=0;n<14;n++){if(over)return;const o=best();if(!o)break;if(o.x){await cutin(o.x,false);exu(E,o.x,o.t,0)}else play(E,o.c,o.t,0);ui();if(chk())return;await sl(850)}
+ for(let n=0;n<14;n++){if(over)return;const o=best();if(!o)break;if(o.x){await exPose(o.x);await cutin(o.x,false);exu(E,o.x,o.t,0)}else play(E,o.c,o.t,0);ui();if(chk())return;await sl(850)}
  if(over)return;endT(E);turn='p';tt=30;start(P);busy=0;ui();turnBanner(true);chk()}
 async function endTurn(){if(over||turn!='p'||busy)return;busy=1;pend=null;endT(P);turn='e';ui();await aiTurn()}
 const psp=()=>pend?(pend.c?pend.c.s:pend.o.h.X):null;
-function tile(S,m,i){const h=S.h,es=ea(S),sc=Math.max(S.mhp,S.hp+S.sh),sp=psp(),nd=sp&&need(sp),
+function tile(S,m,i){const h=S.h,es=ea(S),now=performance.now(),pz=S.pose&&now-S.pose.t<S.pose.d?S.pose:null,ps=pz?(pz.k=='atk'?h.atkImg:h.exImg):'',pf=pz?(pz.k=='atk'?h.atkFace:h.exFace):null,sc=Math.max(S.mhp,S.hp+S.sh),sp=psp(),nd=sp&&need(sp),
  tg=nd&&S.hp>0&&((nd=='e'&&!m&&(S===alive(E)[0]||sp.any))||(nd=='a'&&m)),
  chips=Object.keys(S.s).map(k=>'<span class="stc'+(/^(burn|poi)$/.test(k)?' dot':'')+'" data-st="'+(m?'p':'e')+i+'">'+SD[k][0]+'<sub>'+S.s[k]+'</sub></span>').join(''),
  dl=-(((performance.now()/1000)+i*.7+(m?0:.35))%3.2).toFixed(2);
- return '<div class="unit'+(S.hp<=0?' dead':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+'" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
- '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+'<span class="fgw" style="'+figSz(h,m)+'"><img class="fig" src="'+h.img+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s"></span></div><div class="chips">'+chips+'</div>'+
- '<div class="info" style="--c:'+h.col+'"><div class="nr"><i class="ci">'+(CI[h.cl]||'')+'</i><b class="nm">'+h.n+'</b>'+(S.r?'<span class="rlc" title="'+S.r.n+': '+S.r.t+'">'+rIc(S.r)+'</span>':'')+'<span class="at">⚔'+es+'</span></div>'+
+ return '<div class="unit'+(S.hp<=0?' dead':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+'" style="--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
+ '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+'<span class="fgw" style="'+figSz(h,m,ps,pf)+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s"></span></div><div class="chips">'+chips+'</div>'+
+ '<div class="info" style="--c:'+h.col+'">'+evBadge(h.st)+'<div class="nr"><i class="ci">'+(CI[h.cl]||'')+'</i><b class="nm">'+cHtml(h.bn||h.n)+'</b>'+(S.r?'<span class="rlc" title="'+S.r.n+': '+S.r.t+'">'+rIc(S.r)+'</span>':'')+'<span class="at">⚔'+es+'</span></div>'+
  hbar(S,sc)+'<div class="xv2"><i style="width:'+S.ex+'%"></i></div></div></div>'}
 /* health bar: green HP, white shield, pulsing red = damage the hero takes at the start of its next turn (burn hits shield first, poison ignores it) */
+/* ---- battle poses + hit effects ---- */
+function uKey(S){let i=P?P.u.indexOf(S):-1;if(i>=0)return 'up'+i;i=E?E.u.indexOf(S):-1;return i>=0?'ue'+i:null}
+function slK(S){const c=S&&S.h&&S.h.cl;return c=='Magic'||c=='Healer'?'mg':c=='Attacker'?'sh':'sw'}
+function setPose(S,k,ms){if(!uKey(S))return;S.pose={k,t:performance.now(),d:ms};clearTimeout(S.pt);S.pt=setTimeout(()=>{S.pose=null;if(inB&&P)ui()},ms)}
+async function exPose(S){if(!uKey(S))return;setPose(S,'ex',1000);SND.mana();ui();await sl(1000)}
+/* evolution badge (shown above the health bar and on the VS screen) */
+const WING='<svg viewBox="0 0 44 22" aria-hidden="true"><path d="M44 12C34 3 18 0 1 3c8 2 13 3 18 6C10 8 5 9 0 13c9 0 15 0 20 1-7 2-11 4-15 8 13-1 27-3 39-10z"/></svg>';
+const evBadge=st=>!st?'':st>=4?'<span class="evbd tc"><i class="wg l">'+WING+'</i><b>TRANSCENDENT</b><i class="wg r">'+WING+'</i></span>':'<span class="evbd e'+st+'"><i class="st">'+'★'.repeat(st)+'</i><b>'+['','II','III','IV'][st]+'</b></span>';
 function hbar(S,sc){const nb=S.s.burn&&S.hp>0?3:0,np=S.s.poi&&S.hp>0?2:0,ab=Math.min(S.sh,nb),sh1=S.sh-ab,hl=Math.min(S.hp,nb-ab+np),hp1=S.hp-hl,p=v=>(v/sc*100).toFixed(2)+'%',r=S.hp/S.mhp;
  return '<div class="hb'+(r<=.25?' low':r<=.5?' mid':'')+(hl||ab?' dot':'')+'" style="--tk:'+Math.min(100,1000/sc).toFixed(2)+'%"><i class="hpf" style="width:'+p(hp1)+'"></i>'+(hl?'<i class="dtf" style="left:'+p(hp1)+';width:'+p(hl)+'"></i>':'')+
   '<i class="shf" style="left:'+p(S.hp)+';width:'+p(sh1)+'"></i>'+(ab?'<i class="dtf" style="left:'+p(S.hp+sh1)+';width:'+p(ab)+'"></i>':'')+'<i class="hgl"></i><span>'+S.hp+(S.sh?'<u>+'+S.sh+'</u>':'')+'</span></div>'}
@@ -868,7 +929,7 @@ function showSt(id){const T=id[0]=='p'?P:E,S=T&&T.u[+id.slice(1)];if(!S)return;c
  const nx=k=>k=='burn'?' · next turn: <b class="dmg">-3 HP</b> (shield first)':k=='poi'?' · next turn: <b class="dmg">-2 HP</b> (ignores shield)':k=='reg'?' · next turn: <b class="hl">+3 HP</b>':'';
  const b=$('#sti');b.innerHTML='<div class="sth" style="--c:'+S.h.col+'"><b>'+cHtml(S.h.n)+'</b><small>'+(T===P?'Your hero':'Enemy')+'</small></div>'+ks.map(k=>'<div class="str"><i>'+SD[k][0]+'</i><div><b>'+cHtml(SD[k][1])+'</b> <em>'+S.s[k]+' turn'+(S.s[k]>1?'s':'')+' left</em><p>'+cHtml(SD[k][2])+nx(k)+'</p></div></div>').join('')+'<small class="stx">Tap anywhere to close</small>';
  b.hidden=false;b.classList.remove('in');void b.offsetWidth;b.classList.add('in');SND.click();clearTimeout(showSt.t);showSt.t=setTimeout(()=>{b.hidden=true},6000)}
-function flush(){fx.splice(0).forEach(f=>{const el=$('#'+f.id);if(!el)return;const s=document.createElement('b');s.className='fl';s.textContent=f.x;s.style.color=f.c;el.appendChild(s);if(f.x[0]=='-')el.classList.add('hurt');setTimeout(()=>s.remove(),1100)})}
+function flush(){fx.splice(0).forEach(f=>{const el=$('#'+f.id);if(!el)return;if(f.sl){const w=el.querySelector('.fw');if(w){const k=document.createElement('i');k.className='slh '+f.sl+(f.big?' big':'')+(f.id[1]=='e'?' flip':'');w.appendChild(k);setTimeout(()=>k.remove(),700)}return}const s=document.createElement('b');s.className='fl';s.textContent=f.x;s.style.color=f.c;el.appendChild(s);if(f.x[0]=='-')el.classList.add('hurt');setTimeout(()=>s.remove(),1100)})}
 const hintTxt=()=>{const sp=psp();if(!pend||!sp)return '';const n=need(sp);return n=='e'?(sp.any?'Choose an enemy':'Choose the front enemy'):n=='a'?'Choose an ally':''};
 const bmb=T=>T.bombs.length?'<span title="Bombs about to explode">💣 '+T.bombs.map(b=>b.t).join('/')+'</span>':'';
 function ui(){if(!P)return;document.body.classList.toggle('sel',!!(pend&&need(psp())));
@@ -952,7 +1013,7 @@ const needGen=()=>Math.min(2,GEN.filter(gAvail).length);
 const dd=(id,dur)=>{const m=AM[id];return m&&m.k?[m.k,+dur||2]:null};
 function buildHero(h,fid,b,name,img){b=+b||0;const cl=h.class_==='Mage'?'Magic':(COL[h.class_]?h.class_:'Specialist'),col=COL[cl],at=Math.max(1,+h.atk||1),
  cs=(Array.isArray(h.cards)?h.cards:Object.values(h.cards||{})).filter(c=>c&&c.name),up=n=>(+n>0?+n+b:0);
- const o={id:'u'+fid,fid,cl,n:name||h.name||'Hero',bn:h.name||'Hero',col,hp:Math.max(1,+h.hp||50),atk:at,ap:null,img:img||h.img||ph(col),A:[],S:[],X:null,cr:+h.created||0,src:h,st:0,byId:{},face:nFace(h.face),ar:+h.ar||0,bs:+h.bs||100};
+ const o={id:'u'+fid,fid,cl,n:name||h.name||'Hero',bn:h.name||'Hero',col,hp:Math.max(1,+h.hp||50),atk:at,ap:null,img:img||h.img||ph(col),A:[],S:[],X:null,cr:+h.created||0,src:h,st:0,byId:{},face:nFace(h.face),ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:nFace(h.atkFace),exImg:h.exImg||'',exFace:nFace(h.exFace)};
  cs.forEach(c=>{const v0=+c.value||0,m=AM[c.ail],d=dd(c.ail,c.dur),
   ex=s=>{const sh=up(c.shield),hl=up(c.heal);if(sh)s.sh=(s.sh||0)+sh;if(hl)s.h=(s.h||0)+hl;if(+c.draw)s.dr=+c.draw},
   hit=s=>{if(+c.hits>1)s.x=Math.min(5,+c.hits);if(c.scope=='pierce')s.k='p';else if(c.scope=='all')s.k='a'},
@@ -974,7 +1035,7 @@ function buildHero(h,fid,b,name,img){b=+b||0;const cl=h.class_==='Mage'?'Magic':
   ex(s);reg(s);if(c.token)return;o.S.push(s)});
  return o.S.length?o:null}
 function evH(h){const e=hs(h).ev|0;if(!e||!h.src)return h;const ev=(h.src.evo&&h.src.evo[e])||{},b=(ev.bonus===undefined||ev.bonus===''||ev.bonus===null)?(CFG.evoB[e-1]||0):+ev.bonus;
- const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;if(ev.img){o.face=nFace(ev.face);o.ar=+ev.ar||0}else{o.face=h.face;o.ar=h.ar}return o}
+ const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;if(ev.img){o.face=nFace(ev.face);o.ar=+ev.ar||0;o.atkImg=ev.atkImg||'';o.atkFace=nFace(ev.atkFace);o.exImg=ev.exImg||'';o.exFace=nFace(ev.exFace)}else{o.face=h.face;o.ar=h.ar}return o}
 const evNeed=e=>({fr:CFG.frag[e]||0,st:e===3?CFG.stone:0});
 function evolve(k){const h=HD.find(x=>hk(x)===k);if(!h)return;const s=PD.hs[k]||{lv:1,ev:0},e=s.ev|0;if(e>=4)return;const n=evNeed(e);
  if(s.lv<CFG.maxLv)return toast('Reach level '+CFG.maxLv+' first');if((PD.fr[k]||0)<n.fr)return toast('Not enough card fragments');if(PD.st<n.st)return toast('You need a Transcendence stone');
@@ -1014,7 +1075,7 @@ function deckHTML(l,edit){
  return '<div class="dk">'+gsl(0)+hh.map((k,j)=>hsl(k,j)).join('')+gsl(1)+hh.map((k,j)=>rsl(k,j)).join('')+'</div>'}
 const bufLU=()=>{const l={h:hi.map(i=>hk(HD[i])),r:{},g:GS.slice()};hi.forEach(i=>{if(RL[i])l.r[hk(HD[i])]=RL[i]});return l};
 /* face tiles: centre on the face found by the admin panel (falls back to the old top-centre crop) */
-const nFace=f=>f&&isFinite(+f.x)&&isFinite(+f.y)?{x:+f.x,y:+f.y,z:+f.z||3}:null;
+const nFace=f=>f&&isFinite(+f.x)&&isFinite(+f.y)?{x:+f.x,y:+f.y,z:+f.z||3,auto:f.auto}:null;
 const faceImg=x=>x.face?'<img class="fz" src="'+x.img+'" alt="" referrerpolicy="no-referrer" style="--fx:'+x.face.x+';--fy:'+x.face.y+';--z:'+x.face.z+'">':'<img src="'+x.img+'" alt="" referrerpolicy="no-referrer">';
 /* battle figure size: wide poses (sword out, cape) get more room so they stand as tall as the others; admin "Size in battle" scales on top */
 /* every hero is drawn by HEIGHT (not squeezed into its slot), so sizes are the same on every screen shape.
@@ -1028,7 +1089,8 @@ function calcFt(src){if(!src||src in FT)return;FT[src]=null;const im=new Image()
 const headF=h=>h&&h.face&&h.face.auto===1&&+h.face.z>0?.5/+h.face.z:0;
 let HMED=0;
 function headMed(){const a=[...P.u,...E.u].map(u=>headF(u.h)).filter(Boolean).sort((x,y)=>x-y);HMED=a.length?a[a.length>>1]:0}
-const figSz=(h,m)=>{calcFt(h.img);const hf=headF(h),k=hf&&HMED?Math.min(1.12,Math.max(.84,HMED/hf)):1,fh=Math.min(1.02,.84*k)*((+h.bs||100)/100),ft=FT[h.img]==null?.5:FT[h.img];
+const figSz=(h,m,ps,pf)=>{const src=ps||h.img;calcFt(src);const hf=headF(h),k=hf&&HMED?Math.min(1.12,Math.max(.84,HMED/hf)):1,ft=FT[src]==null?.5:FT[src];let fh=Math.min(1.02,.84*k)*((+h.bs||100)/100);
+ if(ps){const ph=headF({face:pf});if(hf&&ph)fh*=Math.min(1.35,Math.max(.8,hf/ph))}
  return '--fh:'+fh.toFixed(3)+';--tx:'+(-(m?ft:1-ft)*100).toFixed(1)+'%'};
 
 /* ================= DASHBOARD ================= */
@@ -1068,7 +1130,7 @@ async function renderHome(){const my=++rtok;if(!PD)return;$('#tbw').innerHTML=tb
 /* generic popup */
 function openMdl(h){const m=$('#mdl');m.innerHTML='<div class="mdb"><button class="mdx" id="mdx" aria-label="Close">✕</button>'+h+'</div>';m.hidden=false}
 const closeMdl=()=>{$('#mdl').hidden=true};
-$('#mdl').addEventListener('click',e=>{if(e.target.id==='mdl'||e.target.id==='mdx')closeMdl();const pk=e.target.closest('[data-pk]');if(pk){PD.disp=pk.dataset.pk;saveP('disp');closeMdl();SND.click();renderHome()}});
+$('#mdl').addEventListener('click',e=>{if(e.target.id==='lupn'){closeMdl();return}if(e.target.id==='lupg'){closeMdl();SND.click();openEd(PD.sel);return}if(e.target.id==='mdl'||e.target.id==='mdx')closeMdl();const pk=e.target.closest('[data-pk]');if(pk){PD.disp=pk.dataset.pk;saveP('disp');closeMdl();SND.click();renderHome()}});
 function openPick(){const own=HD.map((b,i)=>owned(b)?i:-1).filter(i=>i>=0);
  openMdl('<h3 class="mdh">Choose your display hero</h3><p class="sub" style="color:#6a4a2a">Pick any hero you own. It stands behind the Play button.</p><div class="cg pk">'+own.map(i=>{const x=evH(HD[i]);return '<div class="ct'+(hk(HD[i])===PD.disp?' in':'')+'" data-pk="'+hk(HD[i])+'" style="--c:'+x.col+'"><div class="cth">'+esc(x.n)+'</div><div class="ctf zf">'+faceImg(x)+'</div></div>'}).join('')+'</div>')}
 $('#home').addEventListener('click',e=>{
@@ -1171,10 +1233,10 @@ $('#hd').addEventListener('click',async e=>{
 /* ================= START A MATCH: VS intro -> battle ================= */
 let itm=[],intro=0;
 /* VS cards: every portrait is framed on the face at the same head size, so all heroes look equally big */
-const vsP=(h,i)=>{const f=h.face,z=f&&+f.z>0?+f.z:0,vh=z?Math.min(300,Math.max(100,z*36)):0,nm=String(h.n||'');
+const vsP=(h,i)=>{const f=h.face,z=f&&+f.z>0?+f.z:0,vh=z?Math.min(175,Math.max(100,z*20)):0,nm=String(h.bn||h.n||'');
  return '<div class="vp" style="--c:'+h.col+';--i:'+i+'"><div class="vpi"><i class="vgl"></i><img'+(z?' class="vf" style="--fx:'+(+f.x)+';--fy:'+(+f.y)+';--vh:'+vh.toFixed(1)+'%"':'')+' src="'+h.img+'" alt="" referrerpolicy="no-referrer"><i class="vsh"></i>'+
- '<span class="vci" title="'+cHtml(h.cl)+'">'+(CI[h.cl]||'⚔️')+'</span>'+(h.st?'<span class="vst">'+STG[h.st]+'</span>':'')+
- '<div class="vlb"><span>'+cHtml(h.cl)+'</span><b style="--nl:'+Math.max(9,nm.length)+'">'+cHtml(nm)+'</b></div></div></div>'};
+ '<span class="vci" title="'+cHtml(h.cl)+'">'+(CI[h.cl]||'⚔️')+'</span>'+
+ '<div class="vlb">'+evBadge(h.st)+'<span class="vcl">'+cHtml(h.cl)+'</span><b class="vnm" style="--nl:'+Math.max(9,nm.length)+'">'+cHtml(nm)+'</b></div></div></div>'};
 function showIntro(ps,es){$('#vl').innerHTML=ps.slice().reverse().map((h,i)=>vsP(h,i)).join('');$('#vr').innerHTML=es.map((h,i)=>vsP(h,es.length-1-i)).join('');
  $('#va1').innerHTML=avH(PROF,70);$('#vn1').textContent=myName();$('#va2').src=es[0].img;const v=$('#vsx');v.className='';v.hidden=false;$('#menu').hidden=true;$('#hd').hidden=true;$('#home').hidden=true;hidePop();SND.music(null);
  intro=1;itm=[setTimeout(SND.whoosh,60),setTimeout(SND.whoosh,200),setTimeout(SND.clash,1000),setTimeout(SND.clash,1150),setTimeout(go2,8300)]}
@@ -1183,7 +1245,8 @@ function beginBattle(){headMed();turn='p';over=0;busy=0;pend=null;M=600;tt=30;L=
 
 function pickFoe(){const all=shuf(HD.slice()),out=[],used=new Set();all.forEach(h=>{if(out.length<4&&!used.has(h.cl)){used.add(h.cl);out.push(h)}});all.forEach(h=>{if(out.length<4&&!out.includes(h))out.push(h)});return shuf(out)}
 function playGame(){mobFS();const m=PD.mode;if(m==='story')return toast('Story mode is coming soon!');
- const l=PD.lineups[PD.sel]||{},bad=validLU(l);if(bad||HD.length<4){toast(bad||'Not enough heroes to play yet.');return bad?openEd(PD.sel):0}
+ const l=PD.lineups[PD.sel]||{},bad=validLU(l);if(bad||HD.length<4){if(!bad)return toast('Not enough heroes to play yet.');const cnt=((l.h||[]).map(hidx).filter(i=>i>=0)).length;
+  openMdl('<div class="lup"><div class="lupi">⚔️</div><h3 class="mdh">Line-up '+(PD.sel+1)+' isn’t ready</h3><p>'+(cnt?'This line-up has <b>'+cnt+' of 4</b> heroes.':'This line-up is <b>empty</b>.')+' You need <b>4 heroes, one of each class</b>'+(needGen()?' and <b>'+needGen()+' general card'+(needGen()>1?'s':'')+'</b>':'')+' before you can enter battle.</p><div class="lupb"><button class="g" id="lupn">Not now</button><button id="lupg">Build line-up</button></div></div>');return}
  const ids=(l.h||[]).map(hidx),ps=ids.map(i=>evH(HD[i])),rl=ids.map(i=>REL.find(r=>r.id===(l.r||{})[hk(HD[i])])||null),gen=(l.g||[]).map(id=>GEN.find(g=>g.id===id)).filter(g=>gAvail(g)),
   es=pickFoe(),fr=shuf(REL.slice()),fg=shuf(GEN.filter(g=>!g.locked)).slice(0,2);
  curMode=m;curTeam=ps;if(!PD.played){PD.played=true;saveP('played')}lbUpd();
@@ -1320,7 +1383,7 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
  QUESTS=Object.entries(qs||{}).map(([id,q])=>({id,t:q.title||'Quest',mode:q.mode||'any',wins:Math.max(1,+q.wins||1),rw:q.reward||{},ord:+q.created||0})).sort((a,b)=>a.ord-b.ord);
  const LH=Object.entries(hsr||{}).map(([id,h])=>h?buildHero(h,id,0,h.name,h.img):null).filter(Boolean);
  LH.sort((x,y)=>x.cr-y.cr);if(Object.keys(hsr||{}).some(k=>k.startsWith('hd_'))&&LH.length>=4)HD.length=0;if(LH.length)HD.push(...LH);
- HD.forEach(h=>{calcFt(h.img);if(h.src&&h.src.evo)Object.values(h.src.evo).forEach(e=>e&&e.img&&calcFt(e.img))});
+ HD.forEach(h=>{[h.img,h.atkImg,h.exImg].forEach(calcFt);if(h.src&&h.src.evo)Object.values(h.src.evo).forEach(e=>e&&[e.img,e.atkImg,e.exImg].forEach(calcFt))});
 }catch(e){console.warn(e)}
  if(!RANKS.length)RANKS=defRanks();
  await loadPD();
