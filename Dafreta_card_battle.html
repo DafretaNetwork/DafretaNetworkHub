@@ -757,6 +757,28 @@ body.sel .sdim{opacity:1}
 #gw img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .dh img{pointer-events:none}
 
+/* ===== targeting: only the stage's own dim layer, so glowing targets sit ABOVE it ===== */
+#bat #stage::after{content:none!important}
+body.sel #bat .unit.tg .info{box-shadow:0 0 0 2px #ffd45a,0 0 14px #ffd45a}
+/* ===== EX details while choosing its target ===== */
+#exd{position:absolute;left:50%;bottom:calc(var(--foot)*.05);translate:-50% 0;z-index:13;height:calc(var(--foot)*.9);display:flex;gap:12px;align-items:center;padding:8px 16px 8px 8px;max-width:min(560px,70cqw);pointer-events:none;
+ background:linear-gradient(#2e1d10f5,#140b05f8);border:2px solid #ffd24a;border-radius:12px;box-shadow:0 0 22px #ffb30088,0 8px 20px #000c;animation:exdin .25s cubic-bezier(.2,1.4,.4,1)}
+@keyframes exdin{from{opacity:0;transform:translateY(20px) scale(.92)}}
+#exd .exc{flex:none;height:100%;--cw:calc((var(--foot)*.9 - 16px)/1.515)}
+#exd .exc .card{transform:none!important;cursor:default;box-shadow:0 0 0 2px #ffd24a,0 0 16px #ffd24a99}
+#exd .exi{min-width:0;display:flex;flex-direction:column;gap:4px;color:#f3e3c8}
+#exd .exi small{font:800 11px system-ui;letter-spacing:.12em;color:#ffd24a;text-transform:uppercase}
+#exd .exi b{font:900 clamp(15px,4.5cqh,24px)/1.1 Cinzel,Georgia,serif;color:#fff;text-shadow:0 2px 0 #000a}
+#exd .exi ul{margin:2px 0 0;padding-left:16px;font:600 clamp(11px,3.1cqh,15px)/1.3 system-ui}
+#exd .exi em{font-style:normal;font:800 clamp(10px,2.8cqh,13px) system-ui;color:#8fdcff}
+/* ===== finished quest: Complete button ===== */
+.qs.qbd .qr.qdone .qgl{filter:drop-shadow(0 0 3px #3cff6a) drop-shadow(0 0 8px #8be04a)}
+.qs.qbd .qr.qdone .qgl::before{background:conic-gradient(from var(--qa),transparent 0 55%,#3fbf3a 72%,#e8ffd0 82%,#8be04a 88%,transparent 97%)}
+.qs.qbd .qr.qdone small{color:#8fe3a0;font-weight:800}
+.qs.qbd .qw.qcm{width:auto;min-width:74px;padding:0 10px;background:linear-gradient(#8be04a,#3f9a1c);border-color:#d8ffb0;box-shadow:0 3px 0 #1f5a0c,0 0 14px #8be04a99;cursor:pointer;flex-direction:row;gap:5px;animation:none}
+.qs.qbd .qw.qcm small{font:900 12px system-ui;color:#fff;text-shadow:0 1px 2px #0008}
+@container (max-height:520px){.qs.qbd .qw.qcm{min-width:56px;padding:0 6px}.qs.qbd .qw.qcm small{font-size:9px}#exd{padding:5px 10px 5px 5px;gap:8px}}
+
 /* ===== phone landscape: smaller quest board, scroll sits a little lower ===== */
 @container (max-height:520px){
  .qs.qbd{width:min(330px,44cqw)}
@@ -931,7 +953,7 @@ body.sel .sdim{opacity:1}
 <div id="hud"><button id="gear" aria-label="Menu">⚙</button><div id="hist"></div><div id="hmid"><span id="tm"></span><span id="tn"></span></div><div id="fi"></div></div>
 <div id="stage"></div>
 <div id="foot"><div id="fl"><div id="en"></div><div id="pi"></div></div><div id="hand"></div><div id="fr2"><div class="endw" id="endw"><i class="endr"></i><button id="end">END<br>TURN</button></div><div id="dk"></div></div></div>
-<div id="hint" hidden></div><div id="sti" hidden></div>
+<div id="hint" hidden></div><div id="exd" hidden></div><div id="sti" hidden></div>
 <div id="tbn" hidden><div class="tfl"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="trb"><b></b></div></div>
 <div id="czm" hidden></div>
 <div id="lg" hidden></div><div id="log" hidden></div>
@@ -1165,6 +1187,8 @@ function ui(){if(!P)return;document.body.classList.toggle('sel',!!(pend&&need(ps
  {const hd=$('#hand'),n=P.hand.length,hh=hd.clientHeight||150,W=hd.clientWidth||600,cw=Math.max(44,Math.round(Math.min(hh*.8,W/(1+Math.max(0,n-1)*.5)))),step=n>1?Math.min(cw*.8,(W-cw)/(n-1)):0;hd.style.setProperty('--cw',cw+'px');
   hd.innerHTML=P.hand.map((c,i)=>{const k=i-(n-1)/2,pl=turn=='p'&&!busy&&ok(P,c),bf=bufC(c);return cardH(c.s,(pend&&pend.c===c)?' sel':pl?(bf?' rdy buf':' rdy'):' off','data-u="'+c.u+'" style="--x:'+(k*step).toFixed(1)+'px;--r:'+(k*Math.min(4.5,34/n)).toFixed(1)+'deg;--y:'+(k*k*cw*.012).toFixed(1)+'px;--z:'+(i+1)+'"',c.o)}).join('')}
  const hn=hintTxt(),hi2=$('#hint');hi2.textContent=hn;hi2.hidden=!hn;
+ {const xd=$('#exd'),O=pend&&pend.o;if(O&&O.h.X){const X=O.h.X;if(xd.dataset.k!==O.h.id){xd.dataset.k=O.h.id;
+  xd.innerHTML='<div class="exc">'+cardH({...X,c:'EX'},'','',O)+'</div><div class="exi"><small>Ultimate · choose a target</small><b>'+cHtml(X.n)+'</b><ul>'+dparts(X,ea(O)).map(t=>'<li>'+t+'</li>').join('')+'</ul><em>'+(need(X)=='a'?'Tap a glowing ally':'Tap a glowing enemy')+' · tap elsewhere to cancel</em></div>'}xd.hidden=false}else{xd.hidden=true;xd.dataset.k=''}}
  $('#end').disabled=turn!='p'||busy;$('#end').innerHTML=turn=='p'?'END<br>TURN':'ENEMY<br>TURN';{const w=$('#endw'),my=turn=='p'&&!busy&&!over;w.classList.toggle('dis',!my);w.classList.toggle('nudge',my&&!P.hand.some(c=>ok(P,c))&&!P.u.some(xr))}flush();tick()}
 const bb=(T,w)=>T.bombs.length?'   💣 '+w+': '+T.bombs.map(b=>b.n+' ('+b.t+')').join(', '):'';
 const tick=()=>{$('#tm').textContent='⏱ '+Math.floor(M/60)+':'+String(M%60).padStart(2,'0');$('#tn').textContent=turn=='p'?'Your turn '+tt+'s':'Foe turn'};
@@ -1278,14 +1302,14 @@ function result(win){const R={win,heroes:[],rank:null,quests:[]};if(!PD||!curTea
   R.heroes.push({h,b,a:{lv:s.lv,xp:s.xp},gain:wasMax?0:gain,ups,max:wasMax})});
  if(win)PD.w++;else PD.l++;
  if(curMode==='rank'){const b=rkI(PD.pts);PD.pts=Math.max(0,PD.pts+(win?CFG.rankWin:-CFG.rankLoss));const a=rkI(PD.pts);R.rank={d:win?CFG.rankWin:-CFG.rankLoss,a,up:a>b,down:a<b}}
- if(win)QUESTS.forEach(q=>{if(q.mode!=='any'&&q.mode!==curMode)return;const p=PD.qp[q.id]=PD.qp[q.id]||{w:0};if(p.c||p.w>=q.wins)return;p.w++;R.quests.push({t:q.t,w:p.w,n:q.wins,rw:p.w>=q.wins?claim(q.id,1):''})});
+ if(win)QUESTS.forEach(q=>{if(q.mode!=='any'&&q.mode!==curMode)return;const p=PD.qp[q.id]=PD.qp[q.id]||{w:0};if(p.c||p.w>=q.wins)return;p.w++;R.quests.push({t:q.t,w:p.w,n:q.wins})});
  {const td=new Date().toLocaleDateString('en-CA');if(PD.ld!==td){PD.ld=td;PD.days=(PD.days|0)+1}}
  saveP('played','w','l','hs','pts','qp','days','ld');lbUpd();return R}
 function claim(id,quiet){const q=QUESTS.find(x=>x.id===id);if(!q)return;const p=PD.qp[id]||{w:0};if(p.c||p.w<q.wins)return;const r=q.rw||{},amt=Math.max(1,+r.amt||1);let txt;
  if(r.type==='frag'){let h=r.hero&&r.hero!=='random'?HD.find(x=>hk(x)===String(r.hero).replace(/^hd_/,'')):null;if(!h)h=HD[Math.random()*HD.length|0];PD.fr[hk(h)]=(PD.fr[hk(h)]||0)+amt;txt=amt+' '+h.n+' card fragments'}
  else if(r.type==='gen'){const g=GEN.find(x=>x.id===r.gen);PD.gc[r.gen]=true;txt='the general card '+(g?g.s.n:'')}
  else{PD.st+=amt;txt=amt+' Transcendence stone'+(amt>1?'s':'')}
- p.c=Date.now();PD.qp[id]=p;saveP('fr','gc','st','qp');if(quiet)return txt;SND.heal();toast('Quest complete! You received '+txt+'.');renderHome()}
+ p.c=Date.now();PD.qp[id]=p;saveP('fr','gc','st','qp');if(quiet)return txt;SND.heal();toast('Quest completed! You received '+txt+'.');renderHome()}
 async function invite(k,btn){const key='dfinv_'+k,t=+localStorage[key]||0;if(Date.now()-t<864e5)return toast('You already invited them today');
  try{await fb('','PATCH',{['inbox/'+k+'/notes/'+mid()]:{type:'inv',from:ME,t:Date.now()}});localStorage[key]=Date.now();toast('Invite sent! They will get a notification.');if(btn){btn.disabled=true;btn.textContent='Invited ✓'}}catch(e){toast('Could not send the invite')}}
 
@@ -1326,8 +1350,8 @@ const modeTxt={any:'Win in Standard or Ranked',std:'Win in Standard',rank:'Win i
 const qIc=q=>(q.rw||{}).type==='frag'?'🧩':(q.rw||{}).type==='gen'?'🃏':'💠';
 const qMI=q=>q.mode==='rank'?'👑':q.mode==='std'?'⚔️':'🎯';
 function qH(q){const p=PD.qp[q.id]||{w:0},w=Math.min(q.wins,p.w||0),done=w>=q.wins,cl=!!p.c,r=q.rw||{},amt=Math.max(1,+r.amt||1);
- return `<div class="qr act" data-qo="${esc(q.id)}" role="button" tabindex="0"><i class="qgl"></i><span class="qic">${qMI(q)}</span><div class="qm"><b>${esc(q.t)}</b><div class="qb"><i style="width:${w/q.wins*100}%"></i><span>${w}/${q.wins}</span></div><small>${modeTxt[q.mode]||modeTxt.any}</small></div>
-  <button class="qw${done&&!cl?' go':''}" data-q="${esc(q.id)}" ${done&&!cl?'':'disabled'} title="${done&&!cl?'Tap to claim':cl?'Claimed':'Reward'}"><i>${qIc(q)}</i><small>${cl?'✓':(r.type==='gen'?'×1':amt)}</small></button></div>`}
+ return `<div class="qr act${done&&!cl?' qdone':''}" data-qo="${esc(q.id)}" role="button" tabindex="0"><i class="qgl"></i><span class="qic">${qMI(q)}</span><div class="qm"><b>${esc(q.t)}</b><div class="qb"><i style="width:${w/q.wins*100}%"></i><span>${w}/${q.wins}</span></div><small>${done?'Finished! Tap Complete':modeTxt[q.mode]||modeTxt.any}</small></div>
+  ${done&&!cl?`<button class="qw go qcm" data-q="${esc(q.id)}"><i>🎁</i><small>Complete</small></button></div>`:''}${done&&!cl?'':`<button class="qw" data-q="${esc(q.id)}" ${done&&!cl?'':'disabled'} title="${done&&!cl?'Tap to claim':cl?'Claimed':'Reward'}"><i>${qIc(q)}</i><small>${cl?'✓':(r.type==='gen'?'×1':amt)}</small></button></div>`}`}
 const qAct=()=>QUESTS.filter(q=>!(PD.qp[q.id]||{}).c);
 const qReady=()=>QUESTS.filter(q=>{const p=PD.qp[q.id]||{};return !p.c&&(p.w||0)>=q.wins}).length;
 function rwInfo(q){const r=q.rw||{},a=Math.max(1,+r.amt||1);
@@ -1336,13 +1360,13 @@ function rwInfo(q){const r=q.rw||{},a=Math.max(1,+r.amt||1);
  return['💠',a+' Transcendence stone'+(a>1?'s':''),'Needed for the final evolution']}
 function openQuest(id){const q=QUESTS.find(x=>x.id===id);if(!q)return;const p=PD.qp[q.id]||{w:0},w=Math.min(q.wins,p.w||0),done=w>=q.wins,cl=!!p.c,rw=rwInfo(q),
  mn=q.mode==='rank'?'Ranked':q.mode==='std'?'Standard':'Standard or Ranked',
- steps=['Build a line-up of 4 heroes (one per class) on the Battle page.','Select <b>'+mn+'</b> mode and press <b>Play</b>.','Win <b>'+q.wins+'</b> match'+(q.wins>1?'es':'')+'. Only wins count, losses don’t reset your progress.','The reward is sent to you automatically and the quest disappears from your list.'];
+ steps=['Build a line-up of 4 heroes (one per class) on the Battle page.','Select <b>'+mn+'</b> mode and press <b>Play</b>.','Win <b>'+q.wins+'</b> match'+(q.wins>1?'es':'')+'. Only wins count, losses don’t reset your progress.','Come back to the Battle page and tap <b>Complete quest</b> to get your reward. The quest then leaves your list.'];
  openMdl(`<div class="qpop"><div class="qph"><span class="qpi">📜</span><div><small>${esc(modeTxt[q.mode]||modeTxt.any)}</small><h3 class="mdh">${esc(q.t)}</h3></div></div>
   <div class="qpb"><i style="width:${w/q.wins*100}%"></i><span>${cl?'Completed':w+' / '+q.wins+' wins'}</span></div>
   ${q.desc?`<h4>Instructions</h4><p class="qpd">${esc(q.desc).replace(/\n/g,'<br>')}</p>`:''}
   <h4>How to complete</h4><ol class="qps">${steps.map(t=>'<li><span>'+t+'</span></li>').join('')}</ol>
   <h4>Reward</h4><div class="qprw"><i>${rw[0]}</i><div><b>${esc(rw[1])}</b><small>${esc(rw[2])}</small></div></div>
-  <p class="qpok">${cl?'Completed ✓ Reward received':'In progress · '+w+' / '+q.wins+' wins · reward is given automatically'}</p></div>`)}
+  ${done&&!cl?`<button class="qpcl go" data-qc="${esc(q.id)}">🎁 Complete quest</button>`:`<p class="qpok">${cl?'Completed ✓ Reward received':'In progress · '+w+' / '+q.wins+' wins'}</p>`}</div>`)}
 const QSCROLL='<img src="https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Stylized%20Worn%20Parchment%20Scroll%20Icon.png" alt="" referrerpolicy="no-referrer">';
 function tbH(){const ri=rkI(PD.pts),tl=HD.reduce((a,h)=>{const s=hs(h);return a+s.lv+s.ev*CFG.maxLv},0);
  const st=Math.max(1,CFG.rankStep),into=(PD.pts|0)%st;
@@ -1545,7 +1569,7 @@ async function animXp(i){const o=RSV.heroes[i],c=$('#xc'+i);if(!c)return;const f
  bar(o.a.xp/need*100,.9);tx.textContent=o.a.xp+'/'+need}
 function renderExp(){rsStage=2;const R=RSV;$('#rmd').textContent='Hero EXP';$('#rlg').hidden=true;
  const lines=[];if(R.rank)lines.push(`<li>Ranked: <b>${R.rank.d>0?'+':''}${R.rank.d} pts</b> · ${rkE(R.rank.a,18)} ${esc((RANKS[R.rank.a]||{}).n||'')}${R.rank.up?' · <b>RANK UP!</b>':R.rank.down?' · rank down':''}</li>`);
- R.quests.forEach(q=>lines.push(`<li>Quest <b>${esc(q.t)}</b>: ${q.w}/${q.n}${q.w>=q.n?' · complete! You received <b>'+esc(q.rw||'')+'</b>':''}</li>`));
+ R.quests.forEach(q=>lines.push(`<li>Quest <b>${esc(q.t)}</b>: ${q.w}/${q.n}${q.w>=q.n?' · finished! Tap <b>Complete</b> on the Battle page to get your reward':''}</li>`));
  R.heroes.forEach(o=>{if(!o.max&&o.a.lv>=CFG.maxLv&&o.ups.length)lines.push(`<li><b>${esc(o.h.bn||o.h.n)}</b> is at max level and ready to evolve!</li>`)});
  $('#rst').innerHTML=`<div class="xg2">${R.heroes.map(xcard).join('')}</div>${lines.length?`<ul class="rsl">${lines.join('')}</ul>`:''}`;
  R.heroes.forEach((o,i)=>setTimeout(()=>animXp(i),500+i*350))}
@@ -1658,7 +1682,6 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
  if(!RANKS.length)RANKS=defRanks();
  await loadPD();
  if(!PD.lineups[0]){const f=[],u=new Set();HD.forEach(h=>{if(owned(h)&&f.length<4&&!u.has(h.cl)){u.add(h.cl);f.push(hk(h))}});if(f.length==4)PD.lineups[0]={h:f,r:{},g:GEN.filter(gAvail).slice(0,needGen()).map(g=>g.id)}}
- {const got=QUESTS.filter(q=>{const p=PD.qp[q.id]||{};return !p.c&&(p.w||0)>=q.wins}).map(q=>claim(q.id,1)).filter(Boolean);if(got.length)setTimeout(()=>toast('Quest reward received: '+got.join(', ')),900)}
  leg();renderHome()})();
 
 
