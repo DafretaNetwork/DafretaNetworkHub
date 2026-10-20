@@ -1011,9 +1011,9 @@ async function importDefaults(){
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
 const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,atkImg:'',atkFace:null,exImg:'',exFace:null,cards:[],evo:{},open:false,locked:false,comments:[]});
-const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:''});
+const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:'',shDur:2});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
-const emptyGF=()=>({art:'',id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
+const emptyGF=()=>({art:'',shDur:2,id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
 const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
 const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
@@ -1044,15 +1044,15 @@ const GEN_FX={
  bomb:['Bomb (delayed explosion)','Explodes after {d} turn(s): deals {v} damage to all enemies']
 };
 const GEN_ICON={dmg:'💥',dmg_all:'🌋',heal:'💚',heal_all:'✨',shield:'🛡️',shield_all:'🏰',energy:'💎',draw:'🎴',bomb:'💣'};
-const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).replace('{d}',+g.delay||2)+(AILS[g.ail]?' + '+AILS[g.ail].name+' ('+(+g.dur||2)+'t)':'');
+const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).replace('{d}',+g.delay||2)+(/^shield/.test(g.effect)?' for '+(+g.shDur||2)+' turn(s)':'')+(AILS[g.ail]?' + '+AILS[g.ail].name+' ('+(+g.dur||2)+'t)':'');
 function cardText(c){const v=+c.value||0,a=AILS[c.ail],ad=a?' + '+a.name+' ('+(+c.dur||2)+'t)':'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (+foe behind)',all:' (all foes)'}[c.scope]||'';
-  const ex=[+c.shield?'+'+(+c.shield)+' shield':'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
+  const sd=' ('+(+c.shDur||2)+'t)',ex=[+c.shield?'+'+(+c.shield)+' shield'+sd:'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
   switch(c.type){
     case 'heal':t='Heal '+v+ad+(c.target==='self'?' (self only)':'');break;
     case 'mana':t='Gain '+v+' energy';break;
     case 'conjure':t='Add cards to hand';break;
     case 'draw':t='Draw '+v+' card(s)';break;
-    case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+(c.target==='self'?' (self)':'');break;
+    case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+sd+(c.target==='self'?' (self)':'');break;
     case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)'+(c.target==='enemy'?' to any enemy':''):'');break;
     case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,none:'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
     default:t='Deal '+v+' dmg'+hits+reach+ad}
@@ -1414,6 +1414,7 @@ function renderCardForm(){
     ${(c.type==='attack'||c.type==='debuff')?`<div><label>Hits (times the damage is dealt)</label><input type="number" min="1" max="5" value="${+c.hits||1}" oninput="CF.hits=+this.value"></div><div><label>Reach</label><select onchange="CF.scope=this.value">${[['front','Front enemy only'],['pierce','Front enemy + the foe behind (70%)'],['all','All enemies']].map(([k,l])=>`<option value="${k}"${(c.scope||'front')===k?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
     ${!['buff','draw','mana'].includes(c.type)?`<div><label>Bonus shield (optional)</label><input type="number" min="0" value="${+c.shield||0}" oninput="CF.shield=+this.value"></div>`:''}
     ${!['heal','draw','mana'].includes(c.type)?`<div><label>Bonus heal (optional)</label><input type="number" min="0" value="${+c.heal||0}" oninput="CF.heal=+this.value"></div>`:''}
+    ${!['draw','mana','conjure'].includes(c.type)?`<div><label>🛡️ Shield lasts (turns) <span class="mut" style="font-weight:400">· only if the card gives shield</span></label><input type="number" min="1" max="9" value="${+c.shDur||2}" oninput="CF.shDur=+this.value"></div>`:''}
     ${c.type!=='draw'?`<div><label>Also draw cards (optional)</label><input type="number" min="0" max="5" value="${+c.draw||0}" oninput="CF.draw=+this.value"></div>`:''}
    </div>
    ${conjHTML()}
@@ -1458,7 +1459,7 @@ async function saveCard(){
   if(CF.type==='ultimate'&&HF.cards.some((x,j)=>x.type==='ultimate'&&j!==CF.i))return toast('This hero already has an ultimate. Edit or remove it first.');
   if(CF.type==='conjure'&&!(CF.cmode&&CF.cpool.length))return toast('Choose the cards this skill adds to the hand');
   if(CF.cmode&&!CF.cpool.length)return toast('Add at least one card to the “Add cards to hand” list, or set the mode to None');
-  const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',target:(CF.type==='heal'||CF.type==='buff'||CF.type==='debuff')?(CF.target||''):'',shield:Math.max(0,+CF.shield||0),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
+  const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',target:(CF.type==='heal'||CF.type==='buff'||CF.type==='debuff')?(CF.target||''):'',shield:Math.max(0,+CF.shield||0),shDur:Math.max(1,Math.min(9,+CF.shDur||2)),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
   if(CF.type==='ultimate')card.ult=CF.ult||'all';
   card.id=CF.id||newCid();if(CF.art)card.art=CF.art;if(CF.token&&CF.type!=='ultimate')card.token=true;
   if(CF.cmode&&CF.cpool.length)card.conj={mode:CF.cmode,n:Math.max(1,Math.min(5,+CF.cn||1)),cost:(CF.ccost===''||CF.ccost==null)?'':Math.max(0,+CF.ccost),pool:CF.cpool.slice()};
@@ -1530,6 +1531,7 @@ function genSecInner(){
     <div><label>Card Name</label><input value="${esc(GF.name)}" maxlength="30" oninput="GF.name=this.value" placeholder="e.g. Bomb"></div>
     <div><label>Effect</label><select onchange="GF.effect=this.value;paintGen()">${Object.entries(GEN_FX).map(([k,v])=>`<option value="${k}"${GF.effect===k?' selected':''}>${v[0]}</option>`).join('')}</select></div>
     <div><label>Value</label><input type="number" min="0" value="${+GF.value||0}" oninput="GF.value=+this.value;gfTxt()"></div>
+    ${/^shield/.test(GF.effect)?`<div><label>🛡️ Shield lasts (turns)</label><input type="number" min="1" max="9" value="${+GF.shDur||2}" oninput="GF.shDur=+this.value;gfTxt()"></div>`:''}
     ${GF.effect==='bomb'?`<div><label>Explodes after (turns)</label><input type="number" min="1" max="9" value="${+GF.delay||2}" oninput="GF.delay=+this.value;gfTxt()"></div>`:''}
     <div><label>Mana Cost</label><input type="number" min="0" max="20" value="${+GF.manaCost||0}" oninput="GF.manaCost=+this.value"></div>
     <div><label>Status ailment (optional)</label><select onchange="GF.ail=this.value;paintGen()">${ailOpts(GF.ail)}</select></div>
@@ -1547,7 +1549,7 @@ function gfTxt(){const e=$('#gftx');if(e)e.textContent='Effect: '+genText(GF)}
 async function saveGen(){
   if(!GF.name.trim())return toast('Card name is required');
   const id=GF.id||'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||0,delay:Math.max(1,+GF.delay||2),manaCost:Math.max(0,+GF.manaCost||0),ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),locked:!!GF.locked,art:GF.art||null,updated:Date.now()};
+  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||0,delay:Math.max(1,+GF.delay||2),shDur:Math.max(1,Math.min(9,+GF.shDur||2)),manaCost:Math.max(0,+GF.manaCost||0),ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),locked:!!GF.locked,art:GF.art||null,updated:Date.now()};
   try{await api('cardgame/general/'+id,'PUT',d);GENS[id]=d;GF=emptyGF();paintGen();toast('General card saved')}catch(e){toast(e.message)}}
 function editGen(id){const g=GENS[id];if(!g)return;GF={...emptyGF(),...g,id};paintGen();const e=$('#gensec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 async function delGen(id){if(!confirm('Delete this general card?'))return;try{await api('cardgame/general/'+id,'DELETE');delete GENS[id];if(GF.id===id)GF=emptyGF();paintGen()}catch(e){toast(e.message)}}
