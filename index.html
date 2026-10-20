@@ -677,7 +677,7 @@ const FBK='AIzaSyC8LZNIUsV_DySPviZLOOseesnmmBsglAQ',ALIAS=k=>k+'@users.dafretane
 let TOK=null;
 const fbPass=async(k,p)=>'Dn!'+(await sha('fb:'+k+':'+p)).slice(0,40);
 async function idt(m,b){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+m+'?key='+FBK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...b,returnSecureToken:true})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||'AUTH_ERROR');return j}
-function setTok(j,k){TOK={it:j.idToken||j.id_token,rt:j.refreshToken||j.refresh_token,uid:j.localId||j.user_id,exp:Date.now()+((+(j.expiresIn||j.expires_in)||3600)-180)*1000,u:k};localStorage.dn_s=JSON.stringify(TOK)}
+function setTok(j,k){TOK={it:j.idToken||j.id_token,rt:j.refreshToken||j.refresh_token,uid:j.localId||j.user_id,exp:Date.now()+((+(j.expiresIn||j.expires_in)||3600)-180)*1000,u:k,em:arguments.length>2?!!arguments[2]:!!(TOK&&TOK.em)};localStorage.dn_s=JSON.stringify(TOK)}
 let tokP=null;
 async function tok(){if(!TOK)return null;if(Date.now()<TOK.exp)return TOK.it;if(tokP)return tokP;
   tokP=(async()=>{try{const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+FBK,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(TOK.rt)});const j=await r.json();if(!r.ok)throw 0;setTok(j,TOK.u);return TOK.it}catch(e){TOK=null;localStorage.removeItem('dn_s');return null}finally{tokP=null}})();return tokP}
@@ -722,7 +722,7 @@ function toast(t,fn){const e=$('#toast');e.textContent=t;e.onclick=fn?()=>{e.sty
 async function boot(){
   try{
     const s=JSON.parse(localStorage.dn_s||'null');
-    if(s&&s.rt&&s.u){TOK=s;if(await tok()){const a=await api('auth/'+s.u).catch(()=>null);if(a)me={k:s.u,role:a.role,email:a.email||'',uid:TOK.uid}}}
+    if(s&&s.rt&&s.u){TOK=s;if(await tok()){const a=await api('auth/'+s.u).catch(()=>null);if(a)me={k:s.u,role:a.role,email:a.email||'',uid:TOK.uid,em:!!TOK.em}}}
     else if(s)localStorage.removeItem('dn_s');
   }catch(e){return $('#app').innerHTML=`<div class="msg">${esc(e.message)}</div>`}
   await Promise.race([initLoc(),new Promise(r=>setTimeout(r,2500))]);
@@ -811,30 +811,50 @@ async function homeV(){
 }
 function loginV(){
   view(`<div class="auth box"><h2>Log in</h2><div id="m"></div>
-  <label>Username</label><input id="u" autocomplete="username"><label>Password</label><input id="p" type="password" autocomplete="current-password" onkeydown="event.key==='Enter'&&doLogin()">
-  <div class="row" style="margin-top:18px"><button onclick="doLogin()">Log in</button><button class="g" onclick="location.hash='#/register'">Create account</button></div></div>`);
+  <label>Username or email</label><input id="u" autocomplete="username" placeholder="Accounts made after the update log in with their email">
+  <label>Password</label><input id="p" type="password" autocomplete="current-password" onkeydown="event.key==='Enter'&&doLogin()">
+  <p style="margin:8px 0 0;text-align:right"><a href="#/login" onclick="forgotV();return false">Forgot password?</a></p>
+  <div class="row" style="margin-top:14px"><button onclick="doLogin()">Log in</button><button class="g" onclick="location.hash='#/register'">Create account</button></div></div>`);
 }
-const AUTHMSG={EMAIL_NOT_FOUND:'Wrong username or password.',INVALID_PASSWORD:'Wrong username or password.',INVALID_LOGIN_CREDENTIALS:'Wrong username or password.',USER_DISABLED:'This account has been disabled.',TOO_MANY_ATTEMPTS_TRY_LATER:'Too many tries. Please wait a few minutes and try again.'};
-const amsg=e=>AUTHMSG[String(e.message).split(' ')[0]]||e.message;
+function forgotV(){
+  view(`<div class="auth box"><h2>Forgot password</h2><div id="m"></div>
+  <p class="mut">Type the email you signed up with. We'll send you a link to choose a new password.</p>
+  <label>Email</label><input id="fe" type="email" autocomplete="email" onkeydown="event.key==='Enter'&&doForgot()">
+  <div class="row" style="margin-top:16px"><button onclick="doForgot()">Send reset link</button><button class="g" onclick="loginV()">Back to log in</button></div>
+  <p class="mut" style="margin-top:16px;font-size:13px">Created your account before email sign-in was added (you log in with a username)? Email recovery isn't available for those accounts yet. Please <a href="#/support" onclick="openSupport();return false">contact Support</a>.</p></div>`)}
+async function doForgot(){const e=$('#fe').value.trim(),m=$('#m');if(!/^\S+@\S+\.\S+$/.test(e))return m.innerHTML='<div class="msg">Enter a valid email.</div>';
+  try{await idt('sendOobCode',{requestType:'PASSWORD_RESET',email:e})}catch(x){if(!/EMAIL_NOT_FOUND/.test(x.message))return m.innerHTML=`<div class="msg">${esc(amsg(x))}</div>`}
+  m.innerHTML='<div class="msg ok">If an account uses that email, a reset link is on its way. Check your inbox (and spam folder), click the link, choose a new password, then log in with your email.</div>'}
+let VPEND=null;
+async function resendVerify(){if(!VPEND)return;try{await idt('sendOobCode',{requestType:'VERIFY_EMAIL',idToken:VPEND});$('#m').innerHTML='<div class="msg ok">Verification email sent again. Check your inbox and spam folder.</div>'}catch(e){$('#m').innerHTML=`<div class="msg">${esc(amsg(e))}</div>`}}
 async function doLogin(){
-  const k=$('#u').value.trim().toLowerCase(),pw=$('#p').value,bad=t=>$('#m').innerHTML=`<div class="msg">${esc(t)}</div>`;
-  if(!k||!pw)return bad('Enter your username and password.');
-  try{const fp=await fbPass(k,pw);let j=null;
-    try{j=await idt('signInWithPassword',{email:ALIAS(k),password:fp})}catch(e){if(!/EMAIL_NOT_FOUND|INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message))throw e}
-    if(!j){/* first login since the upgrade: check the old password, then move the account to Firebase Authentication */
-      TOK=null;const old=await api('auth/'+k).catch(()=>null),h=await sha(pw);
-      if(!old||!old.hash||old.hash!==h)return bad('Wrong username or password.');
-      try{j=await idt('signUp',{email:ALIAS(k),password:fp})}catch(e){if(/EMAIL_EXISTS/.test(e.message))return bad('Wrong username or password.');throw e}
-      setTok(j,k);await mp({['owners/'+k]:TOK.uid,['migproof/'+TOK.uid]:h});await mp({['uids/'+TOK.uid]:k,['migproof/'+TOK.uid]:null,['auth/'+k+'/hash']:null})}
-    else setTok(j,k);
-    const a=await api('auth/'+k)||{};
-    me={k,role:a.role||'player',email:a.email||'',uid:TOK.uid};afterAuth();earlyCheck();const r=RET||'#/';RET='';location.hash===r?route():location.hash=r;if(SUPGO){SUPGO=false;setTimeout(openSupport,700)}
+  const raw=$('#u').value.trim(),k=raw.toLowerCase(),pw=$('#p').value,bad=t=>$('#m').innerHTML=`<div class="msg">${esc(t)}</div>`;
+  if(!raw||!pw)return bad('Enter your username or email, and your password.');
+  try{let j=null,em=false,user=k;
+    if(raw.includes('@')){/* accounts made after the update: real email + password, email must be verified */
+      try{j=await idt('signInWithPassword',{email:raw,password:pw})}catch(e){if(/EMAIL_NOT_FOUND|INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message))return bad('Wrong email or password. (Accounts made before the update log in with their username.)');throw e}
+      const lk=await idt('lookup',{idToken:j.idToken}).catch(()=>null),u0=lk&&lk.users&&lk.users[0];
+      if(u0&&!u0.emailVerified){VPEND=j.idToken;return $('#m').innerHTML='<div class="msg">Please verify your email first: open the link we emailed you, then log in again. <a href="#/login" onclick="resendVerify();return false">Resend verification email</a></div>'}
+      em=true;setTok(j,'',true);user=await api('uids/'+TOK.uid);if(!user){TOK=null;localStorage.removeItem('dn_s');return bad('This sign-in is not linked to a player account.')}setTok(j,user,true)}
+    else{
+      if(await api('emaillogin/'+k).catch(()=>null))return bad('This account logs in with its email address. Type your email instead of the username.');
+      const fp=await fbPass(k,pw);
+      try{j=await idt('signInWithPassword',{email:ALIAS(k),password:fp})}catch(e){if(!/EMAIL_NOT_FOUND|INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message))throw e}
+      if(!j){/* first login since the upgrade: check the old password, then move the account to Firebase Authentication */
+        TOK=null;const old=await api('auth/'+k).catch(()=>null),h=await sha(pw);
+        if(!old||!old.hash||old.hash!==h)return bad('Wrong username or password.');
+        try{j=await idt('signUp',{email:ALIAS(k),password:fp})}catch(e){if(/EMAIL_EXISTS/.test(e.message))return bad('Wrong username or password.');throw e}
+        setTok(j,k,false);await mp({['owners/'+k]:TOK.uid,['migproof/'+TOK.uid]:h});await mp({['uids/'+TOK.uid]:k,['migproof/'+TOK.uid]:null,['auth/'+k+'/hash']:null})}
+      else setTok(j,k,false)}
+    const a=await api('auth/'+user)||{};
+    me={k:user,role:a.role||'player',email:a.email||'',uid:TOK.uid,em};afterAuth();earlyCheck();const r=RET||'#/';RET='';location.hash===r?route():location.hash=r;if(SUPGO){SUPGO=false;setTimeout(openSupport,700)}
   }catch(e){TOK=null;localStorage.removeItem('dn_s');bad(amsg(e))}
 }
 function regV(){
   view(`<div class="auth box"><h2>Create account</h2><div id="m"></div>
-  <label>Username (3-16 letters, numbers, _)</label><input id="u" autocomplete="username"><label>Email</label><input id="e" type="email">
-  <label>Password</label><input id="p" type="password" autocomplete="new-password"><label>Confirm password</label><input id="p2" type="password">
+  <label>Username (3-16 letters, numbers, _)</label><input id="u" autocomplete="username">
+  <label>Email <span class="mut" style="font-weight:400">(must be real: you'll verify it, log in with it, and use it to reset your password)</span></label><input id="e" type="email" autocomplete="email">
+  <label>Password (at least 6 characters)</label><input id="p" type="password" autocomplete="new-password"><label>Confirm password</label><input id="p2" type="password">
   <div class="tg"><input id="pub" type="checkbox" checked><span>Let other players find my page</span></div>
   <button onclick="doReg()">Create account</button>
   <p class="mut" style="margin-top:18px;text-align:center">Already have an account? <a href="#/login">Log in here</a></p></div>`);
@@ -844,16 +864,21 @@ async function doReg(){
   const bad=t=>m.innerHTML=`<div class="msg">${t}</div>`;
   if(!/^[a-z0-9_]{3,16}$/.test(k))return bad('Username must be 3-16 letters, numbers or underscores.');
   if(!/^\S+@\S+\.\S+$/.test(e))return bad('Enter a valid email.');
-  if(p.length<4)return bad('Password needs at least 4 characters.');
+  if(p.length<6)return bad('Password needs at least 6 characters.');
   if(p!==$('#p2').value)return bad('Passwords do not match.');
   try{if(await api('owners/'+k)||await api('auth/'+k).catch(()=>null))return bad('That username is taken.');
-    let j;try{j=await idt('signUp',{email:ALIAS(k),password:await fbPass(k,p)})}catch(x){if(/EMAIL_EXISTS/.test(x.message))return bad('That username is not available.');throw x}
-    setTok(j,k);await api('owners/'+k,'PUT',TOK.uid);await api('uids/'+TOK.uid,'PUT',k);
-    await api('auth/'+k,'PUT',{email:e,role:'player'});
+    let j;try{j=await idt('signUp',{email:e,password:p})}catch(x){if(/EMAIL_EXISTS/.test(x.message))return bad('That email is already used by another account. Log in with it, or use Forgot password.');if(/INVALID_EMAIL/.test(x.message))return bad('That email address is not valid.');throw x}
+    setTok(j,k,true);await api('owners/'+k,'PUT',TOK.uid);await api('uids/'+TOK.uid,'PUT',k);await api('emaillogin/'+k,'PUT',true);
+    await api('auth/'+k,'PUT',{email:e,role:'player',em:true});
     const now=Date.now(),ec=await api('config/early').catch(()=>null),eg=!!(ec&&ec.badge&&now<=ec.until);
     await api('profiles/'+k,'PUT',{name:n,avatar:Math.floor(Math.random()*AV.length),frame:'none',public:$('#pub').checked,created:now,...(eg?{badges:{[ec.badge]:now},eb:true}:{})});
-    invP();me={k,role:'player',email:e,uid:TOK.uid};afterAuth();const r=RET||'#/';RET='';location.hash=r;if(SUPGO){SUPGO=false;setTimeout(openSupport,700)}
-  }catch(x){bad(esc(amsg(x)))}
+    await idt('sendOobCode',{requestType:'VERIFY_EMAIL',idToken:TOK.it}).catch(()=>{});
+    VPEND=TOK.it;invP();TOK=null;localStorage.removeItem('dn_s');
+    view(`<div class="auth box" style="text-align:center"><div style="font-size:54px">📧</div><h2>Check your email</h2><div id="m"></div>
+     <p class="mut" style="margin:12px 0">We sent a verification link to <b>${esc(e)}</b>. Open it to activate your account (check your spam folder too).</p>
+     <p class="mut" style="margin:0 0 18px">Then log in with your <b>email</b> and password.</p>
+     <div class="row" style="justify-content:center"><button onclick="location.hash='#/login';loginV()">Go to log in</button><button class="g" onclick="resendVerify()">Resend email</button></div></div>`)
+  }catch(x){TOK=null;localStorage.removeItem('dn_s');bad(esc(amsg(x)))}
 }
 async function charV(k){
   const p=k&&await getProf(k,true);
@@ -928,7 +953,7 @@ async function meV(){
    <div class="row" style="margin:10px 0 22px"><input id="cd" style="max-width:380px" placeholder="Enter badge code" onkeydown="event.key==='Enter'&&redeem()"><button onclick="redeem()">Add badge</button></div>
    <h3>My badges (${cnt(p)})</h3>${badgeGrid(p,{},false)}`;
   if(tab==='char')body=`${picker(p)}<div class="tg"><input id="pub" type="checkbox" ${p.public?'checked':''}><span>Let anyone find and view my page, even without an account</span></div><button onclick="saveChar()">Save character</button>`;
-  if(tab==='sec')body=`<div id="m"></div><div style="max-width:380px"><h3>Email</h3><label>Current: ${esc(me.email||'none')}</label><input id="ne" type="email" placeholder="New email"><div style="margin-top:10px"><button onclick="chEmail()">Change email</button></div>
+  if(tab==='sec')body=`<div id="m"></div><div style="max-width:380px"><p class="mut" style="font-size:13px;margin:0 0 12px">${me.em?'You log in with your <b>email</b>. Forgot password works for this account.':'You log in with your <b>username</b>. Email password recovery is for accounts made after the update; contact Support if you ever lose access.'}</p><h3>Email</h3><label>Current: ${esc(me.email||'none')}</label><input id="ne" type="email" placeholder="New email"><div style="margin-top:10px"><button onclick="chEmail()">Change email</button></div>
    <h3 style="margin-top:30px">Password</h3><label>Current password</label><input id="op" type="password"><label>New password</label><input id="np" type="password"><div style="margin-top:10px"><button onclick="chPass()">Change password</button></div></div>`;
   view(`<div class="pgbg"><canvas id="pt2"></canvas></div><div class="pgw"><h2 style="margin-bottom:14px">${esc(p.name)}</h2><div class="tabs">${T.map(t=>`<div class="tab ${tab===t[0]?'on':''}" onclick="tab='${t[0]}';meV()">${t[1]}</div>`).join('')}</div><div class="box">${body}</div></div>`);particles('pt2',1);
 }
@@ -948,13 +973,15 @@ async function redeem(){
   }catch(e){m.innerHTML=`<div class="msg">${esc(e.message)}</div>`}
 }
 async function saveChar(){await api('profiles/'+me.k,'PATCH',{avatar:tmp.avatar,frame:tmp.frame,img:tmp.img||null,public:$('#pub').checked});invP(me.k);toast('Character saved')}
-async function chEmail(){const e=$('#ne').value.trim();if(!/^\S+@\S+\.\S+$/.test(e))return $('#m').innerHTML='<div class="msg">Enter a valid email.</div>';
+async function chEmail(){const e=$('#ne').value.trim(),m=$('#m');if(!/^\S+@\S+\.\S+$/.test(e))return m.innerHTML='<div class="msg">Enter a valid email.</div>';
+  if(me.em){try{await idt('sendOobCode',{requestType:'VERIFY_AND_CHANGE_EMAIL',idToken:await tok(),newEmail:e});m.innerHTML=`<div class="msg ok">We sent a confirmation link to <b>${esc(e)}</b>. Your login email changes once you click it.</div>`;await api('auth/'+me.k,'PATCH',{pending:e})}catch(x){m.innerHTML=`<div class="msg">${esc(/EMAIL_EXISTS/.test(x.message)?'That email is already used by another account.':amsg(x))}</div>`}return}
   await api('auth/'+me.k,'PATCH',{email:e});me.email=e;toast('Email changed');meV()}
 async function chPass(){
   const np=$('#np').value,m=$('#m');
-  if(np.length<4)return m.innerHTML='<div class="msg">New password needs at least 4 characters.</div>';
-  try{await idt('signInWithPassword',{email:ALIAS(me.k),password:await fbPass(me.k,$('#op').value)})}catch(e){return m.innerHTML='<div class="msg">Current password is wrong.</div>'}
-  try{const j=await idt('update',{idToken:await tok(),password:await fbPass(me.k,np)});setTok(j,me.k);toast('Password changed');meV()}catch(e){m.innerHTML=`<div class="msg">${esc(amsg(e))}</div>`}}
+  if(np.length<(me.em?6:4))return m.innerHTML=`<div class="msg">New password needs at least ${me.em?6:4} characters.</div>`;
+  const P=async x=>me.em?x:await fbPass(me.k,x),lem=me.em?(await idt('lookup',{idToken:await tok()}).then(r=>r.users[0].email).catch(()=>me.email)):ALIAS(me.k);
+  try{await idt('signInWithPassword',{email:lem,password:await P($('#op').value)})}catch(e){return m.innerHTML='<div class="msg">Current password is wrong.</div>'}
+  try{const j=await idt('update',{idToken:await tok(),password:await P(np)});setTok(j,me.k);toast('Password changed');meV()}catch(e){m.innerHTML=`<div class="msg">${esc(amsg(e))}</div>`}}
 
 /* ---------- admin ---------- */
 const AT=[['players','Players'],['codes','Badge codes'],['inv','Inventory'],['news','News'],['orders','Payments'],['cardgame','Dafreta Card Battle']];
@@ -1687,7 +1714,7 @@ async function delUser(k){
   if(!confirm('Delete '+k+' and all their badges?'))return;
   try{const au=await api('auth')||{};
     if(au[k]&&au[k].role==='admin'&&Object.values(au).filter(a=>a.role==='admin').length<=1)return toast('You need at least one admin account');
-    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');await api('supportin/'+k,'DELETE');await api('supportin/m:'+k,'DELETE');await api('presence/'+k,'DELETE');{const uid=await api('owners/'+k).catch(()=>null);if(uid&&uid!=='reserved')await mp({['uids/'+uid]:null,['admins/'+uid]:null}).catch(()=>{})}await api('owners/'+k,'DELETE').catch(()=>{});invP();toast('Deleted '+k);adminV()
+    await api('auth/'+k,'DELETE');await api('profiles/'+k,'DELETE');await api('inbox/'+k,'DELETE');await api('supportin/'+k,'DELETE');await api('supportin/m:'+k,'DELETE');await api('presence/'+k,'DELETE');{const uid=await api('owners/'+k).catch(()=>null);if(uid&&uid!=='reserved')await mp({['uids/'+uid]:null,['admins/'+uid]:null}).catch(()=>{})}await api('owners/'+k,'DELETE').catch(()=>{});await api('emaillogin/'+k,'DELETE').catch(()=>{});invP();toast('Deleted '+k);adminV()
   }catch(e){toast(e.message)}}
 
 /* ---------- badge codes (admin) ---------- */
