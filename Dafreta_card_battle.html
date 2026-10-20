@@ -991,7 +991,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toast=m=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{t.hidden=true},3400)};
 let ME=null,PROF=null,PD=null,LBD=null,LBt=0,AM={},QUESTS=[],RANKS=[],APPR={},curMode='std',curTeam=[],pgNow='battle',ed=0,rtok=0,efl='',rt=-1,hdi=-1,hdTab='info',hdSk=[],RSV=null,rsStage=1,cmT=0;
-const CFG={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0};
+const CFG={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0};
 const COL={Defender:'#f5c451',Magic:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a',Specialist:'#b07cff'};
 const CI={Defender:'🛡️',Healer:'➕',Magic:'✦',Attacker:'⚔️',Specialist:'★'};
 try{const s=JSON.parse(localStorage.dn_s||'null');if(s&&s.u)ME=s.u}catch(e){}
@@ -1029,9 +1029,9 @@ const hidx=fid=>HD.findIndex(h=>hk(h)===String(fid).replace(/^hd_/,''));
 const gAvail=g=>g&&(!g.locked||(PD&&PD.gc[g.id]));
 const needGen=()=>Math.min(2,GEN.filter(gAvail).length);
 const dd=(id,dur)=>{const m=AM[id];return m&&m.k?[m.k,+dur||2]:null};
-function buildHero(h,fid,b,name,img){b=+b||0;const cl=h.class_==='Mage'?'Magic':(COL[h.class_]?h.class_:'Specialist'),col=COL[cl],at=Math.max(1,+h.atk||1),
+function buildHero(h,fid,b,name,img,hb,ab){b=+b||0;hb=+hb||0;ab=+ab||0;const cl=h.class_==='Mage'?'Magic':(COL[h.class_]?h.class_:'Specialist'),col=COL[cl],at=Math.max(1,+h.atk||1),
  cs=(Array.isArray(h.cards)?h.cards:Object.values(h.cards||{})).filter(c=>c&&c.name),up=n=>(+n>0?+n+b:0);
- const o={id:'u'+fid,fid,cl,n:name||h.name||'Hero',bn:h.name||'Hero',col,hp:Math.max(1,+h.hp||50),atk:at,ap:null,img:img||h.img||ph(col),A:[],S:[],X:null,cr:+h.created||0,src:h,st:0,byId:{},face:nFace(h.face),ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:nFace(h.atkFace),exImg:h.exImg||'',exFace:nFace(h.exFace)};
+ const o={id:'u'+fid,fid,cl,n:name||h.name||'Hero',bn:h.name||'Hero',col,hp:Math.max(1,+h.hp||50)+hb,atk:at,ap:null,img:img||h.img||ph(col),A:[],S:[],X:null,cr:+h.created||0,src:h,st:0,byId:{},face:nFace(h.face),ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:nFace(h.atkFace),exImg:h.exImg||'',exFace:nFace(h.exFace)};
  cs.forEach(c=>{const v0=+c.value||0,m=AM[c.ail],d=dd(c.ail,c.dur),
   ex=s=>{const sh=up(c.shield),hl=up(c.heal);if(sh)s.sh=(s.sh||0)+sh;if(hl)s.h=(s.h||0)+hl;if(+c.draw)s.dr=+c.draw},
   hit=s=>{if(+c.hits>1)s.x=Math.min(5,+c.hits);if(c.scope=='pierce')s.k='p';else if(c.scope=='all')s.k='a'},
@@ -1051,9 +1051,11 @@ function buildHero(h,fid,b,name,img){b=+b||0;const cl=h.class_==='Mage'?'Magic':
   else if(c.type==='debuff'){if(v0>0){s.d=up(v0)/at;hit(s)}if(d)s.ap=d;if(!s.d&&!s.ap)return;if(c.target==='enemy')s.any=1}
   else{const v=up(v0);s.d=v>0?v/at:1;hit(s);if(d)s.ap=d;if(m&&m.sh)s.sh=m.sh}
   ex(s);reg(s);if(c.token)return;o.S.push(s)});
+ o.atk=at+ab;
  return o.S.length?o:null}
 function evH(h){const e=hs(h).ev|0;if(!e||!h.src)return h;const ev=(h.src.evo&&h.src.evo[e])||{},b=(ev.bonus===undefined||ev.bonus===''||ev.bonus===null)?(CFG.evoB[e-1]||0):+ev.bonus;
- const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;if(ev.img){o.face=nFace(ev.face);o.ar=+ev.ar||0;o.atkImg=ev.atkImg||'';o.atkFace=nFace(ev.atkFace);o.exImg=ev.exImg||'';o.exFace=nFace(ev.exFace)}else{o.face=h.face;o.ar=h.ar}return o}
+ const pick=(v,d)=>(v===undefined||v===''||v===null||isNaN(+v))?(+d||0):+v,hb=pick(ev.hpB,CFG.evoHp[e-1]),ab=pick(ev.atkB,CFG.evoAtk[e-1]);
+ const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img,hb,ab);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;if(ev.img){o.face=nFace(ev.face);o.ar=+ev.ar||0;o.atkImg=ev.atkImg||'';o.atkFace=nFace(ev.atkFace);o.exImg=ev.exImg||'';o.exFace=nFace(ev.exFace)}else{o.face=h.face;o.ar=h.ar}return o}
 const evNeed=e=>({fr:CFG.frag[e]||0,st:e===3?CFG.stone:0});
 function evolve(k){const h=HD.find(x=>hk(x)===k);if(!h)return;const s=PD.hs[k]||{lv:1,ev:0},e=s.ev|0;if(e>=4)return;const n=evNeed(e);
  if(s.lv<CFG.maxLv)return toast('Reach level '+CFG.maxLv+' first');if((PD.fr[k]||0)<n.fr)return toast('Not enough card fragments');if(PD.st<n.st)return toast('You need a Transcendence stone');
@@ -1382,7 +1384,7 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
 (async()=>{try{
  const [hsr,as,rs,gs,qs,rk,cf,ap]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','appearance'].map(k=>fb('cardgame/'+k).catch(()=>null)));
  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CFG[k]=+cf[k]});
-  ['frag','evoB'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CFG[k]=a}})}
+  ['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CFG[k]=a}})}
  APPR=ap||{};
  RANKS=(rk?Object.values(rk):[]).filter(r=>r&&r.n);if(!RANKS.length)RANKS=defRanks();
  const EK={dot:'burn',hot:'reg',atkup:'atk',atkdown:'weak',stun:'stun',mark:'mark',poison:'poi'},MD={x2:2,x3:3,x4:4};
