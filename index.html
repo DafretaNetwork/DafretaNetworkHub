@@ -618,6 +618,7 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .pzg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:8px}.pzc{display:flex;gap:10px;align-items:flex-start;background:#0f1e33;border:1px solid var(--line);border-radius:10px;padding:10px}
 .pzp{flex:none;width:84px;height:110px;border-radius:8px;display:grid;place-items:center;background:repeating-conic-gradient(#1a2a42 0 25%,#13203a 0 50%) 0 0/14px 14px;overflow:hidden;font-size:11px;text-align:center}.pzp img{width:100%;height:100%;object-fit:contain}
 .cpool{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.cpc{background:#14243c;border:1px solid var(--line);border-radius:20px;padding:3px 6px 3px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.cpc button{background:none;border:0;color:var(--mute);cursor:pointer;padding:0 4px;font-size:13px}.cpc button:hover{color:#ff6a6a}
+.rwrow{flex-wrap:nowrap;align-items:center}.rwrow select{width:auto;flex:1 1 150px;min-width:0}.rwrow input{flex:0 0 100px}
 /* ===================== RANK EMBLEM EFFECTS (glow / radiant ring / glitter) ===================== */
 .rkw{position:relative;display:inline-grid;place-items:center;width:var(--rs);height:var(--rs);flex:none;isolation:isolate}
 .rkw .rke2{position:relative;z-index:2;width:100%;height:100%;display:grid;place-items:center;filter:drop-shadow(0 3px 4px #000a)}
@@ -1074,16 +1075,16 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
   AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
   if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
-  CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();
+  CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();DF=emptyDF();
   const n=o=>Object.keys(o).length;
-  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['ranks','🏅','Ranks',RKS.length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
-  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
+  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
+  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
   return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
     <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
       <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
@@ -1209,6 +1210,48 @@ function questSecInner(){
     <div style="grid-column:1/-1"><label>Detailed instructions (shown when a player taps the quest; optional)</label><textarea maxlength="600" style="min-height:80px" oninput="QF.desc=this.value" placeholder="e.g. Use a line-up with a Healer and win 3 Standard matches this week. Step-by-step instructions are added automatically below this text.">${esc(QF.desc||'')}</textarea></div></div>
    ${QF.rtype==='gen'?'<p class="mut" style="font-size:13px;margin:8px 0 0">Tip: mark the card “Reward-only” in General Cards so players can only get it from this quest.</p>':''}
    <div class="row" style="margin-top:10px"><button onclick="saveQuest()">💾 Save quest</button>${QF.id?'<button class="g" onclick="QF=emptyQF();paintQuest()">Cancel</button>':''}</div></div>`}
+/* ---------------- daily quests (reset 6:00 AM Philippine time) ---------------- */
+let DAILY={tasks:{},miles:[]};
+const DTTA={win:['🏆','Win matches (any mode)'],win_std:['⚔️','Win Standard matches'],win_rank:['👑','Win Ranked matches'],play:['🎮','Play matches (win or lose)'],cards:['🃏','Play cards in battle'],ex:['🌟','Use ultimates (EX)'],kill:['💀','Defeat enemy heroes'],dmg:['💥','Deal damage (total)'],heal:['💚','Heal HP (total)'],shield:['🛡️','Gain shield (total)']};
+const emptyDF=()=>({id:null,title:'',desc:'',type:'win',n:3,icon:'',rw:{type:'frag',hero:'random',gen:'',amt:5}});
+let DF=emptyDF();
+const rwSel=(r,ex,paint)=>`<select onchange="${ex}.type=this.value;${paint}()"><option value="frag"${r.type==='frag'?' selected':''}>🧩 Card fragments</option><option value="gen"${r.type==='gen'?' selected':''}>🃏 General card</option><option value="stone"${r.type==='stone'?' selected':''}>💠 Transcendence stone</option></select>`
+ +(r.type==='frag'?`<select onchange="${ex}.hero=this.value"><option value="random">Random hero</option>${Object.entries(HLIST).map(([k,h])=>`<option value="${esc(k)}"${r.hero===k?' selected':''}>${esc(h.name)}</option>`).join('')}</select>`:'')
+ +(r.type==='gen'?`<select onchange="${ex}.gen=this.value"><option value="">— choose —</option>${Object.entries(GENS).map(([k,g])=>`<option value="${esc(k)}"${r.gen===k?' selected':''}>${esc(g.name)}</option>`).join('')}</select>`:'')
+ +(r.type!=='gen'?`<input type="number" min="1" max="9999" value="${Math.max(1,+r.amt||1)}" oninput="${ex}.amt=+this.value" style="max-width:110px" title="Amount">`:'');
+const paintDaily=()=>{const e=$('#dailysec');if(e)e.innerHTML=dailyInner()};
+function dailyInner(){
+  const L=Object.entries(DAILY.tasks).sort((a,b)=>(+a[1].created||0)-(+b[1].created||0)),nT=L.length;
+  const list=L.length?L.map(([k,t])=>`<div class="bx2 qrow"><span style="font-size:28px;width:40px;text-align:center">${esc(t.icon||(DTTA[t.type]||['⭐'])[0])}</span><div style="flex:1;min-width:0"><b>${esc(t.title)}</b><div class="mut" style="font-size:13px">${esc((DTTA[t.type]||['',''])[1])}: <b>${+t.n||1}</b>${t.desc?' · '+esc(t.desc):''}</div><div style="font-size:13px;margin-top:2px">Reward: ${rwText(t.rw)}</div></div><div class="row"><button class="s" onclick="editDaily('${esc(k)}')">Edit</button><button class="d s" onclick="delDaily('${esc(k)}')">✕</button></div></div>`).join(''):'<p class="mut" style="font-size:14px">No daily quests yet. The Daily button only appears in the game once you add at least one.</p>';
+  const miles=DAILY.miles.map((m,i)=>`<div class="bx2 qrow" style="flex-wrap:wrap"><b style="width:28px">🎁</b><label style="margin:0;display:flex;align-items:center;gap:6px">After <input type="number" min="1" max="99" value="${+m.at||1}" style="width:70px" oninput="DAILY.miles[${i}].at=+this.value"> daily quests →</label><div class="row rwrow" style="gap:6px;flex:1;min-width:240px">${rwSel(m.rw,'DAILY.miles['+i+'].rw','paintDaily')}</div><button class="d s" onclick="DAILY.miles.splice(${i},1);paintDaily()">✕</button></div>`).join('');
+  const r=DF.rw;
+  return `<h4>Daily Quests</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Daily quests <b>reset every day at 6:00 AM Philippine time</b>. Each player's progress is saved on their own account: when a player finishes a quest they tap <b>Claim</b>, it is stamped done for them for the rest of the day, and the milestone bar fills up. After the reset everything is available again for everyone.</p>
+  <div id="dlist">${list}</div>
+  <div class="bx2" style="margin-top:12px"><b>${DF.id?'✏️ Edit daily quest':'➕ New daily quest'}</b>
+   <div class="f2" style="margin:8px 0 0;gap:8px">
+    <div><label>Title</label><input value="${esc(DF.title)}" maxlength="40" oninput="DF.title=this.value" placeholder="e.g. Gladiator"></div>
+    <div><label>What the player must do</label><select onchange="DF.type=this.value;paintDaily()">${Object.entries(DTTA).map(([k,v])=>`<option value="${k}"${DF.type===k?' selected':''}>${v[0]} ${v[1]}</option>`).join('')}</select></div>
+    <div><label>How many (target)</label><input type="number" min="1" max="99999" value="${+DF.n||1}" oninput="DF.n=+this.value"></div>
+    <div><label>Icon emoji (optional)</label><input value="${esc(DF.icon)}" maxlength="4" oninput="DF.icon=this.value" placeholder="${(DTTA[DF.type]||['⭐'])[0]}"></div>
+    <div style="grid-column:1/-1"><label>Short description (optional, auto-written if empty)</label><input value="${esc(DF.desc)}" maxlength="70" oninput="DF.desc=this.value" placeholder="${esc((DTTA[DF.type]||['',''])[1])}: ${+DF.n||1}"></div>
+    <div style="grid-column:1/-1"><label>Reward for this quest</label><div class="row rwrow" style="gap:6px">${rwSel(r,'DF.rw','paintDaily')}</div></div></div>
+   <div class="row" style="margin-top:10px"><button onclick="saveDaily()">💾 Save daily quest</button>${DF.id?'<button class="g" onclick="DF=emptyDF();paintDaily()">Cancel</button>':''}</div></div>
+  <h4 style="margin-top:20px">Milestone chests</h4><p class="mut" style="margin:4px 0 10px;font-size:13px">Chests on the progress bar at the top of the Daily Quests window. A chest opens when the player has claimed that many daily quests today (you have ${nT} quest${nT===1?'':'s'}). Up to 6 chests.</p>
+  ${miles||'<p class="mut" style="font-size:14px">No milestone chests yet.</p>'}
+  <div class="row" style="margin-top:10px"><button class="s" onclick="addMile()" ${DAILY.miles.length>=6?'disabled':''}>＋ Add milestone</button><button onclick="saveMiles()">💾 Save milestones</button></div>`}
+function addMile(){const last=DAILY.miles.length?Math.max(...DAILY.miles.map(m=>+m.at||0)):0;DAILY.miles.push({at:last+1,rw:{type:'stone',amt:1}});paintDaily()}
+async function saveMiles(){
+  for(const m of DAILY.miles){if(!(+m.at>=1))return toast('Each milestone needs at least 1 quest');if(m.rw.type==='gen'&&!m.rw.gen)return toast('Choose the general card for every card reward')}
+  const nT=Object.keys(DAILY.tasks).length,l=DAILY.miles.map(m=>({at:Math.floor(+m.at),rw:m.rw.type==='gen'?{type:'gen',gen:m.rw.gen,amt:1}:{type:m.rw.type,...(m.rw.type==='frag'?{hero:m.rw.hero||'random'}:{}),amt:Math.max(1,+m.rw.amt||1)}})).sort((a,b)=>a.at-b.at);
+  try{await api('cardgame/daily/miles','PUT',l.length?l:null);DAILY.miles=l.map(m=>({...m,rw:{...m.rw}}));paintDaily();toast('Milestones saved'+(l.some(m=>m.at>nT)?' · note: some need more quests than you have':''))}catch(e){toast(e.message)}}
+async function saveDaily(){
+  if(!DF.title.trim())return toast('Title is required');if(!(+DF.n>=1))return toast('Target must be at least 1');
+  if(DF.rw.type==='gen'&&!DF.rw.gen)return toast('Choose the general card to give');
+  const id=DF.id||'d'+Date.now().toString(36)+Math.random().toString(36).slice(2,4),r=DF.rw;
+  const d={title:DF.title.trim(),desc:(DF.desc||'').trim()||null,type:DF.type,n:Math.floor(+DF.n),icon:(DF.icon||'').trim()||null,rw:r.type==='gen'?{type:'gen',gen:r.gen,amt:1}:{type:r.type,...(r.type==='frag'?{hero:r.hero||'random'}:{}),amt:Math.max(1,+r.amt||1)},created:(DAILY.tasks[id]&&DAILY.tasks[id].created)||Date.now()};
+  try{await api('cardgame/daily/tasks/'+id,'PUT',d);DAILY.tasks[id]=d;DF=emptyDF();paintDaily();toast('Daily quest saved')}catch(e){toast(e.message)}}
+function editDaily(id){const t=DAILY.tasks[id];if(!t)return;DF={id,title:t.title||'',desc:t.desc||'',type:t.type||'win',n:+t.n||1,icon:t.icon||'',rw:{type:'frag',hero:'random',gen:'',amt:5,...(t.rw||{})}};paintDaily();const e=$('#dailysec');if(e)e.scrollIntoView({behavior:'smooth'})}
+async function delDaily(id){if(!confirm('Delete this daily quest?'))return;try{await api('cardgame/daily/tasks/'+id,'DELETE');delete DAILY.tasks[id];if(DF.id===id)DF=emptyDF();paintDaily()}catch(e){toast(e.message)}}
 const paintQuest=()=>{const e=$('#questsec');if(e)e.innerHTML=questSecInner()};
 async function saveQuest(){
   if(!QF.title.trim())return toast('Quest title is required');if(!(+QF.wins>=1))return toast('Wins needed must be at least 1');
