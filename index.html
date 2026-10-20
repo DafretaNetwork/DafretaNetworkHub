@@ -1038,7 +1038,7 @@ const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===
 /* ======================================================================
    CARD BATTLE ADMIN  (organised into sections)
    ====================================================================== */
-let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
+let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
 const emptyQF=()=>({id:null,title:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
 let QF=emptyQF();
 const defRanksA=()=>['Copper','Silver','Gold','Platinum','Emerald','Diamond'].flatMap(n=>['I','II','III','IV','V'].map(r=>({n:n+' '+r})));
@@ -1054,7 +1054,7 @@ async function cardgameAdminHTML(){
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
   AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
-  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
+  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();
   const n=o=>Object.keys(o).length;
@@ -1135,6 +1135,7 @@ function evoHTML(){
   return `<div class="evg">${[1,2,3,4].map(i=>{const e=(HF.evo&&HF.evo[i])||{},need=i<4?`Lv ${CGC.maxLv} + ${CGC.frag[i-1]} fragments`:`Lv ${CGC.maxLv} + ${CGC.frag[3]} fragments + ${CGC.stone} stone`;
    return `<div class="evc"><div class="evt"><b>${EVN[i-1]}</b><small class="mut">${need}</small></div>
     <label>Name</label><input value="${esc(e.name||'')}" maxlength="40" placeholder="${esc(HF.name||'Hero')} ${EVN[i-1]}" oninput="evSet(${i},'name',this.value)">
+    <div class="f2" style="gap:6px;margin:0"><div><label>❤️ HP bonus</label><input type="number" min="0" max="99999" value="${e.hpB===undefined||e.hpB===''||e.hpB===null?'':+e.hpB}" placeholder="default +${CGC.evoHp[i-1]??0}" oninput="evSet(${i},'hpB',this.value)"></div><div><label>⚔️ ATK bonus</label><input type="number" min="0" max="9999" value="${e.atkB===undefined||e.atkB===''||e.atkB===null?'':+e.atkB}" placeholder="default +${CGC.evoAtk[i-1]??0}" oninput="evSet(${i},'atkB',this.value)"></div></div>
     <label>Stat bonus (+ to every card)</label><input type="number" min="0" max="999" value="${e.bonus===undefined||e.bonus===''||e.bonus===null?'':+e.bonus}" placeholder="default +${CGC.evoB[i-1]??0}" oninput="evSet(${i},'bonus',this.value)">
     <label>Image</label><div class="row" style="align-items:center;gap:8px"><button class="s" onclick="$('#evf${i}').click()">Upload</button>${e.img?`<div class="zf" style="width:64px;height:46px;border-radius:6px;border:1px solid var(--line)">${faceTag(e.img,e.face)}</div><button class="g s" onclick="evSet(${i},'img','');evSet(${i},'face',null);paintEvo()">✕</button>`:'<span class="mut" style="font-size:12px">base portrait</span>'}</div>
     <input id="evf${i}" type="file" accept="image/*" hidden onchange="upEvoImg(${i},this)">
@@ -1233,10 +1234,12 @@ function settingsInner(){
   <div class="bx2" style="margin-top:10px"><b>Unlocking locked heroes</b><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Card fragments needed to unlock a hero</label><input id="sunl" type="number" min="1" value="${CGC.unlock}"></div></div><p class="mut" style="font-size:13px;margin:6px 0 0">A hero is locked when you tick “Locked hero” in its editor. Players get fragments from quests.</p></div>
   <div class="bx2" style="margin-top:10px"><b>Card fragments needed</b><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>→ ${n}</label><input id="sfr${i}" type="number" min="0" value="${CGC.frag[i]??0}"></div>`).join('')}</div></div>
   <div class="bx2" style="margin-top:10px"><b>Default stat bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to every card number (damage, heal, shield…). A hero can override this in its own Evolutions step.</p><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}</label><input id="sev${i}" type="number" min="0" value="${CGC.evoB[i]??0}"></div>`).join('')}</div></div>
+  <div class="bx2" style="margin-top:10px"><b>Default hero HP / ATK bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to the hero's base HP and ATK at that evolution (not added up between stages). Higher ATK makes every damage card and the ultimate hit proportionally harder. A hero can override these in its own Evolutions step.</p>
+  <div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}: ❤️ HP / ⚔️ ATK</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input id="shp${i}" type="number" min="0" value="${CGC.evoHp[i]??0}"><input id="sat${i}" type="number" min="0" value="${CGC.evoAtk[i]??0}"></div></div>`).join('')}</div></div>
   <div class="row" style="margin-top:12px"><button onclick="saveSettings()">💾 Save settings</button></div>`}
 async function saveSettings(){const g=id=>Math.max(0,Math.floor(+$('#'+id).value||0));
   if(!(g('smax')>=1))return toast('Max level must be at least 1');
-  CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.expLv=Math.max(1,g('sexl'));CGC.expWin=g('sexw');CGC.expLoss=g('sexs');CGC.unlock=Math.max(1,g('sunl'));CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));
+  CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.expLv=Math.max(1,g('sexl'));CGC.expWin=g('sexw');CGC.expLoss=g('sexs');CGC.unlock=Math.max(1,g('sunl'));CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));CGC.evoHp=EVN.map((_,i)=>g('shp'+i));CGC.evoAtk=EVN.map((_,i)=>g('sat'+i));
   try{await saveCfg();toast('Settings saved')}catch(e){toast(e.message)}}
 
 /* ---------------- hero list card ---------------- */
@@ -1258,7 +1261,7 @@ async function saveHero(){
   if(!name)return bad('Hero name is required.');
   if(!(hp>0))return bad('HP must be greater than 0.');
   const isEdit=!!HF.id,evo={};
-  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);if(e.img){o.img=e.img;if(e.face)o.face=e.face;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face']}})}if(Object.keys(o).length)evo[i]=o});
+  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);['hpB','atkB'].forEach(k=>{if(e[k]!==undefined&&e[k]!==''&&e[k]!==null&&!isNaN(+e[k]))o[k]=Math.max(0,+e[k])});if(e.img){o.img=e.img;if(e.face)o.face=e.face;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face']}})}if(Object.keys(o).length)evo[i]=o});
   try{
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
@@ -1271,7 +1274,7 @@ async function saveHero(){
 }
 async function editHero(id){
   try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
-    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,img:e.img||'',face:e.face||null,ar:+e.ar||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,exImg:e.exImg||'',exFace:e.exFace||null}});
+    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,exImg:e.exImg||'',exFace:e.exFace||null}});
     let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
     HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,exImg:h.exImg||'',exFace:h.exFace||null,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
     CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0);autoFaceMissing()
