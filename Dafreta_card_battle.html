@@ -344,12 +344,14 @@ body.sel #hand,body.sel #top,body.sel #lg,body.sel #log,body.sel #en,body.sel #e
    ===================================================================== */
 html,body{height:100%;margin:0;overflow:hidden;background:#000}
 body{min-height:0;background:#000}
-#gw{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;overflow:hidden;container-type:size;background:radial-gradient(120% 70% at 50% 0,#1d2658,#0b1020 62%);color:var(--tx);font:14px/1.35 system-ui,sans-serif}
-@media (orientation:portrait) and (max-width:620px){#gw{width:100vh;width:100dvh;height:100vw;transform-origin:0 0;transform:translateX(100vw) rotate(90deg)}}
+#gw{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;width:var(--gvw,100vw);height:var(--gvh,100dvh);overflow:hidden;container-type:size;background:radial-gradient(120% 70% at 50% 0,#1d2658,#0b1020 62%);color:var(--tx);font:14px/1.35 system-ui,sans-serif}
+@media (orientation:portrait) and (max-width:620px){#gw{width:100vh;width:100dvh;height:100vw;width:var(--gvh,100dvh);height:var(--gvw,100vw);transform-origin:0 0;transform:translateX(var(--gvw,100vw)) rotate(90deg)}}
 #gw [hidden]{display:none!important}
 #home{position:absolute;inset:0;min-height:0;height:100%}
 #sb{position:relative;height:100%;top:auto}
 #hm{min-height:0;overflow:auto}
+#pgv{min-height:0}
+
 #menu{position:absolute;inset:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:0}
 #menu .ew{flex:1;min-height:0;align-items:stretch}
 #menu .em{overflow:auto;height:100%}
@@ -1125,9 +1127,93 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .rkup .tap.on{opacity:1;animation:exbl 1.2s ease-in-out infinite}
 @container (max-height:520px){.rkx{--rkbs:clamp(80px,30cqh,130px)}.rkm{flex-basis:min(380px,52cqw);gap:5px}}
 @media(prefers-reduced-motion:reduce){.rkup .rays,.rkbar i::after{animation:none}}
+
+/* battle page always fits the screen; the swap-hero button sits in the top corner */
+.bp{min-height:0!important;height:100%}.rcy{top:10px!important;right:12px}
+/* ===================== SIDEBAR v2: game icons ===================== */
+#sb{width:112px;gap:6px;padding:10px 0;box-shadow:inset -1px 0 0 #8a5a3244,4px 0 14px #0007}
+.sbn{position:relative;border-left:0;gap:3px;padding:9px 4px 8px;font:800 11.5px/1.1 Cinzel,Georgia,serif;letter-spacing:.03em;color:#e7c99b;text-shadow:0 1px 2px #000;white-space:nowrap;transition:color .2s}
+.sbn .gi{width:54px;height:54px;display:block;overflow:visible;filter:drop-shadow(0 3px 3px #000b);transition:transform .25s cubic-bezier(.3,1.6,.5,1),filter .25s}
+.sbn::after{content:"";position:absolute;left:50%;top:7px;width:62px;height:62px;translate:-50% 0;border-radius:50%;z-index:-1;background:radial-gradient(circle,#ffb43a00 0,transparent 70%);transition:background .25s}
+.sbn:hover .gi{transform:translateY(-2px) scale(1.06)}
+.sbn.on{background:linear-gradient(90deg,#ff9a2e45,#ff9a2e12 70%,transparent);color:#fff}
+.sbn.on::before{content:"";position:absolute;left:0;top:10%;bottom:10%;width:4px;border-radius:0 4px 4px 0;background:linear-gradient(#fff3c4,#ff9a2e);box-shadow:0 0 10px #ff9a2e}
+.sbn.on::after{background:radial-gradient(circle,#ffb43a66 0,#ffb43a1f 45%,transparent 70%)}
+.sbn.on .gi{transform:scale(1.08);filter:drop-shadow(0 0 5px #ffc83a) drop-shadow(0 3px 3px #000b)}
+.sbn.ex .gi{width:46px;height:46px}
+#sb{isolation:isolate}
+@container (max-height:520px){#sb{width:80px;gap:2px;padding:4px 0}.sbn{padding:5px 2px 4px;font-size:8.6px;letter-spacing:0;gap:1px}.sbn .gi{width:38px;height:38px}.sbn::after{width:44px;height:44px;top:4px}.sbn.ex .gi{width:32px;height:32px}}
+/* ===================== LINE-UP PANEL v2 ===================== */
+.lu.pnl{position:relative;padding:0 0 4px;background:radial-gradient(120% 70% at 50% 0,#5a3a2066,transparent 70%),linear-gradient(#3a2414f5,#1c1007f8);border:2px solid #c9893a;border-radius:14px;box-shadow:0 0 0 2px #1a0d05,0 0 0 3.5px #8a5a2a77,0 14px 30px #000c,inset 0 1px 0 #ffe3a355}
+.lu.pnl::before{content:"";position:absolute;inset:4px;border:1px solid #e0a84a2e;border-radius:10px;pointer-events:none}
+.lu .lt{position:relative;gap:6px;align-items:center;padding:8px 9px;border-bottom:1px solid #00000080;box-shadow:0 1px 0 #e0a84a22;background:linear-gradient(#ffffff0d,transparent)}
+.lu .pt{clip-path:none;width:34px;height:34px;padding:0;display:grid;place-items:center;border-radius:50%;border:2px solid #7a4a28;background:radial-gradient(circle at 50% 32%,#5e3d22,#22140a 75%);color:#e7c99b;font:800 15px/1 Cinzel,Georgia,serif;box-shadow:inset 0 2px 4px #0009,0 2px 0 #0008;transition:transform .15s,box-shadow .2s}
+.lu .pt:hover{filter:none;transform:translateY(-1px);border-color:#c9893a}
+.lu .pt.on{border-color:#fff3c4;background:radial-gradient(circle at 50% 28%,#fff6cf,#ffc83a 45%,#c47f00 90%);color:#3a1d04;text-shadow:0 1px 0 #fff8;box-shadow:0 0 0 2px #6a3a08,0 0 14px #ffc83acc,0 3px 0 #6a3a08}
+.lu .pt.el{width:auto;height:34px;margin-left:auto;padding:0 14px 0 12px;border-radius:9px;border:2px solid #ffe3a3;background:linear-gradient(#ffc24a,#e0780f);color:#fff;font:800 13px system-ui,sans-serif;letter-spacing:.02em;text-shadow:0 1px 2px #0009;box-shadow:inset 0 1px 0 #fff8,0 3px 0 #8a4308,0 5px 10px #0008}
+.lu .pt.el:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #fff8,0 1px 0 #8a4308}
+.lu .lg{padding:9px 10px 8px}
+.dk>div{border-radius:8px;border:2px solid #0d0703;border-top:4px solid var(--c,#555);background:linear-gradient(#33200f,#170d06);box-shadow:inset 0 0 0 1px #ffffff14,0 3px 7px #000b}
+.dk>div:nth-child(n+6){height:calc(var(--w)*.5)}
+.dk:has(.tc){padding-top:calc(var(--w)*.17)}
+.dk .em{border:2px dashed #6a4a2a;border-top:2px dashed #6a4a2a;background:repeating-linear-gradient(135deg,#ffffff07 0 5px,transparent 5px 11px),linear-gradient(#1f1309,#140b05);box-shadow:inset 0 3px 10px #000c}
+.dk .em:not(.dim):hover{border-color:#c9893a}
+.pls{width:calc(var(--w)*.34);height:calc(var(--w)*.34);max-width:38px;max-height:38px;border-radius:50%;display:grid;place-items:center;font-style:normal;border:2px solid #c9893a;background:radial-gradient(circle at 50% 35%,#6a4426,#2a170a);box-shadow:0 0 10px #ffb34a44,inset 0 1px 0 #ffe3a355;position:relative}
+.pls::before,.pls::after{content:"";position:absolute;width:46%;height:12%;border-radius:2px;background:linear-gradient(#fff3c4,#ffc83a)}.pls::after{rotate:90deg}
+.dk>div:nth-child(n+6) .pls{width:calc(var(--w)*.26);height:calc(var(--w)*.26)}
+.dk .em.rl:not(:has(.pls))::before{content:"";width:calc(var(--w)*.2);aspect-ratio:1;rotate:45deg;border:2px solid #6a4a2a;border-radius:3px;opacity:.7}
+.dk .dg{background:radial-gradient(circle at 50% 35%,#4a5168,#1d2130);border-top-color:#c9ced8}
+.dk .dr{background:radial-gradient(circle at 50% 40%,#5a3a22,#1f1209)}
+.dk>div:nth-child(n+6).dr,.dk>div:nth-child(n+6).dg{flex-direction:row;gap:5px;padding:0 4px;font-size:calc(var(--w)*.2)}
+.dk>div:nth-child(n+6).dg i{font-size:calc(var(--w)*.2)}
+.dk .sel{outline:3px solid #ffd24a;outline-offset:-1px;box-shadow:0 0 14px #ffd24a}
+/* hero tiles */
+.dk>.dh{overflow:visible;container-type:inline-size;padding:0}
+.hf{position:absolute;inset:0;border-radius:5px}
+.ctf{position:relative}.ctf>.hf{border-radius:0}
+.ct,.rt{container-type:inline-size}
+.frt{top:auto;bottom:4%;right:4%;z-index:3;font:800 max(7px,7cqw)/1 system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:2.2cqw 3.6cqw;border-radius:4px;background:linear-gradient(#ffd24a,#c47f00);color:#2a1500;box-shadow:0 1px 3px #000a}
+.stb{z-index:3}
+/* LEVEL badge: class colour fading to white */
+.lvx{position:absolute;left:0;bottom:0;z-index:3;display:flex;flex-direction:column;align-items:center;padding:1.8cqw 14cqw 1.2cqw 4cqw;pointer-events:none;border-bottom-left-radius:5px;
+ background:linear-gradient(#ffffff70,#fff0 46%),linear-gradient(100deg,var(--c,#f5c451) 0%,color-mix(in srgb,var(--c,#f5c451) 62%,#fff) 34%,#fff 58%,#ffffffd9 74%,#fff0 98%);clip-path:polygon(0 0,76% 0,100% 100%,0 100%)}
+.lvx small{font:900 7cqw/1 system-ui,sans-serif;letter-spacing:.09em;color:#1a0d04;opacity:.85}
+.lvx b{font:900 23cqw/.88 "Arial Black","Segoe UI Black",system-ui,sans-serif;letter-spacing:-.03em;color:#170b03;text-shadow:-.45cqw -.45cqw 0 #fff,.45cqw -.45cqw 0 #fff,-.45cqw .45cqw 0 #fff,.45cqw .45cqw 0 #fff,0 .9cqw 1.4cqw #0007}
+.rt .lvx{border-bottom-left-radius:0}
+/* ===================== TRANSCENDENT emblem + tile ===================== */
+.tce{position:absolute;left:50%;top:0;z-index:4;width:calc(98% * var(--tcs,1));transform:translate(calc(-50% - var(--tcx,0)*100%),calc(var(--tcc,.5)*-100%));pointer-events:none;filter:drop-shadow(0 3px 4px #000b)}
+.ct .tce{top:20%;width:calc(62% * var(--tcs,1))}
+.ct .lvx{padding:1.2cqw 10cqw .8cqw 3cqw}.ct .lvx small{font-size:5cqw}.ct .lvx b{font-size:15cqw}
+.rt .lvx b{font-size:20cqw}
+.tce>img{display:block;width:100%;height:auto}
+.tce .tcg{position:absolute;inset:0;height:100%;animation:tcge 2.4s ease-in-out infinite}
+@keyframes tcge{0%,100%{filter:drop-shadow(0 0 1px #fff6c8) drop-shadow(0 0 2px #ffc83a) drop-shadow(0 0 0 #ffb30000)}50%{filter:drop-shadow(0 0 1.5px #fffbe6) drop-shadow(0 0 4px #ffd24a) drop-shadow(0 0 9px #ffb300)}}
+.tcbs,.tcgs{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;background-repeat:no-repeat;background-size:300% 100%;background-position:100% 0}
+.tcbs{-webkit-mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png') center/100% 100% no-repeat;mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png') center/100% 100% no-repeat;background-image:linear-gradient(110deg,transparent 40%,#fff2c0aa 48%,#ffffffee 50%,#fff2c0aa 52%,transparent 60%);animation:tcsh 3.2s ease-in-out infinite}
+.tcgs{-webkit-mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;background-image:linear-gradient(110deg,transparent 38%,#ffffff 50%,transparent 62%);animation:tcsh 3.2s ease-in-out .45s infinite}
+@keyframes tcsh{0%{background-position:100% 0}50%,100%{background-position:0 0}}
+.tcgl{position:absolute;inset:0;pointer-events:none;-webkit-mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;}
+.tcsp{position:absolute;left:var(--tl,0%);top:var(--tt,0%);width:var(--tw2,100%);height:var(--th2,100%);pointer-events:none}
+.tcgl i,.tcsp i{position:absolute;aspect-ratio:1;translate:-50% -50%;background:radial-gradient(circle,#fff 0 22%,#fff6c8 58%);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);opacity:0;animation:tctw 1.9s ease-in-out infinite}
+.tcgl i{width:11%}
+.tcgl i:nth-child(1){left:46%;top:calc(var(--tcc,.5)*100% - 7%)}
+.tcgl i:nth-child(2){left:54.5%;top:calc(var(--tcc,.5)*100% + 4%);animation-delay:.4s;width:8%}
+.tcgl i:nth-child(3){left:50%;top:calc(var(--tcc,.5)*100% + 13%);animation-delay:.85s;width:7%}
+.tcgl i:nth-child(4){left:52.5%;top:calc(var(--tcc,.5)*100% - 14%);animation-delay:1.25s;width:7%}
+.tcgl i:nth-child(5){left:47.5%;top:calc(var(--tcc,.5)*100% + 6%);animation-delay:1.6s;width:6%}
+.tcsp i{width:7%;filter:drop-shadow(0 0 2px #ffd24a)}
+.tcsp i:nth-child(1){left:14%;top:30%;animation-duration:2.6s}
+.tcsp i:nth-child(2){left:86%;top:38%;animation-duration:2.9s;animation-delay:1.1s}
+.tcsp i:nth-child(3){left:30%;top:76%;width:5%;animation-duration:2.4s;animation-delay:1.9s}
+@keyframes tctw{0%,100%{transform:scale(0) rotate(0);opacity:0}45%{transform:scale(1.15) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:.6}}
+/* Transcendent hero tile: gold frame + shine in step with the emblem */
+.dk>.dh.tc{border-color:#8a5a08;border-top-color:var(--c);box-shadow:inset 0 0 0 1px #ffd24a99,0 0 0 1px #ffc83a88,0 0 14px #ffb30066,0 3px 7px #000b}
+.ct.tc{border-color:#c98a12;box-shadow:0 0 0 1px #ffd24a88,0 0 12px #ffb30055}
+.tc .hf::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;background-image:linear-gradient(110deg,transparent 38%,#fff3c455 46%,#fffbe8cc 50%,#fff3c455 54%,transparent 62%);background-size:300% 100%;background-repeat:no-repeat;background-position:100% 0;animation:tcsh 3.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.tcbs,.tcgs,.tcgl i,.tcsp i,.tce .tcg,.tc .hf::after{animation:none}}
 </style></head><body>
 <div id="gw">
-<div id="home"><nav id="sb"><button class="sbn on" data-pg="battle"><i>⚔️</i>Battle</button><button class="sbn" data-pg="friends"><i>👥</i>Friends</button><button class="sbn" data-pg="shop"><i>🛒</i>Shop</button><button class="sbn" data-pg="lb"><i>🏆</i>Leaderboard</button><button class="sbn ex" id="exit"><i>🚪</i>Exit</button></nav>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gSt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#cdd6e3"/><stop offset="1" stop-color="#6f7a8c"/></linearGradient><linearGradient id="gGd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#ffc83a"/><stop offset="1" stop-color="#b8700a"/></linearGradient><linearGradient id="gLe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a4a"/><stop offset="1" stop-color="#6a3a14"/></linearGradient><linearGradient id="gRd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0473a"/><stop offset="1" stop-color="#7a1410"/></linearGradient><linearGradient id="gBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2ff"/><stop offset="1" stop-color="#2f6fd0"/></linearGradient><linearGradient id="gWd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8703c"/><stop offset="1" stop-color="#4a2a10"/></linearGradient></defs></svg><div id="home"><nav id="sb"><button class="sbn on" data-pg="battle"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><g transform="translate(24 24) rotate(-45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g><g transform="translate(24 24) rotate(45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g></g></svg><span>Battle</span></button><button class="sbn" data-pg="friends"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M23 40c.6-8.4 4.4-13 10-13s9.4 4.6 10 13z" fill="url(#gBl)"/><circle cx="33" cy="17.5" r="6.2" fill="url(#gBl)"/><path d="M5 42c.8-10 5.8-15.5 13.5-15.5S31.2 32 32 42z" fill="url(#gGd)"/><circle cx="18.5" cy="17" r="7.6" fill="url(#gGd)"/><path d="M14 14.5c2.5-3 7.5-3 10 0" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.3"/><path d="M11 36.5c2-3.5 5-5 7.5-5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.3"/></g></svg><span>Friends</span></button><button class="sbn" data-pg="shop"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M17 12.5c2.4 1.6 11.6 1.6 14 0l-2.6 5.8h-8.8z" fill="url(#gLe)"/><path d="M19.5 19.5c-8 4.6-12.5 11-11.5 16.5 1 5 7.5 7.5 16 7.5s15-2.5 16-7.5c1-5.5-3.5-11.9-11.5-16.5z" fill="url(#gLe)"/><path d="M13 30c1-3 3-5.5 5.5-7" fill="none" stroke="#f0c48a" stroke-opacity=".6" stroke-width="1.4"/><rect x="18" y="17.4" width="12" height="3.6" rx="1.8" fill="url(#gGd)"/><circle cx="26.5" cy="40" r="5.4" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="7.6" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="4.6" fill="none" stroke="#9a5a06" stroke-width="1.2"/><path d="M34 33.5c1-1.4 3.6-1.4 4.6 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1"/></g></svg><span>Shop</span></button><button class="sbn" data-pg="lb"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#1e0f05" stroke-width="4.8" stroke-linecap="round"/><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#ffc83a" stroke-width="2.4" stroke-linecap="round"/><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M13 6.5h22v9.5c0 8-4.6 13-11 13S13 24 13 16z" fill="url(#gGd)"/><path d="M21 28.5h6l1.2 6h-8.4z" fill="url(#gGd)"/><rect x="14" y="34.5" width="20" height="4.6" rx="1.4" fill="url(#gWd)"/><rect x="10.5" y="39" width="27" height="4.6" rx="1.4" fill="url(#gWd)"/><path d="M24 10.5l1.8 3.7 4 .5-2.9 2.8.7 4L24 19.6 20.4 21.5l.7-4-2.9-2.8 4-.5z" fill="#fff6c8" stroke="#a86a00" stroke-width="1"/></g><path d="M16 9v6.5c0 3 .8 5.6 2.2 7.4" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.4" stroke-linecap="round"/></svg><span>Leaderboard</span></button><button class="sbn ex" id="exit"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M8 43V8.5C8 6.6 9.6 5 11.5 5h15C28.4 5 30 6.6 30 8.5V43z" fill="url(#gWd)"/><path d="M15.3 8v35M22.6 8v35" stroke-opacity=".45"/><circle cx="25.5" cy="25" r="1.9" fill="url(#gGd)"/></g><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#1e0f05" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#ffc83a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exit</span></button></nav>
 <div id="hm"><div id="tbw"></div><div id="pgv"><p class="sub pad">Loading…</p></div></div></div>
 <div id="menu" hidden><header class="eh"><button class="g" id="edb" aria-label="Back">←</button><h2 id="edt">Edit Line-up</h2><div class="ers" id="ers"></div><button class="main" id="eds">Save line-up</button></header>
 <div class="ew"><div class="em"><div class="dkp pnl" id="dkp"></div><div id="egrid"></div></div><nav class="ef" id="ef"></nav></div></div>
@@ -1152,6 +1238,11 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 <div id="ov" hidden></div>
 </div>
 <script>
+/* size the game from the real window (Android Chrome keeps stale vh/dvh after fullscreen + rotation, which pushed the bottom off-screen) */
+(function(){const fit=()=>{const r=document.documentElement.style;r.setProperty('--gvw',innerWidth+'px');r.setProperty('--gvh',innerHeight+'px')},
+ later=()=>{fit();setTimeout(fit,200);setTimeout(fit,600);setTimeout(fit,1200)};
+ fit();['resize','orientationchange','fullscreenchange','webkitfullscreenchange','pageshow'].forEach(e=>addEventListener(e,later));
+ document.addEventListener('visibilitychange',later);if(window.visualViewport)visualViewport.addEventListener('resize',fit)})();
 (function(){
 /* app-like: block menus, selection, dragging and developer shortcuts */
 ['contextmenu','dragstart','selectstart'].forEach(ev=>document.addEventListener(ev,e=>{if(ev==='selectstart'&&e.target&&e.target.closest&&e.target.closest('input,textarea'))return;e.preventDefault()},{capture:true}));
@@ -1622,11 +1713,20 @@ function validLU(l){const ids=((l&&l.h)||[]).map(hidx);if(ids.length!=4||ids.som
  if(ids.some(i=>!owned(HD[i])))return 'Your line-up has a hero you have not unlocked.';
  if(new Set(ids.map(i=>HD[i].cl)).size!=4)return 'A deck can only have 1 hero per class.';
  if(((l.g||[]).filter(id=>gAvail(GEN.find(g=>g.id===id)))).length<needGen())return 'Pick '+needGen()+' general cards.';return ''}
+/* level badge + Transcendent emblem (base and gem share one canvas, so they always line up) */
+const lvH=l=>'<span class="lvx"><small>LEVEL</small><b>'+l+'</b></span>';
+const TCB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png',TCG='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png';
+const tcEmb=()=>'<span class="tce" aria-label="Transcendent"><img class="tcb" src="'+TCB+'" alt="" referrerpolicy="no-referrer"><i class="tcbs"></i><span class="tcsp"><i></i><i></i><i></i></span><img class="tcg" src="'+TCG+'" alt="" referrerpolicy="no-referrer"><i class="tcgs"></i><span class="tcgl"><i></i><i></i><i></i><i></i><i></i></span></span>';
+/* measure the emblem's visible area once, so it sits centred on the tile edge at the right size whatever padding the PNG has */
+(function(){const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const W=240,H=Math.max(1,Math.round(W*im.naturalHeight/im.naturalWidth)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(im,0,0,W,H);const d=x.getImageData(0,0,W,H).data;let x0=W,x1=-1,y0=H,y1=-1;
+ for(let y=0;y<H;y++)for(let k=0;k<W;k++)if(d[(y*W+k)*4+3]>40){if(k<x0)x0=k;if(k>x1)x1=k;if(y<y0)y0=y;if(y>y1)y1=y}if(x1<0)return;
+ const r=document.documentElement.style,p=v=>(v*100).toFixed(2)+'%';r.setProperty('--tcs',(W/(x1-x0+1)).toFixed(3));r.setProperty('--tcx',((x0+x1+1)/2/W-.5).toFixed(4));r.setProperty('--tcc',((y0+y1+1)/2/H).toFixed(4));
+ r.setProperty('--tl',p(x0/W));r.setProperty('--tt',p(y0/H));r.setProperty('--tw2',p((x1-x0+1)/W));r.setProperty('--th2',p((y1-y0+1)/H))}catch(e){}};im.src=TCB})();
 function deckHTML(l,edit){
- const hsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em"'+(edit?' data-slot="'+j+'"':' data-go="1" title="Add a hero"')+'>＋</div>';const x=evH(HD[i]),s=hs(HD[i]);
-  return '<div class="dh zf'+(edit&&rt===i?' sel':'')+'" style="--c:'+x.col+'"'+(edit?' data-dh="'+i+'" data-j="'+j+'"':'')+' title="'+esc(x.n)+'">'+faceImg(x)+'<b class="lvb">'+s.lv+'</b>'+(s.ev?'<span class="stb">'+STG[s.ev]+'</span>':'')+(j===0?'<em class="frt">Front</em>':'')+'</div>'};
- const rsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em dim"></div>';const r=REL.find(q=>q.id===(l.r||{})[k]);return r?'<div class="dr'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+' title="'+esc(r.n)+'">'+rIc(r)+'<small>'+esc(r.n)+'</small></div>':'<div class="em'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+'>'+(edit?'＋':'')+'</div>'};
- const gsl=n=>{const g=GEN.find(x=>x.id===(l.g||[])[n]);return g?'<div class="dg"'+(edit?' data-dg="'+n+'"':'')+' title="'+esc(g.s.n)+'"><i>'+art(g.s)+'</i><small>'+esc(g.s.n)+'</small></div>':(n<needGen()||edit&&n<2&&GEN.length>n?'<div class="em"'+(edit?' data-dg="'+n+'"':'')+'>'+(edit?'＋':'')+'</div>':'<div class="em dim"></div>')};
+ const hsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em"'+(edit?' data-slot="'+j+'"':' data-go="1" title="Add a hero"')+'><i class="pls"></i></div>';const x=evH(HD[i]),s=hs(HD[i]),tc=s.ev>=4;
+  return '<div class="dh'+(tc?' tc':'')+(edit&&rt===i?' sel':'')+'" style="--c:'+x.col+'"'+(edit?' data-dh="'+i+'" data-j="'+j+'"':'')+' title="'+esc(x.n)+'"><div class="zf hf">'+faceImg(x)+'</div>'+lvH(s.lv)+(tc?tcEmb():s.ev?'<span class="stb">'+STG[s.ev]+'</span>':'')+(j===0?'<em class="frt">Front</em>':'')+'</div>'};
+ const rsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em dim"></div>';const r=REL.find(q=>q.id===(l.r||{})[k]);return r?'<div class="dr'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+' title="'+esc(r.n)+'">'+rIc(r)+'<small>'+esc(r.n)+'</small></div>':'<div class="em rl'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+'>'+(edit?'<i class="pls"></i>':'')+'</div>'};
+ const gsl=n=>{const g=GEN.find(x=>x.id===(l.g||[])[n]);return g?'<div class="dg"'+(edit?' data-dg="'+n+'"':'')+' title="'+esc(g.s.n)+'"><i>'+art(g.s)+'</i><small>'+esc(g.s.n)+'</small></div>':(n<needGen()||edit&&n<2&&GEN.length>n?'<div class="em cdb"'+(edit?' data-dg="'+n+'"':'')+'>'+(edit?'<i class="pls"></i>':'')+'</div>':'<div class="em dim"></div>')};
  const hh=[0,1,2,3].map(j=>(l.h||[])[j]);
  return '<div class="dk">'+gsl(0)+hh.map((k,j)=>hsl(k,j)).join('')+gsl(1)+hh.map((k,j)=>rsl(k,j)).join('')+'</div>'}
 const bufLU=()=>{const l={h:hi.map(i=>hk(HD[i])),r:{},g:GS.slice()};hi.forEach(i=>{if(RL[i])l.r[hk(HD[i])]=RL[i]});return l};
@@ -1755,9 +1855,9 @@ function toggleDeck(i){const h=HD[i];if(!owned(h)){toast('Unlock this hero first
  const dup=hi.findIndex(j=>HD[j].cl===h.cl);if(dup>=0){const old=hi[dup];delete RL[old];hi[dup]=i;rt=i;toast('Replaced '+HD[old].n+' (only 1 hero per class)');return 'replaced'}
  if(hi.length>=4){toast('Your deck already has 4 heroes. Remove one first.');return ''}
  hi.push(i);rt=i;return 'added'}
-function heroTile(i){const b=HD[i],x=evH(b),s=hs(b),own=owned(b),fr=PD.fr[hk(b)]||0;
- return '<div class="ct'+(own?'':' lk')+(hi.includes(i)?' in':'')+'" data-h="'+i+'" style="--c:'+x.col+'"><div class="cth">'+esc(x.n)+'</div><div class="ctf zf'+(own?'':' gr')+'">'+faceImg(x)+'</div>'+
-  (own?'<b class="lvb">'+s.lv+'<small>LV</small></b>'+(s.ev?'<span class="stb">'+STG[s.ev]+'</span>':''):'<div class="lkb"><span class="lki">🔒</span><div class="fb"><i style="width:'+Math.min(100,fr/CFG.unlock*100)+'%"></i><span>🧩 '+fr+'/'+CFG.unlock+'</span></div>'+(fr>=CFG.unlock?'<em>Tap to unlock!</em>':'')+'</div>')+'</div>'}
+function heroTile(i){const b=HD[i],x=evH(b),s=hs(b),own=owned(b),fr=PD.fr[hk(b)]||0,tc=own&&s.ev>=4;
+ return '<div class="ct'+(own?'':' lk')+(tc?' tc':'')+(hi.includes(i)?' in':'')+'" data-h="'+i+'" style="--c:'+x.col+'"><div class="cth">'+esc(x.n)+'</div><div class="ctf"><div class="zf hf'+(own?'':' gr')+'">'+faceImg(x)+'</div>'+(own?lvH(s.lv)+(tc?tcEmb():s.ev?'<span class="stb">'+STG[s.ev]+'</span>':''):'')+'</div>'+
+  (own?'':'<div class="lkb"><span class="lki">🔒</span><div class="fb"><i style="width:'+Math.min(100,fr/CFG.unlock*100)+'%"></i><span>🧩 '+fr+'/'+CFG.unlock+'</span></div>'+(fr>=CFG.unlock?'<em>Tap to unlock!</em>':'')+'</div>')+'</div>'}
 function menu(){hidePop();$('#edt').textContent='Edit Line-up · Preset '+(ed+1);$('#ers').innerHTML=resH();
  const need=needGen(),okSave=hi.length==4&&GS.length==need;$('#eds').disabled=!okSave;
  $('#dkp').innerHTML=deckHTML(bufLU(),true)+'<div class="dki"><b>Deck rules</b><ul><li class="'+(hi.length==4?'ok':'')+'">4 heroes, 1 per class ('+hi.length+'/4)</li><li class="'+(GS.length==need?'ok':'')+'">'+need+' general card'+(need==1?'':'s')+' ('+GS.length+'/'+need+')</li><li>1 relic per hero (optional)</li></ul><small>Tap a hero for details. Tap a ＋ slot under a hero to add a relic.</small></div>';
@@ -1856,7 +1956,7 @@ function rcol(c,max){const t=c.stt.d+c.stt.h+c.stt.s,sg=v=>t?v/t*100:0;
  return `<div class="rc"><div class="rbc"><div class="rbs${t?'':' z'}" data-p="${t/max*100}" title="Damage ${c.stt.d} · Heal ${c.stt.h} · Shield ${c.stt.s}"><i class="sg sd" style="height:${sg(c.stt.d)}%"></i><i class="sg sh" style="height:${sg(c.stt.h)}%"></i><i class="sg ss" style="height:${sg(c.stt.s)}%"></i>${t?`<b class="rn" data-n="${t}">0</b>`:''}</div></div>${c.tile}${c.relic}</div>`}
 function sideCols(T,gens,ev,left){const g=genTot(T),gi=T.gl[0]&&T.gl[0].g,g2=T.gl[1]&&T.gl[1].g;
  const gc={stt:g,tile:`<div class="rt gt" title="General cards"><i>${gi?art(gi.s):'🃏'}</i></div>`,relic:`<div class="rrl">${g2?`<i>${art(g2.s)}</i>`:''}</div>`};
- const hc=T.u.map((u,i)=>{const x=ev?ev[i]:u.h,r=u.r;return {stt:u.stt,tile:`<div class="rt zf" style="--c:${x.col}" title="${esc(x.n)}">${faceImg(x)}${PD&&ev?`<b class="lvb">${hs(x).lv}</b>`:''}</div>`,relic:`<div class="rrl">${r?`${rIc(r)}<small>${esc(r.n)}</small>`:''}</div>`}});
+ const hc=T.u.map((u,i)=>{const x=ev?ev[i]:u.h,r=u.r;return {stt:u.stt,tile:`<div class="rt zf" style="--c:${x.col}" title="${esc(x.n)}">${faceImg(x)}${PD&&ev?lvH(hs(x).lv):''}</div>`,relic:`<div class="rrl">${r?`${rIc(r)}<small>${esc(r.n)}</small>`:''}</div>`}});
  return left?[gc,...hc.slice().reverse()]:[...hc,gc]}
 function showResult(win,m){RSV=result(win);rsStage=1;const r=$('#res');r.hidden=false;r.className=win?'win':'lose';
  const L1=sideCols(P,null,curTeam,true),R1=sideCols(E,null,null,false),max=Math.max(1,...[...L1,...R1].map(c=>c.stt.d+c.stt.h+c.stt.s));
