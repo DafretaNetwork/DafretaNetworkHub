@@ -2326,7 +2326,8 @@ function toggleDeck(i){const h=HD[i];if(!owned(h)){toast('Unlock this hero first
  hi.push(i);rt=i;return 'added'}
 /* hero collection grid: light copies of the portraits (full-size art in every tile overloaded phones and flashed black) */
 const THB={},THK={};let thN=0;
-function thSrc(src){if(!src)return src;const v=THB[src];if(v)return v===1?src:v;THB[src]=1;THK[src]=THK[src]||++thN;const im=new Image();if(!/^data:/.test(src))im.crossOrigin='anonymous';
+const IMS={};/* small copies saved by the admin's One-click optimize: portrait -> tile-size picture */
+function thSrc(src){if(!src)return src;if(IMS[src])return IMS[src];const v=THB[src];if(v)return v===1?src:v;THB[src]=1;THK[src]=THK[src]||++thN;const im=new Image();if(!/^data:/.test(src))im.crossOrigin='anonymous';
  im.onload=()=>{try{const H=720;if(im.naturalHeight<=H*1.2){THB[src]=src;return}const W=Math.max(1,Math.round(im.naturalWidth*H/im.naturalHeight)),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(im,0,0,W,H);
   let u=c.toDataURL('image/webp',.88);if(!/^data:image\/webp/.test(u))u=c.toDataURL('image/png');THB[src]=u;document.querySelectorAll('img[data-tk="'+THK[src]+'"]').forEach(e=>{e.src=u})}catch(e){THB[src]=src}};
  im.onerror=()=>{THB[src]=src};im.src=src;return src}
@@ -2639,6 +2640,7 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
   else if(fx=='bomb')s.bomb={t:Math.max(1,+g.delay||2),d:v,ap:d||undefined};else return;
   GEN.push({id,s,locked:!!g.locked})});
  QUESTS=Object.entries(qs||{}).map(([id,q])=>({id,t:q.title||'Quest',desc:String(q.desc||''),mode:q.mode||'any',wins:Math.max(1,+q.wins||1),rw:q.reward||{},ord:+q.created||0})).sort((a,b)=>a.ord-b.ord);
+ Object.values(hsr||{}).forEach(h=>{if(!h)return;if(h.img&&h.imgS)IMS[h.img]=h.imgS;Object.values(h.evo||{}).forEach(e=>{if(e&&e.img&&e.imgS)IMS[e.img]=e.imgS})});
  const LH=Object.entries(hsr||{}).map(([id,h])=>h?buildHero(h,id,0,h.name,h.img):null).filter(Boolean);
  LH.sort((x,y)=>x.cr-y.cr);if(Object.keys(hsr||{}).some(k=>k.startsWith('hd_'))&&LH.length>=4)HD.length=0;if(LH.length)HD.push(...LH);
  HD.forEach(h=>{[h.img,h.atkImg,h.exImg].forEach(calcFt);if(h.src&&h.src.evo)Object.values(h.src.evo).forEach(e=>e&&[e.img,e.atkImg,e.exImg].forEach(calcFt))});
