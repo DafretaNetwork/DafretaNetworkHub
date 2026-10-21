@@ -1417,19 +1417,11 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .cg .tce{filter:none}
 .cg .tce .tcg{animation:none;filter:drop-shadow(0 0 2px #ffd24a)}
 /* line-up screens: same emblem animation, done with cheap moves (sliding a shine, fading a glow) so phones keep up */
+/* line-up screens: the Transcendent emblem is drawn into one small canvas per tile (same look and animation, far lighter for phones) */
 #menu .tce{filter:none}
-#menu .tce .tcg{animation:none;filter:drop-shadow(0 0 2px #ffd24a)}
-#menu .tce .tcg{z-index:2}#menu .tcgs,#menu .tcgl{z-index:3}
-/* gem edge glow, drawn BEHIND the gem: a blurred gold copy of the gem shape that breathes (same look as the main menu, much lighter) */
-#menu .tce::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% calc(var(--tcc,.5)*100%),#fffbe6,#ffd24a 40%,#ffb300);
- -webkit-mask:var(--tcgm,none) center/100% 100% no-repeat;mask:var(--tcgm,none) center/100% 100% no-repeat;filter:blur(2.5px);transform-origin:50% calc(var(--tcc,.5)*100%);animation:mtg 2.4s ease-in-out infinite}
-@keyframes mtg{0%,100%{opacity:.45;transform:scale(1.06)}50%{opacity:1;transform:scale(1.2)}}
-#menu .tcbs,#menu .tcgs{mix-blend-mode:normal;background:none!important;animation:none!important;overflow:hidden}
-#menu .tcbs::before,#menu .tcgs::before{content:"";position:absolute;top:0;bottom:0;left:0;width:300%;animation:mtsh 3.2s ease-in-out infinite}
-#menu .tcbs::before{background:linear-gradient(110deg,transparent 40%,#fff2c0aa 48%,#ffffffee 50%,#fff2c0aa 52%,transparent 60%)}
-#menu .tcgs::before{background:linear-gradient(110deg,transparent 38%,#ffffff 50%,transparent 62%);animation-delay:.45s}
-@keyframes mtsh{0%{transform:translateX(0)}50%,100%{transform:translateX(-66.66%)}}
-@media(prefers-reduced-motion:reduce){#menu .tce::after,#menu .tcbs::before,#menu .tcgs::before{animation:none}}
+#menu .tce>*:not(.tcv){visibility:hidden!important;animation:none!important}
+#menu .tce>.tcv{position:absolute;left:-12%;top:-12%;width:124%;height:124%;visibility:visible;pointer-events:none}
+#menu .tc .hf::after{mix-blend-mode:normal;opacity:.7;inset:0 auto 0 0;width:300%;background-size:100% 100%;animation:cgsh 3.2s ease-in-out infinite}
 .cg .tc .hf::after{mix-blend-mode:normal;opacity:.7;inset:0 auto 0 0;width:300%;background-size:100% 100%;animation:cgsh 3.2s ease-in-out infinite}
 @keyframes cgsh{0%{transform:translateX(-66.66%)}50%,100%{transform:translateX(0)}}
 
@@ -2337,6 +2329,40 @@ function thSrc(src){if(!src)return src;const v=THB[src];if(v)return v===1?src:v;
   let u=c.toDataURL('image/webp',.88);if(!/^data:image\/webp/.test(u))u=c.toDataURL('image/png');THB[src]=u;document.querySelectorAll('img[data-tk="'+THK[src]+'"]').forEach(e=>{e.src=u})}catch(e){THB[src]=src}};
  im.onerror=()=>{THB[src]=src};im.src=src;return src}
 const faceImgT=x=>{const u=thSrc(x.img),k=THK[x.img]||0;return x.face?'<img class="fz" src="'+u+'" data-tk="'+k+'" alt="" decoding="async" referrerpolicy="no-referrer" style="--fx:'+x.face.x+';--fy:'+x.face.y+';--z:'+x.face.z+'">':'<img src="'+u+'" data-tk="'+k+'" alt="" decoding="async" referrerpolicy="no-referrer">'};
+
+/* ---- Transcendent emblem renderer for the line-up screens (one canvas per emblem, ~30fps, stops when hidden) ---- */
+const TCR=(()=>{let B=null,G=null,bs='',gs='',glow=null,shad=null,cw=0,raf=0,last=0;const ld=(src,cb)=>{const im=new Image();im.onload=()=>cb(im);im.src=src};
+ const ensure=()=>{if(bs!==TCBs){bs=TCBs;ld(bs,i=>{B=i;cw=0})}if(gs!==TCGs){gs=TCGs;ld(gs,i=>{G=i;cw=0})}};
+ const mkc=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+ const PAD=.12/1.24;// emblem box inside the canvas
+ function prep(W,H){cw=W;const ew=W/1.24,eh=H/1.24,ox=W*PAD,oy=H*PAD;
+  shad=mkc(W,H);let x=shad.getContext('2d');x.shadowColor='rgba(0,0,0,.72)';x.shadowBlur=W*.03;x.shadowOffsetY=W*.014;x.drawImage(B,ox,oy,ew,eh);
+  glow=mkc(W,H);x=glow.getContext('2d');const t=mkc(W,H),tx=t.getContext('2d');tx.drawImage(G,ox,oy,ew,eh);tx.globalCompositeOperation='source-in';const gr=tx.createRadialGradient(W/2,oy+eh*TCC(),0,W/2,oy+eh*TCC(),ew*.25);gr.addColorStop(0,'#fffbe6');gr.addColorStop(.4,'#ffd24a');gr.addColorStop(1,'#ffb300');tx.fillStyle=gr;tx.fillRect(0,0,W,H);
+  x.filter='blur('+Math.max(1.5,W*.012)+'px)';x.drawImage(t,0,0);x.drawImage(t,0,0);x.filter='none'}
+ const TCC=()=>+getComputedStyle(document.documentElement).getPropertyValue('--tcc')||.5;
+ let tcc=.5,box=[0,0,1,1];
+ const ease=p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+ let SCR=null;function band(ctx,img,W,H,ox,oy,ew,eh,ph,ang,a,wd){if(ph<0||ph>1)return;const t=SCR||(SCR=document.createElement('canvas'));if(t.width!==W||t.height!==H){t.width=W;t.height=H}const x=t.getContext('2d');x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);x.drawImage(img,ox,oy,ew,eh);x.globalCompositeOperation='source-in';
+  const cx=ox+ew*(1.4-2.8*ease(ph)),g=x.createLinearGradient(cx-ew*wd,oy,cx+ew*wd,oy+eh*.35);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.42,'rgba(255,242,192,'+a*.66+')');g.addColorStop(.5,'rgba(255,255,255,'+a+')');g.addColorStop(.58,'rgba(255,242,192,'+a*.66+')');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation='screen';ctx.drawImage(t,0,0);ctx.globalCompositeOperation='source-over'}
+ function star(ctx,x,y,r,a){if(a<=.01)return;ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.rotate(Math.PI/4*a);ctx.beginPath();for(let i=0;i<8;i++){const rr=i%2?r*.28:r,an=i*Math.PI/4-Math.PI/2;ctx.lineTo(Math.cos(an)*rr,Math.sin(an)*rr)}ctx.closePath();
+  const g=ctx.createRadialGradient(0,0,0,0,0,r);g.addColorStop(0,'#fff');g.addColorStop(.6,'#fff6c8');g.addColorStop(1,'rgba(255,210,74,.6)');ctx.fillStyle=g;ctx.shadowColor='#ffd24a';ctx.shadowBlur=r*.8;ctx.fill();ctx.restore()}
+ const tw=(t,d,dl)=>{const p=((t-dl)%d+d)%d/d;return p<.45?p/.45:p<.7?1-(p-.45)/.25*.6:Math.max(0,.4-(p-.7)/.3*.4)};
+ function frame(now){raf=requestAnimationFrame(frame);if(now-last<33)return;last=now;const m=$('#menu');if(!m||m.hidden||!document.querySelector('#menu .tce'))return;ensure();if(!B||!G)return;
+  tcc=TCC();const cs=document.documentElement.style,pv=k=>parseFloat(cs.getPropertyValue(k))/100;box=[pv('--tl')||0,pv('--tt')||0,pv('--tw2')||1,pv('--th2')||1];
+  const t=now/1000,dpr=Math.min(2,window.devicePixelRatio||1);
+  document.querySelectorAll('#menu .tce').forEach(e=>{let c=e.querySelector('.tcv');if(!c){c=document.createElement('canvas');c.className='tcv';e.appendChild(c)}
+   const W=Math.max(8,Math.round(c.clientWidth*dpr)),H=Math.max(8,Math.round(c.clientHeight*dpr));if(c.width!==W||c.height!==H){c.width=W;c.height=H}if(cw!==W||!shad||shad.height!==H)prep(W,H);
+   const x=c.getContext('2d'),ew=W/1.24,eh=H/1.24,ox=W*PAD,oy=H*PAD,gx=W/2,gy=oy+eh*tcc;x.clearRect(0,0,W,H);
+   x.drawImage(shad,0,0);
+   band(x,B,W,H,ox,oy,ew,eh,(t%3.2)/1.6,0,.93,.14);
+   [[.14,.30,2.6,0],[.86,.38,2.9,1.1],[.30,.76,2.4,1.9]].forEach(([sx,sy,d,dl],i)=>{const a=tw(t,d,dl);star(x,ox+ew*(box[0]+box[2]*sx),oy+eh*(box[1]+box[3]*sy),ew*(i==2?.05:.07)*box[2]*.5*(.4+a*.8),a)});
+   const gp=(Math.sin(t/2.4*Math.PI*2-Math.PI/2)+1)/2,sc=1.06+.14*gp;x.save();x.globalAlpha=.45+.55*gp;x.translate(gx,gy);x.scale(sc,sc);x.translate(-gx,-gy);x.drawImage(glow,0,0);x.restore();
+   x.drawImage(G,ox,oy,ew,eh);
+   band(x,G,W,H,ox,oy,ew,eh,((t-.45)%3.2+3.2)%3.2/1.6,0,1,.12);
+   [[.46,-.07,.11,0],[.545,.04,.08,.4],[.50,.13,.07,.85],[.525,-.14,.07,1.25],[.475,.06,.06,1.6]].forEach(([sx,dy,w,dl])=>{const a=tw(t,1.9,dl);star(x,ox+ew*sx,oy+eh*(tcc+dy),ew*w*.5*(.4+a*.8),a)})})}
+ return{start(){if(!raf)raf=requestAnimationFrame(frame)}}})();
+TCR.start();
 function frMeter(b,s){const e=s.ev|0,k=hk(b);if(e>=4)return '<div class="frm max"><span class="frt"><i style="width:100%"></i><em>MAX</em></span>'+STNI+'</div>';
  const st=e===3,cur=st?(PD.st|0):(PD.fr[k]||0),need=st?Math.max(1,CFG.stone):Math.max(1,CFG.frag[e]||1),p=Math.min(100,cur/need*100);
  return '<div class="frm'+(st?' st':'')+(cur>=need?' ok':'')+'" title="'+(st?'Transcendence stones for the last evolution':'Fragments for the next evolution')+'"><span class="frt"><i style="width:'+p.toFixed(1)+'%"></i><em>'+g$(cur)+'/'+g$(need)+'</em></span>'+(st?STNI:PUZI)+'</div>'}
