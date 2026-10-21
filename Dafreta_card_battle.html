@@ -1297,6 +1297,58 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 @keyframes vrkfl{0%{opacity:0;transform:scale(.4)}35%{opacity:1}100%{opacity:0;transform:scale(1.5)}}
 @container (max-height:520px){#vsx .vrk{--vrs:clamp(38px,12cqh,52px);margin:-10px 0 -14px}#vsx .vrk small{font-size:8.5px;padding:2px 6px}}
 @media(prefers-reduced-motion:reduce){#vsx .vrk,#vsx .vrk::before{animation:none}}
+
+/* ===================== status animations: stun / burn / frost ===================== */
+.stn2{position:absolute;aspect-ratio:1;translate:-50% -50%;z-index:4;pointer-events:none;animation:stin .45s cubic-bezier(.2,1.5,.4,1) var(--e) both}
+@keyframes stin{from{opacity:0;transform:translateY(-30%) scale(.4)}}
+.stn2 .hal{position:absolute;left:4%;right:4%;top:50%;height:34%;translate:0 -50%;border-radius:50%;border:2.5px solid #ffe58ae6;box-shadow:0 0 6px #ffd24a,inset 0 0 6px #ffd24a99;opacity:.85;animation:halp 1.2s ease-in-out infinite alternate;animation-delay:var(--t)}
+@keyframes halp{to{opacity:.45;box-shadow:0 0 12px #ffd24a,inset 0 0 8px #ffd24a66}}
+.stn2 .orb2{position:absolute;inset:0;transform:scaleY(.34)}
+.stn2 b{position:absolute;left:50%;top:50%;width:30%;aspect-ratio:1;margin:-15% 0 0 -15%;animation:stp 1.5s linear infinite;animation-delay:calc(var(--t) - var(--i) * .5s)}
+.stn2 b svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px #ffcc00)}
+.stn2 b.sp{width:9%;margin:-4.5% 0 0 -4.5%;border-radius:50%;background:radial-gradient(circle,#fff 0 30%,#fff6b0 45%,transparent 72%)}
+@keyframes stp{0%{transform:rotate(0deg) translateX(145%) rotate(0deg) scaleY(2.94) scale(.9);opacity:.95}
+ 25%{transform:rotate(90deg) translateX(145%) rotate(-90deg) scaleY(2.94) scale(1.18);opacity:1}
+ 50%{transform:rotate(180deg) translateX(145%) rotate(-180deg) scaleY(2.94) scale(.9);opacity:.85}
+ 75%{transform:rotate(270deg) translateX(145%) rotate(-270deg) scaleY(2.94) scale(.62);opacity:.45}
+ 100%{transform:rotate(360deg) translateX(145%) rotate(-360deg) scaleY(2.94) scale(.9);opacity:.95}}
+.stn2 b.sp{animation-name:stp2}
+@keyframes stp2{0%{transform:rotate(0deg) translateX(480%) rotate(0deg) scaleY(2.94);opacity:.9}25%{transform:rotate(90deg) translateX(480%) rotate(-90deg) scaleY(2.94) scale(1.3);opacity:1}50%{transform:rotate(180deg) translateX(480%) rotate(-180deg) scaleY(2.94);opacity:.8}75%{transform:rotate(270deg) translateX(480%) rotate(-270deg) scaleY(2.94) scale(.6);opacity:.35}100%{transform:rotate(360deg) translateX(480%) rotate(-360deg) scaleY(2.94);opacity:.9}}
+
+.brn{position:absolute;left:50%;bottom:-3%;width:78%;aspect-ratio:1/1.05;translate:-50% 0;z-index:3;pointer-events:none;mix-blend-mode:screen;animation:fxin .5s ease-out var(--e) both}
+@keyframes fxin{from{opacity:0;transform:scale(.6)}}
+.brn .bgl{position:absolute;left:-14%;right:-14%;bottom:-2%;height:34%;border-radius:50%;background:radial-gradient(ellipse at 50% 60%,#ffc35acc,#ff6a1a77 42%,transparent 70%);animation:bgl 1.1s ease-in-out infinite alternate;animation-delay:var(--t)}
+@keyframes bgl{to{opacity:.6;transform:scaleX(1.08)}}
+.brn .fwr{position:absolute;left:50%;bottom:2%;width:62%;aspect-ratio:100/140;translate:-50% 0;transform-origin:50% 100%;animation:fsw 1.6s ease-in-out infinite;animation-delay:var(--t)}
+.brn .flm{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 0 4px #ff8a1a) drop-shadow(0 0 12px #ff4a0a99)}
+.brn .flm path{transform-box:fill-box;transform-origin:50% 100%}
+.brn .flm .f1{animation:fl1 .9s ease-in-out infinite alternate;animation-delay:var(--t)}
+.brn .flm .f2{animation:fl2 .7s ease-in-out infinite alternate;animation-delay:calc(var(--t) - .2s)}
+.brn .flm .f3{animation:fl3 .5s ease-in-out infinite alternate;animation-delay:calc(var(--t) - .1s)}
+@keyframes fsw{0%,100%{transform:skewX(-4deg) scaleY(1)}50%{transform:skewX(5deg) scaleY(1.06)}}
+@keyframes fl1{0%{transform:scale(1,.94) skewX(3deg)}50%{transform:scale(.96,1.05) skewX(-3deg)}100%{transform:scale(1.03,.98) skewX(2deg)}}
+@keyframes fl2{0%{transform:scale(.95,1.04) skewX(-4deg)}100%{transform:scale(1.04,.92) skewX(4deg)}}
+@keyframes fl3{0%{transform:scale(1,.9);opacity:.9}100%{transform:scale(.9,1.08);opacity:1}}
+.brn .bem{position:absolute;bottom:22%;left:var(--x);width:3.6%;aspect-ratio:1;border-radius:50%;background:#ffe08a;box-shadow:0 0 3px #ffb03a,0 0 7px #ff5a0a;opacity:0;animation:bem 1.9s ease-out infinite;animation-delay:calc(var(--t) - var(--i) * .27s)}
+@keyframes bem{0%{opacity:0;transform:translate(0,0)}12%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-650%) scale(.4)}}
+#bat .unit.st-burn .fgw{filter:drop-shadow(0 6px 10px #ff6a1a88)}
+
+.frz{position:absolute;left:50%;bottom:-1%;width:66%;height:calc(var(--fh) * 27%);translate:-50% 0;z-index:3;pointer-events:none;filter:drop-shadow(0 0 2px #dff8ff) drop-shadow(0 0 7px #5ccfffaa)}
+.frz .fgr{position:absolute;left:-22%;right:-22%;bottom:-6%;height:26%;border-radius:50%;background:radial-gradient(ellipse,#d8f6ffcc,#7fd6ff55 45%,transparent 70%);animation:fxin .5s ease-out var(--e) both}
+.frz .ice{position:absolute;inset:0;transform-origin:50% 100%;animation:icein .6s cubic-bezier(.2,1.25,.4,1) var(--e) both;
+ clip-path:polygon(0 100%,1% 46%,7% 30%,13% 44%,21% 12%,29% 34%,38% 2%,46% 28%,54% 0,62% 30%,70% 10%,78% 36%,86% 16%,93% 40%,99% 30%,100% 100%);
+ background:linear-gradient(112deg,transparent 28%,#ffffff99 31%,transparent 35%),linear-gradient(64deg,transparent 58%,#ffffff66 61%,transparent 65%),linear-gradient(90deg,#ffffff22,transparent 20%,transparent 80%,#ffffff22),linear-gradient(180deg,#f0fdffeb 0,#b9ecffcc 30%,#6fc3ecb8 72%,#3f93cfd9 100%)}
+@keyframes icein{0%{transform:scaleY(0) scaleX(.85);opacity:.4}70%{transform:scaleY(1.06) scaleX(1.01);opacity:1}100%{transform:none}}
+.frz .ihl{position:absolute;inset:-10% -30%;background:linear-gradient(105deg,transparent 40%,#ffffffcc 48%,transparent 56%);animation:ihl 2.6s ease-in-out infinite;animation-delay:var(--t)}
+@keyframes ihl{0%,55%{transform:translateX(-60%)}100%{transform:translateX(60%)}}
+.frz .icr{position:absolute;inset:0;background:linear-gradient(150deg,transparent 47%,#ffffffb3 48%,transparent 50%),linear-gradient(30deg,transparent 64%,#ffffff8c 65%,transparent 67%),linear-gradient(80deg,transparent 30%,#e6fbff99 31%,transparent 33%);opacity:.8}
+.frz .ish{position:absolute;bottom:0;left:var(--x);width:calc(22% * var(--s));aspect-ratio:.55;translate:-50% 0;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(#f4feff,#8fd9f7 60%,#4d9fd6);transform-origin:50% 100%;animation:icein .6s cubic-bezier(.2,1.3,.4,1) var(--e) both;animation-delay:calc(var(--e) + var(--i) * .06s)}
+.frz .ms{position:absolute;bottom:18%;left:var(--x);width:58%;aspect-ratio:2.2;translate:-50% 0;border-radius:50%;background:radial-gradient(ellipse,#effcffb3,#c8f1ff55 45%,transparent 70%);filter:blur(3px);opacity:0;animation:mist 3.4s ease-out infinite;animation-delay:calc(var(--t) - var(--i) * .57s)}
+@keyframes mist{0%{opacity:0;transform:translate(0,15%) scale(.55)}25%{opacity:.85}100%{opacity:0;transform:translate(var(--dx),-170%) scale(1.6)}}
+.frz .tw{position:absolute;left:var(--x);bottom:var(--y);width:9%;aspect-ratio:1;translate:-50% 50%;background:#fff;clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);opacity:0;animation:tw 2.2s ease-in-out infinite;animation-delay:calc(var(--t) - var(--i) * .44s)}
+@keyframes tw{0%,100%{opacity:0;transform:scale(.2) rotate(0)}45%{opacity:1;transform:scale(1) rotate(45deg)}70%{opacity:0;transform:scale(.4) rotate(90deg)}}
+#bat .unit.st-frz .fgw{filter:drop-shadow(0 0 6px #9ff0ffaa) saturate(.8) brightness(1.05)}
+@media(prefers-reduced-motion:reduce){.stn2 b,.brn .fwr,.brn .flm path,.brn .bem,.frz .ms,.frz .ihl,.frz .tw{animation-duration:6s}}
 </style></head><body>
 <div id="gw">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gSt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#cdd6e3"/><stop offset="1" stop-color="#6f7a8c"/></linearGradient><linearGradient id="gGd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#ffc83a"/><stop offset="1" stop-color="#b8700a"/></linearGradient><linearGradient id="gLe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a4a"/><stop offset="1" stop-color="#6a3a14"/></linearGradient><linearGradient id="gRd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0473a"/><stop offset="1" stop-color="#7a1410"/></linearGradient><linearGradient id="gBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2ff"/><stop offset="1" stop-color="#2f6fd0"/></linearGradient><linearGradient id="gWd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8703c"/><stop offset="1" stop-color="#4a2a10"/></linearGradient></defs></svg><div id="home"><nav id="sb"><button class="sbn on" data-pg="battle"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><g transform="translate(24 24) rotate(-45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g><g transform="translate(24 24) rotate(45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g></g></svg><span>Battle</span></button><button class="sbn" data-pg="friends"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M23 40c.6-8.4 4.4-13 10-13s9.4 4.6 10 13z" fill="url(#gBl)"/><circle cx="33" cy="17.5" r="6.2" fill="url(#gBl)"/><path d="M5 42c.8-10 5.8-15.5 13.5-15.5S31.2 32 32 42z" fill="url(#gGd)"/><circle cx="18.5" cy="17" r="7.6" fill="url(#gGd)"/><path d="M14 14.5c2.5-3 7.5-3 10 0" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.3"/><path d="M11 36.5c2-3.5 5-5 7.5-5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.3"/></g></svg><span>Friends</span></button><button class="sbn" data-pg="shop"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M17 12.5c2.4 1.6 11.6 1.6 14 0l-2.6 5.8h-8.8z" fill="url(#gLe)"/><path d="M19.5 19.5c-8 4.6-12.5 11-11.5 16.5 1 5 7.5 7.5 16 7.5s15-2.5 16-7.5c1-5.5-3.5-11.9-11.5-16.5z" fill="url(#gLe)"/><path d="M13 30c1-3 3-5.5 5.5-7" fill="none" stroke="#f0c48a" stroke-opacity=".6" stroke-width="1.4"/><rect x="18" y="17.4" width="12" height="3.6" rx="1.8" fill="url(#gGd)"/><circle cx="26.5" cy="40" r="5.4" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="7.6" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="4.6" fill="none" stroke="#9a5a06" stroke-width="1.2"/><path d="M34 33.5c1-1.4 3.6-1.4 4.6 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1"/></g></svg><span>Shop</span></button><button class="sbn" data-pg="lb"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#1e0f05" stroke-width="4.8" stroke-linecap="round"/><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#ffc83a" stroke-width="2.4" stroke-linecap="round"/><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M13 6.5h22v9.5c0 8-4.6 13-11 13S13 24 13 16z" fill="url(#gGd)"/><path d="M21 28.5h6l1.2 6h-8.4z" fill="url(#gGd)"/><rect x="14" y="34.5" width="20" height="4.6" rx="1.4" fill="url(#gWd)"/><rect x="10.5" y="39" width="27" height="4.6" rx="1.4" fill="url(#gWd)"/><path d="M24 10.5l1.8 3.7 4 .5-2.9 2.8.7 4L24 19.6 20.4 21.5l.7-4-2.9-2.8 4-.5z" fill="#fff6c8" stroke="#a86a00" stroke-width="1"/></g><path d="M16 9v6.5c0 3 .8 5.6 2.2 7.4" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.4" stroke-linecap="round"/></svg><span>Leaderboard</span></button><button class="sbn ex" id="exit"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M8 43V8.5C8 6.6 9.6 5 11.5 5h15C28.4 5 30 6.6 30 8.5V43z" fill="url(#gWd)"/><path d="M15.3 8v35M22.6 8v35" stroke-opacity=".45"/><circle cx="25.5" cy="25" r="1.9" fill="url(#gGd)"/></g><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#1e0f05" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#ffc83a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exit</span></button></nav>
@@ -1402,6 +1454,7 @@ const SND=(()=>{
  function toggle(){on=!on;try{localStorage.setItem('dfsnd',on?'1':'0')}catch(e){}unlock();
   if(ctx){mg.gain.setTargetAtTime(on?.2:0,now(),.05);sg.gain.setTargetAtTime(on?.8:0,now(),.05)}if(cur&&cur.a)cur.a.volume=on?.5:0;btn();hint()}
  /* sound effects */
+ const TH={},thr=k=>{const n=performance.now();if(TH[k]&&n-TH[k]<140)return 1;TH[k]=n;return 0};
  const fx={
   clash(){if(!ok())return;const t=now();[1650,2480,3720,5200].forEach((f,i)=>tone(f,t,.55-i*.08,'sine',.16/Math.pow(i+1,.3)));nz(t,.14,.5,'highpass',3000,0,1);tone(220,t,.18,'triangle',.5,sg,90)},
   whoosh(){if(!ok())return;nz(now(),.4,.3,'bandpass',250,3600,1.4)},
@@ -1412,6 +1465,13 @@ const SND=(()=>{
   shield(){if(!ok())return;const t=now()+.1;tone(1500,t,.35,'triangle',.14);tone(2250,t,.25,'sine',.08);nz(t,.05,.2,'highpass',5000,0,1)},
   mana(){if(!ok())return;const t=now();tone(1046,t,.25,'sine',.1);tone(1568,t+.08,.3,'sine',.1)},
   ult(){if(!ok())return;const t=now();nz(t,.5,.3,'bandpass',250,3500,1.4);tone(110,t,.5,'sawtooth',.1,sg,520);tone(90,t+.5,.45,'sine',.7,sg,32);nz(t+.5,.45,.5,'lowpass',2000,150,.7)},
+  /* status effects: throttled so a sweep hitting 4 heroes plays once */
+  frost(){if(!ok()||thr('frz'))return;const t=now();[0,.035,.08,.14].forEach((d,i)=>nz(t+d,.045,.32-i*.05,'highpass',5200+i*900,0,1.4));
+   [2093,2637,3136,3951].forEach((f,i)=>tone(f,t+.06+i*.045,.55-i*.06,'sine',.07));tone(1046,t+.02,.7,'triangle',.05,sg,1568);nz(t+.05,.9,.16,'bandpass',900,3200,1.6)},
+  burn(){if(!ok()||thr('brn'))return;const t=now();nz(t,.55,.34,'bandpass',260,2600,.9);tone(95,t,.45,'sine',.32,sg,52);
+   for(let i=0;i<7;i++)nz(t+.05+Math.random()*.55,.025,.12+Math.random()*.08,'highpass',3500,0,1)},
+  burnTick(){if(!ok()||thr('brt'))return;const t=now();nz(t,.32,.16,'bandpass',300,1400,.9);for(let i=0;i<4;i++)nz(t+Math.random()*.3,.02,.09,'highpass',3800,0,1)},
+  stun(){if(!ok()||thr('stn'))return;const t=now();[1568,1976,2349].forEach((f,i)=>tone(f,t+i*.07,.22,'triangle',.08,sg,f*1.12));tone(392,t,.25,'sine',.18,sg,196)},
   boom(){if(!ok())return;const t=now();tone(80,t,.5,'sine',.8,sg,28);nz(t,.5,.55,'lowpass',2200,120,.7)},
   click(){if(!ok())return;tone(620,now(),.05,'square',.04,sg,420)},
   myturn(){if(!ok())return;const t=now();nz(t,.45,.3,'bandpass',300,3200,1.2);[659,988,1319].forEach((f,i)=>tone(f,t+.05+i*.09,.7,'triangle',.16));tone(196,t,.5,'sine',.4,sg,98)},
@@ -1477,7 +1537,7 @@ const clean=T=>['deck','hand','disc'].forEach(k=>T[k]=T[k].filter(c=>c.o.hp>0));
 function hurt(O,d,pierce,cr,dot){if(!dot&&O.s.blk>0){if(--O.s.blk<=0)delete O.s.blk;fl(O,'Blocked!','#9fd8ff');return 0}
  const ab=pierce?0:Math.min(O.sh,d);O.sh-=ab;O.hp=Math.max(0,O.hp-(d-ab));O.ex=Math.min(100,O.ex+Math.min(25,d*2));fl(O,'-'+d,'#ff5a5a',cr);if(O.hp<=0){O.s={};O.sh=0;O.bst=0}return d}
 /* status rules: pairs cancel, Burn/Block/Fatigue stack, a second Entangle knocks the relic off */
-function applyS(x,k,n){if(!x||x.hp<=0||!k)return;n=Math.max(1,+n||1);const T=teamOf(x),pr={atk:'weak',weak:'atk',brk:'bol',bol:'brk'}[k];
+function applyS(x,k,n){if(!x||x.hp<=0||!k)return;n=Math.max(1,+n||1);if(/^(frz|burn|stun)$/.test(k)){if(!x.s[k])(x.fxT||(x.fxT={}))[k]=performance.now();if(inB)SND[k=='frz'?'frost':k=='burn'?'burn':'stun']()}const T=teamOf(x),pr={atk:'weak',weak:'atk',brk:'bol',bol:'brk'}[k];
  if(pr&&x.s[pr]){delete x.s[pr];fl(x,'Nullified','#e8e2d0');return}
  if(k=='burn'){x.bst=(x.s.burn?(x.bst||0):0)+n;x.s.burn=RU.burnDur;return}
  if(k=='blk'){x.s.blk=Math.min(RU.blkMax,(x.s.blk||0)+n);return}
@@ -1531,7 +1591,7 @@ function exu(T,S,t,me){if(T===P)MS.ex++;S.ex=0;SND.ult();hist.push({s:{...S.h.X,
  log((me?'You: ':'Foe: ')+S.h.n+' unleashes '+S.h.X.n+'!'+(r&&r.e=='ult_freeze'?' (relic: all enemies frozen)':''))}
 function boom(T,b){SND.boom();const F=T===P?E:P;alive(F).forEach(x=>{const dm=Math.max(1,Math.round(b.d*tk(x)));if(b.o)b.o.stt.d+=Math.min(dm,x.hp+x.sh);hurt(x,dm);if(b.ap&&x.hp>0)applyS(x,b.ap[0],b.ap[1])});log('💣 '+(T===P?'Your':'Foe')+' '+b.n+' explodes!')}
 function start(T){T.rd++;T.en=Math.min(10,T.rd);T.pl=0;T.hand.forEach(c=>{if(c.s.cht)c.ch=(c.ch||0)+1});
- T.u.forEach(S=>{if(S.hp<=0)return;['tnt','bol'].forEach(k=>{if(S.s[k]&&--S.s[k]<=0)delete S.s[k]});if(S.s.shd&&--S.s.shd<=0){delete S.s.shd;if(S.sh){S.sh=0;fl(S,'Shield gone','#9fe')}}if(S.s.burn){const bd=Math.round((S.bst||1)*RU.burnPer);if(bd)hurt(S,bd,0,0,1);if(S.hp>0&&--S.s.burn<=0){delete S.s.burn;S.bst=0}}if(S.s.poi&&S.hp>0)hurt(S,2,1,0,1);if(S.s.reg&&S.hp>0){const a=Math.min(3,S.mhp-S.hp);S.hp+=a;fl(S,'+'+a,'#5be39b')}
+ T.u.forEach(S=>{if(S.hp<=0)return;['tnt','bol'].forEach(k=>{if(S.s[k]&&--S.s[k]<=0)delete S.s[k]});if(S.s.shd&&--S.s.shd<=0){delete S.s.shd;if(S.sh){S.sh=0;fl(S,'Shield gone','#9fe')}}if(S.s.burn){const bd=Math.round((S.bst||1)*RU.burnPer);if(bd){hurt(S,bd,0,0,1);if(inB)SND.burnTick()}if(S.hp>0&&--S.s.burn<=0){delete S.s.burn;S.bst=0}}if(S.s.poi&&S.hp>0)hurt(S,2,1,0,1);if(S.s.reg&&S.hp>0){const a=Math.min(3,S.mhp-S.hp);S.hp+=a;fl(S,'+'+a,'#5be39b')}
   const r=relOn(S)?S.r:null;if(r&&S.hp>0){const v=+r.v||0;if(r.e=='ex_turn')S.ex=Math.min(100,S.ex+v);if(r.e=='shield_turn'){S.sh+=v;S.s.shd=Math.max(S.s.shd||0,1);fl(S,'+'+v,'#fff')}if(r.e=='regen_turn'){const a=Math.min(v,S.mhp-S.hp);if(a){S.hp+=a;fl(S,'+'+a,'#5be39b')}}}});
  T.bombs=T.bombs.filter(b=>{if(--b.t>0)return 1;boom(T,b);return 0});
  clean(T);draw(T,2)}
@@ -1570,8 +1630,8 @@ function tile(S,m,i){const h=S.h,es=ea(S),now=performance.now(),pz=S.pose&&now-S
  tg=nd&&((nd=='e'&&!m&&canHit(S,sp))||(nd=='a'&&m&&S.hp>0)||(nd=='x'&&S.hp>0)||(nd=='ad'&&m&&(S.hp>0||!!sp.rev))),
  chips=Object.keys(S.s).map(k=>'<span class="stc'+(/^(burn|poi)$/.test(k)?' dot':'')+(/^(atk|reg|bol|blk|tnt|bx\d)$/.test(k)?' gd':'')+'" data-st="'+(m?'p':'e')+i+'">'+(SD[k]||['✨'])[0]+'<sub>'+(k=='burn'?(S.bst||1):S.s[k])+'</sub></span>').join(''),
  dl=-(((performance.now()/1000)+i*.7+(m?0:.35))%3.2).toFixed(2);
- return '<div class="unit'+(S.hp<=0?' dead':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+'" style="z-index:'+(11+i)+';--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
- '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(S.hp>0?orbH(S):'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+(S.hp<=0?tombH(S,h):'<span class="fgw" style="'+figSz(h,m,ps,pf)+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s">'+stunH(S,h,m)+'</span>')+'</div><div class="chips">'+chips+'</div>'+
+ return '<div class="unit'+(S.hp<=0?' dead':'')+(S.hp>0&&S.s.burn?' st-burn':'')+(S.hp>0&&S.s.frz?' st-frz':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+'" style="z-index:'+(11+i)+';--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
+ '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(S.hp>0?orbH(S):'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+(S.hp<=0?tombH(S,h):(()=>{const fz=figSz(h,m,ps,pf),fh=+((fz.match(/--fh:([\d.]+)/)||[])[1]||.84);return '<span class="fgw" style="'+fz+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s">'+stunH(S,h,m)+'</span>'+(S.s.burn?burnH(S):'')+(S.s.frz?frostH(S,fh):'')})())+'</div><div class="chips">'+chips+'</div>'+
  '<div class="info" style="--c:'+h.col+'">'+evBadge(h.st)+'<div class="nr"><i class="ci">'+(CI[h.cl]||'')+'</i><b class="nm" style="--nl:'+Math.max(6,String(h.bn||h.n).length+(S.r?3:1.5))+'">'+cHtml(h.bn||h.n)+'</b>'+(S.r?'<span class="rlc" title="'+S.r.n+': '+S.r.t+'">'+rIc(S.r)+'</span>':'')+'</div>'+
  hbar(S,sc)+'<div class="xv2"><i style="width:'+S.ex+'%"></i></div></div></div>'}
 /* health bar: green HP, white shield, pulsing red = damage the hero takes at the start of its next turn (burn hits shield first, poison ignores it) */
@@ -1584,8 +1644,20 @@ const odly=p=>'-'+((performance.now()/1000)%p).toFixed(2)+'s';
 function orbH(S){let o='';const b=k=>'<b style="--i:0">'+FXA[k]+'</b><b style="--i:1">'+FXA[k]+'</b><b style="--i:2">'+FXA[k]+'</b>';
  if(S.sh>0)o+='<i class="orb fsh" style="--od:'+odly(3.3)+'">'+b('shd')+'</i>';
  if(S.s.atk||S.s.bx2||S.s.bx3||S.s.bx4)o+='<i class="orb atk" style="--od:-'+((performance.now()/1000+1.6)%3.3).toFixed(2)+'s">'+b('atk')+'</i>';return o}
-function stunH(S,h,m){if(!S.s.stun||S.hp<=0)return '';const f=h.face||{},x=+f.x||.5,y=+f.y||.08;
- return '<i class="stn" style="left:'+((m?x:1-x)*100).toFixed(1)+'%;top:'+Math.max(-4,(y-.1)*100).toFixed(1)+'%;--od:'+odly(1.5)+'"><b style="--i:0">'+FXA.star+'</b><b style="--i:1">'+FXA.star+'</b><b style="--i:2">'+FXA.star+'</b></i>'}
+const tNow=()=>'-'+(performance.now()/1000).toFixed(3)+'s',fxE=(S,k)=>-(Math.min(4000,performance.now()-((S.fxT&&S.fxT[k])||0))/1000).toFixed(3)+'s';
+/* stun: golden stars circling a tilted halo above the head */
+function stunH(S,h,m){if(!S.s.stun||S.hp<=0)return '';const f=h.face||{},x=+f.x||.5,y=+f.y||.1,z=+f.z||5,hf=.5/z,ar=+h.ar||.55,w=Math.min(100,Math.max(42,hf*2.3/ar*100));
+ return '<i class="stn2" style="left:'+((m?x:1-x)*100).toFixed(1)+'%;top:'+Math.max(-6,(y-hf*.62)*100).toFixed(1)+'%;width:'+w.toFixed(1)+'%;--t:'+tNow()+';--e:'+fxE(S,'stun')+'"><i class="hal"></i><i class="orb2">'+[0,1,2].map(i=>'<b style="--i:'+i+'">'+FXA.star+'</b>').join('')+'<b class="sp" style="--i:.5"></b><b class="sp" style="--i:1.5"></b><b class="sp" style="--i:2.5"></b></i></i>'}
+/* burn: flames + embers licking the feet */
+/* burn: one big living flame at the feet, with a white-hot core, ground glow and a few sparks */
+const FLM='<svg class="flm" viewBox="0 0 100 140" aria-hidden="true"><defs><radialGradient id="flO" cx="50%" cy="80%" r="75%"><stop offset="0" stop-color="#ffb02e"/><stop offset=".55" stop-color="#ff5a12"/><stop offset="1" stop-color="#c81e06"/></radialGradient><radialGradient id="flM" cx="50%" cy="78%" r="70%"><stop offset="0" stop-color="#ffe680"/><stop offset=".6" stop-color="#ffa21f"/><stop offset="1" stop-color="#ff6a12"/></radialGradient><radialGradient id="flC" cx="50%" cy="75%" r="65%"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff6c4"/><stop offset="1" stop-color="#ffd84a"/></radialGradient></defs>'+
+ '<path class="f1" d="M50 4C56 26 78 34 82 62c3 18-4 30-2 40 8-6 11-14 11-14 6 28-12 48-41 48S7 120 11 92c2-12 9-18 9-18 0 10 4 16 10 20-4-16 2-30 9-42 8-14 14-24 11-48z" fill="url(#flO)"/>'+
+ '<path class="f2" d="M50 34c4 16 20 24 22 44 2 14-4 22-3 30 6-4 8-10 8-10 3 20-10 34-27 34s-30-12-28-32c1-8 6-13 6-13 0 7 3 11 7 14-2-12 2-21 7-30 6-10 10-18 8-37z" fill="url(#flM)"/>'+
+ '<path class="f3" d="M50 64c3 10 13 16 14 30 1 16-6 26-14 26s-16-8-15-22c1-10 6-14 9-20 3-5 6-8 6-14z" fill="url(#flC)"/></svg>';
+function burnH(S){return '<i class="brn" style="--t:'+tNow()+';--e:'+fxE(S,'burn')+'"><i class="bgl"></i><i class="fwr">'+FLM+'</i>'+[30,50,68,40,60].map((x,i)=>'<i class="bem" style="--i:'+i+';--x:'+x+'%;--dx:'+((i%2?1:-1)*(120+i*50))+'%"></i>').join('')+'</i>'}
+/* frost: an ice block up to the knees, glinting, with cold mist rolling off it */
+function frostH(S,fh){return '<i class="frz" style="--fh:'+fh+';--t:'+tNow()+';--e:'+fxE(S,'frz')+'"><i class="fgr"></i><i class="ice"><i class="ihl"></i><i class="icr"></i></i>'+[[-4,.8],[96,.7],[10,.55],[84,.6]].map(([x,sc],i)=>'<i class="ish" style="--x:'+x+'%;--s:'+sc+';--i:'+i+'"></i>').join('')+
+ [8,30,52,74,20,62].map((x,i)=>'<i class="ms" style="--i:'+i+';--x:'+x+'%;--dx:'+((i%2?1:-1)*(18+i*6))+'%"></i>').join('')+[22,48,70,36,80].map((x,i)=>'<i class="tw" style="--i:'+i+';--x:'+x+'%;--y:'+(20+((i*37)%55))+'%"></i>').join('')+'</i>'}
 /* ---- tombstone + ghost for fallen heroes (animation delays keep it smooth across re-renders) ---- */
 const GHOST='<svg viewBox="0 0 60 72" aria-hidden="true"><path d="M30 3C14 3 5 15 5 32v34l6.25-6 6.25 6 6.25-6 6.25 6 6.25-6 6.25 6 6.25-6L55 66V32C55 15 46 3 30 3z" fill="#f6f9ff" stroke="#9fb3d6" stroke-width="2"/><path d="M5 40c-4 2-5 7-2 9M55 40c4 2 5 7 2 9" fill="none" stroke="#9fb3d6" stroke-width="3" stroke-linecap="round"/><ellipse cx="21" cy="30" rx="4.2" ry="5.4" fill="#1d2233"/><ellipse cx="39" cy="30" rx="4.2" ry="5.4" fill="#1d2233"/><circle cx="22.4" cy="28" r="1.6" fill="#fff"/><circle cx="40.4" cy="28" r="1.6" fill="#fff"/><ellipse cx="14.5" cy="39" rx="4" ry="2.4" fill="#ffb3c6" opacity=".8"/><ellipse cx="45.5" cy="39" rx="4" ry="2.4" fill="#ffb3c6" opacity=".8"/><ellipse cx="30" cy="41" rx="3" ry="3.6" fill="#1d2233"/></svg>';
 function tombH(S,h){const now=performance.now();if(!S.dt)S.dt=now;const el=now-S.dt,g=el-650;
