@@ -1078,7 +1078,7 @@ const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:n
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:'',cost:1});
 const emptyGF=()=>({art:'',shDur:2,id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
-const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['dispel','Dispel — remove debuffs from an ally or buffs from an enemy'],['search','Search — look at the top cards, keep one'],['chaos','Chaos — a random effect (damage / heal / shield / draw / Empower)'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
+const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['dispel','Dispel — remove debuffs from an ally or buffs from an enemy'],['search','Search — look at the top cards, keep one'],['chaos','Chaotic — pick 1 of 3 random general cards (maybe another of this card)'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
 const CV_LABEL={dispel:'(not used)',chaos:'(not used)',search:'Cards to look at',attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
 const TYPE_ICON={dispel:'✨',search:'🔍',chaos:'🎲',attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',conjure:'📜',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
 const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['pick','Damage ONE chosen enemy'],['revive','Resurrect an ally (and restore HP)'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally'],['none','No direct effect (use only “Add cards to hand”)']];
@@ -1114,7 +1114,7 @@ function cardText(c){const v0=+c.value||0,v=c.pct?v0+'% ATK':v0,a=AILS[c.ail],st
     case 'heal':t='Heal '+v+ad+(c.target==='self'?' (self only)':c.target==='team'?' (all allies)':'');break;
     case 'dispel':t='Dispel debuffs from an ally, or buffs from an enemy';break;
     case 'search':t='Look at the top '+(v0||3)+' cards, add one to your hand';break;
-    case 'chaos':t='Random: damage, heal, shield, draw 2 or Empower';break;
+    case 'chaos':t='Look at 3 random general cards (maybe another of this card), add one to your hand';break;
     case 'mana':t='Gain '+v+' energy';break;
     case 'conjure':t='Add cards to hand';break;
     case 'draw':t='Draw '+v+' card(s)';break;
