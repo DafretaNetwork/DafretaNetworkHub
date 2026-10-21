@@ -1107,9 +1107,9 @@ const GEN_FX={
  bomb:['Bomb (delayed explosion)','Explodes after {d} turn(s): deals {v} damage to all enemies']
 };
 const GEN_ICON={dmg:'💥',dmg_all:'🌋',heal:'💚',heal_all:'✨',shield:'🛡️',shield_all:'🏰',energy:'💎',draw:'🎴',bomb:'💣'};
-const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).replace('{d}',+g.delay||2)+(/^shield/.test(g.effect)?' for '+(+g.shDur||2)+' turn(s)':'')+(AILS[g.ail]?' + '+AILS[g.ail].name+' ('+(+g.dur||2)+'t)':'');
-function cardText(c){const v0=+c.value||0,v=c.pct?v0+'% ATK':v0,a=AILS[c.ail],st=ailStacks(c.ail),ad=a?' + '+a.name+(st?((+c.dur||1)>1?' ×'+(+c.dur||1):''):' ('+(+c.dur||2)+'t)'):'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (Penetrate)',all:' (all foes)'}[c.scope]||'',v2=+c.value2>0?' or '+(c.pct?(+c.value2)+'% ATK':+c.value2):'';
-  const sd=' ('+(+c.shDur||2)+'t)',ex=[+c.shield?'+'+(+c.shield)+' shield'+sd:'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
+const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).replace('{d}',+g.delay||2)+(/^shield/.test(g.effect)?' for '+(+g.shDur||2)+' turn(s)':'')+(AILS[g.ail]?' + '+AILS[g.ail].name+' '+(+g.dur||2)+'⏱':'');
+function cardText(c){const v0=+c.value||0,v=c.pct?v0+'% ATK':v0,a=AILS[c.ail],st=ailStacks(c.ail),ad=a?' + '+a.name+(st?((+c.dur||1)>1?' ×'+(+c.dur||1):''):' '+(+c.dur||2)+'⏱'):'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (Penetrate)',all:' (all foes)'}[c.scope]||'',v2=+c.value2>0?' or '+(c.pct?(+c.value2)+'% ATK':+c.value2):'';
+  const sd=' '+(+c.shDur||2)+'⏱',ex=[+c.shield?'+'+(+c.shield)+' shield'+sd:'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
   switch(c.type){
     case 'heal':t='Heal '+v+ad+(c.target==='self'?' (self only)':c.target==='team'?' (all allies)':'');break;
     case 'dispel':t='Dispel debuffs from an ally, or buffs from an enemy';break;
@@ -1118,9 +1118,9 @@ function cardText(c){const v0=+c.value||0,v=c.pct?v0+'% ATK':v0,a=AILS[c.ail],st
     case 'mana':t='Gain '+v+' energy';break;
     case 'conjure':t='Add cards to hand';break;
     case 'draw':t='Draw '+v+' card(s)';break;
-    case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+sd+(c.target==='self'?' (self)':'');break;
-    case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)'+(c.target==='enemy'?' to any enemy':''):'');break;
-    case 'ultimate':t=({pick:'Deal '+v+' dmg to one enemy'+ad,revive:'Resurrect an ally'+(v0?' and restore '+v+' HP':''),all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,none:c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?'Ultimate':'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
+    case 'buff':t=a?'Apply '+a.name+' '+(+c.dur||2)+'⏱ to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+sd+(c.target==='self'?' (self)':'');break;
+    case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' '+(+c.dur||2)+'⏱'+(c.target==='enemy'?' to any enemy':''):'');break;
+    case 'ultimate':t=({pick:'Deal '+v+' dmg to one enemy'+ad,revive:'Resurrect an ally'+(v0?' and restore '+v+' HP':''),all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,none:c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?'Ultimate':'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' '+(+c.dur||2)+'⏱':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
     default:t='Deal '+v+v2+' dmg'+hits+reach+(c.target==='enemy'?' to any enemy':'')+ad}
   const cj=c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?' · adds '+(c.conj.mode==='random'?(+c.conj.n||1)+' random':Object.keys(c.conj.pool).length)+' card(s) to hand':'';const kw=[+c.exg?'+'+(+c.exg)+' energy':'',+c.grow?'+'+(+c.grow)+'% dmg each turn':'',c.rch?'Recharge':'',c.cht?'Chant':''].filter(Boolean).join(' · ');return t+(ex?' · '+ex:'')+cj+(kw?' · '+kw:'')+(c.token?' · token':'')}
 const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===t).map(([k,a])=>`<option value="${esc(k)}"${sel===k?' selected':''}>${esc(a.name)} — ${AIL_EFFECTS[a.effect]||a.effect}</option>`).join('');
