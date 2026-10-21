@@ -1501,20 +1501,12 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .rst .rsl{margin:2px auto 0;font-size:clamp(10px,2.3cqh,13.5px);line-height:1.3}.rst .rsl li{margin:0}
 .rst .gdw{margin-bottom:2px}
 
-/* ===================== crisp rank emblems: static glow on the picture + a separate pulsing glow layer behind it ===================== */
-.rkw.hr .rke2,.rkw.hs.hr .rke2{animation:none!important}
-.rkw .rfe{position:absolute;inset:0;z-index:1;pointer-events:none;background:var(--c2);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;filter:blur(calc(var(--rs) * .05));animation:rfeo 2.2s ease-in-out infinite}
-@keyframes rfeo{0%,100%{opacity:.35;transform:scale(1.02)}50%{opacity:.95;transform:scale(1.1)}}
-@media(prefers-reduced-motion:reduce){.rkw .rfe{animation:none;opacity:.6}}
 /* ===================== EXP screen: slightly wider hero boxes (Transcendent badge fits), a bit more space between them ===================== */
 .rst .xg2{gap:clamp(12px,2.4cqw,30px)}
 .rst .xc{width:clamp(92px,min(16cqw,25cqh),190px);container-type:inline-size}
 .rst .xt{aspect-ratio:1.5}
 .rst .xbd{font-size:min(7.6cqw,14px);min-height:2em}.rst .xbd .evbd.tc{font-size:1em}
 
-/* crisp glitter: vector stars with a soft colour halo, no filter on the spinning ring */
-.rfs{filter:none!important}
-.rfs b{clip-path:none!important;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cpath d=%22M50 4 C53 38 62 47 96 50 C62 53 53 62 50 96 C47 62 38 53 4 50 C38 47 47 38 50 4Z%22 fill=%22%23fff%22/%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%229%22 fill=%22%23fff%22/%3E%3C/svg%3E") center/62% no-repeat,radial-gradient(circle,color-mix(in srgb,var(--c3) 85%,#fff) 0,color-mix(in srgb,var(--c3) 45%,transparent) 30%,transparent 62%)!important}
 /* leaderboard: rows outside the screen don't run their badge animations */
 .lbr2{content-visibility:auto;contain-intrinsic-size:auto 76px}
 </style></head><body>
@@ -2017,7 +2009,7 @@ const WINGS='<i class="rfw">'+WGS(1,'wl')+WGS(0,'wr')+'</i>';
 const rkIn=i=>{const r=RANKS[i]||{};return r.img?'<img src="'+r.img+'" alt="">':'<svg viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="'+rkC(i)+'" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">'+RR[i%5]+'</text></svg>'};
 function rkFx(i,s){const r=RANKS[i]||{},f=r.fx||{},g=GC[f.g],ry=GC[f.r],sp=GC[f.s],wg=GC[f.w],mk=c=>'<i class="rfh'+c+'" style="-webkit-mask-image:url(\''+r.img+'\');mask-image:url(\''+r.img+'\')"></i>';
  return '<span class="rkw'+(sp?' hs':'')+(ry?' hr':'')+'" style="--rs:'+(typeof s=='number'?s+'px':s)+(g?';--c1:'+g:'')+(ry?';--c2:'+ry:'')+(sp?';--c3:'+sp:'')+(wg?';--c4:'+wg:'')+'">'+(g?'<i class="rfg"></i>':'')+(wg?WINGS:'')+'<span class="rke2">'+rkIn(i)+'</span>'+
-  (sp?'<i class="rfs"><b></b><b></b><b></b><b></b><b></b><b></b></i>'+(r.img?mk(''):''):'')+(ry&&r.img?mk(' r'):'')+(ry&&r.img?'<i class="rfe" style="-webkit-mask-image:url(\''+r.img+'\');mask-image:url(\''+r.img+'\')"></i>':'')+'</span>'}
+  (sp?'<i class="rfs"><b></b><b></b><b></b><b></b><b></b><b></b></i>'+(r.img?mk(''):''):'')+(ry&&r.img?mk(' r'):'')+'</span>'}
 const rkE=(i,s)=>{const r=RANKS[i]||{};return r.img?'<img class="rke" src="'+r.img+'" alt="" style="width:'+s+'px;height:'+s+'px">':'<svg class="rke" width="'+s+'" height="'+s+'" viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="'+rkC(i)+'" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">'+RR[i%5]+'</text></svg>'};
 
 /* ---- heroes: ownership, levels, evolutions ---- */
