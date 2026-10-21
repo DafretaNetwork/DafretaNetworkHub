@@ -1719,7 +1719,7 @@ async function cardgameV(){
       <p class="mut" style="margin:14px auto;max-width:36ch">The card battle game is not available yet. Check back soon!</p>
       <button onclick="location.hash='#/'">← Back to Home</button>
     </div>`);return;}
-  view(`<iframe src="./Dafreta_card_battle.html" title="Dafreta Card Battle" style="position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;border:0;display:block;z-index:300;background:#000" allow="autoplay; fullscreen" allowfullscreen></iframe>`);
+  view(`<iframe src="./Dafreta_card_battle.html" title="Dafreta Card Battle" style="position:fixed;inset:0;width:100%;height:100%;border:0;display:block;z-index:300;background:#000" allow="autoplay; fullscreen" allowfullscreen></iframe>`);
 }
 async function lockOldAuth(){
   if(!confirm('Lock the old password list now?\n\nAccounts that have not logged in since the upgrade will be reserved and can no longer log in by themselves (they will need help from Support). This cannot be undone from here.'))return;
