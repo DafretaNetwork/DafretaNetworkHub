@@ -1273,8 +1273,9 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 @container (max-height:520px){.mdb.srm{padding:12px 14px 12px}.srw{gap:6px}.srf{width:50px;height:50px}.srf svg{width:30px;height:30px}.srw h3{font-size:19px}.srw p{font-size:12px}.srr{padding:6px 12px;gap:10px}.srr small{font-size:9px}.srr b{font-size:11px}.srd{font-size:13px}.srb button{padding:8px;font-size:13px}}
 
 /* ===================== new rules: cost glow, badges, search picker ===================== */
-#gw .card .c.cup{color:#ff3b26;text-shadow:0 0 1px #fff,0 0 5px #ff2a14,0 0 9px #ff2a1499;animation:cgl 1.6s ease-in-out infinite}
-#gw .card .c.cdn{color:#13c24a;text-shadow:0 0 1px #fff,0 0 5px #2aff6a,0 0 9px #2aff6a88;animation:cgl 1.6s ease-in-out infinite}
+#gw .card .c.cup,#gw .card .c.cdn{-webkit-text-stroke:.55cqw #000;paint-order:stroke fill}
+#gw .card .c.cup{color:#ff3b26;text-shadow:0 0 .5cqw #000,0 0 4px #ff2a14,0 0 8px #ff2a1488;animation:cgl 1.6s ease-in-out infinite}
+#gw .card .c.cdn{color:#2bff6a;text-shadow:0 0 .5cqw #000,0 0 4px #2aff6a,0 0 8px #2aff6a88;animation:cgl 1.6s ease-in-out infinite}
 @keyframes cgl{50%{filter:brightness(1.25)}}
 .fatb{color:#e9c7ff;font-weight:800;text-shadow:0 0 6px #b36bff}
 #bat .stc.gd{box-shadow:0 0 0 1px #7dffb066}
@@ -2213,6 +2214,7 @@ function conjure(T,S,cj){const list=cj.mode=='random'?pickRand(cj.pool,cj.n):cj.
 /* ---- card zoom (hold a card, hover for a moment, or tap a played-card thumbnail) ---- */
 function zoomHTML(s,o,ex){const h=o.h,cl=h.cl||'General',col=h.col||'#8d93a3',buf=bufS(s,o),a=(o.atk||1)*(o.s?pw(o):1),c1='color-mix(in srgb,'+col+' 78%,#000)',c2='color-mix(in srgb,'+col+' 42%,#000)',kw=[];
  const sd=k=>SD[k];
+ if(!ex&&s._cb!=null&&+s.c!==s._cb){const why=[P&&P.fat&&!s.ba&&!s.rel?'Fatigue +'+P.fat:'',s.rch&&P&&P.pl?'Recharge −'+P.pl:'',s.cht?'Chant (−1 per turn held)':''].filter(Boolean);kw.push([(+s.c>s._cb?'🔺':'🔻')+' Cost '+s._cb+' → '+s.c,(+s.c>s._cb?'More expensive':'Cheaper')+' right now'+(why.length?': '+why.join(', '):'')+'.'])}
  if(ex)kw.push(['Ultimate (EX)','Fires from the EX button once this hero’s EX meter reaches 100. Playing cards charges the meter.']);
  const unit=a=>/^(burn|blk|fat)$/.test(a[0])?a[1]+' stack'+(a[1]>1?'s':''):a[1]+' turn'+(a[1]>1?'s':'');
  if(s.ap)kw.push([sd(s.ap[0])[0]+' '+esc(sd(s.ap[0])[1])+' · '+unit(s.ap),esc(sd(s.ap[0])[2])+'. Applied to the enemy'+(s.d?' after dealing damage':'')+'.']);
@@ -2242,10 +2244,12 @@ function zoomHTML(s,o,ex){const h=o.h,cl=h.cl||'General',col=h.col||'#8d93a3',bu
 function zoomShow(s,o,ex,sticky){const z=$('#czm');z.innerHTML=zoomHTML(s,o,ex);z.className=sticky?'st':'';z.hidden=false;zOn=1}
 function zoomHide(){const z=$('#czm');if(z)z.hidden=true;zOn=0}
 function showZoomHist(k){const h=hist[k];if(h)zoomShow(h.s,h.o,!!h.ex,1)}
+/* the card as it is right now in hand: current cost (Fatigue / Recharge / Chant) and grown damage */
+const handS=c=>({...spOf(c),c:costOf(P,c),_cb:+c.s.c||0});
 const handCard=e=>{const el=e.target.closest('#hand .card');return el&&P&&P.hand.find(k=>k.u==el.dataset.u)};
-$('#hand').addEventListener('pointerdown',e=>{const c=handCard(e);if(!c)return;clearTimeout(zT);zT=setTimeout(()=>zoomShow(c.s,c.o,0,0),320)});
+$('#hand').addEventListener('pointerdown',e=>{const c=handCard(e);if(!c)return;clearTimeout(zT);zT=setTimeout(()=>zoomShow(handS(c),c.o,0,0),320)});
 ['pointerup','pointercancel'].forEach(ev=>$('#hand').addEventListener(ev,()=>{clearTimeout(zT);if(zOn){zoomHide();zSup=Date.now()}}));
-$('#hand').addEventListener('pointerover',e=>{if(e.pointerType!=='mouse')return;const c=handCard(e);if(!c)return;clearTimeout(zH);zH=setTimeout(()=>zoomShow(c.s,c.o,0,0),650)});
+$('#hand').addEventListener('pointerover',e=>{if(e.pointerType!=='mouse')return;const c=handCard(e);if(!c)return;clearTimeout(zH);zH=setTimeout(()=>zoomShow(handS(c),c.o,0,0),650)});
 $('#hand').addEventListener('pointerout',e=>{if(e.pointerType!=='mouse')return;const a=e.target.closest&&e.target.closest('#hand .card'),b=e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('#hand .card');if(a&&a===b)return;clearTimeout(zH);if(zOn){zoomHide()}});
 $('#czm').addEventListener('click',()=>{zoomHide();zSup=Date.now()});
 /* ---- turn banner ---- */
