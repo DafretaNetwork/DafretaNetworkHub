@@ -1090,10 +1090,10 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .rkm{flex:0 1 min(460px,52cqw);display:flex;flex-direction:column;gap:8px}
 .rkd{font:italic 900 clamp(28px,9cqh,58px)/1 Georgia,serif;letter-spacing:.02em;opacity:0;transform:translateY(14px);transition:opacity .35s,transform .35s cubic-bezier(.2,1.5,.4,1)}
 .rkd.on{opacity:1;transform:none}
-.rkd.up{color:#7dffb0;text-shadow:0 3px 0 #0a4a24,0 0 18px #3cff8a88}.rkd.dn{color:#ff8a7a;text-shadow:0 3px 0 #5a0d08,0 0 18px #ff3a2a88}
+.rkd.up{color:#7dffb0;text-shadow:0 3px 0 #0a4a24,0 0 18px #3cff8a88}.rkd.rdn{color:#ff8a7a;text-shadow:0 3px 0 #5a0d08,0 0 18px #ff3a2a88}
 .rkbar{position:relative;height:clamp(20px,6cqh,30px);border-radius:16px;background:linear-gradient(#170a03,#2a160a);border:2px solid #000;box-shadow:0 0 0 2px #c9893a,inset 0 3px 6px #000c;overflow:hidden}
 .rkbar i{position:absolute;inset:0 auto 0 0;border-radius:14px;background:linear-gradient(#bff0ff,#3aa8ff 45%,#1f62d6);box-shadow:0 0 14px #3aa8ff}
-.rkbar.dn i{background:linear-gradient(#ffd0c4,#ff6a4a 45%,#b0200f);box-shadow:0 0 14px #ff5a3a}
+.rkbar.rdn i{background:linear-gradient(#ffd0c4,#ff6a4a 45%,#b0200f);box-shadow:0 0 14px #ff5a3a}
 .rkbar i::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 35%,#ffffff88 50%,transparent 65%) 0 0/250% 100%;animation:rksh 1.6s linear infinite}
 @keyframes rksh{from{background-position:120% 0}to{background-position:-60% 0}}
 .rkbar span{position:absolute;inset:0;display:grid;place-items:center;font:900 clamp(11px,3.4cqh,15px) system-ui;color:#fff;text-shadow:0 1px 3px #000}
@@ -1116,7 +1116,7 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .rkup .flash.go{animation:rkflash .75s ease-out}
 @keyframes rkflash{0%{opacity:0}18%{opacity:1}40%{opacity:1}100%{opacity:0}}
 .rkup h2{margin:0;font:italic 900 clamp(34px,11cqh,76px)/1 Georgia,serif;letter-spacing:.05em;color:#ffe27a;text-shadow:0 5px 0 #8a4a00,0 0 30px #ffb300;opacity:0}
-.rkup.dn h2{color:#ff8a7a;text-shadow:0 5px 0 #5a0d08,0 0 30px #ff3a2a}
+.rkup.rdn h2{color:#ff8a7a;text-shadow:0 5px 0 #5a0d08,0 0 30px #ff3a2a}
 .rkup h2.on{opacity:1;animation:rkin .55s cubic-bezier(.2,1.5,.4,1) both}
 .rkup .chg{display:flex;align-items:center;gap:12px;opacity:0;font:800 clamp(12px,3.6cqh,18px) Cinzel,serif;color:#fff;text-shadow:0 2px 4px #000}
 .rkup .chg.on{opacity:1;transition:opacity .5s .2s}
@@ -1252,6 +1252,23 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
  .mdb.rkm{padding:10px 12px 10px}.rlh{gap:8px}.rlcr{width:32px;height:32px}.rlcr svg{width:19px;height:19px}.rlh h3{font-size:16px}.rlh small{font-size:10px}
  .rlw{--rle:44px;padding:calc(var(--rle)*.95 + 6px) 8px 10px;margin-top:-12px}.rlc{flex-basis:86px;padding:4px 4px 9px;gap:2px}.rle{margin-top:-24px}.rln{font-size:12px}.rlp{font-size:9.5px}.rld i{min-width:15px;font-size:7.5px;padding:2px 0}
  .rlf{margin-top:6px;padding:6px 10px;gap:10px}.rlx b{font-size:13px}.rlx span{font-size:10px}.rlf ul{font-size:10.5px;line-height:1.35}}
+
+/* ===================== SURRENDER popup ===================== */
+.mdb.srm{max-width:min(460px,94cqw);padding:22px 22px 18px;text-align:center;color:#f3e3c8;background:radial-gradient(120% 70% at 50% 0,#7a2a14,transparent 70%),linear-gradient(#3e2412,#1f1108);border:3px solid #c9893a;border-radius:18px;box-shadow:0 0 0 3px #2a1206,0 0 0 5px #e0a84a55,0 24px 60px #000;animation:dqin .35s cubic-bezier(.2,1.3,.4,1)}
+.mdb.srm .mdx{display:none}
+.srw{display:flex;flex-direction:column;align-items:center;gap:10px}
+.srf{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 45% 35%,#e0473a,#7a1410);border:3px solid #ffd27a;box-shadow:0 0 0 3px #2a1206,0 0 24px #ff4a2a88}.srf svg{width:46px;height:46px;overflow:visible}
+.srw h3{margin:0;font:900 26px/1.1 Cinzel,Georgia,serif;letter-spacing:.08em;text-transform:uppercase;color:#ffe3a3;text-shadow:0 2px 0 #000,0 0 14px #ff6a3a66}
+.srw p{margin:0;max-width:36ch;font:500 14px/1.45 system-ui,sans-serif}.srw p b{color:#ff8a7a}
+.srr{display:flex;align-items:center;gap:16px;padding:12px 18px;border-radius:12px;background:#0006;border:1px solid #e0a84a33}
+.srr>div{display:flex;flex-direction:column;align-items:center;gap:3px}.srr small{font:800 11px Cinzel,Georgia,serif;color:#e7c99b}.srr b{font:800 13px system-ui;color:#fff}
+.srd{font:900 17px system-ui;color:#ff6a5a;text-shadow:0 0 10px #ff3a2a88;padding:5px 11px;border-radius:10px;background:#3a0a06;border:1.5px solid #ff6a5a88;white-space:nowrap}
+.srb{display:flex;gap:10px;width:100%;margin-top:6px}.srb button{flex:1;border:0;border-radius:10px;padding:12px 10px;font:800 15px system-ui,sans-serif;color:#fff;cursor:pointer;text-shadow:0 1px 2px #0008;transition:transform .1s,filter .15s}
+.srb button:hover{filter:brightness(1.1)}.srb button:active{transform:translateY(3px)}
+.sryes{background:linear-gradient(#e0473a,#8a1a10);box-shadow:inset 0 1px 0 #fff5,0 4px 0 #4a0a06}
+.srno{background:linear-gradient(#8be04a,#3f9a1c);box-shadow:inset 0 1px 0 #fff6,0 4px 0 #1f5a0c}
+.rksr{color:#ff8a7a!important;font-weight:800!important}
+@container (max-height:520px){.mdb.srm{padding:12px 14px 12px}.srw{gap:6px}.srf{width:50px;height:50px}.srf svg{width:30px;height:30px}.srw h3{font-size:19px}.srw p{font-size:12px}.srr{padding:6px 12px;gap:10px}.srr small{font-size:9px}.srr b{font-size:11px}.srd{font-size:13px}.srb button{padding:8px;font-size:13px}}
 </style></head><body>
 <div id="gw">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gSt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#cdd6e3"/><stop offset="1" stop-color="#6f7a8c"/></linearGradient><linearGradient id="gGd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#ffc83a"/><stop offset="1" stop-color="#b8700a"/></linearGradient><linearGradient id="gLe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a4a"/><stop offset="1" stop-color="#6a3a14"/></linearGradient><linearGradient id="gRd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0473a"/><stop offset="1" stop-color="#7a1410"/></linearGradient><linearGradient id="gBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2ff"/><stop offset="1" stop-color="#2f6fd0"/></linearGradient><linearGradient id="gWd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8703c"/><stop offset="1" stop-color="#4a2a10"/></linearGradient></defs></svg><div id="home"><nav id="sb"><button class="sbn on" data-pg="battle"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><g transform="translate(24 24) rotate(-45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g><g transform="translate(24 24) rotate(45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g></g></svg><span>Battle</span></button><button class="sbn" data-pg="friends"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M23 40c.6-8.4 4.4-13 10-13s9.4 4.6 10 13z" fill="url(#gBl)"/><circle cx="33" cy="17.5" r="6.2" fill="url(#gBl)"/><path d="M5 42c.8-10 5.8-15.5 13.5-15.5S31.2 32 32 42z" fill="url(#gGd)"/><circle cx="18.5" cy="17" r="7.6" fill="url(#gGd)"/><path d="M14 14.5c2.5-3 7.5-3 10 0" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.3"/><path d="M11 36.5c2-3.5 5-5 7.5-5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.3"/></g></svg><span>Friends</span></button><button class="sbn" data-pg="shop"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M17 12.5c2.4 1.6 11.6 1.6 14 0l-2.6 5.8h-8.8z" fill="url(#gLe)"/><path d="M19.5 19.5c-8 4.6-12.5 11-11.5 16.5 1 5 7.5 7.5 16 7.5s15-2.5 16-7.5c1-5.5-3.5-11.9-11.5-16.5z" fill="url(#gLe)"/><path d="M13 30c1-3 3-5.5 5.5-7" fill="none" stroke="#f0c48a" stroke-opacity=".6" stroke-width="1.4"/><rect x="18" y="17.4" width="12" height="3.6" rx="1.8" fill="url(#gGd)"/><circle cx="26.5" cy="40" r="5.4" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="7.6" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="4.6" fill="none" stroke="#9a5a06" stroke-width="1.2"/><path d="M34 33.5c1-1.4 3.6-1.4 4.6 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1"/></g></svg><span>Shop</span></button><button class="sbn" data-pg="lb"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#1e0f05" stroke-width="4.8" stroke-linecap="round"/><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#ffc83a" stroke-width="2.4" stroke-linecap="round"/><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M13 6.5h22v9.5c0 8-4.6 13-11 13S13 24 13 16z" fill="url(#gGd)"/><path d="M21 28.5h6l1.2 6h-8.4z" fill="url(#gGd)"/><rect x="14" y="34.5" width="20" height="4.6" rx="1.4" fill="url(#gWd)"/><rect x="10.5" y="39" width="27" height="4.6" rx="1.4" fill="url(#gWd)"/><path d="M24 10.5l1.8 3.7 4 .5-2.9 2.8.7 4L24 19.6 20.4 21.5l.7-4-2.9-2.8 4-.5z" fill="#fff6c8" stroke="#a86a00" stroke-width="1"/></g><path d="M16 9v6.5c0 3 .8 5.6 2.2 7.4" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.4" stroke-linecap="round"/></svg><span>Leaderboard</span></button><button class="sbn ex" id="exit"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M8 43V8.5C8 6.6 9.6 5 11.5 5h15C28.4 5 30 6.6 30 8.5V43z" fill="url(#gWd)"/><path d="M15.3 8v35M22.6 8v35" stroke-opacity=".45"/><circle cx="25.5" cy="25" r="1.9" fill="url(#gGd)"/></g><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#1e0f05" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#ffc83a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exit</span></button></nav>
@@ -1432,7 +1449,7 @@ const endT=T=>T.u.forEach(S=>{for(const k in S.s)if(k!=='shd'&&--S.s[k]<=0)delet
 function chk(){clean(P);clean(E);const p=alive(P).length,e=alive(E).length;if(p&&e)return 0;fin(p?'Victory!':e?'Defeat':'Draw');return 1}
 function fin(m){over=1;pend=null;hideU();ui();SND.music(null);const win=/Victory/.test(m),draw=!win&&/Draw/.test(m);SND.end(win);zoomHide();setTimeout(()=>endBanner(win,draw,m),650)}
 function endBanner(win,draw,m){const x=$('#endx');x.className=win?'w':draw?'d':'l';x.querySelector('h1').textContent=win?'VICTORY':draw?'DRAW':'DEFEAT';
- x.querySelector('.exs').textContent=/Time up/.test(m)?'Time is up':(win?'The enemy team has fallen':draw?'Both teams fell':'Your team has fallen');x.dataset.r='';x.hidden=false;void x.offsetWidth;x.classList.add('go');
+ x.querySelector('.exs').textContent=/Surrender/.test(m)?'You surrendered':/Time up/.test(m)?'Time is up':(win?'The enemy team has fallen':draw?'Both teams fell':'Your team has fallen');x.dataset.r='';x.hidden=false;void x.offsetWidth;x.classList.add('go');
  if(win)setTimeout(()=>SND.levelup(),250);setTimeout(()=>{x.dataset.r='1'},1100);
  x.onclick=()=>{if(x.dataset.r!=='1')return;x.dataset.r='';x.hidden=true;x.classList.remove('go');SND.click();showResult(win,m)}}
 function best(){let b=null,bs=1;const al=alive(E),en=alive(P);
@@ -1679,7 +1696,7 @@ function buildHero(h,fid,b,name,img,hb,ab){b=+b||0;hb=+hb||0;ab=+ab||0;const cl=
  return o.S.length?o:null}
 function evH(h){const e=hs(h).ev|0;if(!e||!h.src)return h;const ev=(h.src.evo&&h.src.evo[e])||{},b=(ev.bonus===undefined||ev.bonus===''||ev.bonus===null)?(CFG.evoB[e-1]||0):+ev.bonus;
  const pick=(v,d)=>(v===undefined||v===''||v===null||isNaN(+v))?(+d||0):+v,hb=pick(ev.hpB,CFG.evoHp[e-1]),ab=pick(ev.atkB,CFG.evoAtk[e-1]);
- const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img,hb,ab);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;if(ev.img){o.face=nFace(ev.face);o.ar=+ev.ar||0;o.atkImg=ev.atkImg||'';o.atkFace=nFace(ev.atkFace);o.exImg=ev.exImg||'';o.exFace=nFace(ev.exFace)}else{o.face=h.face;o.ar=h.ar}return o}
+ const o=buildHero(h.src,h.fid,b,evName(h,e),ev.img||h.img,hb,ab);if(!o)return h;o.bn=h.n;o.st=e;o.cr=h.cr;if(ev.img){o.face=nFace(ev.face);o.ar=+ev.ar||0;if(+ev.bs)o.bs=+ev.bs;o.atkImg=ev.atkImg||'';o.atkFace=nFace(ev.atkFace);o.exImg=ev.exImg||'';o.exFace=nFace(ev.exFace)}else{o.face=h.face;o.ar=h.ar}return o}
 const evNeed=e=>({fr:CFG.frag[e]||0,st:e===3?CFG.stone:0});
 function evolve(k){GUARD.check();const h=HD.find(x=>hk(x)===k);if(!h)return;const s=PD.hs[k]||{lv:1,ev:0},e=s.ev|0;if(e>=4)return;const n=evNeed(e);
  if(s.lv<CFG.maxLv)return toast('Reach level '+CFG.maxLv+' first');if((PD.fr[k]||0)<n.fr)return toast('Not enough card fragments');if(PD.st<n.st)return toast('You need a Transcendence stone');
@@ -1688,13 +1705,15 @@ function unlockHero(k){GUARD.check();const h=HD.find(x=>hk(x)===k);if(!h||owned(
  PD.fr[k]-=CFG.unlock;PD.own[k]=true;saveP('fr','own');SND.ult();toast('🎉 '+h.n+' unlocked!');hdRender()}
 
 /* ---- match results: EXP, levels, rank points, quests ---- */
+const SURR_RP=30;let SURR=0;
+function rkApply(R,win){if(curMode!=='rank')return;const pb=PD.pts|0,b=rkI(pb);PD.pts=Math.max(0,pb+(win?CFG.rankWin:-(SURR?SURR_RP:CFG.rankLoss)));const a=rkI(PD.pts);R.rank={d:PD.pts-pb,a,b,pb,pa:PD.pts,up:a>b,down:a<b,s:!!SURR}}
 function result(win){const R={win,heroes:[],rank:null,quests:[]};if(!PD||!curTeam.length)return R;GUARD.check();BG.check();
- if(BTamp||Date.now()-BT<20000){if(win){flag(BTamp?'battle':'too-fast');toast('This match did not count for rewards.')}PD.l+=win?0:1;saveP('l');return R}PD.played=true;const gain=win?CFG.expWin:CFG.expLoss;
+ if(BTamp||Date.now()-BT<20000){if(win){flag(BTamp?'battle':'too-fast');toast('This match did not count for rewards.')}PD.l+=win?0:1;if(!win){rkApply(R,false);lbUpd()}saveP('l','pts');return R}PD.played=true;const gain=win?CFG.expWin:CFG.expLoss;
  curTeam.forEach(h=>{const k=hk(h),s=PD.hs[k]=PD.hs[k]||{lv:1,ev:0,xp:0},b={lv:s.lv,xp:s.xp||0},ups=[];s.xp=s.xp||0;const wasMax=s.lv>=CFG.maxLv;
   if(!wasMax&&gain>0){s.xp+=gain;while(s.xp>=CFG.expLv&&s.lv<CFG.maxLv){s.xp-=CFG.expLv;s.lv++;ups.push(s.lv)}if(s.lv>=CFG.maxLv)s.xp=0}
   R.heroes.push({h,b,a:{lv:s.lv,xp:s.xp},gain:wasMax?0:gain,ups,max:wasMax})});
  if(win)PD.w++;else PD.l++;
- if(curMode==='rank'){const pb=PD.pts|0,b=rkI(pb);PD.pts=Math.max(0,pb+(win?CFG.rankWin:-CFG.rankLoss));const a=rkI(PD.pts);R.rank={d:PD.pts-pb,a,b,pb,pa:PD.pts,up:a>b,down:a<b}}
+ rkApply(R,win);
  {const sm=k=>P.u.concat(P.gl).reduce((a,u)=>a+(u.stt[k]||0),0);
   R.daily=dqAdd({win:win?1:0,win_std:win&&curMode==='std'?1:0,win_rank:win&&curMode==='rank'?1:0,play:1,cards:MS.cards,ex:MS.ex,kill:E.u.filter(u=>u.hp<=0).length,dmg:sm('d'),heal:sm('h'),shield:sm('s')})}
  if(win)QUESTS.forEach(q=>{if(q.mode!=='any'&&q.mode!==curMode)return;const p=PD.qp[q.id]=PD.qp[q.id]||{w:0};if(p.c||p.w>=q.wins)return;p.w++;R.quests.push({t:q.t,w:p.w,n:q.wins})});
@@ -1783,10 +1802,10 @@ function calcFt(src){if(!src||src in FT)return;FT[src]=null;const im=new Image()
   let yb=-1;for(let y=H-1;y>=0&&yb<0;y--)for(let x=0;x<W;x++)if(d[(y*W+x)*4+3]>60){yb=y;break}if(yb<0)return;
   const y0=Math.max(0,yb-Math.round(H*.06));let sx=0,n=0;for(let y=y0;y<=yb;y++)for(let x=0;x<W;x++)if(d[(y*W+x)*4+3]>60){sx+=x;n++}
   if(n){FT[src]=Math.min(.72,Math.max(.28,(sx/n+.5)/W));if(inB&&P&&!over)ui()}}catch(e){}};im.src=src}
-const headF=h=>h&&h.face&&h.face.auto===1&&+h.face.z>0?.5/+h.face.z:0;
+const headF=h=>h&&h.face&&h.face.auto!==0&&+h.face.z>0?.5/+h.face.z:0;
 let HMED=0;
 function headMed(){const a=[...P.u,...E.u].map(u=>headF(u.h)).filter(Boolean).sort((x,y)=>x-y);HMED=a.length?a[a.length>>1]:0}
-const figSz=(h,m,ps,pf)=>{const src=ps||h.img;calcFt(src);const hf=headF(h),k=hf&&HMED?Math.min(1.12,Math.max(.84,HMED/hf)):1,ft=FT[src]==null?.5:FT[src];let fh=Math.min(1.02,.84*k)*((+h.bs||100)/100);
+const figSz=(h,m,ps,pf)=>{const src=ps||h.img;calcFt(src);const hf=headF(h),k=hf&&HMED?Math.min(1.22,Math.max(.84,HMED/hf)):1,ft=FT[src]==null?.5:FT[src];let fh=Math.min(1.02,.84*k)*((+h.bs||100)/100);
  return '--fh:'+fh.toFixed(3)+';--tx:'+(-(m?ft:1-ft)*100).toFixed(1)+'%'};
 
 /* ================= DASHBOARD ================= */
@@ -1993,7 +2012,7 @@ function showIntro(ps,es){$('#vl').innerHTML=ps.slice().reverse().map((h,i)=>vsP
  $('#va1').innerHTML=avH(PROF,70);$('#vn1').textContent=myName();$('#va2').src=es[0].img;const v=$('#vsx');v.className='';v.hidden=false;$('#menu').hidden=true;$('#hd').hidden=true;$('#home').hidden=true;hidePop();SND.music(null);
  intro=1;itm=[setTimeout(SND.whoosh,60),setTimeout(SND.whoosh,200),setTimeout(SND.clash,1000),setTimeout(SND.clash,1150),setTimeout(go2,8300)]}
 function go2(){if(!intro)return;intro=0;itm.forEach(clearTimeout);const v=$('#vsx');v.classList.add('out');setTimeout(()=>{v.hidden=true},400);beginBattle()}
-function beginBattle(){MS={cards:0,ex:0};BT=Date.now();BTamp=0;headMed();turn='p';over=0;busy=0;pend=null;M=600;tt=turnLen();L=['Duel start: 4 vs 4!'];hist=[];zoomHide();inB=0;start(P);inB=1;document.body.classList.add('inbat');$('#bat').hidden=false;ui();SND.music('battle');SND.deal(6);turnBanner(true)}
+function beginBattle(){SURR=0;MS={cards:0,ex:0};BT=Date.now();BTamp=0;headMed();turn='p';over=0;busy=0;pend=null;M=600;tt=turnLen();L=['Duel start: 4 vs 4!'];hist=[];zoomHide();inB=0;start(P);inB=1;document.body.classList.add('inbat');$('#bat').hidden=false;ui();SND.music('battle');SND.deal(6);turnBanner(true)}
 
 function pickFoe(){const all=shuf(HD.slice()),out=[],used=new Set();all.forEach(h=>{if(out.length<4&&!used.has(h.cl)){used.add(h.cl);out.push(h)}});all.forEach(h=>{if(out.length<4&&!out.includes(h))out.push(h)});return shuf(out)}
 function playGame(){mobFS();const m=PD.mode;if(m==='story')return toast('Story mode is coming soon!');
@@ -2041,8 +2060,8 @@ function rkTxt(p,i){const st=Math.max(1,CFG.rankStep);return RANKS[i+1]?(p%st)+'
 function rkNext(i,p){const st=Math.max(1,CFG.rankStep);return RANKS[i+1]?(st-p%st)+' RP to '+rkName(i+1):'You are at the highest rank!'}
 function renderRank(){rsStage=3;const K=RSV.rank,st=Math.max(1,CFG.rankStep),pct=p=>(RANKS[rkI(p)+1]?p%st/st*100:100);
  $('#rmd').textContent='Ranked Points';$('#rlg').hidden=true;
- $('#rst').innerHTML=`<div class="rkx"><div class="rkb" id="rkb">${rkBadge(K.b)}</div><div class="rkm"><div class="rkd ${K.d>=0?'up':'dn'}" id="rkd">${K.d>=0?'+':''}<span id="rkdn">0</span> RP</div>
-  <div class="rkbar${K.d<0?' dn':''}" id="rkbar"><i id="rkf" style="width:${pct(K.pb)}%"></i><span id="rkt">${rkTxt(K.pb,K.b)}</span></div><small id="rks">${rkNext(K.b,K.pb)}</small></div></div>`;
+ $('#rst').innerHTML=`<div class="rkx"><div class="rkb" id="rkb">${rkBadge(K.b)}</div><div class="rkm"><div class="rkd ${K.d>=0?'up':'rdn'}" id="rkd">${K.d>=0?'+':'−'}<span id="rkdn">0</span> RP</div>
+  <div class="rkbar${K.d<0?' rdn':''}" id="rkbar"><i id="rkf" style="width:${pct(K.pb)}%"></i><span id="rkt">${rkTxt(K.pb,K.b)}</span></div><small id="rks">${rkNext(K.b,K.pb)}</small>${K.s?'<small class="rksr">🏳 Surrender penalty: −'+SURR_RP+' RP</small>':''}</div></div>`;
  const f=$('#rkf'),bar=(w,t,txt)=>{f.style.transition=t?'width '+t+'s cubic-bezier(.3,.8,.3,1)':'none';f.style.width=w+'%';if(txt)$('#rkt').textContent=txt};
  (async()=>{await wait(350);$('#rkd').classList.add('on');countUp($('#rkdn'),Math.abs(K.d),900);if(K.d)SND.mana();await wait(250);
   if(K.up){bar(100,.9,st+' / '+st+' RP');await wait(1000);await rankShow(K.b,K.a,1);const rb=$('#rkb');if(!rb)return;rb.innerHTML=rkBadge(K.a);rb.classList.add('swap');bar(0,0,'');await wait(60);bar(pct(K.pa),.9,rkTxt(K.pa,K.a))}
@@ -2050,7 +2069,7 @@ function renderRank(){rsStage=3;const K=RSV.rank,st=Math.max(1,CFG.rankStep),pct
   else bar(pct(K.pa),.9,rkTxt(K.pa,K.a));
   const sm=$('#rks');if(sm)sm.textContent=rkNext(K.a,K.pa)})()}
 /* full-screen promotion: dim -> old badge charges up -> white flash -> new badge */
-function rankShow(b,a,up){return new Promise(res=>{const o=document.createElement('div');o.className='rkup'+(up?'':' dn');o.style.setProperty('--rc2',up?rkC(a):'#ff5a3a');
+function rankShow(b,a,up){return new Promise(res=>{const o=document.createElement('div');o.className='rkup'+(up?'':' rdn');o.style.setProperty('--rc2',up?rkC(a):'#ff5a3a');
  o.innerHTML='<i class="dim"></i><i class="rays"></i><div class="stage"><div class="big">'+rkFx(b,'var(--rkbs)')+'</div><h2>'+(up?'PROMOTED!':'RANK DOWN')+'</h2><div class="chg"><span>'+rkFx(b,'clamp(34px,10cqh,58px)')+'<small>'+rkName(b)+'</small></span><i class="ar">➜</i><span>'+rkFx(a,'clamp(34px,10cqh,58px)')+'<small>'+rkName(a)+'</small></span></div></div><i class="flash"></i><span class="tap">Tap to continue</span>';
  $('#res').appendChild(o);let done=0;const end=()=>{if(done)return;done=1;o.style.transition='opacity .3s';o.style.opacity='0';setTimeout(()=>o.remove(),300);res()};
  (async()=>{const big=o.querySelector('.big');await wait(650);
@@ -2114,7 +2133,11 @@ function turnBanner(mine){const b=$('#tbn');b.className=mine?'me':'foe';b.queryS
 /* ---- pause menu ---- */
 function openPause(){openMdl('<h3 class="mdh">Paused</h3><div class="pz"><button id="pzr">▶ Resume</button><button class="g" id="pzs">'+(SND.isOn()?'🔊 Sound: ON':'🔇 Sound: OFF')+'</button><button class="d" id="pzx">🏳 Surrender</button></div>')}
 $('#gear').addEventListener('click',()=>{if(!over)openPause()});
-$('#mdl').addEventListener('click',e=>{const b=e.target.closest('#pzr,#pzs,#pzx');if(!b)return;if(b.id==='pzr')closeMdl();else if(b.id==='pzs'){SND.toggle();openPause()}else if(b.dataset.c){closeMdl();if(!over)fin('Defeat')}else{b.dataset.c=1;b.textContent='Tap again to surrender'}});
+function openSurr(){const rk=curMode==='rank',pts=PD?PD.pts|0:0,pa=Math.max(0,pts-SURR_RP),i=rkI(pts),j=rkI(pa),nm=k=>esc((RANKS[k]||{}).n||'');
+ openMdl('<div class="srw"><div class="srf"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 6v38" stroke="#5a3204" stroke-width="4" stroke-linecap="round"/><path d="M13 6v38" stroke="#ffd27a" stroke-width="1.8" stroke-linecap="round"/><path d="M15 8c6-3 10 3 16 0s9-1 11 1v16c-2-2-5-3-11 0s-10-3-16 0z" fill="#fff" stroke="#3a1a08" stroke-width="1.6" stroke-linejoin="round"/><path d="M18 13c4-1.5 7 1.5 11 0M18 18c4-1.5 7 1.5 11 0" fill="none" stroke="#c9d3e0" stroke-width="1.3"/></svg></div><h3>Surrender?</h3><p>'+(rk?'Giving up now counts as a loss and you will be deducted <b>'+SURR_RP+' RP</b>.':'Giving up now counts as a loss.')+'</p>'+
+  (rk?'<div class="srr"><div>'+rkFx(i,46)+'<small>'+nm(i)+'</small><b>'+pts+' RP</b></div><span class="srd">−'+SURR_RP+' RP</span><div>'+rkFx(j,46)+'<small>'+nm(j)+'</small><b>'+pa+' RP</b></div></div>':'')+
+  '<div class="srb"><button class="sryes" id="sryes">🏳 Surrender</button><button class="srno" id="srno">No, continue playing</button></div></div>','srm')}
+$('#mdl').addEventListener('click',e=>{const b=e.target.closest('#pzr,#pzs,#pzx,#sryes,#srno');if(!b)return;if(b.id==='pzr'||b.id==='srno')closeMdl();else if(b.id==='pzs'){SND.toggle();openPause()}else if(b.id==='pzx'){if(!over)openSurr()}else if(b.id==='sryes'){closeMdl();if(!over){SURR=1;fin('Surrendered')}}});
 /* ---- drag & drop heroes in the line-up ---- */
 const ROT=()=>matchMedia('(orientation:portrait) and (max-width:620px)').matches;
 $('#menu').addEventListener('pointerdown',e=>{const t=e.target.closest('.dh[data-j]');if(!t||(e.button&&e.button>0))return;drg={el:t,j:+t.dataset.j,x:e.clientX,y:e.clientY,id:e.pointerId,on:0,over:null}});
