@@ -624,10 +624,18 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .rkw .rke2{position:relative;z-index:2;width:100%;height:100%;display:grid;place-items:center;filter:drop-shadow(0 3px 4px #000a)}
 .rkw .rke2>img,.rkw .rke2>svg{width:100%;height:100%;object-fit:contain;display:block}
 .rkw.hs .rke2{filter:drop-shadow(0 0 2px var(--c3)) drop-shadow(0 0 7px var(--c3)) drop-shadow(0 3px 4px #000a)}
+.rkw.hr .rke2{filter:drop-shadow(0 0 2px var(--c2)) drop-shadow(0 0 7px var(--c2)) drop-shadow(0 3px 4px #000a)}
+.rkw.hs.hr .rke2{filter:drop-shadow(0 0 2px var(--c2)) drop-shadow(0 0 6px var(--c3)) drop-shadow(0 0 10px var(--c2)) drop-shadow(0 3px 4px #000a)}
+.rfh.r{background-image:linear-gradient(115deg,transparent 40%,color-mix(in srgb,var(--c2) 35%,#fff) 50%,transparent 60%);animation-delay:1.3s}
+.rfw{position:absolute;left:-62%;right:-62%;top:-13%;height:112%;z-index:1;display:flex;justify-content:space-between;pointer-events:none;color:var(--c4);animation:rfwf 3s ease-in-out infinite}
+.rfw::before{content:"";position:absolute;left:16%;right:16%;top:6%;bottom:10%;border-radius:50%;background:radial-gradient(ellipse,color-mix(in srgb,var(--c4) 55%,transparent) 0,transparent 70%);filter:blur(6px)}
+.rfw svg{position:relative;width:50%;height:100%;overflow:visible;filter:drop-shadow(0 0 1.5px #fffc) drop-shadow(0 0 5px var(--c4)) drop-shadow(0 0 12px var(--c4))}
+.rfw .wr{transform-origin:22% 58%;animation:rfwr 3s ease-in-out infinite}.rfw .wl{transform-origin:78% 58%;animation:rfwl 3s ease-in-out infinite}
+@keyframes rfwf{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes rfwr{0%,100%{transform:rotate(3deg)}50%{transform:rotate(-5deg)}}
+@keyframes rfwl{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(5deg)}}
 .rfg{position:absolute;inset:-32%;z-index:0;border-radius:50%;pointer-events:none;background:radial-gradient(circle,var(--c1) 0,color-mix(in srgb,var(--c1) 55%,transparent) 30%,transparent 68%);filter:blur(4px);animation:rfg 2.4s ease-in-out infinite}
 @keyframes rfg{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}
-.rfr{position:absolute;inset:-54%;z-index:1;border-radius:50%;pointer-events:none;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--c2) 90%,transparent) 0 5deg,transparent 5deg 22deg);-webkit-mask:radial-gradient(circle,#000 20%,transparent 66%);mask:radial-gradient(circle,#000 20%,transparent 66%);animation:rfspin 8s linear infinite}
-.rfr::after{content:"";position:absolute;inset:14%;border-radius:50%;background:repeating-conic-gradient(from 11deg,color-mix(in srgb,var(--c2) 60%,transparent) 0 3deg,transparent 3deg 30deg);animation:rfspin 4s linear infinite reverse}
 @keyframes rfspin{to{transform:rotate(360deg)}}
 .rfs{position:absolute;inset:-12%;z-index:3;pointer-events:none;filter:drop-shadow(0 0 3px var(--c3)) drop-shadow(0 0 6px var(--c3));animation:rfspin 7s linear infinite}
 .rfs b{position:absolute;width:24%;aspect-ratio:1;background:radial-gradient(circle,#fff 0 22%,var(--c3) 60%);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:rftw 1.8s ease-in-out infinite;opacity:0}
@@ -636,7 +644,7 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 @keyframes rftw{0%,100%{transform:scale(0) rotate(0);opacity:0}45%{transform:scale(1.1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:.6}}
 .rfh{position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 40%,color-mix(in srgb,var(--c3) 35%,#fff) 50%,transparent 60%) 0 0/300% 100% no-repeat;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;mix-blend-mode:screen;animation:rfsh 2.6s ease-in-out infinite}
 @keyframes rfsh{0%{background-position:100% 0}60%,100%{background-position:0 0}}
-@media(prefers-reduced-motion:reduce){.rfg,.rfr,.rfr::after,.rfs,.rfs b,.rfh{animation:none}.rfs b{opacity:1;transform:scale(.8)}}
+@media(prefers-reduced-motion:reduce){.rfg,.rfs,.rfs b,.rfh,.rfw,.rfw svg{animation:none}.rfw{opacity:.85}.rfs b{opacity:1;transform:scale(.8)}}
 
 .rkrow{flex-wrap:wrap}.rkp{width:64px!important;height:56px;overflow:visible}
 .rkfx{flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;padding:2px 0 4px 34px}
@@ -1322,11 +1330,15 @@ async function delQuest(id){if(!confirm('Delete this quest? Players keep anythin
 
 /* ---------------- ranks ---------------- */
 const RKCOL=['#c27c3a','#c3ccd6','#ffd24a','#8fe3d8','#38d27c','#6cd4ff'],RKR=['I','II','III','IV','V'];
-const GCA={white:'#ffffff',blue:'#4aa8ff',purple:'#b36bff',gold:'#ffc83a',green:'#3ee07a'};
-const FXK=[['g','✨ Glow (behind)'],['r','☀️ Radiant ring'],['s','💎 Glitter (edges)']];
+const GCA={white:'#ffffff',blue:'#4aa8ff',purple:'#b36bff',gold:'#ffc83a',green:'#3ee07a',red:'#ff4a4a',orange:'#ff9a2e',pink:'#ff6ad5',cyan:'#3ee6ff'};
+const WGS=(f,c)=>{const p=(a,s,o)=>'<path transform="rotate('+a+') scale('+s+')" d="M0 0C16 -12 40 -21 64 -18C50 -5 26 6 0 8Z" fill="currentColor" fill-opacity="'+o+'"/>';
+ return '<svg class="'+c+'" viewBox="0 0 100 100" aria-hidden="true"><g transform="'+(f?'translate(100 0) scale(-1 1) ':'')+'translate(22 58)" stroke="#fff" stroke-opacity=".9" stroke-width="1.1" stroke-linejoin="round">'+[[-44,.78,.14],[-32,.9,.16],[-20,.98,.18],[-8,.98,.2],[4,.9,.22],[16,.78,.24],[28,.62,.26]].map(x=>p(...x)).join('')+[[-36,.58,.36],[-20,.66,.4],[-4,.64,.44],[12,.54,.48]].map(x=>p(...x)).join('')+'</g></svg>'};
+const WINGS='<i class="rfw">'+WGS(1,'wl')+WGS(0,'wr')+'</i>';
+
+const FXK=[['g','✨ Glow (behind)'],['r','🌟 Edge shine'],['s','💎 Glitter (edges)'],['w','🕊️ Wings aura']];
 const fxOpts=v=>'<option value="">None</option>'+Object.keys(GCA).map(c=>`<option value="${c}"${v===c?' selected':''}>${c[0].toUpperCase()+c.slice(1)}</option>`).join('');
-const rkPrev=i=>{const r=RKS[i]||{},f=r.fx||{},g=GCA[f.g],ry=GCA[f.r],sp=GCA[f.s];
-  return `<span class="rkw${sp?' hs':''}" style="--rs:48px${g?';--c1:'+g:''}${ry?';--c2:'+ry:''}${sp?';--c3:'+sp:''}">${g?'<i class="rfg"></i>':''}${ry?'<i class="rfr"></i>':''}<span class="rke2">${rkPrev0(i)}</span>${sp?'<i class="rfs">'+'<b></b>'.repeat(6)+'</i>'+(r.img?`<i class="rfh" style="-webkit-mask-image:url('${r.img}');mask-image:url('${r.img}')"></i>`:''):''}</span>`};
+const rkPrev=i=>{const r=RKS[i]||{},f=r.fx||{},g=GCA[f.g],ry=GCA[f.r],sp=GCA[f.s],wg=GCA[f.w],mk=c=>`<i class="rfh${c}" style="-webkit-mask-image:url('${r.img}');mask-image:url('${r.img}')"></i>`;
+  return `<span class="rkw${sp?' hs':''}${ry?' hr':''}" style="--rs:48px${g?';--c1:'+g:''}${ry?';--c2:'+ry:''}${sp?';--c3:'+sp:''}${wg?';--c4:'+wg:''}">${g?'<i class="rfg"></i>':''}${wg?WINGS:''}<span class="rke2">${rkPrev0(i)}</span>${sp?'<i class="rfs">'+'<b></b>'.repeat(6)+'</i>'+(r.img?mk(''):''):''}${ry&&r.img?mk(' r'):''}</span>`};
 function rkFxSet(i,k,v){RKS[i].fx={...(RKS[i].fx||{}),[k]:v};const e=$('#rkp'+i);if(e)e.innerHTML=rkPrev(i)}
 function rkTier(i){const t=Math.floor(i/5)*5,e=Math.min(t+5,RKS.length),f={...(RKS[i].fx||{})};for(let j=t;j<e;j++)RKS[j].fx={...f};paintRanks();toast(`Effects copied to ranks ${t+1}–${e}. Press Save ranks to keep them.`)}
 const rkPrev0=i=>RKS[i]&&RKS[i].img?`<img src="${RKS[i].img}" style="width:42px;height:42px;object-fit:contain">`:`<svg width="42" height="42" viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="${RKCOL[Math.min(5,Math.floor(i/5))]}" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">${RKR[i%5]}</text></svg>`;
@@ -1334,7 +1346,7 @@ function rankSecInner(){
   return `<h4>Ranked mode</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Players earn points by winning Ranked matches. Their rank is how many full “points per rank” they have, in the order of the list below (first = lowest).</p>
   <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Points per rank</label><input id="rkstep" type="number" min="1" value="${CGC.rankStep}"></div><div><label>Points for a win</label><input id="rkwin" type="number" min="0" value="${CGC.rankWin}"></div><div><label>Points lost on a loss</label><input id="rkloss" type="number" min="0" value="${CGC.rankLoss}"></div></div>
    <div class="row" style="margin-top:10px"><button class="s" onclick="saveRankCfg()">💾 Save ranked settings</button></div></div>
-  <div class="bx2" style="margin-top:14px;border-left:4px solid var(--gold)"><b>Emblem effects</b><p class="mut" style="font-size:13px;margin:4px 0 0">Each rank can use up to 3 animated effects behind and around its emblem, in white, blue, purple, gold or green: <b>Glow</b> (soft pulsing light from behind), <b>Radiant ring</b> (rays circling behind the emblem) and <b>Glitter</b> (sparkles orbiting the edges plus a shine across the emblem). Mix 1, 2 or all 3. The preview updates live; press <b>Save ranks</b> to publish.</p></div>
+  <div class="bx2" style="margin-top:14px;border-left:4px solid var(--gold)"><b>Emblem effects</b><p class="mut" style="font-size:13px;margin:4px 0 0">Each rank can use up to 4 animated effects, each in its own color: <b>Glow</b> (soft pulsing light from behind), <b>Edge shine</b> (the emblem's edges glow and a shine sweeps across it, no stars), <b>Glitter</b> (edge glow and shine plus sparkles orbiting the edges) and <b>Wings aura</b> (glowing wings with white lining behind the emblem that fade in and out). Mix any of them. The preview updates live; press <b>Save ranks</b> to publish.</p></div>
   <h4 style="margin-top:18px">Rank names &amp; emblems ${RKSAVED?'':'<span class="cgpill">using defaults</span>'}</h4>
   <div class="rklist">${RKS.map((r,i)=>`<div class="rkrow"><span class="rkn">${i+1}</span><span class="rkp" id="rkp${i}">${rkPrev(i)}</span><input value="${esc(r.n)}" maxlength="24" oninput="RKS[${i}].n=this.value"><button class="s" onclick="$('#rkf${i}').click()" title="PNG with transparent background, 512×512 or larger looks best">Emblem</button>${r.img?`<button class="g s" onclick="RKS[${i}].img='';paintRanks()">✕</button>`:''}<input id="rkf${i}" type="file" accept="image/*" hidden onchange="upRkImg(${i},this)"><div class="rkfx">${FXK.map(([k,l])=>`<label>${l}<select onchange="rkFxSet(${i},'${k}',this.value)">${fxOpts((r.fx||{})[k])}</select></label>`).join('')}<button class="g s" onclick="rkTier(${i})" title="Use these effects for every rank in this tier (e.g. Gold I–V)">Copy to tier</button></div></div>`).join('')}</div>
   <div class="row" style="margin-top:10px"><button class="s" onclick="rkAdd()">＋ Add rank</button><button class="g s" onclick="rkDel()">Remove last</button><button class="g s" onclick="rkReset()">Reset to defaults</button><button onclick="saveRanks()">💾 Save ranks</button></div>`}
@@ -1349,7 +1361,7 @@ async function upRkImg(i,inp){const f=inp.files[0];inp.value='';if(!f)return;try
 function rkAdd(){RKS.push({n:'New rank '+(RKS.length+1)});paintRanks()}
 function rkDel(){if(RKS.length<=1)return toast('Keep at least one rank');RKS.pop();paintRanks()}
 function rkReset(){if(!confirm('Reset all rank names and emblems to the defaults (Copper I – Diamond V)?'))return;RKS=defRanksA();paintRanks()}
-async function saveRanks(){const l=RKS.map(r=>{const f=r.fx||{},fx={};['g','r','s'].forEach(k=>{if(GCA[f[k]])fx[k]=f[k]});return {n:(r.n||'').trim()||'Rank',...(r.img?{img:r.img}:{}),...(Object.keys(fx).length?{fx}:{})}});try{await api('cardgame/ranks','PUT',l);RKS=l;RKSAVED=true;paintRanks();toast('Ranks saved')}catch(e){toast(e.message)}}
+async function saveRanks(){const l=RKS.map(r=>{const f=r.fx||{},fx={};['g','r','s','w'].forEach(k=>{if(GCA[f[k]])fx[k]=f[k]});return {n:(r.n||'').trim()||'Rank',...(r.img?{img:r.img}:{}),...(Object.keys(fx).length?{fx}:{})}});try{await api('cardgame/ranks','PUT',l);RKS=l;RKSAVED=true;paintRanks();toast('Ranks saved')}catch(e){toast(e.message)}}
 async function saveCfg(){await api('cardgame/config','PUT',CGC)}
 async function saveRankCfg(){const g=id=>+$('#'+id).value;if(!(g('rkstep')>=1))return toast('Points per rank must be at least 1');
   CGC.rankStep=Math.floor(g('rkstep'));CGC.rankWin=Math.max(0,Math.floor(g('rkwin')));CGC.rankLoss=Math.max(0,Math.floor(g('rkloss')));try{await saveCfg();toast('Ranked settings saved')}catch(e){toast(e.message)}}
