@@ -237,8 +237,9 @@ body.sel #hand,body.sel #top,body.sel #lg,body.sel #log,body.sel #en,body.sel #e
 /* ===== battle page: background + display hero ===== */
 .bbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
 .bsh{position:absolute;inset:0;z-index:0;background:linear-gradient(90deg,#120a05d9 0%,#120a0580 45%,transparent 78%),linear-gradient(0deg,#120a05d0,transparent 40%)}
-.bartw{position:absolute;right:0;top:0;height:80%;width:48%;z-index:1;pointer-events:none}
-.bartw .bart{position:absolute;right:0;top:0;width:100%;height:100%;max-width:none;object-fit:contain;object-position:right top}
+.bartw{position:absolute;right:0;top:0;bottom:0;width:56%;z-index:1;pointer-events:none;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24%);mask-image:linear-gradient(90deg,transparent 0,#000 24%)}
+.bartw .bart{position:absolute;right:auto;left:63%;top:calc(23% - var(--fy,.12)*var(--mh,180%));height:var(--mh,180%);width:auto;max-width:none;max-height:none;object-fit:fill;transform:translateX(calc(var(--fx,.5)*-100%));animation:mascin .6s cubic-bezier(.2,.8,.3,1) both}
+@keyframes mascin{from{opacity:0;translate:28px 0}}
 .rcy{position:absolute;right:16px;top:calc(80% - 56px);z-index:3;width:46px;height:46px;border-radius:50%;border:3px solid #ffe3a3;background:linear-gradient(#ffb43a,#c9660f);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 0 #7a3a05,0 0 16px #000a;padding:0}
 .rcy:hover{filter:brightness(1.12)}.rcy:active{translate:0 2px;box-shadow:0 2px 0 #7a3a05}
 /* ===== line-up editor (collection) ===== */
@@ -471,7 +472,7 @@ body.sel .sdim{opacity:1}
  .bp{min-height:0;height:100%;padding:4px 10px 8px;gap:6px}.qs{padding:7px;width:min(380px,56cqw);max-height:34cqh;overflow:auto}.qs h3{margin:0 0 4px;font-size:13px}.qr{margin-bottom:4px;gap:6px}.qm b{font-size:11px}.qb{height:13px}.qm small{font-size:9px}.qw{width:40px;height:40px}.qw i{font-size:18px}
  .lu{flex:0 0 auto;max-width:none}.pt{padding:6px 12px;font-size:12px}.lg{padding:7px;gap:6px}.dk{--w:clamp(54px,min(8.8cqw,21cqh),108px);gap:4px}
  .mp{gap:6px;flex-basis:240px}.md{min-width:66px;padding:5px 8px 4px;font-size:10px}.md i svg{width:18px;height:18px}.mds{padding:3px}.play{padding:8px 44px;font-size:20px}
- .bartw{height:96%;width:42%}.rcy{width:36px;height:36px;top:6px;right:10px}
+ .bartw{width:58%}.rcy{width:36px;height:36px;top:6px;right:10px}
  .eh,.hdt{padding:4px 52px 4px 8px;gap:8px}.eh h2,.hdt h2{font-size:15px}.ers .rsi{padding:2px 8px}.eh .main{padding:6px 12px;font-size:13px}
  .em{padding:8px}.dkp{padding:8px;gap:12px;margin-bottom:8px}.dki{font-size:11px;max-width:200px}.ef{padding:6px 5px;gap:5px}.ef button{width:40px;height:40px;font-size:18px}.cg{grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:7px}.ctf{height:64px}.cth{font-size:11px;padding:2px 6px}
  .hdw{padding:6px 8px 12px;gap:8px;flex-wrap:nowrap;align-items:stretch}.hdl{flex:1 1 40%;min-height:0;padding-bottom:46px}.hdl .big{max-height:62cqh}.rib{font-size:18px;padding:5px 26px 5px 14px}.hdadd{padding:7px 16px;font-size:13px}.nv{width:32px;height:32px}
@@ -879,10 +880,18 @@ body.sel #bat .unit.tg .info{box-shadow:0 0 0 2px #ffd45a,0 0 14px #ffd45a}
 .rkw .rke2{position:relative;z-index:2;width:100%;height:100%;display:grid;place-items:center;filter:drop-shadow(0 3px 4px #000a)}
 .rkw .rke2>img,.rkw .rke2>svg{width:100%;height:100%;object-fit:contain;display:block}
 .rkw.hs .rke2{filter:drop-shadow(0 0 2px var(--c3)) drop-shadow(0 0 7px var(--c3)) drop-shadow(0 3px 4px #000a)}
+.rkw.hr .rke2{filter:drop-shadow(0 0 2px var(--c2)) drop-shadow(0 0 7px var(--c2)) drop-shadow(0 3px 4px #000a)}
+.rkw.hs.hr .rke2{filter:drop-shadow(0 0 2px var(--c2)) drop-shadow(0 0 6px var(--c3)) drop-shadow(0 0 10px var(--c2)) drop-shadow(0 3px 4px #000a)}
+.rfh.r{background-image:linear-gradient(115deg,transparent 40%,color-mix(in srgb,var(--c2) 35%,#fff) 50%,transparent 60%);animation-delay:1.3s}
+.rfw{position:absolute;left:-62%;right:-62%;top:-13%;height:112%;z-index:1;display:flex;justify-content:space-between;pointer-events:none;color:var(--c4);animation:rfwf 3s ease-in-out infinite}
+.rfw::before{content:"";position:absolute;left:16%;right:16%;top:6%;bottom:10%;border-radius:50%;background:radial-gradient(ellipse,color-mix(in srgb,var(--c4) 55%,transparent) 0,transparent 70%);filter:blur(6px)}
+.rfw svg{position:relative;width:50%;height:100%;overflow:visible;filter:drop-shadow(0 0 1.5px #fffc) drop-shadow(0 0 5px var(--c4)) drop-shadow(0 0 12px var(--c4))}
+.rfw .wr{transform-origin:22% 58%;animation:rfwr 3s ease-in-out infinite}.rfw .wl{transform-origin:78% 58%;animation:rfwl 3s ease-in-out infinite}
+@keyframes rfwf{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes rfwr{0%,100%{transform:rotate(3deg)}50%{transform:rotate(-5deg)}}
+@keyframes rfwl{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(5deg)}}
 .rfg{position:absolute;inset:-32%;z-index:0;border-radius:50%;pointer-events:none;background:radial-gradient(circle,var(--c1) 0,color-mix(in srgb,var(--c1) 55%,transparent) 30%,transparent 68%);filter:blur(4px);animation:rfg 2.4s ease-in-out infinite}
 @keyframes rfg{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}
-.rfr{position:absolute;inset:-54%;z-index:1;border-radius:50%;pointer-events:none;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--c2) 90%,transparent) 0 5deg,transparent 5deg 22deg);-webkit-mask:radial-gradient(circle,#000 20%,transparent 66%);mask:radial-gradient(circle,#000 20%,transparent 66%);animation:rfspin 8s linear infinite}
-.rfr::after{content:"";position:absolute;inset:14%;border-radius:50%;background:repeating-conic-gradient(from 11deg,color-mix(in srgb,var(--c2) 60%,transparent) 0 3deg,transparent 3deg 30deg);animation:rfspin 4s linear infinite reverse}
 @keyframes rfspin{to{transform:rotate(360deg)}}
 .rfs{position:absolute;inset:-12%;z-index:3;pointer-events:none;filter:drop-shadow(0 0 3px var(--c3)) drop-shadow(0 0 6px var(--c3));animation:rfspin 7s linear infinite}
 .rfs b{position:absolute;width:24%;aspect-ratio:1;background:radial-gradient(circle,#fff 0 22%,var(--c3) 60%);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:rftw 1.8s ease-in-out infinite;opacity:0}
@@ -891,7 +900,7 @@ body.sel #bat .unit.tg .info{box-shadow:0 0 0 2px #ffd45a,0 0 14px #ffd45a}
 @keyframes rftw{0%,100%{transform:scale(0) rotate(0);opacity:0}45%{transform:scale(1.1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:.6}}
 .rfh{position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 40%,color-mix(in srgb,var(--c3) 35%,#fff) 50%,transparent 60%) 0 0/300% 100% no-repeat;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;mix-blend-mode:screen;animation:rfsh 2.6s ease-in-out infinite}
 @keyframes rfsh{0%{background-position:100% 0}60%,100%{background-position:0 0}}
-@media(prefers-reduced-motion:reduce){.rfg,.rfr,.rfr::after,.rfs,.rfs b,.rfh{animation:none}.rfs b{opacity:1;transform:scale(.8)}}
+@media(prefers-reduced-motion:reduce){.rfg,.rfs,.rfs b,.rfh,.rfw,.rfw svg{animation:none}.rfw{opacity:.85}.rfs b{opacity:1;transform:scale(.8)}}
 /* ===================== PLAYER PLATE (top bar) ===================== */
 .pf2{--pfs:64px;position:relative;display:flex;align-items:center;gap:12px;padding:6px 18px 6px 6px;margin:6px 0 8px 4px;border:0;cursor:pointer;color:#fff;text-align:left;font:inherit;
  background:linear-gradient(180deg,#6b3f1c 0%,#3e2412 55%,#2a170a 100%);border-radius:calc(var(--pfs)/2 + 8px) 16px 16px calc(var(--pfs)/2 + 8px);
@@ -1258,7 +1267,7 @@ function draw(T,n){let k=0;while(n-->0){if(!T.deck.length){T.deck=shuf(T.disc.fi
 function mk(hs,rl,gen){rl=rl||[];const T={u:hs.map((h,i)=>{const r=rl[i]||null,v=r?+r.v||0:0;let hp=h.hp,at=h.atk;if(r&&r.e=='hp_bonus')hp+=v;if(r&&r.e=='atk_bonus')at+=v;return{h,hp,mhp:hp,atk:at,sh:0,ex:r&&r.e=='ex_start'?Math.min(100,v):0,s:{},r,stt:{d:0,h:0,s:0}}}),deck:[],hand:[],disc:[],en:0,rd:0,bombs:[],gl:[]};
  T.u.forEach(o=>pool(o.h).forEach(s=>T.deck.push({u:++uid,s,o})));(gen||[]).forEach(g=>{const go={h:{id:'G',cl:'General',n:'General',col:'#c9ced8'},hp:1,mhp:1,atk:1,sh:0,ex:0,s:{},stt:{d:0,h:0,s:0},g};T.gl.push(go);T.deck.push({u:++uid,s:g.s,o:go})});shuf(T.deck);draw(T,4);return T}
 const clean=T=>['deck','hand','disc'].forEach(k=>T[k]=T[k].filter(c=>c.o.hp>0));
-function hurt(O,d,pierce,cr){const ab=pierce?0:Math.min(O.sh,d);O.sh-=ab;O.hp=Math.max(0,O.hp-(d-ab));O.ex=Math.min(100,O.ex+Math.min(25,d*2));fl(O,'-'+d,'#ff5a5a',cr)}
+function hurt(O,d,pierce,cr){const ab=pierce?0:Math.min(O.sh,d);O.sh-=ab;O.hp=Math.max(0,O.hp-(d-ab));O.ex=Math.min(100,O.ex+Math.min(25,d*2));fl(O,'-'+d,'#ff5a5a',cr);if(O.hp<=0){O.s={};O.sh=0}}
 function use(T,S,sp,t){let a=sp.self?S:t;
  if(sp.bomb){T.bombs.push({n:sp.n,t:sp.bomb.t,d:sp.bomb.d,ap:sp.bomb.ap,o:S});return}
  if(sp.d||sp.ap){const F=T===P?E:P,fu=alive(F),ts=sp.k=='a'?fu:sp.k=='p'?[t,fu[fu.indexOf(t)+1]].filter(Boolean):[t];
@@ -1393,7 +1402,7 @@ const BG=(()=>{const K=crypto.getRandomValues(new Uint32Array(1))[0];let snap=nu
   check(){if(!P||!E||!snap||over||!inB)return;if(fnv(take().join(','),K)===sig)return;let i=0;P.en=snap[i++];P.u.concat(E.u).forEach(u=>{u.hp=snap[i++];u.mhp=snap[i++];u.sh=snap[i++];u.atk=snap[i++];u.ex=snap[i++]});
    BTamp=1;flag('battle');toast('⚠️ Battle values were changed by an outside program. They were restored and this match will not give rewards.');ui()}}})();
 let BT=0,BTamp=0;
-function ui(){if(!P)return;queueMicrotask(()=>BG.seal());document.body.classList.toggle('sel',!!(pend&&need(psp())));
+function ui(){if(!P)return;P.u.concat(E.u).forEach(u=>{if(u.hp<=0&&(u.sh||Object.keys(u.s).length)){u.s={};u.sh=0}});queueMicrotask(()=>BG.seal());document.body.classList.toggle('sel',!!(pend&&need(psp())));
  const st=$('#stage');st.className=turn=='p'?'zp':'ze';
  if(!st.querySelector('.cam'))st.innerHTML='<div class="camd"><div class="cam"><i class="spot"></i><div class="team p"></div><div class="team e"></div><i class="sdim"></i><div class="fxl"></div></div></div>';if(!st.querySelector('.fxl')){const l=document.createElement('div');l.className='fxl';st.querySelector('.cam').appendChild(l)}
  st.querySelector('.team.p').innerHTML=P.u.map((u,i)=>tile(u,1,i)).reverse().join('');st.querySelector('.team.e').innerHTML=E.u.map((u,i)=>tile(u,0,i)).join('');
@@ -1485,11 +1494,15 @@ const RN=['Copper','Silver','Gold','Platinum','Emerald','Diamond'],RC=['#c27c3a'
 const defRanks=()=>RN.flatMap(n=>RR.map(r=>({n:n+' '+r})));
 const rkI=p=>Math.max(0,Math.min(RANKS.length-1,Math.floor((p||0)/Math.max(1,CFG.rankStep))));
 const rkC=i=>RC[Math.min(RC.length-1,Math.floor(i/5))];
-const GC={white:'#ffffff',blue:'#4aa8ff',purple:'#b36bff',gold:'#ffc83a',green:'#3ee07a'};
+const GC={white:'#ffffff',blue:'#4aa8ff',purple:'#b36bff',gold:'#ffc83a',green:'#3ee07a',red:'#ff4a4a',orange:'#ff9a2e',pink:'#ff6ad5',cyan:'#3ee6ff'};
+const WGS=(f,c)=>{const p=(a,s,o)=>'<path transform="rotate('+a+') scale('+s+')" d="M0 0C16 -12 40 -21 64 -18C50 -5 26 6 0 8Z" fill="currentColor" fill-opacity="'+o+'"/>';
+ return '<svg class="'+c+'" viewBox="0 0 100 100" aria-hidden="true"><g transform="'+(f?'translate(100 0) scale(-1 1) ':'')+'translate(22 58)" stroke="#fff" stroke-opacity=".9" stroke-width="1.1" stroke-linejoin="round">'+[[-44,.78,.14],[-32,.9,.16],[-20,.98,.18],[-8,.98,.2],[4,.9,.22],[16,.78,.24],[28,.62,.26]].map(x=>p(...x)).join('')+[[-36,.58,.36],[-20,.66,.4],[-4,.64,.44],[12,.54,.48]].map(x=>p(...x)).join('')+'</g></svg>'};
+const WINGS='<i class="rfw">'+WGS(1,'wl')+WGS(0,'wr')+'</i>';
+
 const rkIn=i=>{const r=RANKS[i]||{};return r.img?'<img src="'+r.img+'" alt="">':'<svg viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="'+rkC(i)+'" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">'+RR[i%5]+'</text></svg>'};
-function rkFx(i,s){const r=RANKS[i]||{},f=r.fx||{},g=GC[f.g],ry=GC[f.r],sp=GC[f.s];
- return '<span class="rkw'+(sp?' hs':'')+'" style="--rs:'+(typeof s=='number'?s+'px':s)+(g?';--c1:'+g:'')+(ry?';--c2:'+ry:'')+(sp?';--c3:'+sp:'')+'">'+(g?'<i class="rfg"></i>':'')+(ry?'<i class="rfr"></i>':'')+'<span class="rke2">'+rkIn(i)+'</span>'+
-  (sp?'<i class="rfs"><b></b><b></b><b></b><b></b><b></b><b></b></i>'+(r.img?'<i class="rfh" style="-webkit-mask-image:url(\''+r.img+'\');mask-image:url(\''+r.img+'\')"></i>':''):'')+'</span>'}
+function rkFx(i,s){const r=RANKS[i]||{},f=r.fx||{},g=GC[f.g],ry=GC[f.r],sp=GC[f.s],wg=GC[f.w],mk=c=>'<i class="rfh'+c+'" style="-webkit-mask-image:url(\''+r.img+'\');mask-image:url(\''+r.img+'\')"></i>';
+ return '<span class="rkw'+(sp?' hs':'')+(ry?' hr':'')+'" style="--rs:'+(typeof s=='number'?s+'px':s)+(g?';--c1:'+g:'')+(ry?';--c2:'+ry:'')+(sp?';--c3:'+sp:'')+(wg?';--c4:'+wg:'')+'">'+(g?'<i class="rfg"></i>':'')+(wg?WINGS:'')+'<span class="rke2">'+rkIn(i)+'</span>'+
+  (sp?'<i class="rfs"><b></b><b></b><b></b><b></b><b></b><b></b></i>'+(r.img?mk(''):''):'')+(ry&&r.img?mk(' r'):'')+'</span>'}
 const rkE=(i,s)=>{const r=RANKS[i]||{};return r.img?'<img class="rke" src="'+r.img+'" alt="" style="width:'+s+'px;height:'+s+'px">':'<svg class="rke" width="'+s+'" height="'+s+'" viewBox="0 0 40 40"><path d="M20 3l14 6v11c0 9-6 15-14 18C12 35 6 29 6 20V9z" fill="'+rkC(i)+'" stroke="#0008" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="13" fill="#1a1204">'+RR[i%5]+'</text></svg>'};
 
 /* ---- heroes: ownership, levels, evolutions ---- */
@@ -1662,11 +1675,12 @@ function tbH(){const ri=rkI(PD.pts),tl=HD.reduce((a,h)=>{const s=hs(h);return a+
 function dispHero(){let h=PD.disp&&HD.find(x=>hk(x)===PD.disp&&owned(x));if(!h){const l=PD.lineups[PD.sel]||{};h=(l.h||[]).map(k=>HD[hidx(k)]).find(Boolean)}return h||HD.find(owned)}
 const MIC={std:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6M16 16l4 4M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6M8 16l-4 4M5 21l-2-2"/></svg>',story:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>',rank:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 20h12"/></svg>'};
 const RCY='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15.5 6.2L21 16"/><path d="M21 21v-5h-5"/></svg>';
+const mascSt=x=>{const f=x.face;return f?'--fx:'+f.x+';--fy:'+f.y+';--mh:'+Math.min(340,Math.max(150,f.z*46)).toFixed(1)+'%':'--fx:.5;--fy:.12;--mh:180%'};
 function pgBattle(){const l=PD.lineups[PD.sel]||{h:[],r:{},g:[]},dh=dispHero(),dx=dh&&evH(dh);
  const tabs=[0,1,2,3,4].map(i=>`<button class="pt${i===PD.sel?' on':''}" data-p="${i}">${i+1}</button>`).join('')+'<button class="pt el" id="el">✎ Edit Line-up</button>';
  const md=[['std','Standard',MIC.std],['story','Story',MIC.story],['rank','Ranked',MIC.rank]],bad=validLU(l);
  return `<div class="bp">${APPR.bg?`<img class="bbg" src="${APPR.bg}" alt=""><div class="bsh"></div>`:''}
- ${dx?`<div class="bartw"><img class="bart" src="${dx.img}" alt="" referrerpolicy="no-referrer"></div><button class="rcy" id="rcy" title="Change display hero" aria-label="Change display hero">${RCY}</button>`:''}
+ ${dx?`<div class="bartw"><img class="bart" src="${dx.img}" alt="" referrerpolicy="no-referrer" style="${mascSt(dx)}"></div><button class="rcy" id="rcy" title="Change display hero" aria-label="Change display hero">${RCY}</button>`:''}
  <div class="qs qbd"><div class="qsi${qAct().length?' on':''}" aria-hidden="true">${QSCROLL}${qAct().length?`<em>${qAct().length}</em>`:''}</div><div class="qbx"><div class="qhd"><h3>Quests</h3><small>${qAct().length?'Tap a quest for details':''}</small></div>${qAct().length?qAct().map(qH).join(''):QUESTS.length?'<p class="qdn">✓ All quests complete! New ones are on the way.</p>':'<p class="qemp">No quests right now. Check back soon!</p>'}</div></div>
  <div class="bb"><div class="lu pnl"><div class="lt">${tabs}</div><div class="lg">${deckHTML(l,false)}</div></div>
  <div class="mp"><div class="mds">${md.map(([k,n,ic])=>`<button class="md${PD.mode===k?' on':''}" data-m="${k}"><i>${ic}</i><span>${n}</span>${k==='story'?'<em class="msoon">Soon</em>':''}</button>`).join('')}</div><button class="play" id="play">Play</button></div></div></div>`}
