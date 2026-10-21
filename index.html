@@ -1307,7 +1307,7 @@ function cgAils(){
 }
 
 /* ---------------- quests ---------------- */
-const rwText=r=>{r=r||{};const a=Math.max(1,+r.amt||1);if(r.type==='frag')return `🧩 ${a} card fragments (${r.hero&&r.hero!=='random'&&HLIST[r.hero]?esc(HLIST[r.hero].name):'random hero'})`;if(r.type==='gen')return `🃏 General card: ${GENS[r.gen]?esc(GENS[r.gen].name):'(deleted)'}`;return `💠 ${a} Transcendence stone${a>1?'s':''}`};
+const rwText=r=>{r=r||{};const a=Math.max(1,+r.amt||1);if(r.type==='gold')return `🪙 ${a} gold`;if(r.type==='none')return 'No reward';if(r.type==='frag')return `🧩 ${a} card fragments (${r.hero&&r.hero!=='random'&&HLIST[r.hero]?esc(HLIST[r.hero].name):'random hero'})`;if(r.type==='gen')return `🃏 General card: ${GENS[r.gen]?esc(GENS[r.gen].name):'(deleted)'}`;return `💠 ${a} Transcendence stone${a>1?'s':''}`};
 function questListHTML(){const e=Object.entries(QSTS).sort((a,b)=>(+a[1].created||0)-(+b[1].created||0));if(!e.length)return '<p class="mut" style="font-size:14px">No quests yet.</p>';
   return e.map(([k,q])=>`<div class="bx2 qrow"><div style="flex:1;min-width:0"><b>${esc(q.title)}</b><div class="mut" style="font-size:13px">Win <b>${+q.wins||1}</b> · ${MODE_TXT[q.mode]||MODE_TXT.any}</div><div style="font-size:13px;margin-top:2px">Reward: ${rwText(q.reward)}</div>${q.desc?`<div class="mut cl" style="font-size:12px;margin:2px 0 0">📝 ${esc(q.desc)}</div>`:''}</div><div class="row"><button class="s" onclick="editQuest('${esc(k)}')">Edit</button><button class="d s" onclick="delQuest('${esc(k)}')">✕</button></div></div>`).join('')}
 function questSecInner(){
@@ -1320,10 +1320,10 @@ function questSecInner(){
     <div><label>Quest title</label><input value="${esc(QF.title)}" maxlength="50" oninput="QF.title=this.value" placeholder="e.g. Win 3 Standard Games"></div>
     <div><label>Counts wins in</label><select onchange="QF.mode=this.value">${Object.entries(MODE_TXT).map(([k,v])=>`<option value="${k}"${QF.mode===k?' selected':''}>${v}</option>`).join('')}</select></div>
     <div><label>Wins needed to finish</label><input type="number" min="1" max="9999" value="${+QF.wins||1}" oninput="QF.wins=+this.value"></div>
-    <div><label>Reward</label><select onchange="QF.rtype=this.value;paintQuest()"><option value="frag"${QF.rtype==='frag'?' selected':''}>🧩 Card fragments</option><option value="gen"${QF.rtype==='gen'?' selected':''}>🃏 General card</option><option value="stone"${QF.rtype==='stone'?' selected':''}>💠 Transcendence stone</option></select></div>
+    <div><label>Reward</label><select onchange="QF.rtype=this.value;paintQuest()"><option value="frag"${QF.rtype==='frag'?' selected':''}>🧩 Card fragments</option><option value="gen"${QF.rtype==='gen'?' selected':''}>🃏 General card</option><option value="stone"${QF.rtype==='stone'?' selected':''}>💠 Transcendence stone</option><option value="gold"${QF.rtype==='gold'?' selected':''}>🪙 Gold</option><option value="none"${QF.rtype==='none'?' selected':''}>— No reward</option></select></div>
     ${QF.rtype==='frag'?`<div><label>Fragments of which hero</label><select onchange="QF.hero=this.value">${heroOpts}</select></div>`:''}
     ${QF.rtype==='gen'?`<div><label>General card</label><select onchange="QF.gen=this.value">${genOpts}</select></div>`:''}
-    ${QF.rtype!=='gen'?`<div><label>Amount</label><input type="number" min="1" max="9999" value="${+QF.amt||1}" oninput="QF.amt=+this.value"></div>`:''}
+    ${QF.rtype!=='gen'&&QF.rtype!=='none'?`<div><label>Amount</label><input type="number" min="1" max="9999" value="${+QF.amt||1}" oninput="QF.amt=+this.value"></div>`:''}
     <div style="grid-column:1/-1"><label>Detailed instructions (shown when a player taps the quest; optional)</label><textarea maxlength="600" style="min-height:80px" oninput="QF.desc=this.value" placeholder="e.g. Use a line-up with a Healer and win 3 Standard matches this week. Step-by-step instructions are added automatically below this text.">${esc(QF.desc||'')}</textarea></div></div>
    ${QF.rtype==='gen'?'<p class="mut" style="font-size:13px;margin:8px 0 0">Tip: mark the card “Reward-only” in General Cards so players can only get it from this quest.</p>':''}
    <div class="row" style="margin-top:10px"><button onclick="saveQuest()">💾 Save quest</button>${QF.id?'<button class="g" onclick="QF=emptyQF();paintQuest()">Cancel</button>':''}</div></div>`}
@@ -1332,10 +1332,10 @@ let DAILY={tasks:{},miles:[]};
 const DTTA={win:['🏆','Win matches (any mode)'],win_std:['⚔️','Win Standard matches'],win_rank:['👑','Win Ranked matches'],play:['🎮','Play matches (win or lose)'],cards:['🃏','Play cards in battle'],ex:['🌟','Use ultimates (EX)'],kill:['💀','Defeat enemy heroes'],dmg:['💥','Deal damage (total)'],heal:['💚','Heal HP (total)'],shield:['🛡️','Gain shield (total)']};
 const emptyDF=()=>({id:null,title:'',desc:'',type:'win',n:3,icon:'',rw:{type:'frag',hero:'random',gen:'',amt:5}});
 let DF=emptyDF();
-const rwSel=(r,ex,paint)=>`<select onchange="${ex}.type=this.value;${paint}()"><option value="frag"${r.type==='frag'?' selected':''}>🧩 Card fragments</option><option value="gen"${r.type==='gen'?' selected':''}>🃏 General card</option><option value="stone"${r.type==='stone'?' selected':''}>💠 Transcendence stone</option></select>`
+const rwSel=(r,ex,paint)=>`<select onchange="${ex}.type=this.value;${paint}()"><option value="frag"${r.type==='frag'?' selected':''}>🧩 Card fragments</option><option value="gen"${r.type==='gen'?' selected':''}>🃏 General card</option><option value="stone"${r.type==='stone'?' selected':''}>💠 Transcendence stone</option><option value="gold"${r.type==='gold'?' selected':''}>🪙 Gold</option><option value="none"${r.type==='none'?' selected':''}>— No reward</option></select>`
  +(r.type==='frag'?`<select onchange="${ex}.hero=this.value"><option value="random">Random hero</option>${Object.entries(HLIST).map(([k,h])=>`<option value="${esc(k)}"${r.hero===k?' selected':''}>${esc(h.name)}</option>`).join('')}</select>`:'')
  +(r.type==='gen'?`<select onchange="${ex}.gen=this.value"><option value="">— choose —</option>${Object.entries(GENS).map(([k,g])=>`<option value="${esc(k)}"${r.gen===k?' selected':''}>${esc(g.name)}</option>`).join('')}</select>`:'')
- +(r.type!=='gen'?`<input type="number" min="1" max="9999" value="${Math.max(1,+r.amt||1)}" oninput="${ex}.amt=+this.value" style="max-width:110px" title="Amount">`:'');
+ +(r.type!=='gen'&&r.type!=='none'?`<input type="number" min="1" max="9999" value="${Math.max(1,+r.amt||1)}" oninput="${ex}.amt=+this.value" style="max-width:110px" title="Amount">`:'');
 const paintDaily=()=>{const e=$('#dailysec');if(e)e.innerHTML=dailyInner()};
 function dailyInner(){
   const L=Object.entries(DAILY.tasks).sort((a,b)=>(+a[1].created||0)-(+b[1].created||0)),nT=L.length;
@@ -1365,7 +1365,7 @@ async function saveDaily(){
   if(!DF.title.trim())return toast('Title is required');if(!(+DF.n>=1))return toast('Target must be at least 1');
   if(DF.rw.type==='gen'&&!DF.rw.gen)return toast('Choose the general card to give');
   const id=DF.id||'d'+Date.now().toString(36)+Math.random().toString(36).slice(2,4),r=DF.rw;
-  const d={title:DF.title.trim(),desc:(DF.desc||'').trim()||null,type:DF.type,n:Math.floor(+DF.n),icon:(DF.icon||'').trim()||null,rw:r.type==='gen'?{type:'gen',gen:r.gen,amt:1}:{type:r.type,...(r.type==='frag'?{hero:r.hero||'random'}:{}),amt:Math.max(1,+r.amt||1)},created:(DAILY.tasks[id]&&DAILY.tasks[id].created)||Date.now()};
+  const d={title:DF.title.trim(),desc:(DF.desc||'').trim()||null,type:DF.type,n:Math.floor(+DF.n),icon:(DF.icon||'').trim()||null,rw:r.type==='gen'?{type:'gen',gen:r.gen,amt:1}:r.type==='none'?{type:'none',amt:0}:{type:r.type,...(r.type==='frag'?{hero:r.hero||'random'}:{}),amt:Math.max(1,+r.amt||1)},created:(DAILY.tasks[id]&&DAILY.tasks[id].created)||Date.now()};
   try{await api('cardgame/daily/tasks/'+id,'PUT',d);DAILY.tasks[id]=d;DF=emptyDF();paintDaily();toast('Daily quest saved')}catch(e){toast(e.message)}}
 function editDaily(id){const t=DAILY.tasks[id];if(!t)return;DF={id,title:t.title||'',desc:t.desc||'',type:t.type||'win',n:+t.n||1,icon:t.icon||'',rw:{type:'frag',hero:'random',gen:'',amt:5,...(t.rw||{})}};paintDaily();const e=$('#dailysec');if(e)e.scrollIntoView({behavior:'smooth'})}
 async function delDaily(id){if(!confirm('Delete this daily quest?'))return;try{await api('cardgame/daily/tasks/'+id,'DELETE');delete DAILY.tasks[id];if(DF.id===id)DF=emptyDF();paintDaily()}catch(e){toast(e.message)}}
@@ -1374,7 +1374,7 @@ async function saveQuest(){
   if(!QF.title.trim())return toast('Quest title is required');if(!(+QF.wins>=1))return toast('Wins needed must be at least 1');
   if(QF.rtype==='gen'&&!QF.gen)return toast('Choose the general card to give');
   const id=QF.id||'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const reward=QF.rtype==='frag'?{type:'frag',hero:QF.hero||'random',amt:Math.max(1,+QF.amt||1)}:QF.rtype==='gen'?{type:'gen',gen:QF.gen,amt:1}:{type:'stone',amt:Math.max(1,+QF.amt||1)};
+  const reward=QF.rtype==='frag'?{type:'frag',hero:QF.hero||'random',amt:Math.max(1,+QF.amt||1)}:QF.rtype==='gen'?{type:'gen',gen:QF.gen,amt:1}:QF.rtype==='none'?{type:'none',amt:0}:{type:QF.rtype==='gold'?'gold':'stone',amt:Math.max(1,+QF.amt||1)};
   const d={title:QF.title.trim(),desc:(QF.desc||'').trim().slice(0,600)||null,mode:QF.mode,wins:Math.max(1,Math.floor(+QF.wins)),reward,created:(QSTS[id]&&QSTS[id].created)||Date.now()};
   try{await api('cardgame/quests/'+id,'PUT',d);QSTS[id]=d;QF=emptyQF();paintQuest();toast('Quest saved')}catch(e){toast(e.message)}}
 function editQuest(id){const q=QSTS[id];if(!q)return;const r=q.reward||{};QF={id,title:q.title||'',desc:q.desc||'',mode:q.mode||'any',wins:+q.wins||1,rtype:r.type||'frag',hero:r.hero||'random',gen:r.gen||'',amt:+r.amt||1};paintQuest();const e=$('#questsec');if(e)e.scrollIntoView({behavior:'smooth'})}
