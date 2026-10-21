@@ -1153,7 +1153,7 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .lu .pt.el{width:auto;height:34px;margin-left:auto;padding:0 14px 0 12px;border-radius:9px;border:2px solid #ffe3a3;background:linear-gradient(#ffc24a,#e0780f);color:#fff;font:800 13px system-ui,sans-serif;letter-spacing:.02em;text-shadow:0 1px 2px #0009;box-shadow:inset 0 1px 0 #fff8,0 3px 0 #8a4308,0 5px 10px #0008}
 .lu .pt.el:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #fff8,0 1px 0 #8a4308}
 .lu .lg{padding:9px 10px 8px}
-.dk>div{border-radius:8px;border:2px solid #0d0703;border-top:4px solid var(--c,#555);background:linear-gradient(#33200f,#170d06);box-shadow:inset 0 0 0 1px #ffffff14,0 3px 7px #000b}
+.dk>div{border-radius:8px;border:2px solid #0d0703;border-top:max(7px,calc(var(--w)*.075)) solid var(--c,#555);background:linear-gradient(#33200f,#170d06);box-shadow:inset 0 0 0 1px #ffffff14,0 3px 7px #000b}
 .dk>div:nth-child(n+6){height:calc(var(--w)*.5)}
 .dk:has(.tc){padding-top:calc(var(--w)*.17)}
 .dk .em{border:2px dashed #6a4a2a;border-top:2px dashed #6a4a2a;background:repeating-linear-gradient(135deg,#ffffff07 0 5px,transparent 5px 11px),linear-gradient(#1f1309,#140b05);box-shadow:inset 0 3px 10px #000c}
@@ -1169,7 +1169,8 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .dk .sel{outline:3px solid #ffd24a;outline-offset:-1px;box-shadow:0 0 14px #ffd24a}
 /* hero tiles */
 .dk>.dh{overflow:visible;container-type:inline-size;padding:0}
-.hf{position:absolute;inset:0;border-radius:5px}
+.hf{position:absolute;inset:0;border-radius:0 0 5px 5px}
+.dk>.dh::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:max(7px,calc(var(--w)*.075));background:linear-gradient(#ffffff70,#fff0 60%);pointer-events:none;border-radius:6px 6px 0 0}
 .ctf{position:relative}.ctf>.hf{border-radius:0}
 .ct,.rt{container-type:inline-size}
 .frt{top:auto;bottom:4%;right:4%;z-index:3;font:800 max(7px,7cqw)/1 system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:2.2cqw 3.6cqw;border-radius:4px;background:linear-gradient(#ffd24a,#c47f00);color:#2a1500;box-shadow:0 1px 3px #000a}
@@ -1182,7 +1183,15 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .rt .lvx{border-bottom-left-radius:0}
 /* ===================== TRANSCENDENT emblem + tile ===================== */
 .tce{position:absolute;left:50%;top:0;z-index:4;width:calc(98% * var(--tcs,1));transform:translate(calc(-50% - var(--tcx,0)*100%),calc(var(--tcc,.5)*-100%));pointer-events:none;filter:drop-shadow(0 3px 4px #000b)}
-.ct .tce{top:20%;width:calc(62% * var(--tcs,1))}
+.ct .tce{top:0;width:calc(92% * var(--tcs,1))}
+.ct.tc{overflow:visible;display:flex;flex-direction:column;border-radius:6px}.ct.tc .cth{order:2;position:relative;z-index:1;border-radius:0 0 4px 4px}.ct.tc .ctf{border-radius:4px 4px 0 0}.ct.tc .ctf>.hf{border-radius:4px 4px 0 0}
+/* thick glossy class-colour bar: stays visible on both sides of the Transcendent emblem */
+.dk>.dh{border-top:2px solid #0d0703}
+.dk>.dh::before,.ct.tc .ctf::before{content:"";position:absolute;left:0;right:0;top:0;z-index:2;pointer-events:none;border-radius:5px 5px 0 0;background:linear-gradient(#ffffff8c,#ffffff10 55%,#0000 56%,#00000030),var(--c);box-shadow:0 2px 4px #000a,inset 0 -1px 0 #0006}
+.dk>.dh::before{height:max(9px,11cqw)}.ct.tc .ctf::before{height:max(8px,7cqw);border-radius:4px 4px 0 0}
+.dk>.dh .stb{top:max(12px,14cqw)}
+.cg:has(.tc){row-gap:38px;padding-top:36px}
+@container (max-height:520px){.cg:has(.tc){row-gap:30px;padding-top:28px}}
 .ct .lvx{padding:1.2cqw 10cqw .8cqw 3cqw}.ct .lvx small{font-size:5cqw}.ct .lvx b{font-size:15cqw}
 .rt .lvx b{font-size:20cqw}
 .tce>img{display:block;width:100%;height:auto}
@@ -1207,10 +1216,42 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .tcsp i:nth-child(3){left:30%;top:76%;width:5%;animation-duration:2.4s;animation-delay:1.9s}
 @keyframes tctw{0%,100%{transform:scale(0) rotate(0);opacity:0}45%{transform:scale(1.15) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:.6}}
 /* Transcendent hero tile: gold frame + shine in step with the emblem */
-.dk>.dh.tc{border-color:#8a5a08;border-top-color:var(--c);box-shadow:inset 0 0 0 1px #ffd24a99,0 0 0 1px #ffc83a88,0 0 14px #ffb30066,0 3px 7px #000b}
+.dk>.dh.tc{border-color:#8a5a08;border-top-color:var(--c);box-shadow:0 -3px 8px -2px var(--c),inset 0 0 0 1px #ffd24a99,0 0 0 1px #ffc83a88,0 0 14px #ffb30066,0 3px 7px #000b}
 .ct.tc{border-color:#c98a12;box-shadow:0 0 0 1px #ffd24a88,0 0 12px #ffb30055}
 .tc .hf::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;background-image:linear-gradient(110deg,transparent 38%,#fff3c455 46%,#fffbe8cc 50%,#fff3c455 54%,transparent 62%);background-size:300% 100%;background-repeat:no-repeat;background-position:100% 0;animation:tcsh 3.2s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){.tcbs,.tcgs,.tcgl i,.tcsp i,.tce .tcg,.tc .hf::after{animation:none}}
+
+/* ===================== RANK LEVELS button + popup ===================== */
+.rkib{display:flex;align-items:center;justify-content:center;gap:9px;padding:6px 14px;border-radius:10px;border:2px solid #c9893a;cursor:pointer;color:#ffe3a3;font:800 13px Cinzel,Georgia,serif;letter-spacing:.05em;text-transform:uppercase;text-shadow:0 1px 2px #000;
+ background:linear-gradient(#5e3c20,#2e1a0b);box-shadow:inset 0 1px 0 #ffe3a344,0 3px 0 #1a0d05,0 0 14px #ffb34a33;transition:filter .2s,transform .15s}
+.rkib:hover{filter:brightness(1.15)}.rkib:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #ffe3a344,0 1px 0 #1a0d05}
+.rkib i{font-style:normal;font-size:20px;line-height:1;color:#ffd24a}
+.mdb.rkm{max-width:min(1000px,96cqw);padding:16px 18px 14px;color:#f3e3c8;background:radial-gradient(120% 60% at 50% 0,#6b3c1a,transparent 70%),linear-gradient(#3e2412,#1f1108);border:3px solid #c9893a;border-radius:18px;box-shadow:0 0 0 3px #2a1206,0 0 0 5px #e0a84a55,0 24px 60px #000;animation:dqin .35s cubic-bezier(.2,1.3,.4,1)}
+.mdb.rkm .mdx{width:36px;height:36px;font-size:16px;color:#ffe3a3;background:radial-gradient(circle at 40% 35%,#e0602a,#7a1a08);border:2px solid #e0a84a;box-shadow:0 0 0 2px #2a1206}
+.rlh{display:flex;align-items:center;gap:12px;margin:0 44px 4px 0}
+.rlcr{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;color:#3a1d04;background:radial-gradient(circle at 50% 30%,#fff6cf,#ffc83a 50%,#c47f00);border:2px solid #fff3c4;box-shadow:0 0 0 2px #6a3a08,0 0 14px #ffc83a88}.rlcr svg{width:26px;height:26px}
+.rlh h3{margin:0;font:900 22px/1.1 Cinzel,Georgia,serif;letter-spacing:.07em;text-transform:uppercase;color:#ffe3a3;text-shadow:0 2px 0 #000,0 0 12px #ffb34a66}.rlh small{color:#c9a47a;font:600 12px system-ui}
+.rlw{--rle:66px;display:flex;align-items:stretch;overflow-x:auto;padding:38px 16px 14px;margin:0 -8px;scrollbar-width:thin;scrollbar-color:#a8703c transparent}
+.rlc{position:relative;flex:1 0 112px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 6px 10px;border-radius:12px;
+ background:radial-gradient(90% 60% at 50% 0,color-mix(in srgb,var(--rc) 30%,transparent),transparent 75%),linear-gradient(#2c190b,#170c05);border:2px solid color-mix(in srgb,var(--rc) 55%,#3a2414);box-shadow:inset 0 1px 0 #ffffff1a,0 4px 10px #0009;transition:transform .2s}
+.rlc.done{filter:saturate(.7) brightness(.85)}
+.rlc.on{border-color:#ffd24a;transform:translateY(-4px);box-shadow:0 0 0 2px #ffd24a55,0 0 24px #ffc83a88,inset 0 1px 0 #fff3}
+.rly{position:absolute;bottom:-10px;left:50%;translate:-50% 0;z-index:5;font:900 10px/1 system-ui;font-style:normal;letter-spacing:.14em;padding:4px 11px;border-radius:10px;color:#3a1d04;background:linear-gradient(#ffe08a,#e08a14);border:1.5px solid #fff3c4;box-shadow:0 2px 6px #0009}
+.rlok{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font:900 11px system-ui;color:#fff;background:#3f9a1c;border:1.5px solid #d8ffb0}
+.rle{margin-top:-34px;height:calc(var(--rle) + 6px);display:grid;place-items:center;position:relative;z-index:1}
+.rln{font:900 15px Cinzel,Georgia,serif;letter-spacing:.05em;color:#fff;text-shadow:0 2px 0 #000}
+.rlp{font:700 11px system-ui;color:color-mix(in srgb,var(--rc) 55%,#fff)}
+.rld{display:flex;gap:3px;margin-top:3px}.rld i{min-width:21px;padding:3px 0;text-align:center;font:800 9px/1 Cinzel,Georgia,serif;font-style:normal;border-radius:4px;background:#0007;border:1px solid #ffffff1c;color:#a8906c}
+.rld i.ok{color:#fff;background:color-mix(in srgb,var(--rc) 45%,#000);border-color:color-mix(in srgb,var(--rc) 70%,#fff)}
+.rld i.me{color:#3a1d04;background:linear-gradient(#ffe08a,#e08a14);border-color:#fff3c4;box-shadow:0 0 8px #ffc83a}
+.rla{flex:0 0 16px;align-self:center;height:16px;position:relative}.rla::before{content:"";position:absolute;inset:3px 5px 3px 1px;border-top:3px solid #c9893a;border-right:3px solid #c9893a;rotate:45deg}
+.rlf{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:10px 14px;border-radius:12px;background:#0006;border:1px solid #e0a84a33}
+.rlx{display:flex;flex-direction:column;padding-right:14px;border-right:1px solid #e0a84a44}.rlx small{font:800 10px system-ui;letter-spacing:.1em;text-transform:uppercase;color:#a8906c}.rlx b{font:900 17px Cinzel,Georgia,serif;color:#ffd24a}.rlx span{font:600 12px system-ui;color:#e7c99b}
+.rlf ul{flex:1;min-width:220px;margin:0;padding-left:16px;font:500 12.5px/1.5 system-ui;color:#f3e3c8}.rlf .g{color:#7dff9a}.rlf .r{color:#ff8a7a}
+@container (max-height:520px){.rkib{padding:3px 10px;font-size:10px;gap:6px}.rkib i{font-size:16px}
+ .mdb.rkm{padding:10px 12px 10px}.rlh{gap:8px}.rlcr{width:32px;height:32px}.rlcr svg{width:19px;height:19px}.rlh h3{font-size:16px}.rlh small{font-size:10px}
+ .rlw{--rle:44px;padding:26px 4px 12px}.rlc{flex-basis:86px;padding:4px 4px 9px;gap:2px}.rle{margin-top:-24px}.rln{font-size:12px}.rlp{font-size:9.5px}.rld i{min-width:15px;font-size:7.5px;padding:2px 0}
+ .rlf{margin-top:6px;padding:6px 10px;gap:10px}.rlx b{font-size:13px}.rlx span{font-size:10px}.rlf ul{font-size:10.5px;line-height:1.35}}
 </style></head><body>
 <div id="gw">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gSt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#cdd6e3"/><stop offset="1" stop-color="#6f7a8c"/></linearGradient><linearGradient id="gGd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#ffc83a"/><stop offset="1" stop-color="#b8700a"/></linearGradient><linearGradient id="gLe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a4a"/><stop offset="1" stop-color="#6a3a14"/></linearGradient><linearGradient id="gRd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0473a"/><stop offset="1" stop-color="#7a1410"/></linearGradient><linearGradient id="gBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2ff"/><stop offset="1" stop-color="#2f6fd0"/></linearGradient><linearGradient id="gWd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8703c"/><stop offset="1" stop-color="#4a2a10"/></linearGradient></defs></svg><div id="home"><nav id="sb"><button class="sbn on" data-pg="battle"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><g transform="translate(24 24) rotate(-45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g><g transform="translate(24 24) rotate(45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g></g></svg><span>Battle</span></button><button class="sbn" data-pg="friends"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M23 40c.6-8.4 4.4-13 10-13s9.4 4.6 10 13z" fill="url(#gBl)"/><circle cx="33" cy="17.5" r="6.2" fill="url(#gBl)"/><path d="M5 42c.8-10 5.8-15.5 13.5-15.5S31.2 32 32 42z" fill="url(#gGd)"/><circle cx="18.5" cy="17" r="7.6" fill="url(#gGd)"/><path d="M14 14.5c2.5-3 7.5-3 10 0" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.3"/><path d="M11 36.5c2-3.5 5-5 7.5-5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.3"/></g></svg><span>Friends</span></button><button class="sbn" data-pg="shop"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M17 12.5c2.4 1.6 11.6 1.6 14 0l-2.6 5.8h-8.8z" fill="url(#gLe)"/><path d="M19.5 19.5c-8 4.6-12.5 11-11.5 16.5 1 5 7.5 7.5 16 7.5s15-2.5 16-7.5c1-5.5-3.5-11.9-11.5-16.5z" fill="url(#gLe)"/><path d="M13 30c1-3 3-5.5 5.5-7" fill="none" stroke="#f0c48a" stroke-opacity=".6" stroke-width="1.4"/><rect x="18" y="17.4" width="12" height="3.6" rx="1.8" fill="url(#gGd)"/><circle cx="26.5" cy="40" r="5.4" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="7.6" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="4.6" fill="none" stroke="#9a5a06" stroke-width="1.2"/><path d="M34 33.5c1-1.4 3.6-1.4 4.6 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1"/></g></svg><span>Shop</span></button><button class="sbn" data-pg="lb"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#1e0f05" stroke-width="4.8" stroke-linecap="round"/><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#ffc83a" stroke-width="2.4" stroke-linecap="round"/><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M13 6.5h22v9.5c0 8-4.6 13-11 13S13 24 13 16z" fill="url(#gGd)"/><path d="M21 28.5h6l1.2 6h-8.4z" fill="url(#gGd)"/><rect x="14" y="34.5" width="20" height="4.6" rx="1.4" fill="url(#gWd)"/><rect x="10.5" y="39" width="27" height="4.6" rx="1.4" fill="url(#gWd)"/><path d="M24 10.5l1.8 3.7 4 .5-2.9 2.8.7 4L24 19.6 20.4 21.5l.7-4-2.9-2.8 4-.5z" fill="#fff6c8" stroke="#a86a00" stroke-width="1"/></g><path d="M16 9v6.5c0 3 .8 5.6 2.2 7.4" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.4" stroke-linecap="round"/></svg><span>Leaderboard</span></button><button class="sbn ex" id="exit"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M8 43V8.5C8 6.6 9.6 5 11.5 5h15C28.4 5 30 6.6 30 8.5V43z" fill="url(#gWd)"/><path d="M15.3 8v35M22.6 8v35" stroke-opacity=".45"/><circle cx="25.5" cy="25" r="1.9" fill="url(#gGd)"/></g><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#1e0f05" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#ffc83a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exit</span></button></nav>
@@ -1788,7 +1829,7 @@ function pgBattle(){const l=PD.lineups[PD.sel]||{h:[],r:{},g:[]},dh=dispHero(),d
  ${dx?`<div class="bartw"><img class="bart" src="${dx.img}" alt="" referrerpolicy="no-referrer" decoding="sync" style="${mascSt(dx)}"></div><button class="rcy" id="rcy" title="Change display hero" aria-label="Change display hero">${RCY}</button>`:''}
  <div class="qs qbd"><div class="qsi${qAct().length?' on':''}" aria-hidden="true">${QSCROLL}${qAct().length?`<em>${qAct().length}</em>`:''}</div><div class="qbx"><div class="qhd"><h3>Quests</h3><small>${qAct().length?'Tap a quest for details':''}</small></div>${qAct().length?qAct().map(qH).join(''):QUESTS.length?'<p class="qdn">✓ All quests complete! New ones are on the way.</p>':'<p class="qemp">No quests right now. Check back soon!</p>'}</div></div>
  <div class="bb"><div class="lu pnl"><div class="lt">${tabs}</div><div class="lg">${deckHTML(l,false)}</div></div>
- <div class="mp"><div class="mds">${md.map(([k,n,ic])=>`<button class="md${PD.mode===k?' on':''}" data-m="${k}"><i>${ic}</i><span>${n}</span>${k==='story'?'<em class="msoon">Soon</em>':''}</button>`).join('')}</div><button class="play" id="play">Play</button></div></div></div>`}
+ <div class="mp">${PD.mode==='rank'?`<button class="rkib" id="rkinfo">${rkFx(rkI(PD.pts),24)}<span>See Rank Levels</span><i>›</i></button>`:''}<div class="mds">${md.map(([k,n,ic])=>`<button class="md${PD.mode===k?' on':''}" data-m="${k}"><i>${ic}</i><span>${n}</span>${k==='story'?'<em class="msoon">Soon</em>':''}</button>`).join('')}</div><button class="play" id="play">Play</button></div></div></div>`}
 async function pgFriends(){if(!ME)return '<div class="pnl pad"><h3>Friends</h3><p class="sub">Log in on Dafreta Network to see your friends here.</p></div>';
  const fr=Object.keys(await fb('inbox/'+ME+'/fr').catch(()=>null)||{}),lb=await ensureLB(),pr=await Promise.all(fr.map(k=>fb('profiles/'+k).catch(()=>null)));
  const rows=fr.map((k,i)=>{const p=pr[i]||{},l=lb[k],inv=(+localStorage['dfinv_'+k]||0)>Date.now()-864e5;
@@ -1819,7 +1860,20 @@ async function renderHome(){const my=++rtok;if(!PD)return;$('#tbw').innerHTML=tb
  if(pgNow==='battle'||pgNow==='profile'){$('#pgv').innerHTML=PGS[pgNow]();return}
  $('#pgv').innerHTML='<p class="sub pad">Loading…</p>';const h=await PGS[pgNow]();if(my===rtok)$('#pgv').innerHTML=h}
 /* generic popup */
-function openMdl(h){const m=$('#mdl');m.innerHTML='<div class="mdb"><button class="mdx" id="mdx" aria-label="Close">✕</button>'+h+'</div>';m.hidden=false}
+/* rank ladder popup: tiers are grouped by name (Copper I..V -> Copper), so custom rank lists work too */
+const tierBase=n=>String(n||'').replace(/\s+(I|II|III|IV|V|VI|VII|VIII|IX|X|\d+)$/i,'').trim()||String(n||'');
+function rkTiers(){const t=[];RANKS.forEach((r,i)=>{const b=tierBase(r.n),l=t[t.length-1];if(l&&l.n===b)l.c++;else t.push({n:b,i,c:1})});return t}
+const divOf=(n,d)=>((String(n||'').match(/\s(\S+)$/)||[])[1])||String(d+1);
+function openRankInfo(){const st=Math.max(1,CFG.rankStep),me=rkI(PD.pts),T=rkTiers(),cur=T.findIndex(t=>me>=t.i&&me<t.i+t.c),nx=RANKS[me+1],need=nx?st-(PD.pts|0)%st:0;
+ const card=(t,k)=>{const lo=t.i*st,hi=(t.i+t.c)*st-1,last=k===T.length-1,
+  pips=Array.from({length:t.c},(_,d)=>{const ri=t.i+d,nm=(RANKS[ri]||{}).n;return '<i class="'+(ri<me?'ok':ri===me?'me':'')+'" title="'+esc(nm)+'">'+esc(divOf(nm,d))+'</i>'}).join('');
+  return '<div class="rlc'+(k===cur?' on':k<cur?' done':'')+'" style="--rc:'+rkC(t.i)+'">'+(k===cur?'<em class="rly">YOU</em>':'')+'<div class="rle">'+rkFx(t.i,'var(--rle)')+'</div><b class="rln">'+esc(t.n)+'</b><small class="rlp">'+lo+(last?'+':' – '+hi)+' RP</small><div class="rld">'+pips+'</div>'+(k<cur?'<span class="rlok">✓</span>':'')+'</div>'};
+ const t0=T[0],ex=t0?Array.from({length:t0.c},(_,d)=>esc((RANKS[t0.i+d]||{}).n)).join(' → '):'',up=T[1]?esc((RANKS[T[1].i]||{}).n):'';
+ openMdl(`<div class="rlh"><span class="rlcr">${MIC.rank}</span><div><h3>Rank Levels</h3><small>Win Ranked matches to climb the ladder</small></div></div>
+ <div class="rlw">${T.map(card).join('<i class="rla" aria-hidden="true"></i>')}</div>
+ <div class="rlf"><div class="rlx"><small>Your rank</small><b>${esc((RANKS[me]||{}).n||'')}</b><span>${nx?need+' RP to '+esc(nx.n):'Highest rank reached!'}</span></div>
+ <ul><li>Every rank has <b>${t0?t0.c:5} divisions</b>: ${ex}${up?', then you are promoted to <b>'+up+'</b>':''}.</li><li><b>${st} RP</b> = 1 division · Win <b class="g">+${CFG.rankWin} RP</b> · Loss <b class="r">−${CFG.rankLoss} RP</b></li></ul></div>`,'rkm')}
+function openMdl(h,cl){const m=$('#mdl');m.innerHTML='<div class="mdb'+(cl?' '+cl:'')+'"><button class="mdx" id="mdx" aria-label="Close">✕</button>'+h+'</div>';m.hidden=false}
 const closeMdl=()=>{$('#mdl').hidden=true};
 $('#mdl').addEventListener('click',e=>{const qc=e.target.closest('[data-qc]');if(qc){if(!qc.disabled){closeMdl();claim(qc.dataset.qc)}return}if(e.target.id==='lupn'){closeMdl();return}if(e.target.id==='lupg'){closeMdl();SND.click();openEd(PD.sel);return}if(e.target.id==='mdl'||e.target.id==='mdx')closeMdl();const pk=e.target.closest('[data-pk]');if(pk){PD.disp=pk.dataset.pk;saveP('disp');closeMdl();SND.click();renderHome()}});
 function openPick(){const own=HD.map((b,i)=>owned(b)?i:-1).filter(i=>i>=0);
@@ -1835,6 +1889,7 @@ $('#home').addEventListener('click',e=>{
  const pt=e.target.closest('.pt[data-p]');if(pt){PD.sel=+pt.dataset.p;saveP('sel');SND.click();renderHome();return}
  if(e.target.closest('#el')||e.target.closest('[data-go]')){openEd(PD.sel);return}
  if(e.target.closest('#rcy')){openPick();return}
+ if(e.target.closest('#rkinfo')){openRankInfo();return}
  const md=e.target.closest('.md');if(md){PD.mode=md.dataset.m;saveP('mode');SND.click();renderHome();return}
  if(e.target.closest('#play')){playGame();return}
  const qw=e.target.closest('.qw.go');if(qw){claim(qw.dataset.q);return}
@@ -1856,7 +1911,7 @@ function toggleDeck(i){const h=HD[i];if(!owned(h)){toast('Unlock this hero first
  if(hi.length>=4){toast('Your deck already has 4 heroes. Remove one first.');return ''}
  hi.push(i);rt=i;return 'added'}
 function heroTile(i){const b=HD[i],x=evH(b),s=hs(b),own=owned(b),fr=PD.fr[hk(b)]||0,tc=own&&s.ev>=4;
- return '<div class="ct'+(own?'':' lk')+(tc?' tc':'')+(hi.includes(i)?' in':'')+'" data-h="'+i+'" style="--c:'+x.col+'"><div class="cth">'+esc(x.n)+'</div><div class="ctf"><div class="zf hf'+(own?'':' gr')+'">'+faceImg(x)+'</div>'+(own?lvH(s.lv)+(tc?tcEmb():s.ev?'<span class="stb">'+STG[s.ev]+'</span>':''):'')+'</div>'+
+ return '<div class="ct'+(own?'':' lk')+(tc?' tc':'')+(hi.includes(i)?' in':'')+'" data-h="'+i+'" style="--c:'+x.col+'"><div class="cth">'+esc(x.n)+'</div><div class="ctf"><div class="zf hf'+(own?'':' gr')+'">'+faceImg(x)+'</div>'+(own?lvH(s.lv)+(!tc&&s.ev?'<span class="stb">'+STG[s.ev]+'</span>':''):'')+'</div>'+(tc?tcEmb():'')+
   (own?'':'<div class="lkb"><span class="lki">🔒</span><div class="fb"><i style="width:'+Math.min(100,fr/CFG.unlock*100)+'%"></i><span>🧩 '+fr+'/'+CFG.unlock+'</span></div>'+(fr>=CFG.unlock?'<em>Tap to unlock!</em>':'')+'</div>')+'</div>'}
 function menu(){hidePop();$('#edt').textContent='Edit Line-up · Preset '+(ed+1);$('#ers').innerHTML=resH();
  const need=needGen(),okSave=hi.length==4&&GS.length==need;$('#eds').disabled=!okSave;
