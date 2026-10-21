@@ -1234,6 +1234,7 @@ function evoHTML(){
     <label>Stat bonus (+ to every card)</label><input type="number" min="0" max="999" value="${e.bonus===undefined||e.bonus===''||e.bonus===null?'':+e.bonus}" placeholder="default +${CGC.evoB[i-1]??0}" oninput="evSet(${i},'bonus',this.value)">
     <label>Image</label><div class="row" style="align-items:center;gap:8px"><button class="s" onclick="$('#evf${i}').click()">Upload</button>${e.img?`<div class="zf" style="width:64px;height:46px;border-radius:6px;border:1px solid var(--line)">${faceTag(e.img,e.face)}</div><button class="g s" onclick="evSet(${i},'img','');evSet(${i},'face',null);paintEvo()">✕</button>`:'<span class="mut" style="font-size:12px">base portrait</span>'}</div>
     <input id="evf${i}" type="file" accept="image/*" hidden onchange="upEvoImg(${i},this)">
+    ${e.img?`<button class="s" style="margin-top:8px" onclick="evFace(${i})">🎯 Face &amp; size</button> <span class="mut" style="font-size:12px">${e.face?(e.face.auto===0?'face not found':e.face.auto?'auto-detected':'set by you'):'not set'}${+e.bs&&+e.bs!==100?' · size '+(+e.bs)+'%':''}</span>`:''}
     ${e.img?`<label>Battle poses for this look</label><div class="row" style="gap:6px;flex-wrap:wrap">${POSES.map(([k,l])=>`<button class="${e[k+'Img']?'':'g '}s" onclick="$('#evp${k}${i}').click()">${e[k+'Img']?'✓ ':''}${l.split(' ').slice(1).join(' ')}</button>${e[k+'Img']?`<button class="d s" onclick="evSet(${i},'${k}Img','');evSet(${i},'${k}Face',null);paintEvo()">✕</button>`:''}<input id="evp${k}${i}" type="file" accept="image/*" hidden onchange="upEvoPose(${i},'${k}',this)">`).join('')}</div>`:''}</div>`}).join('')}</div>`;
 }
 const timeAgo=t=>{const d=(Date.now()-t)/1000;return d<60?'just now':d<3600?Math.floor(d/60)+'m ago':d<86400?Math.floor(d/3600)+'h ago':Math.floor(d/86400)+'d ago'};
@@ -1421,7 +1422,7 @@ async function saveHero(){
   if(!name)return bad('Hero name is required.');
   if(!(hp>0))return bad('HP must be greater than 0.');
   const isEdit=!!HF.id,evo={};
-  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);['hpB','atkB'].forEach(k=>{if(e[k]!==undefined&&e[k]!==''&&e[k]!==null&&!isNaN(+e[k]))o[k]=Math.max(0,+e[k])});if(e.img){o.img=e.img;if(e.face)o.face=e.face;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face']}})}if(Object.keys(o).length)evo[i]=o});
+  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);['hpB','atkB'].forEach(k=>{if(e[k]!==undefined&&e[k]!==''&&e[k]!==null&&!isNaN(+e[k]))o[k]=Math.max(0,+e[k])});if(e.img){o.img=e.img;if(e.face)o.face=e.face;if(+e.bs)o.bs=+e.bs;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face']}})}if(Object.keys(o).length)evo[i]=o});
   try{
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
@@ -1434,7 +1435,7 @@ async function saveHero(){
 }
 async function editHero(id){
   try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
-    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,exImg:e.exImg||'',exFace:e.exFace||null}});
+    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,bs:+e.bs||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,exImg:e.exImg||'',exFace:e.exFace||null}});
     let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
     HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,exImg:h.exImg||'',exFace:h.exFace||null,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
     CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0);autoFaceMissing()
@@ -1646,7 +1647,7 @@ function detectFace(src){
   const d=g.getImageData(0,0,W,H).data,N=W*H,sk=new Uint8Array(N);let fy0=H,fy1=-1;
   for(let i=0;i<N;i++){const o=i*4;if(d[o+3]<128)continue;const y=(i/W)|0;if(y<fy0)fy0=y;fy1=y;
     const r=d[o],gg=d[o+1],b=d[o+2],mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),dl=mx-mn;
-    if(mx!==r||r<140||dl<12)continue;const sa=dl/mx;if(sa<.07||sa>.55)continue;const hu=60*(gg-b)/dl;if(hu<-12||hu>38)continue;sk[i]=1}
+    if(mx!==r||r<140||dl<12)continue;const sa=dl/mx;if(sa<.07||sa>.55)continue;const hu=60*(gg-b)/dl;if(hu<-12||hu>34||b<r*.45)continue;sk[i]=1}
   const lab=new Int32Array(N),q=new Int32Array(N),figH=Math.max(1,fy1-fy0+1);let n=0,best=null,bsc=0;
   for(let i=0;i<N;i++){if(!sk[i]||lab[i])continue;n++;let qh=0,qt=0;q[qt++]=i;lab[i]=n;
     while(qh<qt){const j=q[qh++],x=j%W;if(x>0&&sk[j-1]&&!lab[j-1]){lab[j-1]=n;q[qt++]=j-1}if(x<W-1&&sk[j+1]&&!lab[j+1]){lab[j+1]=n;q[qt++]=j+1}
@@ -1668,26 +1669,32 @@ async function procHeroImg(f){const url=URL.createObjectURL(f);try{const im=awai
   if(img.length>9e6)throw new Error('That image is too large to save. Please use a smaller file.');
   return{img,face:detectFace(c),ar:+(c.width/c.height).toFixed(4),w:c.width,h:c.height,kb:Math.round(img.length*.75/1024)}}finally{URL.revokeObjectURL(url)}}
 const faceTag=(src,f)=>f?`<img class="fz" src="${esc(src)}" referrerpolicy="no-referrer" alt="" style="--fx:${+f.x};--fy:${+f.y};--z:${+f.z||3}">`:`<img src="${esc(src)}" referrerpolicy="no-referrer" alt="">`;
-function faceEdHTML(){
-  if(!HF.img)return '<p class="mut" style="font-size:13px;margin:8px 0 0">No portrait yet.</p>';
-  const f=HF.face,hc=HERO_COLORS[HF.class_]||'#888';
-  return `<div class="fcw"><div><div class="fcp" onclick="faceClick(event)" title="Click the hero's face"><img src="${esc(HF.img)}" referrerpolicy="no-referrer" alt="portrait">${f?`<i class="fcm" style="left:${f.x*100}%;top:${f.y*100}%"></i>`:''}</div>
+/* face + size editor: t='b' is the base portrait, '1'..'4' are evolution images */
+const fT=t=>(!t||t==='b')?HF:((HF.evo=HF.evo||{})[t]=HF.evo[t]||{});
+const fBox=t=>(!t||t==='b')?'#fcsec':'#fcev';
+function faceEdHTML(t){t=t||'b';const o=fT(t),base=t==='b';
+  if(!o.img)return '<p class="mut" style="font-size:13px;margin:8px 0 0">No portrait yet.</p>';
+  const f=o.face,hc=HERO_COLORS[HF.class_]||'#888',bs=+o.bs||(base?100:(+HF.bs||100));
+  return `<div class="fcw"><div><div class="fcp" onclick="faceClick(event,'${t}')" title="Click the hero's face"><img src="${esc(o.img)}" referrerpolicy="no-referrer" alt="portrait">${f?`<i class="fcm" style="left:${f.x*100}%;top:${f.y*100}%"></i>`:''}</div>
    <div class="mut" style="font-size:12px;margin-top:4px">Click the face to set the portrait center.</div></div>
-   <div class="fcs"><b>Face portrait ${f?(f.auto===0?'<span class="cgpill">face not found, set it by clicking</span>':f.auto?'<span class="cgpill on">auto-detected</span>':'<span class="cgpill on">set by you</span>'):''}</b>
-    <div class="fct" style="--hc:${hc}"><div class="zf" style="width:140px;height:100px">${faceTag(HF.img,f)}</div><div class="zf" style="width:86px;height:110px">${faceTag(HF.img,f)}</div></div>
-    ${f?`<label>Face zoom <b id="fzv">${(+f.z).toFixed(1)}×</b></label><input type="range" min="1" max="9" step=".1" value="${+f.z}" oninput="faceZoom(this.value)">`:''}
-    <label>Size in battle <b id="bsv">${+HF.bs||100}%</b> <span class="mut" style="font-weight:400">(wide poses are already enlarged automatically)</span></label><input type="range" min="60" max="200" step="5" value="${+HF.bs||100}" oninput="HF.bs=+this.value;$('#bsv').textContent=this.value+'%'">
-    <div class="row" style="gap:8px"><button class="g s" onclick="redetectFace()">🔍 Auto-detect face again</button><button class="d s" onclick="HF.img='';HF.face=null;HF.ar=0;paintFace()">Remove portrait</button></div></div></div>`}
-const paintFace=()=>{const e=$('#fcsec');if(e)e.innerHTML=faceEdHTML()};
-function faceClick(ev){const im=ev.currentTarget.querySelector('img'),b=im.getBoundingClientRect();
+   <div class="fcs"><b>Face portrait ${f?(f.auto===0?'<span class="cgpill">face not found, set it by clicking</span>':f.auto?'<span class="cgpill on">auto-detected</span>':'<span class="cgpill on">set by you</span>'):'<span class="cgpill">not set</span>'}</b>
+    <div class="fct" style="--hc:${hc}"><div class="zf" style="width:140px;height:100px">${faceTag(o.img,f)}</div><div class="zf" style="width:86px;height:110px">${faceTag(o.img,f)}</div></div>
+    ${f?`<label>Face zoom <b id="fzv${t}">${(+f.z).toFixed(1)}×</b> <span class="mut" style="font-weight:400">(make the head fill the boxes like your other heroes)</span></label><input type="range" min="1" max="9" step=".1" value="${+f.z}" oninput="faceZoom(this.value,'${t}')">`:''}
+    <label>Size in battle <b id="bsv${t}">${bs}%</b> <span class="mut" style="font-weight:400">(wide poses are already enlarged automatically)</span></label><input type="range" min="60" max="200" step="5" value="${bs}" oninput="fBs('${t}',this.value)">
+    <div class="row" style="gap:8px"><button class="g s" onclick="redetectFace('${t}')">🔍 Auto-detect face again</button>${base?`<button class="d s" onclick="HF.img='';HF.face=null;HF.ar=0;paintFace()">Remove portrait</button>`:''}</div></div></div>`}
+const paintFace=t=>{t=t||'b';const e=$(fBox(t));if(e)e.innerHTML=faceEdHTML(t);if(t!=='b')paintEvo()};
+function faceClick(ev,t){const o=fT(t),im=ev.currentTarget.querySelector('img'),b=im.getBoundingClientRect();
   const x=Math.min(1,Math.max(0,(ev.clientX-b.left)/b.width)),y=Math.min(1,Math.max(0,(ev.clientY-b.top)/b.height));
-  HF.face={x:+x.toFixed(4),y:+y.toFixed(4),z:HF.face?+HF.face.z:3};paintFace()}
-function faceZoom(v){if(!HF.face)return;HF.face={...HF.face,z:+v};$('#fzv').textContent=(+v).toFixed(1)+'×';document.querySelectorAll('#fcsec .fz').forEach(e=>e.style.setProperty('--z',v))}
-async function redetectFace(){if(!HF.img)return;try{const im=await loadImg(HF.img);HF.face=detectFace(im);if(!+HF.ar)HF.ar=+(im.naturalWidth/im.naturalHeight).toFixed(4);paintFace();toast(HF.face.auto?'Face detected':'Could not find the face. Click it on the picture.')}catch(e){toast('This image cannot be scanned (it is hosted on another site). Click the face to set it.')}}
+  o.face={x:+x.toFixed(4),y:+y.toFixed(4),z:o.face?+o.face.z:3};paintFace(t)}
+function faceZoom(v,t){t=t||'b';const o=fT(t);if(!o.face)return;o.face={...o.face,z:+v};const l=$('#fzv'+t);if(l)l.textContent=(+v).toFixed(1)+'×';document.querySelectorAll(fBox(t)+' .fz').forEach(e=>e.style.setProperty('--z',v))}
+function fBs(t,v){fT(t).bs=+v;const l=$('#bsv'+t);if(l)l.textContent=v+'%'}
+async function redetectFace(t){t=t||'b';const o=fT(t);if(!o.img)return;try{const im=await loadImg(o.img);o.face=detectFace(im);if(!+o.ar)o.ar=+(im.naturalWidth/im.naturalHeight).toFixed(4);paintFace(t);toast(o.face.auto?'Face detected':'Could not find the face. Click it on the picture.')}catch(e){toast('This image cannot be scanned (it is hosted on another site). Click the face to set it.')}}
+function evFace(i){modal(`<div class="mt" style="padding-right:40px">${esc(HF.name||'Hero')} · ${EVN[i-1]} look</div><p class="mut" style="margin:6px 0 4px;font-size:13px">Set where the face is and how big this evolution stands in battle, so it lines up with the other heroes in tiles, the VS screen and battle.</p><div id="fcev">${faceEdHTML(String(i))}</div><div class="row" style="margin-top:14px"><button onclick="closeM()">Done</button></div><p class="mut" style="font-size:12px;margin:8px 0 0">Press Save changes on the hero afterwards to keep it.</p>`,880)}
 /* opening an older hero: frame its face (and evolutions) automatically; press Save to keep it */
 async function autoFaceMissing(){
   if(HF.img&&!HF.face){try{const im=await loadImg(HF.img);HF.face=detectFace(im);if(!+HF.ar)HF.ar=+(im.naturalWidth/im.naturalHeight).toFixed(4);paintFace()}catch(e){}}
-  let ch=0;for(const i of [1,2,3,4]){const e=HF.evo&&HF.evo[i];if(e&&e.img&&!e.face){try{const im=await loadImg(e.img);e.face=detectFace(im);if(!+e.ar)e.ar=+(im.naturalWidth/im.naturalHeight).toFixed(4);ch=1}catch(x){}}}
+  /* evolution faces: also re-scan ones that were auto-detected earlier (the detector no longer mistakes gold/cream armour for skin); faces you set by hand are kept */
+  let ch=0;for(const i of [1,2,3,4]){const e=HF.evo&&HF.evo[i];if(e&&e.img&&(!e.face||e.face.auto===1)){try{const im=await loadImg(e.img);e.face=detectFace(im);if(!+e.ar)e.ar=+(im.naturalWidth/im.naturalHeight).toFixed(4);ch=1}catch(x){}}}
   if(ch)paintEvo()}
 async function upHeroImg(inp){const f=inp.files[0];inp.value='';if(!f)return;const st=$('#hpst');if(st)st.textContent='Processing…';
   try{const r=await procHeroImg(f);HF.img=r.img;HF.face=r.face;HF.ar=r.ar;paintFace();if(st)st.textContent=`Full resolution kept: ${r.w}×${r.h} · ${r.kb} KB`}catch(e){if(st)st.textContent='';toast(e.message)}}
