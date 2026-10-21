@@ -1458,11 +1458,13 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .shh h3{margin:0;font:900 24px Cinzel,Georgia,serif;letter-spacing:.07em;color:#ffe3a3;text-shadow:0 2px 0 #000}.shh small{color:#c9a47a;font:600 12px system-ui}
 .shr{display:flex;flex-direction:column;align-items:flex-end;padding:6px 14px;border-radius:12px;background:#0007;border:1px solid #e0a84a44}.shr span{font:800 10px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#c9a47a}.shr b{font:900 18px/1.1 system-ui;color:#ffe9a8;font-variant-numeric:tabular-nums}
 .shg{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-.sho{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 0 9px;border-radius:12px;overflow:hidden;background:linear-gradient(#2c190b,#170c05);border:2px solid #0d0703;border-top:6px solid var(--c);box-shadow:inset 0 0 0 1px #ffffff14,0 4px 10px #000b}
-.sho.big{border-color:#c98a12;border-top-color:var(--c);box-shadow:0 0 0 1px #ffd24a88,0 0 14px #ffb30055,0 4px 10px #000b}
+.sho{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 0 9px;border-radius:12px;overflow:hidden;background:linear-gradient(#2c190b,#170c05);border:2px solid #0d0703;box-shadow:inset 0 0 0 1px #ffffff14,0 4px 10px #000b}
+.sho.big{border-color:#c98a12;box-shadow:0 0 0 1px #ffd24a88,0 0 14px #ffb30055,0 4px 10px #000b}
 .shrb{position:absolute;top:6px;right:-26px;z-index:3;rotate:35deg;padding:2px 28px;font:900 8.5px/1.3 system-ui;letter-spacing:.08em;color:#3a1d04;background:linear-gradient(#ffe08a,#e08a14);box-shadow:0 2px 4px #0008}
 .sho.n12 .shrb{background:linear-gradient(#ffb0a0,#e0472a);color:#fff}
 .sht{position:relative;width:100%;aspect-ratio:1.15;border-radius:0}
+.shbar{display:block;width:100%;height:14px;flex:none;border-radius:10px 10px 0 0;background:linear-gradient(#ffffff8c,#ffffff10 55%,#0000 56%,#00000030),var(--c);box-shadow:0 2px 4px #000a,inset 0 -1px 0 #0006;position:relative;z-index:2}
+.sho.sold .shbar{filter:grayscale(1) brightness(.6)}
 .shq{position:absolute;left:4px;bottom:4px;z-index:2;display:flex;align-items:center;gap:2px;padding:2px 8px 2px 3px;border-radius:10px;background:#000c;border:1px solid #5ad07a88;font:900 14px/1 system-ui;color:#c8ffd4}.shq .pzi{width:18px;height:18px}
 .shn{font:800 13px Cinzel,Georgia,serif;color:#fff;margin-top:4px}.shs{font:600 10.5px system-ui;color:#c9a47a}
 .shb{display:inline-flex;align-items:center;gap:5px;margin-top:4px;padding:5px 12px 5px 6px;border-radius:10px;border:2px solid #ffe3a3;cursor:pointer;font:900 14px/1 system-ui;color:#3a1d04;background:linear-gradient(#ffe08a,#e8a018);box-shadow:inset 0 1px 0 #fff8,0 3px 0 #8a5a08}
@@ -1472,7 +1474,7 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .sho.sold .sht{filter:grayscale(1) brightness(.5)}
 .shf{display:flex;align-items:center;gap:6px;justify-content:center;margin:14px 0 0;font:600 13px system-ui;color:#e7c99b}.shf .gdi{width:18px;height:18px}.shf b{color:#ffe9a8}
 @container (max-width:560px){.shg{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@container (max-height:520px){.sht{aspect-ratio:1.25}.sho{border-top-width:4px;padding-bottom:6px}.shrb{font-size:6.5px;right:-30px}}
+@container (max-height:520px){.sht{aspect-ratio:1.25}.sho{padding-bottom:6px}.shbar{height:9px;border-radius:8px 8px 0 0}}
 @container (max-height:520px){.shp2{padding:8px 10px}.shh{margin-bottom:6px}.shh h3{font-size:17px}.shr b{font-size:14px}.shg{gap:6px}.shn{font-size:10.5px}.shs{display:none}.shb{font-size:11px;padding:3px 8px 3px 4px}.shq{font-size:11px}.shf{margin-top:6px;font-size:11px}}
 /* ===================== gold reward after battle ===================== */
 .gdw{display:flex;align-items:center;gap:10px;margin:0 auto 12px;padding:6px 18px 6px 8px;width:max-content;border-radius:30px;background:linear-gradient(#2a1a0e,#120a05);border:2px solid #c9893a;box-shadow:0 0 0 2px #000,0 6px 18px #000a;opacity:0;transform:scale(.7)}
@@ -2246,7 +2248,7 @@ let shTm=0;
 const pgShop=()=>{const S=shopDay();clearInterval(shTm);shTm=setInterval(()=>{const t=$('#sht');if(!t){clearInterval(shTm);return}if(S.day!==dKey()){clearInterval(shTm);renderHome();return}t.textContent=fmtLeft(dLeft())},1000);
  return '<div class="pnl pad shp2"><div class="shh"><div><h3>Shop</h3><small>Hero fragments · new offers every day</small></div><div class="shr"><span>Resets in</span><b id="sht">'+fmtLeft(dLeft())+'</b></div></div>'+
  '<div class="shg">'+S.o.map(o=>{const h=HD.find(x=>hk(x)===o.h);if(!h)return '';const b=shopBought(o.i),aff=(PD.gold|0)>=o.p,x=h,big=o.n>=12;
-  return '<div class="sho'+(b?' sold':'')+(big?' big n'+o.n:'')+'" style="--c:'+x.col+'">'+(big?'<span class="shrb">'+(o.n>=20?'BEST VALUE':'HOT')+'</span>':'')+'<div class="sht zf">'+faceImgT(x)+'<span class="shq">'+PUZI+'×'+o.n+'</span></div><b class="shn">'+cHtml(x.n)+'</b><small class="shs">'+o.n+' fragments</small>'+
+  return '<div class="sho'+(b?' sold':'')+(big?' big n'+o.n:'')+'" style="--c:'+x.col+'">'+'<i class="shbar"></i><div class="sht zf">'+faceImg(x).replace('<img ','<img decoding="async" ')+'<span class="shq">'+PUZI+'×'+o.n+'</span></div><b class="shn">'+cHtml(x.n)+'</b><small class="shs">'+o.n+' fragments</small>'+
   (b?'<span class="shb sold">SOLD OUT</span>':'<button class="shb'+(aff?'':' no')+'" data-buy="'+o.i+'">'+GOLDI+g$(o.p)+'</button>')+'</div>'}).join('')+'</div>'+
  '<p class="shf">Your gold: '+GOLDI+'<b>'+g$(PD.gold)+'</b> · Earn gold from battles and quests.</p></div>'};
 const pgShop0=()=>'<div class="pnl pad shp"><h3>🛒 Shop</h3><p class="sub big">Coming soon</p><p class="sub">Cards, skins and more will arrive here.</p></div>';
