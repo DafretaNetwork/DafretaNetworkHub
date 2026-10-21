@@ -509,6 +509,8 @@ body.sel .sdim{opacity:1}
 #gw .card .ow{top:47.6%;right:10%;left:auto;font:800 4.4cqw/1.25 system-ui;padding:.3cqw 2cqw;border-radius:2cqw;color:#111;font-style:normal;box-shadow:0 .4cqw 1cqw #0008}
 #gw .card .cd{left:7%;width:86%;top:58.6%;height:28.2%;display:flex;align-items:center;justify-content:center;text-align:center;font:600 var(--df,7cqw)/1.22 system-ui,sans-serif;color:#fff;background:none;padding:0;border-radius:0;text-shadow:0 .3cqw .8cqw #000;overflow:hidden;overflow-wrap:anywhere}
 #gw .card .cd .bf{color:#8dff7a}
+#gw .card .cd .cdt{display:block;max-width:100%;overflow-wrap:break-word;hyphens:manual}
+.trn{white-space:nowrap}.clk{display:inline-block;width:.95em;height:.95em;vertical-align:-.12em;margin-left:.08em}
 #gw .card.rdy::after{z-index:2}
 #gw .card.off{opacity:1;filter:brightness(.5) saturate(.55)}
 .zcw{flex:none;--cw:min(48cqh,330px,40cqw)}
@@ -1439,20 +1441,21 @@ const bf=(t,b)=>b?'<b class="bf">'+t+'</b>':t;
 const atkTxt=(s,a,b)=>{const n=v=>bf(Math.round(a*v),b);return 'Deal '+(s.d2?n(s.d)+' or '+n(s.d2):n(s.d))+' dmg'};
 const pctTxt=(s)=>'Deal '+Math.round(s.d*100)+'%'+(s.d2?' or '+Math.round(s.d2*100)+'%':'')+' ATK';
 const amt=(o,m,f)=>o?Math.round(o.atk*m)+(f||0):Math.round(m*100)+'% ATK';
-const apTxt=ap=>{const v=SD[ap[0]]||['✨',ap[0]];return v[0]+' '+v[1]+(/^(burn|blk|fat)$/.test(ap[0])?(ap[1]>1?' ×'+ap[1]:''):' ('+ap[1]+'t)')};
+const CLK='<svg class="clk" viewBox="0 0 16 16" aria-label="turns"><circle cx="8" cy="8" r="6.6" fill="#1b2a44" stroke="#e8f1ff" stroke-width="1.6"/><path d="M8 4.2V8l2.6 1.6" fill="none" stroke="#ffd24a" stroke-width="1.8" stroke-linecap="round"/></svg>',trn=n=>'<span class="trn">'+n+CLK+'</span>';
+const apTxt=ap=>{const v=SD[ap[0]]||['✨',ap[0]];return v[0]+' '+v[1]+(/^(burn|blk|fat)$/.test(ap[0])?(ap[1]>1?' ×'+ap[1]:''):' '+trn(ap[1]))};
 const dparts=(s,a,b,o)=>[s.ba&&!s.d&&'',s.rel&&'Equip on '+(o&&o.h?o.h.bn||o.h.n:'its hero')+': '+s.rel.t,s.chaos&&'Look at 3 random general cards (maybe another Chaotic Cube) and add one to your hand',s.srch&&'Look at the top '+s.srch+' cards. Add one to your hand',s.dsp&&'Dispel debuffs from an ally, or buffs from an enemy',s.rev&&'Resurrect an ally',
  s.bomb&&'Bomb: explodes after '+s.bomb.t+' turn'+(s.bomb.t>1?'s':'')+', '+s.bomb.d+' dmg to all foes'+(s.bomb.ap?' + '+SD[s.bomb.ap[0]][0]+' '+SD[s.bomb.ap[0]][1]+' '+s.bomb.ap[1]:''),
  s.d&&((a?atkTxt(s,a,b):pctTxt(s))+(s.x>1?' x'+s.x:'')+(s.ba?' to the front enemy':'')),s.k&&(s.k=='a'?'Hits all foes':'Penetrate'),
- (s.sh||s.shm)&&'+'+bf(s.shm?amt(o,s.shm,s.shb):s.sh,b)+' shield ('+(s.shd||2)+' turn'+((s.shd||2)>1?'s':'')+')'+(s.tm?' (whole team)':''),(s.h||s.hm)&&(s.rev?'restore ':'Heal ')+bf(s.hm?amt(o,s.hm,s.hb):s.h,b)+(s.tm?' (whole team)':''),s.dr&&'Draw '+s.dr,s.en&&'+'+s.en+' energy',
+ (s.sh||s.shm)&&'+'+bf(s.shm?amt(o,s.shm,s.shb):s.sh,b)+' shield '+trn(s.shd||2)+(s.tm?' (whole team)':''),(s.h||s.hm)&&(s.rev?'restore ':'Heal ')+bf(s.hm?amt(o,s.hm,s.hb):s.h,b)+(s.tm?' (whole team)':''),s.dr&&'Draw '+s.dr,s.en&&'+'+s.en+' energy',
  s.me&&(s.tm?'Team':s.self?'Self':'Ally')+': '+apTxt(s.me),s.ap&&apTxt(s.ap),s.cj&&cjTxt(s.cj),s.exg&&'Gain '+s.exg+' energy',s.grow&&'+'+Math.round(s.grow*100)+'% dmg at the end of your turn',s.rch&&'Recharge',s.cht&&'Chant'].filter(Boolean),desc=(s,a,b,o)=>dparts(s,a,b,o).join('. ');
 
 /* card frames: one base image per class (General cards use a grey version) */
 const CARDB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/cards/';
 ['attacker','defender','healer','magic','specialist'].forEach(n=>{const i=new Image();i.src=CARDB+n+'.webp'});
 const cHtml=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const dfs=n=>Math.max(3.6,Math.min(8.2,Math.sqrt(4300/Math.max(1,n)))).toFixed(2);
+const dfs=n=>Math.max(4.4,Math.min(8.2,Math.sqrt(3900/Math.max(1,n)))).toFixed(2);
 const cardH=(s,cls,at,o)=>{const b=o&&bufS(s,o),cl=(o&&o.h&&o.h.cl)||'General',d=desc(s,o&&(o.atk*(o.s?pw(o):1)),b,o&&o.h&&o.h.cl!=='General'?o:null),pl=d.replace(/<[^>]*>/g,'').length,nm=String(s.n||''),cs=String(s.c);
- return '<div class="card cl'+cl+cls+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+(s._cb!=null&&+s.c>s._cb?' cup':s._cb!=null&&+s.c<s._cb?' cdn':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw">'+d+'</small></div>'};
+ return '<div class="card cl'+cl+cls+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+(s._cb!=null&&+s.c>s._cb?' cup':s._cb!=null&&+s.c<s._cb?' cdn':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw"><span class="cdt">'+d+'</span></small></div>'};
 let P,E,turn,over=1,uid=0,M,tt,busy,L=[],fx=[],hi=[0,1,2,3],pend=null,RL={},GS=[],pcur=null,ppin=0;
 const log=m=>{L.push(m);L=L.slice(-3)},xr=S=>S.h.X&&S.ex>=100&&S.hp>0&&!S.s.stun,ea=S=>Math.round(S.atk*pw(S)),alive=T=>T.u.filter(x=>x.hp>0),
  need=s=>s.dsp?'x':s.rev?'ad':s.ba||s.rel||s.srch||s.chaos||s.bomb||s.tm||s.self?0:s.d?(s.k=='a'?0:'e'):s.ap?'e':s.h||s.sh||s.hm||s.shm||s.me?'a':0,
