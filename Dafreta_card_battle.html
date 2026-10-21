@@ -1419,8 +1419,11 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 /* line-up screens: same emblem animation, done with cheap moves (sliding a shine, fading a glow) so phones keep up */
 #menu .tce{filter:none}
 #menu .tce .tcg{animation:none;filter:drop-shadow(0 0 2px #ffd24a)}
-#menu .tce::after{content:"";position:absolute;left:50%;top:calc(var(--tcc,.5)*100%);width:34%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#fff6c8cc 0,#ffd24a88 35%,#ffb30000 70%);animation:mtg 2.4s ease-in-out infinite}
-@keyframes mtg{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+#menu .tce .tcg{z-index:2}#menu .tcgs,#menu .tcgl{z-index:3}
+/* gem edge glow, drawn BEHIND the gem: a blurred gold copy of the gem shape that breathes (same look as the main menu, much lighter) */
+#menu .tce::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% calc(var(--tcc,.5)*100%),#fffbe6,#ffd24a 40%,#ffb300);
+ -webkit-mask:var(--tcgm,none) center/100% 100% no-repeat;mask:var(--tcgm,none) center/100% 100% no-repeat;filter:blur(2.5px);transform-origin:50% calc(var(--tcc,.5)*100%);animation:mtg 2.4s ease-in-out infinite}
+@keyframes mtg{0%,100%{opacity:.45;transform:scale(1.06)}50%{opacity:1;transform:scale(1.2)}}
 #menu .tcbs,#menu .tcgs{mix-blend-mode:normal;background:none!important;animation:none!important;overflow:hidden}
 #menu .tcbs::before,#menu .tcgs::before{content:"";position:absolute;top:0;bottom:0;left:0;width:300%;animation:mtsh 3.2s ease-in-out infinite}
 #menu .tcbs::before{background:linear-gradient(110deg,transparent 40%,#fff2c0aa 48%,#ffffffee 50%,#fff2c0aa 52%,transparent 60%)}
