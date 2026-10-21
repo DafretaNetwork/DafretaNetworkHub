@@ -1159,6 +1159,71 @@ async function cardgameAdminHTML(){
     ${body()}`;
 }
 
+
+/* ---------------- maintenance: flush unused data + one-click optimize ---------------- */
+const kb=n=>n>=1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
+const jlen=o=>o==null?0:JSON.stringify(o).length;
+let MNT={busy:false,log:[],scan:null};
+function mntLog(t){MNT.log.push(t);const e=$('#mntlog');if(e){e.innerHTML=MNT.log.slice(-60).map(x=>'<div>'+x+'</div>').join('');e.scrollTop=e.scrollHeight}}
+function maintHTML(){
+  const sz=[['Heroes (portraits, poses, cards)',jlen(HLIST)],['Ranks (emblems)',jlen(RKS)],['Relics',jlen(RELS)],['General cards',jlen(GENS)],['Buffs & debuffs',jlen(AILS)]],tot=sz.reduce((a,b)=>a+b[1],0);
+  return `<div class="cgp"><h4>⚡ Performance &amp; storage</h4><p class="mut" style="font-size:13px;margin:0 0 10px">Game data players download: <b>${kb(tot)}</b> · ${sz.map(([l,n])=>esc(l)+': '+kb(n)).join(' · ')}</p>
+   <div class="row" style="gap:10px;flex-wrap:wrap"><button onclick="mntScan()" ${MNT.busy?'disabled':''}>🧹 Flush unused data</button><button onclick="mntOptimize()" ${MNT.busy?'disabled':''}>🚀 One-click optimize</button></div>
+   <p class="mut" style="font-size:12px;margin:8px 0 0"><b>Flush</b> finds data nobody uses any more and lets you remove it. <b>Optimize</b> re-saves every image at the size the game actually shows it, as WebP, with the same look (same picture, transparency, face positions, sizes and effects). It downloads a backup of your heroes first and skips anything already optimized, so you can run it again after uploading new art.</p>
+   <div id="mntscan">${MNT.scan?mntScanHTML():''}</div><div id="mntlog" class="bx2" style="max-height:220px;overflow:auto;font-size:12.5px;margin-top:10px;${MNT.log.length?'':'display:none'}">${MNT.log.map(x=>'<div>'+x+'</div>').join('')}</div></div>`}
+const paintMnt=()=>{const e=$('#mntsec');if(e)e.innerHTML=maintHTML()};
+/* ---- flush ---- */
+async function mntScan(){if(MNT.busy)return;MNT.busy=true;MNT.log=[];paintMnt();mntLog('Scanning…');
+  try{const [heroes,ails,gens,cm,lb,own,flg]=await Promise.all(['cardgame/heroes','cardgame/ailments','cardgame/general','cardgame/comments','cardgame/lb','owners','cardgame/flags'].map(p=>api(p).catch(()=>null)));
+   const H=heroes||{},A=ails||{},items=[];
+   const bak=Object.entries(H).filter(([,h])=>h&&h.cardsBak);if(bak.length)items.push({k:'bak',l:'Old card backups from “Apply skill kits” ('+bak.map(([,h])=>esc(h.name)).join(', ')+')',n:bak.reduce((a,[,h])=>a+jlen(h.cardsBak),0),ops:bak.map(([id])=>['cardgame/heroes/'+id+'/cardsBak'])});
+   const dc=Object.keys(cm||{}).filter(k=>!H[k]);if(dc.length)items.push({k:'cm',l:'Comments on heroes that were deleted ('+dc.length+')',n:dc.reduce((a,k)=>a+jlen(cm[k]),0),ops:dc.map(k=>['cardgame/comments/'+k])});
+   const used=new Set();Object.values(H).forEach(h=>cardsOf(h).forEach(c=>c.ail&&used.add(c.ail)));Object.values(gens||{}).forEach(g=>g&&g.ail&&used.add(g.ail));
+   const ua=Object.keys(A).filter(k=>!used.has(k));if(ua.length)items.push({k:'ail',l:'Buffs &amp; debuffs no card uses ('+ua.map(k=>esc(A[k].name||k)).join(', ')+')',n:ua.reduce((a,k)=>a+jlen(A[k]),0),ops:ua.map(k=>['cardgame/ailments/'+k])});
+   const O=own||{},gl=Object.keys(lb||{}).filter(k=>!O[k]);if(gl.length)items.push({k:'lb',l:'Leaderboard entries of accounts that no longer exist ('+gl.length+')',n:gl.reduce((a,k)=>a+jlen(lb[k]),0),ops:gl.map(k=>['cardgame/lb/'+k])});
+   const gf=Object.keys(flg||{}).filter(k=>!O[k]);if(gf.length)items.push({k:'fl',l:'Cheat flags of accounts that no longer exist ('+gf.length+')',n:gf.reduce((a,k)=>a+jlen(flg[k]),0),ops:gf.map(k=>['cardgame/flags/'+k])});
+   /* leftovers: face / size data kept for images that were removed */
+   const lo=[];Object.entries(H).forEach(([id,h])=>{if(!h)return;const p='cardgame/heroes/'+id;
+    if(!h.img){['face','ar','bs','imgS'].forEach(f=>{if(h[f]!=null)lo.push([p+'/'+f,jlen(h[f])])})}
+    ['atk','ex'].forEach(k=>{if(!h[k+'Img']){[k+'Face',k+'Bs'].forEach(f=>{if(h[f]!=null)lo.push([p+'/'+f,jlen(h[f])])})}});
+    Object.entries(h.evo||{}).forEach(([i,e])=>{if(!e)return;const q=p+'/evo/'+i;if(!e.img){['face','ar','bs','imgS'].forEach(f=>{if(e[f]!=null)lo.push([q+'/'+f,jlen(e[f])])})}['atk','ex'].forEach(k=>{if(!e[k+'Img']){[k+'Face',k+'Bs'].forEach(f=>{if(e[f]!=null)lo.push([q+'/'+f,jlen(e[f])])})}})})});
+   if(lo.length)items.push({k:'lo',l:'Leftover face/size settings of images that were removed ('+lo.length+')',n:lo.reduce((a,x)=>a+x[1],0),ops:lo.map(x=>[x[0]])});
+   MNT.scan=items;MNT.log=[];mntLog(items.length?'Found '+items.length+' kind(s) of unused data. Tick what to remove, then press Flush.':'✓ Nothing to flush. Your game data is clean.')}
+  catch(e){mntLog('⚠ '+esc(e.message))}MNT.busy=false;paintMnt()}
+function mntScanHTML(){const it=MNT.scan;if(!it.length)return '';
+  return `<div class="bx2" style="margin-top:10px">${it.map((x,i)=>`<label class="chk" style="display:flex;gap:8px;align-items:flex-start;margin:4px 0"><input type="checkbox" id="mnt${i}" ${x.k==='bak'?'':'checked'}> <span>${x.l} <span class="mut">· ${kb(x.n)}</span>${x.k==='bak'?' <span class="mut">(you lose the ↩ Restore option)</span>':''}</span></label>`).join('')}
+   <div class="row" style="margin-top:8px"><button class="d" onclick="mntFlush()">🧹 Flush selected</button><button class="g" onclick="MNT.scan=null;paintMnt()">Cancel</button></div></div>`}
+async function mntFlush(){const it=(MNT.scan||[]).filter((x,i)=>{const c=$('#mnt'+i);return c&&c.checked});if(!it.length)return toast('Nothing selected');
+  if(!confirm('Permanently remove the selected data? This cannot be undone.'))return;MNT.busy=true;MNT.scan=null;MNT.log=[];paintMnt();let n=0,b=0;
+  for(const x of it){for(const [p] of x.ops){try{await api(p,'DELETE');n++}catch(e){mntLog('⚠ '+esc(p)+': '+esc(e.message))}}b+=x.n;mntLog('✓ '+x.l)}
+  mntLog('<b>Done. Removed '+n+' item(s), about '+kb(b)+'.</b>');MNT.busy=false;toast('Flushed '+kb(b));try{HLIST=await api('cardgame/heroes')||{};AILS=await api('cardgame/ailments')||{}}catch(e){}paintMnt()}
+/* ---- optimize ---- */
+const OPT_HERO=1800,OPT_SMALL=360;
+async function reenc(src,maxW,maxH,q){if(!src||typeof src!=='string')return null;let im;try{im=await loadImg(src)}catch(e){return null}
+  const w0=im.naturalWidth,h0=im.naturalHeight;if(!w0||!h0)return null;const k=Math.min(1,maxW/w0,maxH/h0),W=Math.max(1,Math.round(w0*k)),H=Math.max(1,Math.round(h0*k));
+  const isWebp=/^data:image\/webp/.test(src);if(isWebp&&k>=1)return{u:src,same:1,w:W,h:H};
+  const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(im,0,0,W,H);
+  let u;try{u=c.toDataURL('image/webp',q)}catch(e){return null}if(!/^data:image\/webp/.test(u))return null;
+  if(u.length>=src.length&&k>=1)return{u:src,same:1,w:W,h:H};return{u,w:W,h:H}}
+async function mntOptimize(){if(MNT.busy)return;if(!confirm('Optimize every image in the card game?\n\nA backup of your heroes is downloaded first. The game will look the same; images just get lighter.'))return;
+  MNT.busy=true;MNT.scan=null;MNT.log=[];paintMnt();let before=0,after=0;
+  const step=async(lbl,src,mw,mh,q)=>{const r=await reenc(src,mw,mh,q);if(!r){if(src&&/^https?:/.test(src))mntLog('· '+lbl+': hosted on another site, left as is');return src}before+=src.length;after+=r.u.length;return r.u};
+  try{
+   const H=await api('cardgame/heroes')||{};
+   try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(H)],{type:'application/json'}));a.download='dafreta-heroes-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();mntLog('💾 Hero backup downloaded')}catch(e){}
+   for(const [id,h] of Object.entries(H)){if(!h)continue;const o={...h},nm=esc(h.name||id);mntLog('⏳ '+nm+'…');
+    const doLook=async(t,pre)=>{if(t.img){t.img=await step(nm+pre+' portrait',t.img,OPT_HERO,OPT_HERO,.93);const sm=await reenc(t.img,OPT_SMALL*2,OPT_SMALL,.9);if(sm)t.imgS=sm.u}
+     for(const k of ['atk','ex'])if(t[k+'Img'])t[k+'Img']=await step(nm+pre+' '+k+' pose',t[k+'Img'],OPT_HERO,OPT_HERO,.93)};
+    await doLook(o,'');if(o.evo){o.evo={...o.evo};for(const i of Object.keys(o.evo)){if(!o.evo[i])continue;o.evo[i]={...o.evo[i]};await doLook(o.evo[i],' evolution '+i)}}
+    if(Array.isArray(o.cards)||o.cards){const cs=cardsOf(o);for(const c of cs)if(c.art)c.art=await step(nm+' card art',c.art,843,634,.9);o.cards=cs}
+    await api('cardgame/heroes/'+id,'PUT',o);mntLog('✓ '+nm)}
+   const rk=await api('cardgame/ranks').catch(()=>null);if(rk){const L=Array.isArray(rk)?rk.slice():Object.values(rk);for(const r of L)if(r&&r.img)r.img=await step('rank emblem',r.img,512,512,.93);await api('cardgame/ranks','PUT',L);mntLog('✓ Rank emblems')}
+   for(const [node,fields,mw,mh] of [['relics',['icon'],192,192],['ailments',['icon'],192,192],['general',['icon','art'],843,634]]){const d=await api('cardgame/'+node).catch(()=>null);if(!d)continue;
+    for(const [k,v] of Object.entries(d)){if(!v)continue;let ch=0;for(const f of fields)if(v[f]&&/^data:image\//.test(v[f])){const big=f==='art';const n=await step(node+' '+f,v[f],big?843:mw,big?634:mh,.9);if(n!==v[f]){v[f]=n;ch=1}}if(ch)await api('cardgame/'+node+'/'+k,'PUT',v)}mntLog('✓ '+node[0].toUpperCase()+node.slice(1))}
+   mntLog('<b>Done! Images: '+kb(before)+' → '+kb(after)+' ('+(before?Math.round((1-after/before)*100):0)+'% lighter).</b>');toast('Optimization finished')
+   HLIST=await api('cardgame/heroes')||{};try{const r=await api('cardgame/ranks');if(r)RKS=Object.values(r).filter(x=>x&&x.n)}catch(e){}
+  }catch(e){mntLog('⚠ '+esc(e.message))}
+  MNT.busy=false;paintMnt()}
 /* ---------------- overview ---------------- */
 let FLAGS={};
 const FLAGWHY={memory:'Game values changed in memory (e.g. Cheat Engine). Restored automatically.','save-edited':'Saved data was edited outside the game.',battle:'Battle values changed by an outside program. Match gave no rewards.','too-fast':'Won a match impossibly fast. Match gave no rewards.'};
@@ -1175,6 +1240,7 @@ function cgOverview(){
     ${tile('🛡️','Heroes',Object.keys(HLIST).length,`${play} playable`,'heroes')}${tile('✨','Buffs & Debuffs',Object.keys(AILS).length,'status effects','ails')}${tile('🔮','Relics',Object.keys(RELS).length,'equipment','relics')}
     ${tile('🃏','General Cards',Object.keys(GENS).length,`${Object.values(GENS).filter(g=>g.locked).length} reward-only`,'gen')}${tile('📜','Quests',Object.keys(QSTS).length,'win-based','quests')}${tile('🏅','Ranks',RKS.length,RKSAVED?'custom saved':'defaults','ranks')}
     <div class="cgt" style="cursor:default"><span class="ic">👥</span><b>${LBN}</b><span>Players who played</span><small>on the leaderboard</small></div></div></div>
+    <div id="mntsec">${maintHTML()}</div>
     <div class="cgp"><h4>🚩 Suspicious activity <span class="cgn">${Object.keys(FLAGS).length}</span></h4><p class="mut" style="font-size:13px;margin:0 0 8px">Accounts the game caught using cheat tools or edited save data. Their changes were already undone; review and clear when handled.</p><div id="flagsec">${flagsHTML()}</div></div>
     <div class="cgp"><h4>Checklist</h4>
       ${chk(play>=4,play>=4?`${play} playable heroes (players need at least 4)`:`Only ${play} playable hero(es). Players need at least 4.`,'heroes')}
@@ -1477,12 +1543,12 @@ async function saveHero(){
   if(!name)return bad('Hero name is required.');
   if(!(hp>0))return bad('HP must be greater than 0.');
   const isEdit=!!HF.id,evo={};
-  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);['hpB','atkB'].forEach(k=>{if(e[k]!==undefined&&e[k]!==''&&e[k]!==null&&!isNaN(+e[k]))o[k]=Math.max(0,+e[k])});if(e.img){o.img=e.img;if(e.face)o.face=e.face;if(+e.bs)o.bs=+e.bs;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face'];if(+e[k+'Bs']&&+e[k+'Bs']!==100)o[k+'Bs']=+e[k+'Bs']}})}if(Object.keys(o).length)evo[i]=o});
+  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);['hpB','atkB'].forEach(k=>{if(e[k]!==undefined&&e[k]!==''&&e[k]!==null&&!isNaN(+e[k]))o[k]=Math.max(0,+e[k])});if(e.img){o.img=e.img;if(e.imgS&&e.imgSrc===e.img)o.imgS=e.imgS;if(e.face)o.face=e.face;if(+e.bs)o.bs=+e.bs;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face'];if(+e[k+'Bs']&&+e[k+'Bs']!==100)o[k+'Bs']=+e[k+'Bs']}})}if(Object.keys(o).length)evo[i]=o});
   try{
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
     if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
-    const data={name,class_:cls,hp,atk:atk||0,img:HF.img||null,face:HF.img&&HF.face?HF.face:null,ar:HF.img&&+HF.ar?+HF.ar:null,bs:+HF.bs&&+HF.bs!==100?+HF.bs:null,atkImg:HF.atkImg||null,atkFace:HF.atkImg&&HF.atkFace?HF.atkFace:null,atkBs:HF.atkImg&&+HF.atkBs&&+HF.atkBs!==100?+HF.atkBs:null,exImg:HF.exImg||null,exFace:HF.exImg&&HF.exFace?HF.exFace:null,exBs:HF.exImg&&+HF.exBs&&+HF.exBs!==100?+HF.exBs:null,cards:HF.cards.map(c=>c.conj?{...c,conj:{...c.conj,pool:c.conj.pool.map(r=>String(r).replace(/^@self::/,id+'::'))}}:c),evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
+    const data={name,class_:cls,hp,atk:atk||0,imgS:HF.img&&HF.imgS&&HF.imgSrc===HF.img?HF.imgS:null,img:HF.img||null,face:HF.img&&HF.face?HF.face:null,ar:HF.img&&+HF.ar?+HF.ar:null,bs:+HF.bs&&+HF.bs!==100?+HF.bs:null,atkImg:HF.atkImg||null,atkFace:HF.atkImg&&HF.atkFace?HF.atkFace:null,atkBs:HF.atkImg&&+HF.atkBs&&+HF.atkBs!==100?+HF.atkBs:null,exImg:HF.exImg||null,exFace:HF.exImg&&HF.exFace?HF.exFace:null,exBs:HF.exImg&&+HF.exBs&&+HF.exBs!==100?+HF.exBs:null,cards:HF.cards.map(c=>c.conj?{...c,conj:{...c.conj,pool:c.conj.pool.map(r=>String(r).replace(/^@self::/,id+'::'))}}:c),evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
     await api('cardgame/heroes/'+id,'PUT',data);
     HF=emptyHF();CF=emptyCF();
     toast(isEdit?'Hero updated':'Hero created');atab='cardgame';CGT='heroes';adminV();
@@ -1490,9 +1556,9 @@ async function saveHero(){
 }
 async function editHero(id){
   try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
-    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,bs:+e.bs||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,atkBs:+e.atkBs||0,exImg:e.exImg||'',exFace:e.exFace||null,exBs:+e.exBs||0}});
+    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={imgS:e.imgS||'',imgSrc:e.img||'',name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,bs:+e.bs||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,atkBs:+e.atkBs||0,exImg:e.exImg||'',exFace:e.exFace||null,exBs:+e.exBs||0}});
     let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
-    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,atkBs:+h.atkBs||0,exImg:h.exImg||'',exFace:h.exFace||null,exBs:+h.exBs||0,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
+    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,imgS:h.imgS||'',imgSrc:h.img||'',img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,atkBs:+h.atkBs||0,exImg:h.exImg||'',exFace:h.exFace||null,exBs:+h.exBs||0,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
     CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0);autoFaceMissing()
   }catch(e){toast(e.message)}}
 async function deleteHero(id){if(!confirm('Delete this hero? Players who used it will lose it from their line-ups.'))return;
