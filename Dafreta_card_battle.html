@@ -1289,6 +1289,7 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 #vsx .vrk{--vrs:clamp(46px,9cqh,70px);display:flex;flex-direction:column;align-items:center;gap:1px;margin:-14px 2px -18px;animation:vrkin .7s cubic-bezier(.2,1.6,.4,1) .55s both;position:relative}
 #vsx .vrk::before{content:"";position:absolute;left:50%;top:calc(var(--vrs)*.5);width:calc(var(--vrs)*1.5);aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:radial-gradient(circle,#fff8 0,#ffd24a33 35%,transparent 68%);animation:vrkfl .9s ease-out .9s both;pointer-events:none}
 #vsx .vrk small{font:900 clamp(9px,1.25cqw,13px)/1 Cinzel,Georgia,serif;letter-spacing:.06em;white-space:nowrap;padding:3px 9px;border-radius:9px;color:#fff;background:linear-gradient(color-mix(in srgb,var(--rc) 70%,#000),color-mix(in srgb,var(--rc) 35%,#000));border:1px solid color-mix(in srgb,var(--rc) 70%,#fff);box-shadow:0 2px 6px #000a;text-shadow:0 1px 2px #000;margin-top:-6px;position:relative;z-index:2}
+#vsx .vrk img,#vsx .vrk svg{width:100%;height:100%;max-width:none;aspect-ratio:auto;border:0;border-radius:0;background:none;box-shadow:none;object-fit:contain;object-position:50% 50%}
 @keyframes vrkin{0%{opacity:0;transform:translateY(-40px) scale(.3) rotate(-18deg)}70%{opacity:1;transform:translateY(3px) scale(1.12) rotate(3deg)}100%{opacity:1;transform:none}}
 @keyframes vrkfl{0%{opacity:0;transform:scale(.4)}35%{opacity:1}100%{opacity:0;transform:scale(1.5)}}
 @container (max-height:520px){#vsx .vrk{--vrs:clamp(38px,12cqh,52px);margin:-10px 0 -14px}#vsx .vrk small{font-size:8.5px;padding:2px 6px}}
@@ -1439,7 +1440,7 @@ const atkTxt=(s,a,b)=>{const n=v=>bf(Math.round(a*v),b);return 'Deal '+(s.d2?n(s
 const pctTxt=(s)=>'Deal '+Math.round(s.d*100)+'%'+(s.d2?' or '+Math.round(s.d2*100)+'%':'')+' ATK';
 const amt=(o,m,f)=>o?Math.round(o.atk*m)+(f||0):Math.round(m*100)+'% ATK';
 const apTxt=ap=>{const v=SD[ap[0]]||['✨',ap[0]];return v[0]+' '+v[1]+(/^(burn|blk|fat)$/.test(ap[0])?(ap[1]>1?' ×'+ap[1]:''):' ('+ap[1]+'t)')};
-const dparts=(s,a,b,o)=>[s.ba&&!s.d&&'',s.rel&&'Equip on '+(o&&o.h?o.h.bn||o.h.n:'its hero')+': '+s.rel.t,s.chaos&&'Random: damage, heal, shield, draw or Empower',s.srch&&'Look at the top '+s.srch+' cards. Add one to your hand',s.dsp&&'Dispel debuffs from an ally, or buffs from an enemy',s.rev&&'Resurrect an ally',
+const dparts=(s,a,b,o)=>[s.ba&&!s.d&&'',s.rel&&'Equip on '+(o&&o.h?o.h.bn||o.h.n:'its hero')+': '+s.rel.t,s.chaos&&'Look at 3 random general cards (maybe another Chaotic Cube) and add one to your hand',s.srch&&'Look at the top '+s.srch+' cards. Add one to your hand',s.dsp&&'Dispel debuffs from an ally, or buffs from an enemy',s.rev&&'Resurrect an ally',
  s.bomb&&'Bomb: explodes after '+s.bomb.t+' turn'+(s.bomb.t>1?'s':'')+', '+s.bomb.d+' dmg to all foes'+(s.bomb.ap?' + '+SD[s.bomb.ap[0]][0]+' '+SD[s.bomb.ap[0]][1]+' '+s.bomb.ap[1]:''),
  s.d&&((a?atkTxt(s,a,b):pctTxt(s))+(s.x>1?' x'+s.x:'')+(s.ba?' to the front enemy':'')),s.k&&(s.k=='a'?'Hits all foes':'Penetrate'),
  (s.sh||s.shm)&&'+'+bf(s.shm?amt(o,s.shm,s.shb):s.sh,b)+' shield ('+(s.shd||2)+' turn'+((s.shd||2)>1?'s':'')+')'+(s.tm?' (whole team)':''),(s.h||s.hm)&&(s.rev?'restore ':'Heal ')+bf(s.hm?amt(o,s.hm,s.hb):s.h,b)+(s.tm?' (whole team)':''),s.dr&&'Draw '+s.dr,s.en&&'+'+s.en+' energy',
@@ -1485,20 +1486,22 @@ function unequip(T,S){const r=S.r;if(!r)return;const v=+r.v||0;if(r.e=='hp_bonus
 function dispel(T,x){if(!x)return;const mine=teamOf(x)===T,bad=/^(weak|brk|burn|poi|stun|mark|frz|ent|dx\d)$/,good=/^(atk|reg|bol|blk|tnt|bx\d)$/;let n=0;
  Object.keys(x.s).forEach(k=>{if((mine?bad:good).test(k)){delete x.s[k];n++}});if(mine){if(!x.s.burn)x.bst=0;if(T.fat){T.fat=0;n++}}fl(x,n?'Dispelled':'Nothing to dispel','#e8f4ff');if(n)fx.push({id:uKey(x),cf:'heal'})}
 function revive(T,x){x.dt=0;x.s={};x.sh=0;x.bst=0;x.ex=0;x.hp=0;heroCards(T,x,T.disc);fl(x,'Revived!','#ffe9a8');log((T===P?'Your ':'Foe ')+x.h.n+' is revived!')}
-function chaos(T,S){const F=T===P?E:P,al=alive(T),k=rn()*5|0,lo=al.slice().sort((a,b)=>a.hp/a.mhp-b.hp/b.mhp)[0];
- if(k==0)use(T,S,{n:'Chaotic Cube',d:1.5},tgtOf(F));else if(k==1)use(T,S,{n:'Chaotic Cube',hm:1.5},lo);else if(k==2)use(T,S,{n:'Chaotic Cube',shm:1.5,shd:2},al[0]);else if(k==3)draw(T,2);else{const x=al[rn()*al.length|0];applyS(x,'atk',1);fx.push({id:uKey(x),cf:'atk'})}
- fl(S,'🎲 '+['Damage!','Heal!','Shield!','Draw 2!','Empower!'][k],'#ffe9a8')}
+const genOwner=T=>{let g=T.gl.find(q=>q.gx);if(!g){g={h:{id:'G',cl:'General',n:'General',col:'#c9ced8'},hp:1,mhp:1,atk:1,sh:0,ex:0,s:{},stt:{d:0,h:0,s:0},gx:1};T.gl.push(g)}return g};
+/* Chaotic Cube: 3 random general cards (sometimes another Chaotic Cube), keep one in your hand */
+function chaos(T,S,sp){const gp=GEN.filter(g=>!g.locked||(T===P&&gAvail(g))),opts=[];
+ for(let i=0;i<3;i++){if(!gp.length||rn()<1/(gp.length+1)){opts.push({u:++uid,s:sp,o:S,tmp:1})}else{const g=gp[rn()*gp.length|0];opts.push({u:++uid,s:g.s,o:T.gl.find(q=>q.g&&q.g.id===g.id)||genOwner(T),tmp:1})}}
+ choose(T,opts,'Chaotic Cube','Choose one card to add to your hand.',c=>{T.hand.push(c);SND.draw(1,T===P)})}
 let SRCH=null;
+function choose(T,opts,title,msg,done){if(!opts.length)return;if(T!==P){done(opts.slice().sort((a,b)=>(+b.s.c||0)-(+a.s.c||0))[0]);return}
+ busy=1;SRCH={top:opts,done};const o=$('#srch');o.innerHTML='<div class="srbx"><h3>'+cHtml(title)+'</h3><p>'+cHtml(msg)+'</p><div class="srcs">'+opts.map((c,i)=>cardH(c.s,' rdy','data-si="'+i+'"',c.o)).join('')+'</div></div>';o.hidden=false}
 function search(T,n){if(T.deck.length<n){T.deck=shuf(T.deck.concat(T.disc.filter(c=>!c.tmp)));T.disc=[]}const top=T.deck.splice(-Math.min(n,T.deck.length));if(!top.length)return;
- const done=c=>{T.hand.push(c);T.deck=shuf(T.deck.concat(top.filter(x=>x!==c)));SND.draw(1,T===P)};
- if(T!==P){done(top.slice().sort((a,b)=>(+b.s.c||0)-(+a.s.c||0))[0]);return}
- busy=1;SRCH={top,done};const o=$('#srch');o.innerHTML='<div class="srbx"><h3>Tactical Search</h3><p>Choose one card to add to your hand. The others are shuffled back into your deck.</p><div class="srcs">'+top.map((c,i)=>cardH(c.s,' rdy','data-si="'+i+'"',c.o)).join('')+'</div></div>';o.hidden=false}
+ choose(T,top,'Tactical Search','Choose one card to add to your hand. The others are shuffled back into your deck.',c=>{T.hand.push(c);T.deck=shuf(T.deck.concat(top.filter(x=>x!==c)));SND.draw(1,T===P)})}
 function srPick(i){if(!SRCH)return;const c=SRCH.top[i]||SRCH.top[0];SRCH.done(c);SRCH=null;$('#srch').hidden=true;busy=0;ui();chk()}
 const shAmt=(S,sp)=>sp.shm?Math.max(1,Math.round(S.atk*sp.shm)+(sp.shb||0)):sp.sh||0,hlAmt=(S,sp)=>sp.hm?Math.max(1,Math.round(S.atk*sp.hm)+(sp.hb||0)):sp.h||0;
 function use(T,S,sp,t){let a=sp.self?S:t;const F=T===P?E:P;
  if(sp.bomb){T.bombs.push({n:sp.n,t:sp.bomb.t,d:sp.bomb.d,ap:sp.bomb.ap,o:S});return}
  if(sp.rel){equip(S,sp.rel);fx.push({id:uKey(S),cf:'atk'});return}
- if(sp.chaos){chaos(T,S);return}
+ if(sp.chaos){chaos(T,S,sp);return}
  if(sp.dsp){dispel(T,t);if(!(sp.d||sp.h||sp.hm||sp.sh||sp.shm||sp.me))return;if(teamOf(t)!==T)a=null}
  if(sp.rev&&a&&a.hp<=0&&T.u.includes(a))revive(T,a);
  if((sp.d||sp.ap)&&!(sp.dsp&&teamOf(t)===T)){const fu=alive(F);if(!t||t.hp<=0||!fu.includes(t)||(sp.ba||!sp.any)&&tauntOf(F)&&t!==tauntOf(F))t=sp.any&&t&&fu.includes(t)&&!tauntOf(F)?t:tgtOf(F);
@@ -1537,7 +1540,7 @@ function endBanner(win,draw,m){const x=$('#endx');x.className=win?'w':draw?'d':'
  x.onclick=()=>{if(x.dataset.r!=='1')return;x.dataset.r='';x.hidden=true;x.classList.remove('go');SND.click();showResult(win,m)}}
 function best(){let b=null,bs=1;const al=alive(E),en=alive(P),dead=E.u.filter(x=>x.hp<=0);
  const est=(S,s)=>{let v=0,t=null,a=S;
-  if(s.rel)return{v:S.r?-1:7+rn(),t:null};if(s.chaos)return{v:5+rn()*2,t:null};if(s.srch)return{v:4+rn()*2,t:null};
+  if(s.rel)return{v:S.r?-1:7+rn(),t:null};if(s.chaos)return{v:GEN.length?5+rn()*2:-1,t:null};if(s.srch)return{v:4+rn()*2,t:null};
   if(s.dsp){const bad=x=>Object.keys(x.s).filter(k=>/^(weak|brk|burn|poi|stun|mark|frz|ent)$/.test(k)).length,good=x=>Object.keys(x.s).filter(k=>/^(atk|reg|bol|blk|tnt)$/.test(k)).length;
    let bt=null,bv=0;al.forEach(x=>{const q=bad(x)*4;if(q>bv){bv=q;bt=x}});en.forEach(x=>{const q=good(x)*4;if(q>bv){bv=q;bt=x}});return{v:bv?bv+rn():-1,t:bt}}
   if(s.rev&&dead.length)return{v:30+rn(),t:dead[0]};
@@ -1563,7 +1566,7 @@ function tile(S,m,i){const h=S.h,es=ea(S),now=performance.now(),pz=S.pose&&now-S
  tg=nd&&((nd=='e'&&!m&&canHit(S,sp))||(nd=='a'&&m&&S.hp>0)||(nd=='x'&&S.hp>0)||(nd=='ad'&&m&&(S.hp>0||!!sp.rev))),
  chips=Object.keys(S.s).map(k=>'<span class="stc'+(/^(burn|poi)$/.test(k)?' dot':'')+(/^(atk|reg|bol|blk|tnt|bx\d)$/.test(k)?' gd':'')+'" data-st="'+(m?'p':'e')+i+'">'+(SD[k]||['✨'])[0]+'<sub>'+(k=='burn'?(S.bst||1):S.s[k])+'</sub></span>').join(''),
  dl=-(((performance.now()/1000)+i*.7+(m?0:.35))%3.2).toFixed(2);
- return '<div class="unit'+(S.hp<=0?' dead':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+'" style="z-index:'+(14-i)+';--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
+ return '<div class="unit'+(S.hp<=0?' dead':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+'" style="z-index:'+(11+i)+';--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
  '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(S.hp>0?orbH(S):'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+(S.hp<=0?tombH(S,h):'<span class="fgw" style="'+figSz(h,m,ps,pf)+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s">'+stunH(S,h,m)+'</span>')+'</div><div class="chips">'+chips+'</div>'+
  '<div class="info" style="--c:'+h.col+'">'+evBadge(h.st)+'<div class="nr"><i class="ci">'+(CI[h.cl]||'')+'</i><b class="nm" style="--nl:'+Math.max(6,String(h.bn||h.n).length+(S.r?3:1.5))+'">'+cHtml(h.bn||h.n)+'</b>'+(S.r?'<span class="rlc" title="'+S.r.n+': '+S.r.t+'">'+rIc(S.r)+'</span>':'')+'</div>'+
  hbar(S,sc)+'<div class="xv2"><i style="width:'+S.ex+'%"></i></div></div></div>'}
@@ -2221,7 +2224,7 @@ function zoomHTML(s,o,ex){const h=o.h,cl=h.cl||'General',col=h.col||'#8d93a3',bu
  if(s.dsp)kw.push(['Dispel','On an ally: removes its debuffs (and your team’s Fatigue). On an enemy: removes its buffs.']);
  if(s.rev)kw.push(['Resurrect','Can target a fallen ally and bring it back with the restored HP.']);
  if(s.srch)kw.push(['Search','Look at the top '+s.srch+' cards of your deck, keep one, shuffle the rest back.']);
- if(s.chaos)kw.push(['Chaos','A random effect: damage, heal, shield, draw 2, or Empower.']);
+ if(s.chaos)kw.push(['Chaotic','Shows 3 random general cards (sometimes another Chaotic Cube). Pick one to add to your hand. Added cards vanish after they are played.']);
  if(s.rel)kw.push(['Relic','Equips '+esc(s.rel.n)+' on this hero: '+esc(s.rel.t)+'. Entangle disables it; a second Entangle sends it back into the deck.']);
  if(s.exg)kw.push(['Energy','Adds '+s.exg+' to this hero’s EX meter.']);
  if(s.k=='a')kw.push(['Sweep','Hits every enemy.']);
