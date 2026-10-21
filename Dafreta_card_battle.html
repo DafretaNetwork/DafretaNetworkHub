@@ -1444,14 +1444,14 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 @container (max-height:520px){.ivg{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}.ivh svg{width:38px}.ivh h3{font-size:17px}.ivp{height:48px}.ivc{width:32px;height:32px}.ivi b{font-size:15px}}
 /* ===================== line-up fragment meters ===================== */
 .frm{order:3;display:flex;align-items:center;gap:3px;padding:5px 4px 5px 6px;background:linear-gradient(#1f1309,#140b05);border-top:1px solid #0008}
-.frt{position:relative;flex:1;height:16px;border-radius:9px;background:#0c0703;border:1.5px solid #000;box-shadow:inset 0 2px 3px #000c,0 0 0 1px #c9893a55;overflow:hidden}
-.frt i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:linear-gradient(#a8ffb8,#3fbf5f 55%,#1f8a3a);box-shadow:inset 0 1px 0 #ffffff88}
-.frm.st .frt i{background:linear-gradient(#ead2ff,#a85aff 55%,#6a2ad6)}
-.frm.max .frt i{background:linear-gradient(#fff6c8,#ffc83a 55%,#c47f00)}
-.frm.ok .frt{box-shadow:inset 0 2px 3px #000c,0 0 0 1px #8fffa8,0 0 8px #5aff7a88}
-.frt em{position:absolute;inset:0;display:grid;place-items:center;font:900 10.5px/1 system-ui;font-style:normal;color:#fff;text-shadow:0 0 2px #000,0 1px 2px #000}
+.fmt{position:relative;flex:1;height:16px;border-radius:9px;background:#0c0703;border:1.5px solid #000;box-shadow:inset 0 2px 3px #000c,0 0 0 1px #c9893a55;overflow:hidden}
+.fmt i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:linear-gradient(#a8ffb8,#3fbf5f 55%,#1f8a3a);box-shadow:inset 0 1px 0 #ffffff88}
+.frm.st .fmt i{background:linear-gradient(#ead2ff,#a85aff 55%,#6a2ad6)}
+.frm.max .fmt i{background:linear-gradient(#fff6c8,#ffc83a 55%,#c47f00)}
+.frm.ok .fmt{box-shadow:inset 0 2px 3px #000c,0 0 0 1px #8fffa8,0 0 8px #5aff7a88}
+.fmt em{position:absolute;inset:0;display:grid;place-items:center;font:900 10.5px/1 system-ui;font-style:normal;color:#fff;text-shadow:0 0 2px #000,0 1px 2px #000}
 .frm .pzi{width:22px;height:22px;flex:none;margin-left:-8px;position:relative;z-index:1;filter:drop-shadow(0 1px 2px #000)}
-@container (max-height:520px){.frm{padding:3px 3px 3px 4px}.frt{height:12px}.frt em{font-size:8.5px}.frm .pzi{width:17px;height:17px}}
+@container (max-height:520px){.frm{padding:3px 3px 3px 4px}.fmt{height:12px}.fmt em{font-size:8.5px}.frm .pzi{width:17px;height:17px}}
 /* ===================== shop ===================== */
 .shp2{padding:14px 16px}
 .shh{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
@@ -2400,9 +2400,9 @@ const TCR=(()=>{let B=null,G=null,bs='',gs='',glow=null,shad=null,cw=0,raf=0,las
    [[.46,-.07,.11,0],[.545,.04,.08,.4],[.50,.13,.07,.85],[.525,-.14,.07,1.25],[.475,.06,.06,1.6]].forEach(([sx,dy,w,dl])=>{const a=tw(t,1.9,dl);star(x,ox+ew*sx,oy+eh*(tcc+dy),ew*w*.5*(.4+a*.8),a)})})}
  return{start(){if(!raf)raf=requestAnimationFrame(frame)}}})();
 TCR.start();
-function frMeter(b,s){const e=s.ev|0,k=hk(b);if(e>=4)return '<div class="frm max"><span class="frt"><i style="width:100%"></i><em>MAX</em></span>'+STNI+'</div>';
+function frMeter(b,s){const e=s.ev|0,k=hk(b);if(e>=4)return '<div class="frm max"><span class="fmt"><i style="width:100%"></i><em>MAX</em></span>'+STNI+'</div>';
  const st=e===3,cur=st?(PD.st|0):(PD.fr[k]||0),need=st?Math.max(1,CFG.stone):Math.max(1,CFG.frag[e]||1),p=Math.min(100,cur/need*100);
- return '<div class="frm'+(st?' st':'')+(cur>=need?' ok':'')+'" title="'+(st?'Transcendence stones for the last evolution':'Fragments for the next evolution')+'"><span class="frt"><i style="width:'+p.toFixed(1)+'%"></i><em>'+g$(cur)+'/'+g$(need)+'</em></span>'+(st?STNI:PUZI)+'</div>'}
+ return '<div class="frm'+(st?' st':'')+(cur>=need?' ok':'')+'" title="'+(st?'Transcendence stones for the last evolution':'Fragments for the next evolution')+'"><span class="fmt"><i style="width:'+p.toFixed(1)+'%"></i><em>'+g$(cur)+'/'+g$(need)+'</em></span>'+(st?STNI:PUZI)+'</div>'}
 function heroTile(i){const b=HD[i],x=evH(b),s=hs(b),own=owned(b),fr=PD.fr[hk(b)]||0,tc=own&&s.ev>=4;
  return '<div class="ct'+(own?'':' lk')+(tc?' tc':'')+(hi.includes(i)?' in':'')+'" data-h="'+i+'" style="--c:'+x.col+'"><div class="cth">'+esc(x.n)+'</div><div class="ctf"><div class="zf hf'+(own?'':' gr')+'">'+faceImgT(x)+'</div>'+(own?lvH(s.lv)+(!tc&&s.ev?'<span class="stb">'+STG[s.ev]+'</span>':''):'')+'</div>'+(tc?tcEmb():'')+(own?frMeter(b,s):'')+
   (own?'':'<div class="lkb"><span class="lki">🔒</span><div class="fb"><i style="width:'+Math.min(100,fr/CFG.unlock*100)+'%"></i><span>🧩 '+fr+'/'+CFG.unlock+'</span></div>'+(fr>=CFG.unlock?'<em>Tap to unlock!</em>':'')+'</div>')+'</div>'}
