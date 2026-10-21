@@ -1074,14 +1074,14 @@ async function importDefaults(){
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
 const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,atkImg:'',atkFace:null,exImg:'',exFace:null,cards:[],evo:{},open:false,locked:false,comments:[]});
-const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:'',shDur:2});
-const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:''});
+const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:'',shDur:2,pct:false,value2:0,rch:false,cht:false,grow:0,exg:0});
+const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:'',cost:1});
 const emptyGF=()=>({art:'',shDur:2,id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
-const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
-const CV_LABEL={attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
-const TYPE_ICON={attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',conjure:'📜',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
-const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally'],['none','No direct effect (use only “Add cards to hand”)']];
+const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['dispel','Dispel — remove debuffs from an ally or buffs from an enemy'],['search','Search — look at the top cards, keep one'],['chaos','Chaos — a random effect (damage / heal / shield / draw / Empower)'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
+const CV_LABEL={dispel:'(not used)',chaos:'(not used)',search:'Cards to look at',attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
+const TYPE_ICON={dispel:'✨',search:'🔍',chaos:'🎲',attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',conjure:'📜',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
+const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['pick','Damage ONE chosen enemy'],['revive','Resurrect an ally (and restore HP)'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally'],['none','No direct effect (use only “Add cards to hand”)']];
 const RELIC_FX={
  ex_turn:['Ultimate charge: +meter every turn','Gains {v} ultimate meter at the start of every turn'],
  ex_start:['Ultimate charge: starts battle with meter','Starts the battle with {v} ultimate meter'],
@@ -1108,25 +1108,28 @@ const GEN_FX={
 };
 const GEN_ICON={dmg:'💥',dmg_all:'🌋',heal:'💚',heal_all:'✨',shield:'🛡️',shield_all:'🏰',energy:'💎',draw:'🎴',bomb:'💣'};
 const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).replace('{d}',+g.delay||2)+(/^shield/.test(g.effect)?' for '+(+g.shDur||2)+' turn(s)':'')+(AILS[g.ail]?' + '+AILS[g.ail].name+' ('+(+g.dur||2)+'t)':'');
-function cardText(c){const v=+c.value||0,a=AILS[c.ail],ad=a?' + '+a.name+' ('+(+c.dur||2)+'t)':'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (+foe behind)',all:' (all foes)'}[c.scope]||'';
+function cardText(c){const v0=+c.value||0,v=c.pct?v0+'% ATK':v0,a=AILS[c.ail],st=ailStacks(c.ail),ad=a?' + '+a.name+(st?((+c.dur||1)>1?' ×'+(+c.dur||1):''):' ('+(+c.dur||2)+'t)'):'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (Penetrate)',all:' (all foes)'}[c.scope]||'',v2=+c.value2>0?' or '+(c.pct?(+c.value2)+'% ATK':+c.value2):'';
   const sd=' ('+(+c.shDur||2)+'t)',ex=[+c.shield?'+'+(+c.shield)+' shield'+sd:'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
   switch(c.type){
-    case 'heal':t='Heal '+v+ad+(c.target==='self'?' (self only)':'');break;
+    case 'heal':t='Heal '+v+ad+(c.target==='self'?' (self only)':c.target==='team'?' (all allies)':'');break;
+    case 'dispel':t='Dispel debuffs from an ally, or buffs from an enemy';break;
+    case 'search':t='Look at the top '+(v0||3)+' cards, add one to your hand';break;
+    case 'chaos':t='Random: damage, heal, shield, draw 2 or Empower';break;
     case 'mana':t='Gain '+v+' energy';break;
     case 'conjure':t='Add cards to hand';break;
     case 'draw':t='Draw '+v+' card(s)';break;
     case 'buff':t=a?'Apply '+a.name+' ('+(+c.dur||2)+'t) to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+sd+(c.target==='self'?' (self)':'');break;
     case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' ('+(+c.dur||2)+'t)'+(c.target==='enemy'?' to any enemy':''):'');break;
-    case 'ultimate':t=({all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,none:'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
-    default:t='Deal '+v+' dmg'+hits+reach+ad}
-  const cj=c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?' · adds '+(c.conj.mode==='random'?(+c.conj.n||1)+' random':Object.keys(c.conj.pool).length)+' card(s) to hand':'';return t+(ex?' · '+ex:'')+cj+(c.token?' · token':'')}
+    case 'ultimate':t=({pick:'Deal '+v+' dmg to one enemy'+ad,revive:'Resurrect an ally'+(v0?' and restore '+v+' HP':''),all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,none:c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?'Ultimate':'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' ('+(+c.dur||2)+'t)':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
+    default:t='Deal '+v+v2+' dmg'+hits+reach+(c.target==='enemy'?' to any enemy':'')+ad}
+  const cj=c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?' · adds '+(c.conj.mode==='random'?(+c.conj.n||1)+' random':Object.keys(c.conj.pool).length)+' card(s) to hand':'';const kw=[+c.exg?'+'+(+c.exg)+' energy':'',+c.grow?'+'+(+c.grow)+'% dmg each turn':'',c.rch?'Recharge':'',c.cht?'Chant':''].filter(Boolean).join(' · ');return t+(ex?' · '+ex:'')+cj+(kw?' · '+kw:'')+(c.token?' · token':'')}
 const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===t).map(([k,a])=>`<option value="${esc(k)}"${sel===k?' selected':''}>${esc(a.name)} — ${AIL_EFFECTS[a.effect]||a.effect}</option>`).join('');
   return '<option value="">None</option>'+(g('debuff')?`<optgroup label="Debuffs">${g('debuff')}</optgroup>`:'')+(g('buff')?`<optgroup label="Buffs">${g('buff')}</optgroup>`:'')};
 
 /* ======================================================================
    CARD BATTLE ADMIN  (organised into sections)
    ====================================================================== */
-let CGT='overview',CGC={maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0,turnSec:30},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
+let CGT='overview',CGC={weakPct:50,empPct:50,brkPct:25,bolPct:25,fatMax:5,blkMax:3,burnDur:3,burnPer:1,atkCost:1,atkPct:100,maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0,turnSec:30},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
 const emptyQF=()=>({id:null,title:'',desc:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
 let QF=emptyQF();
 const defRanksA=()=>['Copper','Silver','Gold','Platinum','Emerald','Diamond'].flatMap(n=>['I','II','III','IV','V'].map(r=>({n:n+' '+r})));
@@ -1142,7 +1145,7 @@ async function cardgameAdminHTML(){
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
   AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
-  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
+  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec','weakPct','empPct','brkPct','bolPct','fatMax','blkMax','burnDur','burnPer','atkCost','atkPct'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();DF=emptyDF();
   const n=o=>Object.keys(o).length;
@@ -1184,12 +1187,55 @@ function cgOverview(){
 }
 
 /* ---------------- heroes ---------------- */
+/* ---------------- hero skill kits (one click: Heroes tab) ---------------- */
+const KIT_AILS={k_stun:{name:'Stun',type:'debuff',effect:'stun',value:0,desc:'cannot play cards next turn'},k_taunt:{name:'Taunt',type:'buff',effect:'taunt',value:0,desc:'enemies must target this hero'},
+ k_weak:{name:'Weak',type:'debuff',effect:'weak',value:50,desc:'deals less damage'},k_empower:{name:'Empower',type:'buff',effect:'empower',value:50,desc:'deals more damage'},
+ k_break:{name:'Break',type:'debuff',effect:'break',value:25,desc:'takes more damage'},k_bolster:{name:'Bolster',type:'buff',effect:'bolster',value:25,desc:'takes less damage'},
+ k_block:{name:'Block',type:'buff',effect:'block',value:0,desc:'blocks the next attack'},k_burn:{name:'Burn',type:'debuff',effect:'burn',value:1,desc:'damage per stack every turn'},
+ k_frost:{name:'Frost',type:'debuff',effect:'frost',value:0,desc:'cannot play Attack cards'},k_entangle:{name:'Entangle',type:'debuff',effect:'entangle',value:0,desc:'relic disabled'},
+ k_fatigue:{name:'Fatigue',type:'debuff',effect:'fatigue',value:1,desc:'cards cost +1 per stack'}};
+const KIT_MATCH=[['Knight','K'],['Priest','H'],['Marksman','R'],['Mage','M'],['Adventurer','V']];
+function kitCards(who,hid){const id=()=>newCid(),c=(o)=>({id:id(),value:0,manaCost:1,ail:'',dur:1,hits:1,scope:'front',target:'',shield:0,shDur:2,heal:0,draw:0,...o});
+ if(who==='Knight')return [c({name:'Heroic Charge',type:'ultimate',ult:'front',manaCost:0,pct:true,value:100,ail:'k_stun',dur:1}),
+  c({name:'Defensive Stance',type:'buff',manaCost:0,target:'self',ail:'k_taunt',dur:1,draw:1}),
+  c({name:'Shield Block',type:'buff',manaCost:1,target:'ally',pct:true,value:400,shDur:2}),
+  c({name:'Overpower Strike',type:'attack',manaCost:3,pct:true,value:150,ail:'k_weak',dur:1})];
+ if(who==='Priest')return [c({name:'Holy Redemption',type:'ultimate',ult:'revive',manaCost:0,pct:true,value:400}),
+  c({name:'Cleansing Touch',type:'dispel',manaCost:1}),
+  c({name:'Prayer of Healing',type:'heal',manaCost:1,target:'team',pct:true,value:150}),
+  c({name:'Healing Spell',type:'heal',manaCost:1,target:'ally',pct:true,value:300})];
+ if(who==='Marksman')return [c({name:'Fatal Shot',type:'ultimate',ult:'pick',manaCost:0,pct:true,value:425,exg:30}),
+  c({name:'Incendiary Shot',type:'attack',manaCost:1,pct:true,value:50,ail:'k_burn',dur:1}),
+  c({name:'Multiple Shots',type:'attack',manaCost:2,pct:true,value:100,scope:'all'}),
+  c({name:'Aimed Shot',type:'attack',manaCost:5,pct:true,value:200,target:'enemy',rch:true})];
+ if(who==='Mage'){const ice=c({name:'Ice Scroll',type:'attack',manaCost:3,pct:true,value:125,ail:'k_frost',dur:1,exg:10,cht:true}),fire=c({name:'Flame Scroll',type:'attack',manaCost:3,pct:true,value:125,ail:'k_burn',dur:1,exg:10,cht:true}),
+   bolt=c({name:'Lightning Spell',type:'attack',manaCost:3,pct:true,value:75,value2:150,scope:'all',exg:10,cht:true});
+  return [c({name:'Emanation',type:'ultimate',ult:'none',manaCost:0,conj:{mode:'specific',n:3,cost:1,pool:[hid+'::'+ice.id,hid+'::'+fire.id,hid+'::'+bolt.id]}}),ice,fire,bolt]}
+ if(who==='Adventurer'){const cube=c({name:'Chaotic Cube',type:'chaos',manaCost:1,token:true});
+  return [c({name:'Precious Treasures',type:'ultimate',ult:'none',manaCost:0,conj:{mode:'random',n:2,cost:'',pool:[hid+'::'+cube.id]}}),cube,
+   c({name:'Tactical Search',type:'search',manaCost:0,value:3}),
+   c({name:'Caliburn',type:'attack',manaCost:3,pct:true,value:200,grow:50}),
+   c({name:'Open Chest',type:'draw',manaCost:3,value:2,cht:true})]}
+ return null}
+const kitWho=(id,h)=>{const n=String(h&&h.name||'').toLowerCase();const m=KIT_MATCH.find(([w,k])=>id==='hd_'+k||n===w.toLowerCase());return m?m[0]:(KIT_MATCH.find(([w])=>n.includes(w.toLowerCase()))||[])[0]||null};
+function kitBoxHTML(){const hit=Object.entries(HLIST).map(([id,h])=>[id,h,kitWho(id,h)]).filter(x=>x[2]),bak=Object.entries(HLIST).filter(([,h])=>h&&h.cardsBak);
+ if(!hit.length&&!bak.length)return '';
+ return `<div class="bx2" style="border-left:4px solid #b36bff;margin:12px 0"><b>⚡ Skill kits</b><p class="mut" style="margin:6px 0 10px;font-size:14px">Replace the cards of <b>${hit.map(x=>esc(x[1].name)).join(', ')||'—'}</b> with the new skill kits (values scale with ATK, plus Taunt, Weak, Burn, Frost, Dispel, Resurrect, Recharge, Chant…). Every hero also gets a basic Attack card in battle automatically. Their current cards are backed up so you can restore them.</p>
+  <div class="row" style="gap:8px">${hit.length?'<button onclick="applyKits()">⚡ Apply skill kits</button>':''}${bak.length?'<button class="g" onclick="restoreKits()">↩ Restore previous cards</button>':''}</div></div>`}
+async function applyKits(){const hit=Object.entries(HLIST).map(([id,h])=>[id,h,kitWho(id,h)]).filter(x=>x[2]);if(!hit.length)return;
+ if(!confirm('Replace the cards of '+hit.map(x=>x[1].name).join(', ')+' with the new skill kits?\n\nTheir current cards are backed up (you can restore them).'))return;
+ try{const have=await api('cardgame/ailments').catch(()=>null)||{};for(const [k,a] of Object.entries(KIT_AILS))if(!have[k])await api('cardgame/ailments/'+k,'PUT',a);
+  for(const [id,h,who] of hit){const cs=kitCards(who,id);if(!cs)continue;if(!h.cardsBak&&cardsOf(h).length)await api('cardgame/heroes/'+id+'/cardsBak','PUT',cardsOf(h));await api('cardgame/heroes/'+id+'/cards','PUT',cs)}
+  toast('Skill kits applied');atab='cardgame';CGT='heroes';adminV()}catch(e){toast(e.message)}}
+async function restoreKits(){const bak=Object.entries(HLIST).filter(([,h])=>h&&h.cardsBak);if(!bak.length)return;
+ if(!confirm('Put back the cards these heroes had before the skill kits: '+bak.map(x=>x[1].name).join(', ')+'?'))return;
+ try{for(const [id,h] of bak){await api('cardgame/heroes/'+id+'/cards','PUT',cardsOf({cards:h.cardsBak}));await api('cardgame/heroes/'+id+'/cardsBak','DELETE')}toast('Previous cards restored');atab='cardgame';CGT='heroes';adminV()}catch(e){toast(e.message)}}
 function cgHeroes(){
   if(HF.open)return heroEditorHTML();
   const hl=Object.entries(HLIST),miss=DEFAULT_HEROES.filter(d=>!HLIST['hd_'+d.key]);
   return `<div class="cgp"><div class="cgph"><div><h4>Heroes</h4><p class="mut" style="font-size:13px;margin:0">Click a hero to edit its stats, cards and evolutions.</p></div><button onclick="newHero()">＋ New hero</button></div>
    ${miss.length?`<div class="bx2" style="border-left:4px solid var(--gold);margin:12px 0"><b>Built-in heroes</b><p class="mut" style="margin:6px 0 10px;font-size:14px">Knight, Mage, Priest, Marksman and Adventurer are built into the game. Import them to edit their stats, portraits, cards and evolutions here.${miss.length<DEFAULT_HEROES.length?' ('+miss.length+' not imported: '+miss.map(d=>d.data.name).join(', ')+')':''}</p><button onclick="importDefaults()">📥 Import built-in heroes</button></div>`:''}
-   ${hl.length?`<div class="cghg">${hl.map(([id,h])=>heroCardHTML(id,h)).join('')}</div>`:'<p class="mut" style="margin-top:14px">No heroes yet. Press “New hero” to add your first.</p>'}</div>`;
+   ${kitBoxHTML()}${hl.length?`<div class="cghg">${hl.map(([id,h])=>heroCardHTML(id,h)).join('')}</div>`:'<p class="mut" style="margin-top:14px">No heroes yet. Press “New hero” to add your first.</p>'}</div>`;
 }
 function newHero(){HF={...emptyHF(),open:true};CF=emptyCF();adminV()}
 function closeHero(){HF=emptyHF();CF=emptyCF();adminV()}
@@ -1395,11 +1441,20 @@ function settingsInner(){
   <div class="bx2" style="margin-top:10px"><b>Default stat bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to every card number (damage, heal, shield…). A hero can override this in its own Evolutions step.</p><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}</label><input id="sev${i}" type="number" min="0" value="${CGC.evoB[i]??0}"></div>`).join('')}</div></div>
   <div class="bx2" style="margin-top:10px"><b>Default hero HP / ATK bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to the hero's base HP and ATK at that evolution (not added up between stages). Higher ATK makes every damage card and the ultimate hit proportionally harder. A hero can override these in its own Evolutions step.</p>
   <div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}: ❤️ HP / ⚔️ ATK</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input id="shp${i}" type="number" min="0" value="${CGC.evoHp[i]??0}"><input id="sat${i}" type="number" min="0" value="${CGC.evoAtk[i]??0}"></div></div>`).join('')}</div></div>
+  <h4 style="margin-top:22px">⚔️ Battle rules</h4><p class="mut" style="margin:4px 0 10px;font-size:13px">How the buffs, debuffs and basic Attack cards behave in every match. Durations and stacks per card are set on each card.</p>
+  <div class="bx2"><div class="f2" style="margin:0;gap:8px">
+   <div><label>🥀 Weak: damage dealt −%</label><input id="rwk" type="number" min="0" max="100" value="${CGC.weakPct}"></div><div><label>💪 Empower: damage dealt +%</label><input id="rem" type="number" min="0" max="500" value="${CGC.empPct}"></div>
+   <div><label>💔 Break: damage taken +%</label><input id="rbr" type="number" min="0" max="500" value="${CGC.brkPct}"></div><div><label>🧱 Bolster: damage taken −%</label><input id="rbo" type="number" min="0" max="100" value="${CGC.bolPct}"></div>
+   <div><label>⛊ Block: max stacks</label><input id="rbk" type="number" min="1" max="20" value="${CGC.blkMax}"></div><div><label>😩 Fatigue: max stacks</label><input id="rft" type="number" min="1" max="20" value="${CGC.fatMax}"></div>
+   <div><label>🔥 Burn: lasts (turns)</label><input id="rbd" type="number" min="1" max="20" value="${CGC.burnDur}"></div><div><label>🔥 Burn: damage per stack each turn</label><input id="rbp" type="number" min="0" max="999" value="${CGC.burnPer}"></div>
+   <div><label>⚔️ Attack card: mana cost</label><input id="rac" type="number" min="0" max="10" value="${CGC.atkCost}"></div><div><label>⚔️ Attack card: damage (% of ATK)</label><input id="rap" type="number" min="0" max="1000" value="${CGC.atkPct}"></div></div>
+   <p class="mut" style="font-size:12px;margin:8px 0 0">Weak ↔ Empower and Break ↔ Bolster cancel each other. Every hero gets 1 basic Attack card (4 per team) that always hits the front enemy, or the enemy with Taunt.</p></div>
   <div class="row" style="margin-top:12px"><button onclick="saveSettings()">💾 Save settings</button></div>`}
 const tsTxt=v=>{const m=Math.floor(v/60),s=v%60;return [m?m+' minute'+(m>1?'s':''):'',s?s+' second'+(s>1?'s':''):''].filter(Boolean).join(' ')||'0 seconds'};
 async function saveSettings(){const g=id=>Math.max(0,Math.floor(+$('#'+id).value||0));
   const ts=g('stm')*60+Math.min(59,g('sts'));if(ts<5||ts>600)return toast('Turn time must be between 5 seconds and 10 minutes');CGC.turnSec=ts;
   if(!(g('smax')>=1))return toast('Max level must be at least 1');
+  const gp=(id,lo,hi)=>Math.max(lo,Math.min(hi,g(id)));CGC.weakPct=gp('rwk',0,100);CGC.empPct=gp('rem',0,500);CGC.brkPct=gp('rbr',0,500);CGC.bolPct=gp('rbo',0,100);CGC.blkMax=gp('rbk',1,20);CGC.fatMax=gp('rft',1,20);CGC.burnDur=gp('rbd',1,20);CGC.burnPer=gp('rbp',0,999);CGC.atkCost=gp('rac',0,10);CGC.atkPct=gp('rap',0,1000);
   CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.expLv=Math.max(1,g('sexl'));CGC.expWin=g('sexw');CGC.expLoss=g('sexs');CGC.unlock=Math.max(1,g('sunl'));CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));CGC.evoHp=EVN.map((_,i)=>g('shp'+i));CGC.evoAtk=EVN.map((_,i)=>g('sat'+i));
   try{await saveCfg();toast('Settings saved · turn time '+tsTxt(CGC.turnSec));const e=$('#setsec');if(e)e.innerHTML=settingsInner()}catch(e){toast(e.message)}}
 
@@ -1483,15 +1538,21 @@ function renderCardForm(){
     ${u?`<div><label>Ultimate effect</label><select onchange="CF.ult=this.value">${ULT_FX.map(([k,l])=>`<option value="${k}"${(c.ult||'all')===k?' selected':''}>${l}</option>`).join('')}</select></div>`
       :`<div><label>Mana Cost</label><input type="number" min="0" max="20" value="${+c.manaCost||0}" oninput="CF.manaCost=+this.value"></div>`}
     ${showAil?`<div><label>${c.type==='buff'?'Buff to apply (optional)':c.type==='debuff'?'Debuff to apply':'Status ailment applied (optional)'}</label><select onchange="CF.ail=this.value;refreshCF()">${ailOpts(c.ail)}</select></div>`:''}
-    ${showAil&&c.ail?`<div><label>Ailment duration (turns)</label><input type="number" min="1" max="9" value="${+c.dur||2}" oninput="CF.dur=+this.value"></div>`:''}
-    ${c.type==='heal'||c.type==='buff'?`<div><label>Who can receive it?</label><select onchange="CF.target=this.value">${[['ally','Pick any ally (self or a teammate)'],['self','Self only (the hero playing the card)']].map(([k,l])=>`<option value="${k}"${((c.target||'ally')===k)?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
+    ${showAil&&c.ail?`<div><label>${ailStacks(c.ail)?'Stacks added':'Ailment duration (turns)'}</label><input type="number" min="1" max="9" value="${+c.dur||(ailStacks(c.ail)?1:2)}" oninput="CF.dur=+this.value"></div>`:''}
+    ${c.type==='attack'?`<div><label>Who can it hit?</label><select onchange="CF.target=this.value">${[['front','Front enemy'],['enemy','Pick any enemy']].map(([k,l])=>`<option value="${k}"${((c.target||'front')===k)?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
+    ${c.type==='heal'||c.type==='buff'?`<div><label>Who can receive it?</label><select onchange="CF.target=this.value">${[['ally','Pick any ally (self or a teammate)'],['self','Self only (the hero playing the card)'],['team','The whole team']].map(([k,l])=>`<option value="${k}"${((c.target||'ally')===k)?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
     ${c.type==='debuff'?`<div><label>Who can it target?</label><select onchange="CF.target=this.value">${[['front','Front enemy only'],['enemy','Pick any enemy']].map(([k,l])=>`<option value="${k}"${((c.target||'front')===k)?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
-    ${(c.type==='attack'||c.type==='debuff')?`<div><label>Hits (times the damage is dealt)</label><input type="number" min="1" max="5" value="${+c.hits||1}" oninput="CF.hits=+this.value"></div><div><label>Reach</label><select onchange="CF.scope=this.value">${[['front','Front enemy only'],['pierce','Front enemy + the foe behind (70%)'],['all','All enemies']].map(([k,l])=>`<option value="${k}"${(c.scope||'front')===k?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
+    ${(c.type==='attack'||c.type==='debuff')?`<div><label>Hits (times the damage is dealt)</label><input type="number" min="1" max="5" value="${+c.hits||1}" oninput="CF.hits=+this.value"></div><div><label>Reach</label><select onchange="CF.scope=this.value">${[['front','Front enemy only'],['pierce','Penetrate: target + the foe behind (50%)'],['all','All enemies']].map(([k,l])=>`<option value="${k}"${(c.scope||'front')===k?' selected':''}>${l}</option>`).join('')}</select></div>`:''}
     ${!['buff','draw','mana'].includes(c.type)?`<div><label>Bonus shield (optional)</label><input type="number" min="0" value="${+c.shield||0}" oninput="CF.shield=+this.value"></div>`:''}
     ${!['heal','draw','mana'].includes(c.type)?`<div><label>Bonus heal (optional)</label><input type="number" min="0" value="${+c.heal||0}" oninput="CF.heal=+this.value"></div>`:''}
     ${!['draw','mana','conjure'].includes(c.type)?`<div><label>🛡️ Shield lasts (turns) <span class="mut" style="font-weight:400">· only if the card gives shield</span></label><input type="number" min="1" max="9" value="${+c.shDur||2}" oninput="CF.shDur=+this.value"></div>`:''}
     ${c.type!=='draw'?`<div><label>Also draw cards (optional)</label><input type="number" min="0" max="5" value="${+c.draw||0}" oninput="CF.draw=+this.value"></div>`:''}
+    ${c.type==='attack'||(u&&['all','front','pick'].includes(c.ult||'all'))?`<div><label>Second damage value (optional, picked at random)</label><input type="number" min="0" value="${+c.value2||0}" oninput="CF.value2=+this.value"></div>`:''}
+    <div><label>⚡ Gain energy (EX meter, optional)</label><input type="number" min="0" max="100" value="${+c.exg||0}" oninput="CF.exg=+this.value"></div>
+    ${c.type==='attack'?`<div><label>📈 Damage grows each turn in hand (%)</label><input type="number" min="0" max="500" value="${+c.grow||0}" oninput="CF.grow=+this.value"></div>`:''}
    </div>
+   ${['conjure','dispel','chaos','mana','draw','search'].includes(c.type)?'':`<label class="chk" style="margin-top:10px"><input type="checkbox" ${c.pct?'checked':''} onchange="CF.pct=this.checked;refreshCF()"> 📊 Values are a <b>% of the hero's ATK</b> (e.g. 150 = 150% × ATK). Recommended: the card grows when the hero's ATK goes up.</label>`}
+   ${u?'':`<div class="row" style="gap:18px;margin-top:6px;flex-wrap:wrap"><label class="chk" style="margin:0"><input type="checkbox" ${c.rch?'checked':''} onchange="CF.rch=this.checked"> 🔋 Recharge <span class="mut" style="font-weight:400">(−1 cost per card played this turn)</span></label><label class="chk" style="margin:0"><input type="checkbox" ${c.cht?'checked':''} onchange="CF.cht=this.checked"> 🕯️ Chant <span class="mut" style="font-weight:400">(−1 cost per turn held in hand)</span></label></div>`}
    ${conjHTML()}
    ${artBox('c')}
    ${!u?`<label class="chk" style="margin-top:10px"><input type="checkbox" ${c.token?'checked':''} onchange="CF.token=this.checked"> 🪙 Token card: not shuffled into the deck. It can only be added to a hand by other skills.</label>`:''}
@@ -1503,7 +1564,7 @@ function renderCardForm(){
 function paintCards(){const a=$('#hcards'),b=$('#cform');if(a)a.innerHTML=renderCardList();if(b)b.innerHTML=renderCardForm()}
 function refreshCF(){const b=$('#cform');if(b)b.innerHTML=renderCardForm()}
 function hClass(el){HF.class_=el.value;el.style.borderColor=HERO_COLORS[HF.class_];el.style.color=HERO_COLORS[HF.class_];paintCards()}
-function cfType(v){CF.type=v;if(v==='ultimate')CF.manaCost=0;else if(!CF.manaCost)CF.manaCost=1;if(v==='mana'||v==='conjure')CF.ail='';if(v==='conjure'&&!CF.cmode)CF.cmode='specific';refreshCF()}
+function cfType(v){CF.type=v;if(['dispel','chaos','search'].includes(v)){CF.ail='';CF.pct=false;if(v==='search')CF.value=3}if(v==='ultimate')CF.manaCost=0;else if(!CF.manaCost)CF.manaCost=1;if(v==='mana'||v==='conjure')CF.ail='';if(v==='conjure'&&!CF.cmode)CF.cmode='specific';refreshCF()}
 const newCid=()=>'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 function refCard(ref){const [a,b]=String(ref).split('::');if(a==='g'){const g=GENS[b];return g?{n:g.name,h:'General'}:null}
   if(a==='@self'||a===HF.id){const c=HF.cards.find(x=>x.id===b);return c?{n:c.name,h:HF.name||'this hero'}:null}
@@ -1535,6 +1596,7 @@ async function saveCard(){
   if(CF.type==='conjure'&&!(CF.cmode&&CF.cpool.length))return toast('Choose the cards this skill adds to the hand');
   if(CF.cmode&&!CF.cpool.length)return toast('Add at least one card to the “Add cards to hand” list, or set the mode to None');
   const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',target:(CF.type==='heal'||CF.type==='buff'||CF.type==='debuff')?(CF.target||''):'',shield:Math.max(0,+CF.shield||0),shDur:Math.max(1,Math.min(9,+CF.shDur||2)),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
+  if(CF.type==='attack')card.target=CF.target==='enemy'?'enemy':'';if(CF.pct)card.pct=true;if(+CF.value2>0)card.value2=+CF.value2;if(+CF.exg>0)card.exg=Math.min(100,+CF.exg);if(+CF.grow>0&&CF.type==='attack')card.grow=+CF.grow;if(CF.rch&&CF.type!=='ultimate')card.rch=true;if(CF.cht&&CF.type!=='ultimate')card.cht=true;
   if(CF.type==='ultimate')card.ult=CF.ult||'all';
   card.id=CF.id||newCid();if(CF.art)card.art=CF.art;if(CF.token&&CF.type!=='ultimate')card.token=true;
   if(CF.cmode&&CF.cpool.length)card.conj={mode:CF.cmode,n:Math.max(1,Math.min(5,+CF.cn||1)),cost:(CF.ccost===''||CF.ccost==null)?'':Math.max(0,+CF.ccost),pool:CF.cpool.slice()};
@@ -1568,7 +1630,7 @@ function relicListHTML(){const e=Object.entries(RELS);if(!e.length)return '<p cl
     <div class="row"><button class="s" onclick="editRelic('${esc(k)}')">Edit</button><button class="d s" onclick="delRelic('${esc(k)}')">✕</button></div></div>`).join('')}</div>`}
 function relicSecInner(){
   return `<h3>Relics (Equipment)</h3>
-  <p class="mut" style="margin:6px 0 10px;font-size:14px">A relic is a piece of equipment with a special effect. Each hero can carry <b>1 relic</b>; players choose which hero gets which relic before a duel.</p>
+  <p class="mut" style="margin:6px 0 10px;font-size:14px">A relic is a piece of equipment with a special effect. Players pick which hero gets which relic in their line-up. In battle the relic is a <b>card shuffled into the deck</b>, coloured like its hero: when it is drawn, playing it equips the relic on that hero only. <b>Entangle</b> switches a relic off, and a second Entangle sends it back into the deck.</p>
   <div id="rellist">${relicListHTML()}</div>
   <div class="bx2" style="margin-top:10px"><b>${RF.id?'✏️ Edit relic':'➕ New relic'}</b>
    <div class="f2" style="margin:8px 0 0;gap:8px">
@@ -1576,6 +1638,7 @@ function relicSecInner(){
     <div><label>Effect</label><select onchange="RF.effect=this.value;rfTxt()">${Object.entries(RELIC_FX).map(([k,v])=>`<option value="${k}"${RF.effect===k?' selected':''}>${v[0]}</option>`).join('')}</select></div>
     <div><label>Value</label><input type="number" min="0" value="${+RF.value||0}" oninput="RF.value=+this.value;rfTxt()"></div>
     <div><label>Description (optional, auto-written if empty)</label><input value="${esc(RF.desc)}" maxlength="90" oninput="RF.desc=this.value"></div>
+    <div><label>Mana cost to equip</label><input type="number" min="0" max="10" value="${RF.cost===undefined||RF.cost===null||RF.cost===''?1:+RF.cost}" oninput="RF.cost=+this.value"></div>
    </div>
    <p class="mut" id="rftx" style="font-size:13px;margin:8px 0">Effect: ${esc(relicText(RF.effect,RF.value))}</p>
    <div class="row" style="align-items:center;gap:10px"><button class="s" onclick="$('#rif').click()">Upload icon (optional)</button><span id="rfpv">${RF.icon?`<img src="${RF.icon}" style="height:36px">`:''}</span>
@@ -1588,9 +1651,9 @@ async function upRelIcon(inp){const f=inp.files[0];if(!f)return;try{RF.icon=awai
 async function saveRelic(){
   if(!RF.name.trim())return toast('Relic name is required');
   const id=RF.id||'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const d={name:RF.name.trim(),effect:RF.effect,value:+RF.value||0,desc:(RF.desc||'').trim(),icon:RF.icon||null,updated:Date.now()};
+  const d={name:RF.name.trim(),effect:RF.effect,value:+RF.value||0,cost:Math.max(0,Math.min(10,RF.cost===undefined||RF.cost===''?1:+RF.cost||0)),desc:(RF.desc||'').trim(),icon:RF.icon||null,updated:Date.now()};
   try{await api('cardgame/relics/'+id,'PUT',d);RELS[id]=d;RF=emptyRF();paintRel();toast('Relic saved')}catch(e){toast(e.message)}}
-function editRelic(id){const r=RELS[id];if(!r)return;RF={id,name:r.name||'',effect:r.effect||'ex_turn',value:+r.value||0,desc:r.desc||'',icon:r.icon||''};paintRel();const e=$('#relsec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
+function editRelic(id){const r=RELS[id];if(!r)return;RF={id,name:r.name||'',effect:r.effect||'ex_turn',value:+r.value||0,desc:r.desc||'',icon:r.icon||'',cost:r.cost===undefined||r.cost===null?1:+r.cost};paintRel();const e=$('#relsec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 async function delRelic(id){if(!confirm('Delete this relic?'))return;try{await api('cardgame/relics/'+id,'DELETE');delete RELS[id];if(RF.id===id)RF=emptyRF();paintRel()}catch(e){toast(e.message)}}
 
 /* ---- general cards ---- */
@@ -1830,7 +1893,8 @@ let HF=emptyHF();
 const HERO_CLASSES=['Defender','Magic','Healer','Attacker','Specialist'];
 const HERO_COLORS={'Defender':'#f5c451','Magic':'#5aa9ff','Healer':'#5be39b','Attacker':'#ff5a5a','Specialist':'#b07cff'};
 const HERO_ICONS={'Defender':'🛡️','Magic':'🧙','Healer':'🩺','Attacker':'⚔️','Specialist':'🎯'};
-const AIL_EFFECTS={dot:'Damage over time',hot:'Heal over time',atkup:'ATK up %',atkdown:'ATK down %',stun:'Stun (skip turn)',mark:'Marked (takes +% dmg)',shield:'Shield (absorbs dmg)',poison:'Poison (ignores shield)',x2:'Damage ×2',x3:'Damage ×3',x4:'Damage ×4'};
+const AIL_EFFECTS={burn:'Burn (stacks, dmg per stack each turn)',empower:'Empower (+dmg dealt)',weak:'Weak (−dmg dealt)',break:'Break (+dmg taken)',bolster:'Bolster (−dmg taken)',block:'Block (blocks the next attack, stacks)',frost:'Frost (no Attack cards)',entangle:'Entangle (relic disabled / removed)',taunt:'Taunt (enemies must target it)',fatigue:'Fatigue (+1 card cost per stack)',stun:'Stun (skip turn)',poison:'Poison (ignores shield)',hot:'Heal over time',mark:'Marked (takes +50% dmg)',shield:'Shield (absorbs dmg)',dot:'Burn (old style)',atkup:'Empower (old name: ATK up)',atkdown:'Weak (old name: ATK down)',x2:'Damage ×2',x3:'Damage ×3',x4:'Damage ×4'};
+const STACK_FX=new Set(['burn','dot','block','fatigue']);const ailStacks=id=>!!(AILS[id]&&STACK_FX.has(AILS[id].effect));
 let AILS={};
 const STATUS_EFFECTS=['burn','poison','stun','weak','attack_up','regen','marked'];
 const STATUS_LABELS={'burn':'🔥 Burn','poison':'☠️ Poison','stun':'⚡ Stun','weak':'💧 Weak','attack_up':'⚔️ Attack Up','regen':'💚 Regen','marked':'🎯 Marked'};
