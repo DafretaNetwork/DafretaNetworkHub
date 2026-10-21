@@ -685,13 +685,13 @@ body.sel .sdim{opacity:1}
 #vsx .vlb .evbd{order:0;font-size:clamp(11px,10cqw,17px);margin-bottom:4px}
 #vsx .vlb .evbd.tc{font-size:clamp(7px,6.2cqw,10.5px);margin-bottom:6px}#vsx .evbd.tc .tcr b{letter-spacing:.08em;padding:.36em .75em .3em}
 /* ===================== ATTACK / EX POSES ===================== */
-#bat .unit.pz-atk{z-index:30!important}
+#bat .unit.pz-atk .fw{z-index:30!important}
 #bat .unit.pz-atk .fgw{animation:lunge .72s cubic-bezier(.3,.7,.3,1) var(--pd,0ms) both}
 #bat .unit.foe.pz-atk .fgw{animation-name:lungeF}
 @keyframes lunge{0%{translate:0 0}18%{translate:-7% 0}42%{translate:22% -2%}70%{translate:20% 0}100%{translate:0 0}}
 @keyframes lungeF{0%{translate:0 0}18%{translate:7% 0}42%{translate:-22% -2%}70%{translate:-20% 0}100%{translate:0 0}}
 #bat .unit.pz-atk .fig{filter:brightness(1.12) drop-shadow(0 0 10px #fff8)}
-#bat .unit.pz-ex{z-index:30!important}
+#bat .unit.pz-ex .fw{z-index:30!important}
 #bat .unit.pz-ex .fgw{animation:expw 1s ease-out var(--pd,0ms) both}
 @keyframes expw{0%{scale:1;filter:none}30%{scale:1.1;filter:brightness(1.5) drop-shadow(0 0 18px #ffd24a)}70%{scale:1.12;filter:brightness(1.3) drop-shadow(0 0 26px #ffb300)}100%{scale:1.05;filter:brightness(1.2) drop-shadow(0 0 14px #ffd24a)}}
 #bat .unit.pz-ex .fw::before{content:"";position:absolute;left:50%;bottom:0;width:90%;height:120%;translate:-50% 0;z-index:0;border-radius:50% 50% 10% 10%;background:radial-gradient(ellipse at 50% 100%,#fff6c8 0,#ffd24a 25%,#ff9a1f55 55%,transparent 72%);animation:expil 1s ease-out var(--pd,0ms) both;pointer-events:none}
@@ -1018,7 +1018,8 @@ body.sel #bat .unit.tg .info{box-shadow:0 0 0 2px #ffd45a,0 0 14px #ffd45a}
 @media(prefers-reduced-motion:reduce){.dn{animation:dnfade 1.3s both}@keyframes dnfade{0%,80%{opacity:1}100%{opacity:0}}}
 
 /* ===================== battle names: no ATK, full name fits ===================== */
-#bat .info{container-type:inline-size}
+#bat .info{container-type:inline-size;position:relative;z-index:45}
+#bat .unit .chips{z-index:44}
 #bat .nr .nm{font-size:min(calc(var(--info)*.21),calc(132cqw / var(--nl,8)));text-overflow:clip;letter-spacing:0}
 #bat .fgw{z-index:1}
 /* ===================== hero info popup ===================== */
@@ -1350,28 +1351,43 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 #bat .unit.st-frz .fgw{filter:drop-shadow(0 0 6px #9ff0ffaa) saturate(.8) brightness(1.05)}
 @media(prefers-reduced-motion:reduce){.stn2 b,.brn .fwr,.brn .flm path,.brn .bem,.frz .ms,.frz .ihl,.frz .tw{animation-duration:6s}}
 
-/* ===================== shield: side-view energy barrier in front of the hero ===================== */
-.ffd{position:absolute;left:62%;bottom:-2%;width:62%;height:calc(var(--fh) * 92%);translate:-50% 0;z-index:4;pointer-events:none;filter:drop-shadow(0 0 3px #7fd8ff) drop-shadow(0 0 10px #2a8cffaa);transform-origin:0 50%;animation:ffin .5s cubic-bezier(.2,1.4,.4,1) var(--e) both}
-.ffd.fo{left:38%;scale:-1 1}
-.ffd svg{width:100%;height:100%;display:block;overflow:visible;animation:ffp 2s ease-in-out infinite;animation-delay:var(--t)}
-.ffd .hz{animation:ffhz 2s ease-in-out infinite;animation-delay:var(--t)}
-.ffd .sw{animation:ffsw 2.6s ease-in-out infinite;animation-delay:var(--t)}
-.ffd .fl{transform-box:fill-box;transform-origin:50% 50%;animation:fffl 1.8s ease-in-out infinite;animation-delay:var(--t)}
-@keyframes ffin{0%{opacity:0;transform:scaleX(.2)}60%{opacity:1;transform:scaleX(1.12)}100%{transform:none}}
-@keyframes ffp{0%,100%{opacity:.85}50%{opacity:1}}
-@keyframes ffhz{0%,100%{opacity:.6;transform:translateX(0)}50%{opacity:1;transform:translateX(-2px)}}
-@keyframes ffsw{0%,30%{transform:translateY(0)}100%{transform:translateY(200px)}}
-@keyframes fffl{0%,100%{opacity:.75;transform:scale(.8) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(20deg)}}
-@media(prefers-reduced-motion:reduce){.ffd svg,.ffd .hz,.ffd .sw,.ffd .fl{animation:none}}
+/* ===================== shield: front rim of an energy sphere ===================== */
+/* the sphere's centre (22% across the box) sits on the hero's centre line; the rim curves round the front of the hero */
+.ffd{position:absolute;left:calc(50% - 22% * .74);bottom:-4%;width:74%;height:calc(var(--fh) * 100% + 8%);z-index:4;pointer-events:none;transform-origin:22% 50%;filter:drop-shadow(0 0 6px #3aaeffaa);animation:ffin .5s cubic-bezier(.2,1.4,.4,1) var(--e) both}
+.ffd.fo{scale:-1 1}
+.ffd svg{width:100%;height:100%;display:block;overflow:visible;animation:ffp 2.2s ease-in-out infinite;animation-delay:var(--t)}
+.ffd .au{animation:ffau 2.2s ease-in-out infinite;animation-delay:var(--t)}
+.ffd .rn{animation:ffrn 2.6s linear infinite;animation-delay:var(--t)}
+.ffd .fl{transform-box:fill-box;transform-origin:50% 50%;animation:fffl 2s ease-in-out infinite;animation-delay:var(--t)}
+.ffd .sp1,.ffd .sp2{animation:ffsp 1.6s ease-in-out infinite;animation-delay:var(--t)}.ffd .sp2{animation-delay:calc(var(--t) - .8s)}
+@keyframes ffin{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.05)}100%{transform:none}}
+@keyframes ffp{0%,100%{opacity:.88}50%{opacity:1}}
+@keyframes ffau{0%,100%{opacity:.45;stroke-width:6}50%{opacity:.9;stroke-width:9}}
+@keyframes ffrn{0%{stroke-dashoffset:22}100%{stroke-dashoffset:-78}}
+@keyframes fffl{0%,100%{opacity:.7;transform:scale(.8) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(25deg)}}
+@keyframes ffsp{0%,100%{opacity:0}50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.ffd svg,.ffd .au,.ffd .rn,.ffd .fl,.ffd .sp1,.ffd .sp2{animation:none}}
 /* ===================== taunt: angry scribble speech bubbles popping in front of the head ===================== */
 .tnt{position:absolute;aspect-ratio:1;translate:-50% -50%;z-index:5;pointer-events:none}
 .tnt.fo{scale:-1 1}
-.tnt .bb{position:absolute;left:var(--x);top:var(--y);width:var(--w);transform-origin:12% 92%;opacity:0;animation:tbub 4.4s cubic-bezier(.3,1.4,.5,1) infinite;animation-delay:calc(var(--t) - var(--i) * 1.1s);filter:drop-shadow(0 3px 0 #0006) drop-shadow(0 0 6px #ff4a2a55)}
+.tnt .bb{position:absolute;left:var(--x);top:var(--y);width:var(--w);transform-origin:12% 92%;opacity:0;animation:tbub1 2.6s cubic-bezier(.3,1.4,.5,1) infinite;animation-delay:var(--t);filter:drop-shadow(0 3px 0 #0006) drop-shadow(0 0 6px #ff4a2a55)}
 .tnt .bb svg{width:100%;height:auto;display:block;overflow:visible}
 .tnt.fo .bb svg .sc{transform:scaleX(-1);transform-box:fill-box;transform-origin:50% 50%}
+@keyframes tbub1{0%{opacity:0;transform:scale(.2) rotate(-14deg)}9%{opacity:1;transform:scale(1.15) rotate(4deg)}14%{transform:scale(.95) rotate(-3deg)}19%{transform:scale(1) rotate(0)}25%,45%,65%{transform:scale(1) rotate(2deg) translateX(1px)}35%,55%,75%{transform:scale(1.03) rotate(-2deg) translateX(-1px)}84%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(.6) translateY(-10%)}}
 @keyframes tbub{0%{opacity:0;transform:scale(.2) rotate(-14deg)}5%{opacity:1;transform:scale(1.15) rotate(4deg)}8%{transform:scale(.95) rotate(-3deg)}11%{transform:scale(1) rotate(0)}14%{transform:scale(1) rotate(2deg) translateX(1px)}17%{transform:scale(1) rotate(-2deg) translateX(-1px)}20%{transform:scale(1) rotate(0)}22%{opacity:1;transform:scale(1)}26%{opacity:0;transform:scale(.6) translateY(-12%)}100%{opacity:0;transform:scale(.6)}}
 @media(prefers-reduced-motion:reduce){.tnt .bb{animation-duration:9s}}
 
+
+/* ===================== frozen Attack card ===================== */
+#gw .card.fzc{filter:none}
+#gw .card.fzc::after{content:"";position:absolute;inset:0;z-index:5;background:radial-gradient(ellipse at 50% 50%,#0a1a2a8c,#06101acc);pointer-events:none}
+#gw .card .cice{position:absolute;inset:0;z-index:6;pointer-events:none;box-shadow:inset 0 0 6cqw #9fe6ff88,inset 0 0 1.4cqw #e8fbff}
+#gw .card .ci{position:absolute;width:34%;height:auto;filter:drop-shadow(0 0 1.4cqw #9fe8ff)}
+#gw .card .ci.tl{left:-1%;top:-1%}#gw .card .ci.tr{right:-1%;top:-1%;transform:scaleX(-1)}#gw .card .ci.bl{left:-1%;bottom:-1%;transform:scaleY(-1)}#gw .card .ci.br{right:-1%;bottom:-1%;transform:scale(-1,-1)}
+#gw .card .ci .cis{animation:cis 2.8s ease-in-out infinite}
+@keyframes cis{0%,60%{opacity:0}75%{opacity:1}100%{opacity:0}}
+#gw .card .cfz{position:absolute;left:50%;top:44%;translate:-50% -50%;font:400 22cqw/1 system-ui;color:#e8fbff;text-shadow:0 0 2cqw #7fd8ff,0 0 5cqw #3aaeff;animation:cfz 2.4s ease-in-out infinite}
+@keyframes cfz{0%,100%{opacity:.75;transform:scale(.94) rotate(0)}50%{opacity:1;transform:scale(1.05) rotate(30deg)}}
 </style></head><body>
 <div id="gw">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gSt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#cdd6e3"/><stop offset="1" stop-color="#6f7a8c"/></linearGradient><linearGradient id="gGd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#ffc83a"/><stop offset="1" stop-color="#b8700a"/></linearGradient><linearGradient id="gLe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a4a"/><stop offset="1" stop-color="#6a3a14"/></linearGradient><linearGradient id="gRd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0473a"/><stop offset="1" stop-color="#7a1410"/></linearGradient><linearGradient id="gBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2ff"/><stop offset="1" stop-color="#2f6fd0"/></linearGradient><linearGradient id="gWd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8703c"/><stop offset="1" stop-color="#4a2a10"/></linearGradient></defs></svg><div id="home"><nav id="sb"><button class="sbn on" data-pg="battle"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><g transform="translate(24 24) rotate(-45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g><g transform="translate(24 24) rotate(45)"><path d="M0-21L3.4-16V7H-3.4V-16Z" fill="url(#gSt)"/><path d="M0-15.5V5" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><rect x="-9" y="7" width="18" height="3.6" rx="1.8" fill="url(#gGd)"/><rect x="-2.1" y="10.6" width="4.2" height="7.4" rx="1" fill="url(#gRd)"/><circle cy="20.4" r="2.8" fill="url(#gGd)"/></g></g></svg><span>Battle</span></button><button class="sbn" data-pg="friends"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M23 40c.6-8.4 4.4-13 10-13s9.4 4.6 10 13z" fill="url(#gBl)"/><circle cx="33" cy="17.5" r="6.2" fill="url(#gBl)"/><path d="M5 42c.8-10 5.8-15.5 13.5-15.5S31.2 32 32 42z" fill="url(#gGd)"/><circle cx="18.5" cy="17" r="7.6" fill="url(#gGd)"/><path d="M14 14.5c2.5-3 7.5-3 10 0" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.3"/><path d="M11 36.5c2-3.5 5-5 7.5-5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.3"/></g></svg><span>Friends</span></button><button class="sbn" data-pg="shop"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M17 12.5c2.4 1.6 11.6 1.6 14 0l-2.6 5.8h-8.8z" fill="url(#gLe)"/><path d="M19.5 19.5c-8 4.6-12.5 11-11.5 16.5 1 5 7.5 7.5 16 7.5s15-2.5 16-7.5c1-5.5-3.5-11.9-11.5-16.5z" fill="url(#gLe)"/><path d="M13 30c1-3 3-5.5 5.5-7" fill="none" stroke="#f0c48a" stroke-opacity=".6" stroke-width="1.4"/><rect x="18" y="17.4" width="12" height="3.6" rx="1.8" fill="url(#gGd)"/><circle cx="26.5" cy="40" r="5.4" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="7.6" fill="url(#gGd)"/><circle cx="36.5" cy="35.5" r="4.6" fill="none" stroke="#9a5a06" stroke-width="1.2"/><path d="M34 33.5c1-1.4 3.6-1.4 4.6 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1"/></g></svg><span>Shop</span></button><button class="sbn" data-pg="lb"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#1e0f05" stroke-width="4.8" stroke-linecap="round"/><path d="M14 11H8.5c0 6.5 3 10 8 11M34 11h5.5c0 6.5-3 10-8 11" fill="none" stroke="#ffc83a" stroke-width="2.4" stroke-linecap="round"/><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M13 6.5h22v9.5c0 8-4.6 13-11 13S13 24 13 16z" fill="url(#gGd)"/><path d="M21 28.5h6l1.2 6h-8.4z" fill="url(#gGd)"/><rect x="14" y="34.5" width="20" height="4.6" rx="1.4" fill="url(#gWd)"/><rect x="10.5" y="39" width="27" height="4.6" rx="1.4" fill="url(#gWd)"/><path d="M24 10.5l1.8 3.7 4 .5-2.9 2.8.7 4L24 19.6 20.4 21.5l.7-4-2.9-2.8 4-.5z" fill="#fff6c8" stroke="#a86a00" stroke-width="1"/></g><path d="M16 9v6.5c0 3 .8 5.6 2.2 7.4" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.4" stroke-linecap="round"/></svg><span>Leaderboard</span></button><button class="sbn ex" id="exit"><svg class="gi" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#1e0f05" stroke-width="1.5" stroke-linejoin="round"><path d="M8 43V8.5C8 6.6 9.6 5 11.5 5h15C28.4 5 30 6.6 30 8.5V43z" fill="url(#gWd)"/><path d="M15.3 8v35M22.6 8v35" stroke-opacity=".45"/><circle cx="25.5" cy="25" r="1.9" fill="url(#gGd)"/></g><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#1e0f05" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 25h13M37 19.5l5.5 5.5-5.5 5.5" fill="none" stroke="#ffc83a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exit</span></button></nav>
@@ -1538,8 +1554,10 @@ const CARDB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/
 ['attacker','defender','healer','magic','specialist'].forEach(n=>{const i=new Image();i.src=CARDB+n+'.webp'});
 const cHtml=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dfs=n=>Math.max(4.4,Math.min(8.2,Math.sqrt(3900/Math.max(1,n)))).toFixed(2);
+const CICE=(()=>{const c=(t)=>'<svg class="ci '+t+'" viewBox="0 0 60 60" aria-hidden="true"><path d="M0 0H60L52 6 56 12 44 14 48 22 36 22 38 32 28 30 26 42 18 36 12 50 8 40 0 58Z" fill="url(#ciG)" stroke="#f2fdff" stroke-width="1.4" stroke-linejoin="round"/><path d="M6 6L30 10M8 8L14 30M10 10L24 22" stroke="#ffffffcc" stroke-width="1.2" stroke-linecap="round"/><path d="M0 0H60L52 6 56 12 44 14 48 22 36 22 38 32 28 30 26 42 18 36 12 50 8 40 0 58Z" fill="url(#ciS)" class="cis"/></svg>';
+ return '<i class="cice"><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="ciG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6feff" stop-opacity=".97"/><stop offset=".45" stop-color="#b8ecff" stop-opacity=".9"/><stop offset="1" stop-color="#5cb8ea" stop-opacity=".85"/></linearGradient><linearGradient id="ciS" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/></linearGradient></defs></svg>'+c('tl')+c('tr')+c('bl')+c('br')+'<b class="cfz">❄</b></i>'})();
 const cardH=(s,cls,at,o)=>{const b=o&&bufS(s,o),cl=(o&&o.h&&o.h.cl)||'General',d=desc(s,o&&(o.atk*(o.s?pw(o):1)),b,o&&o.h&&o.h.cl!=='General'?o:null),pl=d.replace(/<[^>]*>/g,'').length,nm=String(s.n||''),cs=String(s.c);
- return '<div class="card cl'+cl+cls+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+(s._cb!=null&&+s.c>s._cb?' cup':s._cb!=null&&+s.c<s._cb?' cdn':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw"><span class="cdt">'+d+'</span></small></div>'};
+ return '<div class="card cl'+cl+cls+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+(s._cb!=null&&+s.c>s._cb?' cup':s._cb!=null&&+s.c<s._cb?' cdn':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw"><span class="cdt">'+d+'</span></small>'+(/ fzc/.test(cls)?CICE:'')+'</div>'};
 let P,E,turn,over=1,uid=0,M,tt,busy,L=[],fx=[],hi=[0,1,2,3],pend=null,RL={},GS=[],pcur=null,ppin=0;
 const log=m=>{L.push(m);L=L.slice(-3)},xr=S=>S.h.X&&S.ex>=100&&S.hp>0&&!S.s.stun,ea=S=>Math.round(S.atk*pw(S)),alive=T=>T.u.filter(x=>x.hp>0),
  need=s=>s.dsp?'x':s.rev?'ad':s.ba||s.rel||s.srch||s.chaos||s.bomb||s.tm||s.self?0:s.d?(s.k=='a'?0:'e'):s.ap?'e':s.h||s.sh||s.hm||s.shm||s.me?'a':0,
@@ -1653,8 +1671,8 @@ function tile(S,m,i){const h=S.h,es=ea(S),now=performance.now(),pz=S.pose&&now-S
  tg=nd&&((nd=='e'&&!m&&canHit(S,sp))||(nd=='a'&&m&&S.hp>0)||(nd=='x'&&S.hp>0)||(nd=='ad'&&m&&(S.hp>0||!!sp.rev))),
  chips=Object.keys(S.s).map(k=>'<span class="stc'+(/^(burn|poi)$/.test(k)?' dot':'')+(/^(atk|reg|bol|blk|tnt|bx\d)$/.test(k)?' gd':'')+'" data-st="'+(m?'p':'e')+i+'">'+(SD[k]||['✨'])[0]+'<sub>'+(k=='burn'?(S.bst||1):S.s[k])+'</sub></span>').join(''),
  dl=-(((performance.now()/1000)+i*.7+(m?0:.35))%3.2).toFixed(2);
- return '<div class="unit'+(S.hp<=0?' dead':'')+(S.hp>0&&S.s.burn?' st-burn':'')+(S.hp>0&&S.s.frz?' st-frz':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+'" style="z-index:'+(11+i)+';--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
- '<div class="fw">'+(xr(S)?'<i class="aura"></i>':'')+(S.hp>0?orbH(S):'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+(S.hp<=0?tombH(S,h):(()=>{const fz=figSz(h,m,ps,pf,pz&&pz.k),fh=+((fz.match(/--fh:([\d.]+)/)||[])[1]||.84);return '<span class="fgw" style="'+fz+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s">'+stunH(S,h,m)+(S.s.tnt?tauntH(S,h,m):'')+'</span>'+(S.sh>0?ffH(S,fh,m):'')+(S.s.burn?burnH(S):'')+(S.s.frz?frostH(S,fh):'')})())+'</div><div class="chips">'+chips+'</div>'+
+ return '<div class="unit'+(S.hp<=0?' dead':'')+(S.hp>0&&S.s.burn?' st-burn':'')+(S.hp>0&&S.s.frz?' st-frz':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+'" style="--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+(m&&xr(S)&&turn=='p'&&!over?'<button class="exb" data-x="'+i+'" title="'+h.X.n+'">EX<span>: '+h.X.n+'</span></button>':'')+
+ '<div class="fw" style="z-index:'+(11+i)+'">'+(xr(S)?'<i class="aura"></i>':'')+(S.hp>0?orbH(S):'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+(S.hp<=0?tombH(S,h):(()=>{const fz=figSz(h,m,ps,pf,pz&&pz.k),fh=+((fz.match(/--fh:([\d.]+)/)||[])[1]||.84);return '<span class="fgw" style="'+fz+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s">'+stunH(S,h,m)+(S.s.tnt?tauntH(S,h,m):'')+'</span>'+(S.sh>0?ffH(S,fh,m):'')+(S.s.burn?burnH(S):'')+(S.s.frz?frostH(S,fh):'')})())+'</div><div class="chips">'+chips+'</div>'+
  '<div class="info" style="--c:'+h.col+'">'+evBadge(h.st)+'<div class="nr"><i class="ci">'+(CI[h.cl]||'')+'</i><b class="nm" style="--nl:'+Math.max(6,String(h.bn||h.n).length+(S.r?3:1.5))+'">'+cHtml(h.bn||h.n)+'</b>'+(S.r?'<span class="rlc" title="'+S.r.n+': '+S.r.t+'">'+rIc(S.r)+'</span>':'')+'</div>'+
  hbar(S,sc)+'<div class="xv2"><i style="width:'+S.ex+'%"></i></div></div></div>'}
 /* health bar: green HP, white shield, pulsing red = damage the hero takes at the start of its next turn (burn hits shield first, poison ignores it) */
@@ -1670,23 +1688,26 @@ function orbH(S){let o='';const b=k=>'<b style="--i:0">'+FXA[k]+'</b><b style="-
 const tNow=()=>'-'+(performance.now()/1000).toFixed(3)+'s',fxE=(S,k)=>-(Math.min(4000,performance.now()-((S.fxT&&S.fxT[k])||0))/1000).toFixed(3)+'s';
 /* stun: golden stars circling a tilted halo above the head */
 function stunH(S,h,m){if(!S.s.stun||S.hp<=0)return '';const f=h.face||{},x=+f.x||.5,y=+f.y||.1,z=+f.z||5,hf=.5/z,ar=+h.ar||.55,w=Math.min(100,Math.max(42,hf*2.3/ar*100));
- return '<i class="stn2" style="left:'+((m?x:1-x)*100).toFixed(1)+'%;top:'+Math.max(-6,(y-hf*.62)*100).toFixed(1)+'%;width:'+w.toFixed(1)+'%;--t:'+tNow()+';--e:'+fxE(S,'stun')+'"><i class="hal"></i><i class="orb2">'+[0,1,2].map(i=>'<b style="--i:'+i+'">'+FXA.star+'</b>').join('')+'<b class="sp" style="--i:.5"></b><b class="sp" style="--i:1.5"></b><b class="sp" style="--i:2.5"></b></i></i>'}
+ return '<i class="stn2" style="left:'+((m?x:1-x)*100).toFixed(1)+'%;top:'+Math.max(-9,(y-hf*.9)*100).toFixed(1)+'%;width:'+w.toFixed(1)+'%;--t:'+tNow()+';--e:'+fxE(S,'stun')+'"><i class="hal"></i><i class="orb2">'+[0,1,2].map(i=>'<b style="--i:'+i+'">'+FXA.star+'</b>').join('')+'<b class="sp" style="--i:.5"></b><b class="sp" style="--i:1.5"></b><b class="sp" style="--i:2.5"></b></i></i>'}
 /* burn: flames + embers licking the feet */
 /* shield: a see-through honeycomb force field around the hero, with a faint shield crest */
-const FFS='<svg viewBox="0 0 70 150" preserveAspectRatio="none" aria-hidden="true"><defs>'+
- '<linearGradient id="fbG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a7cff" stop-opacity="0"/><stop offset=".55" stop-color="#3a8cff" stop-opacity=".35"/><stop offset=".86" stop-color="#28c8ff" stop-opacity=".85"/><stop offset="1" stop-color="#e8fbff"/></linearGradient>'+
- '<linearGradient id="fbH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6fb8ff" stop-opacity="0"/><stop offset="1" stop-color="#9fd6ff" stop-opacity=".28"/></linearGradient>'+
- '<radialGradient id="fbF"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#e6f8ff" stop-opacity=".9"/><stop offset="1" stop-color="#7fd4ff" stop-opacity="0"/></radialGradient>'+
- '<clipPath id="fbC"><path d="M10 4C46 20 64 48 64 75S46 130 10 146C36 124 48 100 48 75S36 26 10 4z"/></clipPath></defs>'+
- '<path class="hz" d="M4 2C44 18 66 48 66 75S44 132 4 148C18 120 26 100 26 75S18 30 4 2z" fill="url(#fbH)"/>'+
- '<path d="M10 4C46 20 64 48 64 75S46 130 10 146C36 124 48 100 48 75S36 26 10 4z" fill="url(#fbG)"/>'+
- '<g clip-path="url(#fbC)"><rect class="sw" x="0" y="-40" width="70" height="34" fill="#fff" opacity=".55"/></g>'+
- '<path d="M10 4C46 20 64 48 64 75S46 130 10 146" fill="none" stroke="#f2fdff" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'+
- '<g class="fl"><circle cx="50" cy="32" r="16" fill="url(#fbF)"/><path d="M50 18v28M36 32h28" stroke="#fff" stroke-width=".9" stroke-linecap="round" vector-effect="non-scaling-stroke" opacity=".9"/><circle cx="58" cy="52" r="1.6" fill="#fff"/><circle cx="61" cy="60" r="1" fill="#fff"/></g></svg>';
+/* shield: the front rim of a glowing energy sphere centred on the hero (side view), like a barrier facing the enemy */
+const FFS='<svg viewBox="0 0 100 160" preserveAspectRatio="none" aria-hidden="true"><defs>'+
+ '<radialGradient id="sbR" cx="22" cy="80" r="76" gradientUnits="userSpaceOnUse"><stop offset=".62" stop-color="#2f6bff" stop-opacity="0"/><stop offset=".8" stop-color="#3b7dff" stop-opacity=".28"/><stop offset=".92" stop-color="#2fb8ff" stop-opacity=".75"/><stop offset=".975" stop-color="#9ff0ff"/><stop offset="1" stop-color="#ffffff"/></radialGradient>'+
+ '<linearGradient id="sbM" x1="0" y1="0" x2="1" y2="0"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#fff" stop-opacity=".75"/><stop offset=".8" stop-color="#fff"/></linearGradient>'+
+ '<mask id="sbK" maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="180"><rect x="-10" y="-10" width="120" height="180" fill="url(#sbM)"/></mask>'+
+ '<radialGradient id="sbF"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="#eafaff" stop-opacity=".9"/><stop offset="1" stop-color="#8fe0ff" stop-opacity="0"/></radialGradient>'+
+ '<filter id="sbB" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs>'+
+ '<g mask="url(#sbK)"><ellipse class="au" cx="22" cy="80" rx="77" ry="77" fill="none" stroke="#5fd2ff" stroke-width="7" filter="url(#sbB)" opacity=".7"/>'+
+ '<ellipse cx="22" cy="80" rx="76" ry="76" fill="url(#sbR)"/>'+
+ '<ellipse cx="22" cy="80" rx="75.4" ry="75.4" fill="none" stroke="#f4feff" stroke-width="1.4" vector-effect="non-scaling-stroke"/>'+
+ '<ellipse class="rn" cx="22" cy="80" rx="75.4" ry="75.4" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" pathLength="100" stroke-dasharray="7 93" vector-effect="non-scaling-stroke" filter="url(#sbB)"/></g>'+
+ '<g class="fl"><circle cx="70" cy="22" r="17" fill="url(#sbF)"/><path d="M70 6v32M54 22h32M60 12l20 20M80 12L60 32" stroke="#fff" stroke-width=".8" stroke-linecap="round" vector-effect="non-scaling-stroke" opacity=".85"/></g>'+
+ '<circle class="sp1" cx="90" cy="64" r="1.6" fill="#fff"/><circle class="sp2" cx="94" cy="98" r="1.2" fill="#fff"/></svg>';
 function ffH(S,fh,m){return '<i class="ffd'+(m?'':' fo')+'" style="--fh:'+fh+';--t:'+tNow()+';--e:'+fxE(S,'shd')+'">'+FFS+'</i>'}
 const TSC=["M30.0 24.0 C49.1 8.6 42.2 19.2 31.5 15.6 C12.2 21.6 14.2 9.3 18.8 24.2 C17.4 14.0 47.6 40.1 36.4 31.8 C68.6 7.7 61.5 16.4 43.7 21.5 C28.5 35.4 20.8 26.9 22.9 14.8 C42.9 8.3 13.6 13.4 46.7 20.9 C28.8 27.1 37.2 16.8 48.7 22.3 C24.6 26.7 41.5 37.5 54.1 28.8 C68.8 10.3 35.1 33.3 51.0 18.9 C12.4 30.1 55.9 26.6 23.3 23.7 C51.7 27.4 44.8 22.4 58.0 19.5", "M30.0 24.0 C38.4 29.9 13.6 31.3 56.3 34.7 C59.3 16.2 33.1 30.1 47.1 35.8 C20.1 10.2 13.5 33.7 17.1 23.1 C33.5 37.4 14.8 22.2 22.2 17.9 C59.2 37.1 26.7 21.0 42.4 33.2 C67.5 11.4 20.6 14.4 33.2 33.2 C45.3 15.5 10.2 21.1 27.2 23.6 C67.2 30.9 40.9 28.2 33.7 25.6 C64.0 34.1 62.5 34.7 48.5 13.3 C16.2 28.8 13.7 8.4 34.8 21.6 C30.4 7.9 10.0 11.4 26.0 15.9", "M30.0 24.0 C11.5 37.5 46.8 11.3 20.9 20.7 C31.8 10.4 60.9 41.8 28.1 20.3 C15.2 9.7 30.6 15.5 38.4 23.6 C11.4 40.2 41.7 11.3 55.8 15.9 C41.7 41.2 61.8 31.1 42.1 12.6 C20.0 33.8 42.0 34.0 28.5 20.8 C58.7 41.5 61.2 35.0 31.8 17.4 C23.6 24.6 31.3 7.0 55.3 29.8 C25.6 30.9 67.4 22.1 17.3 18.7 C67.3 19.1 23.2 14.2 61.0 35.7 C47.4 38.4 60.4 23.3 25.4 16.9", "M30.0 24.0 C15.1 29.8 64.6 34.2 47.3 31.2 C20.7 34.4 30.0 34.8 52.0 23.5 C34.1 40.1 53.5 12.1 62.6 21.5 C64.3 35.0 18.8 35.8 22.1 15.6 C31.0 25.8 17.9 6.5 63.1 27.8 C41.6 39.6 36.0 37.4 62.6 27.6 C25.1 16.5 24.4 27.1 55.7 17.1 C17.9 38.8 31.2 22.5 28.4 22.1 C35.2 39.0 40.1 25.1 44.0 33.7 C36.4 12.6 10.2 34.8 41.1 12.4 C53.5 26.0 29.6 24.7 24.3 23.4"];
 function tauntH(S,h,m){const f=h.face||{},x=+f.x||.5,y=+f.y||.1,z=+f.z||5,hf=.5/z,ar=+h.ar||.55,w=Math.min(230,Math.max(120,hf*6.5/ar*100));
- const pos=[[44,-8,52],[66,22,46],[20,-20,48],[74,-14,42]];
+ const pos=[[58,-14,62]];
  return '<i class="tnt'+(m?'':' fo')+'" style="left:'+((m?x:1-x)*100).toFixed(1)+'%;top:'+((y-hf*.2)*100).toFixed(1)+'%;width:'+w.toFixed(1)+'%;--t:'+tNow()+'">'+pos.map(([px,py,pw],i)=>'<i class="bb" style="--i:'+i+';--x:'+px+'%;--y:'+py+'%;--w:'+pw+'%"><svg viewBox="0 0 80 60"><path d="'+'M4 4L74 2L77 40L36 43L22 56L25 43L3 41Z'+'" fill="#fff8ec" stroke="#3a1a08" stroke-width="3" stroke-linejoin="miter"/><path d="'+'M4 4L74 2L77 40L36 43L22 56L25 43L3 41Z'+'" fill="none" stroke="#ffd9a8" stroke-width="1" transform="translate(1.5 1.5) scale(.96)" opacity=".7"/><g class="sc"><path d="'+TSC[i]+'" fill="none" stroke="#c81e1e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="'+TSC[(i+1)%4]+'" fill="none" stroke="#1d1410" stroke-width="1.6" stroke-linecap="round" transform="translate(4 2) scale(.9)"/></g></svg></i>').join('')+'</i>'}
 /* burn: one big living flame at the feet, with a white-hot core, ground glow and a few sparks */
 const FLM='<svg class="flm" viewBox="0 0 100 140" aria-hidden="true"><defs><radialGradient id="flO" cx="50%" cy="80%" r="75%"><stop offset="0" stop-color="#ffb02e"/><stop offset=".55" stop-color="#ff5a12"/><stop offset="1" stop-color="#c81e06"/></radialGradient><radialGradient id="flM" cx="50%" cy="78%" r="70%"><stop offset="0" stop-color="#ffe680"/><stop offset=".6" stop-color="#ffa21f"/><stop offset="1" stop-color="#ff6a12"/></radialGradient><radialGradient id="flC" cx="50%" cy="75%" r="65%"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff6c4"/><stop offset="1" stop-color="#ffd84a"/></radialGradient></defs>'+
@@ -1772,7 +1793,7 @@ function ui(){if(!P)return;P.u.concat(E.u).forEach(u=>{if(u.hp<=0&&(u.sh||Object
  $('#pi').innerHTML=avH(PROF,'calc(var(--foot)*.3)')+'<b>'+esc(myName())+'</b>';
  $('#dk').innerHTML=(P.fat?'<span class="fatb" title="Fatigue: skill and general cards cost +'+P.fat+' this turn">😩 +'+P.fat+'</span>':'')+'<span>📕 '+P.deck.length+'</span><span'+(P.hand.length>10?' class="over" title="Over the 10-card limit: extra cards are discarded when you end your turn">✋ '+P.hand.length+'/10':'>✋ '+P.hand.length)+'</span>'+bmb(P);
  {const hd=$('#hand'),n=P.hand.length,hh=hd.clientHeight||150,W=hd.clientWidth||600,cw=Math.max(44,Math.round(Math.min(hh*.8,W/(1+Math.max(0,n-1)*.5)))),step=n>1?Math.min(cw*.8,(W-cw)/(n-1)):0;hd.style.setProperty('--cw',cw+'px');
-  hd.innerHTML=P.hand.map((c,i)=>{const k=i-(n-1)/2,pl=turn=='p'&&!busy&&ok(P,c),bf=bufC(c),cc=costOf(P,c);return cardH({...spOf(c),c:cc,_cb:+c.s.c||0},(pend&&pend.c===c)?' sel':pl?(bf?' rdy buf':' rdy'):' off','data-u="'+c.u+'" style="--x:'+(k*step).toFixed(1)+'px;--r:'+(k*Math.min(4.5,34/n)).toFixed(1)+'deg;--y:'+(k*k*cw*.012).toFixed(1)+'px;--z:'+(i+1)+'"',c.o)}).join('')}
+  hd.innerHTML=P.hand.map((c,i)=>{const k=i-(n-1)/2,pl=turn=='p'&&!busy&&ok(P,c),bf=bufC(c),cc=costOf(P,c);return cardH({...spOf(c),c:cc,_cb:+c.s.c||0},((pend&&pend.c===c)?' sel':pl?(bf?' rdy buf':' rdy'):' off')+(c.s.ba&&c.o.s.frz&&c.o.hp>0?' fzc':''),'data-u="'+c.u+'" style="--x:'+(k*step).toFixed(1)+'px;--r:'+(k*Math.min(4.5,34/n)).toFixed(1)+'deg;--y:'+(k*k*cw*.012).toFixed(1)+'px;--z:'+(i+1)+'"',c.o)}).join('')}
  if(uiId){const T=uiId[0]=='p'?P:E,S=T.u[+uiId.slice(1)];if(S)$('#uinf').innerHTML=uinfH(T,S)}
  const hn=hintTxt(),hi2=$('#hint');hi2.textContent=hn;hi2.hidden=!hn;
  {const xd=$('#exd'),O=pend&&pend.o;if(O&&O.h.X){const X=O.h.X;if(xd.dataset.k!==O.h.id){xd.dataset.k=O.h.id;
@@ -2029,7 +2050,7 @@ const figSz=(h,m,ps,pf,pk)=>{const src=ps||h.img;calcFt(src);if(ps)calcFt(h.img)
  let fh=fB&&HMED?HMED/headH(h.img,fB):.84;fh=Math.min(1.16,Math.max(.62,fh));
  /* attack / EX pose: its face goes on the same head line, but only when the pose's face looks believable (else same height as the portrait); admin Pose size scales on top */
  if(ps){const ok=pf&&+pf.z>0&&pf.auto!==0&&+pf.y>.02&&+pf.y<.5&&(!fB||(+pf.z/+fB.z>.55&&+pf.z/+fB.z<1.8));
-  if(ok&&HMED){const r=(HMED/headH(ps,pf))/fh;fh*=Math.min(1.3,Math.max(.85,r))}const pb=+h[(pk||'atk')+'Bs'];if(pb)fh*=pb/100}
+  if(ok&&HMED){const r=(HMED/headH(ps,pf))/fh,rz=fB?(+pf.z)/(+fB.z):r,ag=r/rz;fh*=(ag>.84&&ag<1.19)?Math.min(1.3,Math.max(.85,r)):Math.min(1,Math.max(.85,Math.min(r,rz)))}const pb=+h[(pk||'atk')+'Bs'];if(pb)fh*=pb/100}
  fh*=((+h.bs||100)/100);
  return '--fh:'+fh.toFixed(3)+';--tx:'+(-(m?ft:1-ft)*100).toFixed(1)+'%'};
 
