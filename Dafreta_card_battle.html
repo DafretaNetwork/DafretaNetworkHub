@@ -1200,10 +1200,10 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 .tce .tcg{position:absolute;inset:0;height:100%;animation:tcge 2.4s ease-in-out infinite}
 @keyframes tcge{0%,100%{filter:drop-shadow(0 0 1px #fff6c8) drop-shadow(0 0 2px #ffc83a) drop-shadow(0 0 0 #ffb30000)}50%{filter:drop-shadow(0 0 1.5px #fffbe6) drop-shadow(0 0 4px #ffd24a) drop-shadow(0 0 9px #ffb300)}}
 .tcbs,.tcgs{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;background-repeat:no-repeat;background-size:300% 100%;background-position:100% 0}
-.tcbs{-webkit-mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png') center/100% 100% no-repeat;mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png') center/100% 100% no-repeat;background-image:linear-gradient(110deg,transparent 40%,#fff2c0aa 48%,#ffffffee 50%,#fff2c0aa 52%,transparent 60%);animation:tcsh 3.2s ease-in-out infinite}
-.tcgs{-webkit-mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;background-image:linear-gradient(110deg,transparent 38%,#ffffff 50%,transparent 62%);animation:tcsh 3.2s ease-in-out .45s infinite}
+.tcbs{-webkit-mask:var(--tcbm,url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png')) center/100% 100% no-repeat;mask:var(--tcbm,url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png')) center/100% 100% no-repeat;background-image:linear-gradient(110deg,transparent 40%,#fff2c0aa 48%,#ffffffee 50%,#fff2c0aa 52%,transparent 60%);animation:tcsh 3.2s ease-in-out infinite}
+.tcgs{-webkit-mask:var(--tcgm,url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png')) center/100% 100% no-repeat;mask:var(--tcgm,url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png')) center/100% 100% no-repeat;background-image:linear-gradient(110deg,transparent 38%,#ffffff 50%,transparent 62%);animation:tcsh 3.2s ease-in-out .45s infinite}
 @keyframes tcsh{0%{background-position:100% 0}50%,100%{background-position:0 0}}
-.tcgl{position:absolute;inset:0;pointer-events:none;-webkit-mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;mask:url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png') center/100% 100% no-repeat;}
+.tcgl{position:absolute;inset:0;pointer-events:none;-webkit-mask:var(--tcgm,url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png')) center/100% 100% no-repeat;mask:var(--tcgm,url('https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png')) center/100% 100% no-repeat;}
 .tcsp{position:absolute;left:var(--tl,0%);top:var(--tt,0%);width:var(--tw2,100%);height:var(--th2,100%);pointer-events:none}
 .tcgl i,.tcsp i{position:absolute;aspect-ratio:1;translate:-50% -50%;background:radial-gradient(circle,#fff 0 22%,#fff6c8 58%);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);opacity:0;animation:tctw 1.9s ease-in-out infinite}
 .tcgl i{width:11%}
@@ -1414,10 +1414,10 @@ body.sel #bat .tch{bottom:6%}
 body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brightness(.5)!important}
 
 /* ===================== hero collection grid: smooth on phones ===================== */
-.cg .ct{contain:layout paint}
 .cg .tce{filter:none}
 .cg .tce .tcg{animation:none;filter:drop-shadow(0 0 2px #ffd24a)}
-.cg .tcbs,.cg .tcgs{animation:none;opacity:0}
+#menu .tcbs,#menu .tcgs,#menu .tcgl{display:none}
+#menu .tce{filter:none}#menu .tce .tcg{animation:none;filter:drop-shadow(0 0 2px #ffd24a)}
 .cg .tc .hf::after{mix-blend-mode:normal;opacity:.7;inset:0 auto 0 0;width:300%;background-size:100% 100%;animation:cgsh 3.2s ease-in-out infinite}
 @keyframes cgsh{0%{transform:translateX(-66.66%)}50%,100%{transform:translateX(0)}}
 </style></head><body>
@@ -2046,15 +2046,19 @@ function validLU(l){const ids=((l&&l.h)||[]).map(hidx);if(ids.length!=4||ids.som
 /* level badge + Transcendent emblem (base and gem share one canvas, so they always line up) */
 const lvH=l=>'<span class="lvx"><small>LEVEL</small><b>'+l+'</b></span>';
 const TCB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20Gem%20Emblem.png',TCG='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png';
-const tcEmb=()=>'<span class="tce" aria-label="Transcendent"><img class="tcb" src="'+TCB+'" alt="" referrerpolicy="no-referrer"><i class="tcbs"></i><span class="tcsp"><i></i><i></i><i></i></span><img class="tcg" src="'+TCG+'" alt="" referrerpolicy="no-referrer"><i class="tcgs"></i><span class="tcgl"><i></i><i></i><i></i><i></i><i></i></span></span>';
+let TCBs=TCB,TCGs=TCG;
+const tcEmb=()=>'<span class="tce" aria-label="Transcendent"><img class="tcb" src="'+TCBs+'" alt="" referrerpolicy="no-referrer"><i class="tcbs"></i><span class="tcsp"><i></i><i></i><i></i></span><img class="tcg" src="'+TCGs+'" alt="" referrerpolicy="no-referrer"><i class="tcgs"></i><span class="tcgl"><i></i><i></i><i></i><i></i><i></i></span></span>';
 /* measure the emblem's visible area once, so it sits centred on the tile edge at the right size whatever padding the PNG has */
 (function(){const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const W=240,H=Math.max(1,Math.round(W*im.naturalHeight/im.naturalWidth)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(im,0,0,W,H);const d=x.getImageData(0,0,W,H).data;let x0=W,x1=-1,y0=H,y1=-1;
  for(let y=0;y<H;y++)for(let k=0;k<W;k++)if(d[(y*W+k)*4+3]>40){if(k<x0)x0=k;if(k>x1)x1=k;if(y<y0)y0=y;if(y>y1)y1=y}if(x1<0)return;
  const r=document.documentElement.style,p=v=>(v*100).toFixed(2)+'%';r.setProperty('--tcs',(W/(x1-x0+1)).toFixed(3));r.setProperty('--tcx',((x0+x1+1)/2/W-.5).toFixed(4));r.setProperty('--tcc',((y0+y1+1)/2/H).toFixed(4));
  r.setProperty('--tl',p(x0/W));r.setProperty('--tt',p(y0/H));r.setProperty('--tw2',p((x1-x0+1)/W));r.setProperty('--th2',p((y1-y0+1)/H))}catch(e){}};im.src=TCB})();
+/* small copies of the emblem art (the originals are very large; dozens of them on one screen ran phones out of graphics memory) */
+[[TCB,u=>{TCBs=u;document.documentElement.style.setProperty('--tcbm','url("'+u+'")');document.querySelectorAll('img.tcb').forEach(e=>e.src=u)}],[TCG,u=>{TCGs=u;document.documentElement.style.setProperty('--tcgm','url("'+u+'")');document.querySelectorAll('img.tcg').forEach(e=>e.src=u)}]].forEach(([src,done])=>{const im=new Image();im.crossOrigin='anonymous';
+ im.onload=()=>{try{const W=320,H=Math.max(1,Math.round(W*im.naturalHeight/im.naturalWidth));if(im.naturalWidth<=W*1.2)return;const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(im,0,0,W,H);done(c.toDataURL('image/png'))}catch(e){}};im.src=src});
 function deckHTML(l,edit){
  const hsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em"'+(edit?' data-slot="'+j+'"':' data-go="1" title="Add a hero"')+'><i class="pls"></i></div>';const x=evH(HD[i]),s=hs(HD[i]),tc=s.ev>=4;
-  return '<div class="dh'+(tc?' tc':'')+(edit&&rt===i?' sel':'')+'" style="--c:'+x.col+'"'+(edit?' data-dh="'+i+'" data-j="'+j+'"':'')+' title="'+esc(x.n)+'"><div class="zf hf">'+faceImg(x)+'</div>'+lvH(s.lv)+(tc?tcEmb():s.ev?'<span class="stb">'+STG[s.ev]+'</span>':'')+(j===0?'<em class="frt">Front</em>':'')+'</div>'};
+  return '<div class="dh'+(tc?' tc':'')+(edit&&rt===i?' sel':'')+'" style="--c:'+x.col+'"'+(edit?' data-dh="'+i+'" data-j="'+j+'"':'')+' title="'+esc(x.n)+'"><div class="zf hf">'+faceImgT(x)+'</div>'+lvH(s.lv)+(tc?tcEmb():s.ev?'<span class="stb">'+STG[s.ev]+'</span>':'')+(j===0?'<em class="frt">Front</em>':'')+'</div>'};
  const rsl=(k,j)=>{const i=k==null?-1:hidx(k);if(i<0)return '<div class="em dim"></div>';const r=REL.find(q=>q.id===(l.r||{})[k]);return r?'<div class="dr'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+' title="'+esc(r.n)+'">'+rIc(r)+'<small>'+esc(r.n)+'</small></div>':'<div class="em rl'+(edit&&rt===i?' sel':'')+'"'+(edit?' data-dr="'+i+'"':'')+'>'+(edit?'<i class="pls"></i>':'')+'</div>'};
  const gsl=n=>{const g=GEN.find(x=>x.id===(l.g||[])[n]);return g?'<div class="dg"'+(edit?' data-dg="'+n+'"':'')+' title="'+esc(g.s.n)+'"><i>'+art(g.s)+'</i><small>'+esc(g.s.n)+'</small></div>':(n<needGen()||edit&&n<2&&GEN.length>n?'<div class="em cdb"'+(edit?' data-dg="'+n+'"':'')+'>'+(edit?'<i class="pls"></i>':'')+'</div>':'<div class="em dim"></div>')};
  const hh=[0,1,2,3].map(j=>(l.h||[])[j]);
@@ -2215,7 +2219,7 @@ function toggleDeck(i){const h=HD[i];if(!owned(h)){toast('Unlock this hero first
 const THB={},THK={};let thN=0;
 function thSrc(src){if(!src)return src;const v=THB[src];if(v)return v===1?src:v;THB[src]=1;THK[src]=THK[src]||++thN;const im=new Image();if(!/^data:/.test(src))im.crossOrigin='anonymous';
  im.onload=()=>{try{const H=720;if(im.naturalHeight<=H*1.2){THB[src]=src;return}const W=Math.max(1,Math.round(im.naturalWidth*H/im.naturalHeight)),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(im,0,0,W,H);
-  let u=c.toDataURL('image/webp',.88);if(!/^data:image\/webp/.test(u))u=c.toDataURL('image/png');THB[src]=u;document.querySelectorAll('.cg img[data-tk="'+THK[src]+'"]').forEach(e=>{e.src=u})}catch(e){THB[src]=src}};
+  let u=c.toDataURL('image/webp',.88);if(!/^data:image\/webp/.test(u))u=c.toDataURL('image/png');THB[src]=u;document.querySelectorAll('img[data-tk="'+THK[src]+'"]').forEach(e=>{e.src=u})}catch(e){THB[src]=src}};
  im.onerror=()=>{THB[src]=src};im.src=src;return src}
 const faceImgT=x=>{const u=thSrc(x.img),k=THK[x.img]||0;return x.face?'<img class="fz" src="'+u+'" data-tk="'+k+'" alt="" decoding="async" referrerpolicy="no-referrer" style="--fx:'+x.face.x+';--fy:'+x.face.y+';--z:'+x.face.z+'">':'<img src="'+u+'" data-tk="'+k+'" alt="" decoding="async" referrerpolicy="no-referrer">'};
 function heroTile(i){const b=HD[i],x=evH(b),s=hs(b),own=owned(b),fr=PD.fr[hk(b)]||0,tc=own&&s.ev>=4;
