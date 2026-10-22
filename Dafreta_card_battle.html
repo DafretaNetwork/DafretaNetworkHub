@@ -1950,7 +1950,7 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .rigs{z-index:8}.rigl{z-index:9}.rigv{z-index:10}
 body.sel .sdim{z-index:7!important}
 body.sel #bat .unit:not(.tg) .fw{filter:brightness(.45) saturate(.7)}
-body.sel #bat .unit.tg .fw{z-index:calc(25 - var(--li,0))!important}
+body.sel #bat .unit.tg .fw{z-index:calc(25 + var(--li,0))!important}
 #hand.zm .card:not(.zh){pointer-events:none}
 </style>
 </head><body>
@@ -2244,7 +2244,7 @@ function tile(S,m,i){const h=S.h,es=ea(S),now=performance.now(),pz=S.pose&&now-S
  chips=Object.keys(S.s).map(k=>'<span class="stc'+(/^(burn|poi)$/.test(k)?' dot':'')+(/^(atk|reg|bol|blk|tnt|bx\d)$/.test(k)?' gd':'')+'" data-st="'+(m?'p':'e')+i+'">'+(SD[k]||['✨'])[0]+'<sub>'+(k=='burn'?(S.bst||1):S.s[k])+'</sub></span>').join(''),
  dl=-(((performance.now()/1000)+i*.7+(m?0:.35))%3.2).toFixed(2);
  return '<div class="unit'+(S.hp<=0?' dead':'')+(S.hp>0&&S.s.burn?' st-burn':'')+(S.hp>0&&S.s.frz?' st-frz':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+(S.hp>0&&inB&&rigModel(h)?' rig':'')+'" style="--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+
- '<div class="fw" style="z-index:'+(14-i)+';--li:'+i+'">'+(xr(S)?'<i class="aura"></i>':'')+(S.hp>0?orbH(S):'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+(S.hp<=0?tombH(S,h):(()=>{const fz=figSz(h,m,ps,pf,pz&&pz.k),fh=+((fz.match(/--fh:([\d.]+)/)||[])[1]||.84);return '<span class="fgw" style="'+fz+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s">'+stunH(S,h,m)+(S.s.tnt?tauntH(S,h,m):'')+'</span>'+(S.sh>0?ffH(S,fh,m):'')+(S.s.burn?burnH(S):'')+(S.s.frz?frostH(S,fh):'')})())+'</div><div class="chips">'+chips+'</div>'+
+ '<div class="fw" style="z-index:'+(11+i)+';--li:'+i+'">'+(xr(S)?'<i class="aura"></i>':'')+(S.hp>0?orbH(S):'')+(tg?'<i class="rg"></i><span class="tch">Touch!</span>':'')+(S.hp<=0?tombH(S,h):(()=>{const fz=figSz(h,m,ps,pf,pz&&pz.k),fh=+((fz.match(/--fh:([\d.]+)/)||[])[1]||.84);return '<span class="fgw" style="'+fz+'"><img class="fig" src="'+(ps||h.img)+'" alt="'+cHtml(h.n)+'" referrerpolicy="no-referrer" style="--dl:'+dl+'s">'+stunH(S,h,m)+(S.s.tnt?tauntH(S,h,m):'')+'</span>'+(S.sh>0?ffH(S,fh,m):'')+(S.s.burn?burnH(S):'')+(S.s.frz?frostH(S,fh):'')})())+'</div><div class="chips">'+chips+'</div>'+
  '<div class="info" style="--c:'+h.col+'">'+evBadge(h.st)+'<div class="nr"><i class="ci">'+(CI[h.cl]||'')+'</i><b class="nm" style="--nl:'+Math.max(6,String(h.bn||h.n).length+(S.r?3:1.5))+'">'+cHtml(h.bn||h.n)+'</b>'+(S.r?'<span class="rlc" title="'+S.r.n+': '+S.r.t+'">'+rIc(S.r)+'</span>':'')+'</div>'+
  hbar(S,sc)+'<div class="xv2'+(S.ex>=100?' full':'')+'"><i style="width:'+S.ex+'%"></i></div>'+(m&&xr(S)&&turn=='p'&&!over&&!busy?'<button class="exb xbtn" data-x="'+i+'" title="'+cHtml(h.X.n)+'"><i></i><b>EX</b></button>':'')+'</div></div>'}
 /* health bar: green HP, white shield, pulsing red = damage the hero takes at the start of its next turn (burn hits shield first, poison ignores it) */
@@ -2632,7 +2632,8 @@ function rigPre(S,k,tg){const p=posOf(S);if(!p)return;const c=DRIG.CLIPS[k],a=RG
  if(RGRP[k]==='b'&&k!=='shoot'&&k!=='volley')vAura(S,Math.min(900,c.d),'#ffe08a')}
 /* a projectile leaves now and lands at the matching hit */
 function rigFire(S,a,fi){const c=DRIG.CLIPS[a.k],[ft,hi]=c.fire[fi],me=posOf(S);if(!me)return;const col=elc(a),k=a.k,grp=RGRP[k];
- const from=(grp==='b'&&fi%2===1&&S._tip2)?S._tip2:S._tip||{x:me.x+(me.foe?-1:1)*me.w*.3,y:me.y-me.h*.1};
+ /* shots and spells leave from the chest (or from the traced weapon, once the admin has traced it) */
+ const from=(S._wp&&(grp==='b'&&fi%2===1&&S._tip2?S._tip2:S._tip))||S._chest||{x:me.x+(me.foe?-1:1)*me.w*.2,y:me.top+me.h*.35};
  const dur=k=>Math.max(60,c.hit[k][0]-ft);
  if(k==='rain'){a.tg.forEach((x,j)=>{const q=posOf(x);if(!q)return;const hj=Math.min(c.hit.length-1,j);vArc(from,{x:q.x,y:q.y},col,dur(hj),q.h*1.2)});vSparks(from.x,from.y,10,col,4);return}
  if(k==='storm'){a.tg.forEach(x=>{const q=posOf(x);if(q)vCloud(q,col,dur(Math.min(c.hit.length-1,a.tg.indexOf(x))))});return}
@@ -2685,7 +2686,7 @@ function rigFrame(now){RG.raf=0;if(!inB||!P){RG.acts.clear();RG.parts.length=0;R
  const dpr=Math.min(2,window.devicePixelRatio||1),W=cam.offsetWidth,H=cam.offsetHeight;[RG.cv,RG.gv,RG.sv].forEach(c=>{if(c.width!==Math.round(W*dpr)||c.height!==Math.round(H*dpr)){c.width=Math.round(W*dpr);c.height=Math.round(H*dpr)}});
  const g=RG.gv.getContext('2d'),s=RG.sv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);s.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);s.clearRect(0,0,W,H);
  RG.R.begin();const sel=document.body.classList.contains('sel'),zp=$('#stage').classList.contains('zp');let alive2=0;
- [[P,'p'],[E,'e']].forEach(([T,sd])=>T.u.map((S,i)=>[S,i]).reverse().forEach(([S,i])=>{if(S.hp<=0)return;const md=rigModel(S.h);const el=$('#u'+sd+i);if(!md||!el)return;el.classList.add('rig');const img=el.querySelector('img.fig');if(!img)return;alive2++;
+ [[P,'p'],[E,'e']].forEach(([T,sd])=>T.u.map((S,i)=>[S,i]).forEach(([S,i])=>{if(S.hp<=0)return;const md=rigModel(S.h);const el=$('#u'+sd+i);if(!md||!el)return;el.classList.add('rig');const img=el.querySelector('img.fig');if(!img)return;alive2++;
   const bx=camBox(img,cam),o={x:bx.x,y:bx.y},h=bx.h||1,w=bx.w,foe=sd==='e';if(!RG.ph.has(S))RG.ph.set(S,Math.random()*6);
   let a=RG.acts.get(S);const c=a&&DRIG.CLIPS[a.k];if(a&&(!c||vt-a.t>c.d)){RG.acts.delete(S);a=null}
   const p=DRIG.pose(md,vt,a,RG.ph.get(S));
@@ -2705,7 +2706,7 @@ function rigFrame(now){RG.raf=0;if(!inB||!P){RG.acts.clear();RG.parts.length=0;R
   const dim=sel&&!el.classList.contains('tg')?.42:(zp?foe:!foe)?.8:1;
   {const op={glow:p.glow||0,glowC:a&&a.ex||a&&a.k==='charge'?[1,.8,.25]:a&&RGRP[a.k]==='w'?[.75,.55,1]:a&&RGRP[a.k]==='p'?[1,.95,.6]:a&&(a.k==='cast'||a.k==='guard')?[.6,.85,1]:[1,.95,.75],glowR:(2+(p.glow||0)*2.5)*dpr,flash:Math.min(1,p.flash||0),tint:[dim,dim,dim]};LY.forEach(l=>RG.R.draw(l.mesh,l.img,l.v,tr,op))}
   /* weapon trail ribbon */
-  const tip=toC(DRIG.ptAt(mats,'wp',md.rig.j.wT,md.ar)),hand=toC(DRIG.ptAt(mats,'faF',md.rig.j.hF,md.ar));S._tip=tip;S._tip2=toC(DRIG.ptAt(mats,'faB',md.rig.j.hB,md.ar));let tl=RG.trails.get(S);if(!tl){tl=[];RG.trails.set(S,tl)}
+  const tip=toC(DRIG.ptAt(mats,'wp',md.rig.j.wT,md.ar)),hand=toC(DRIG.ptAt(mats,'faF',md.rig.j.hF,md.ar));S._tip=tip;S._tip2=toC(DRIG.ptAt(mats,'faB',md.rig.j.hB,md.ar));{const ch=toC(DRIG.ptAt(mats,'chest',md.rig.j.chest,md.ar));S._chest=ch&&{x:ch.x+(foe?-1:1)*w*.18,y:ch.y};S._wp=!!(md.rig.parts&&md.rig.parts.wp)}let tl=RG.trails.get(S);if(!tl){tl=[];RG.trails.set(S,tl)}
   if((p.trail||0)>.5&&tip&&hand)tl.push({a:tip,b:hand,t:vt});while(tl.length&&vt-tl[0].t>150)tl.shift();if(tl.length>1)vTrail(g,tl,vt,a&&a.ex?'#ffd24a':a&&a.sp&&a.sp.ap?ELC[a.sp.ap[0]]||'#bfe8ff':'#bfe8ff');
   if(a&&a.k==='charge'&&tip&&Math.random()<.5)RG.parts.push(pt(tip.x,tip.y,(Math.random()-.5)*2,-Math.random()*2,500,3,'#fff3b0',0))}));
  /* effects */
