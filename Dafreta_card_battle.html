@@ -1905,6 +1905,26 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .dsp.wkdone{background:#26352c!important;border-color:#4a6a56!important;color:#9fd8b4!important;box-shadow:none!important;animation:none!important;opacity:1;cursor:default}
 .wknx{font:700 11px system-ui;color:#9fd8b4}.wknx b{color:#fff;font-variant-numeric:tabular-nums}
 .dsp.wkren{width:auto;margin:0;padding:6px 14px;font-size:12px}
+
+/* ===== top bar v4: Starter Pack on its own, Daily Quest / Mail / Inventory perfectly lined up ===== */
+.tb .stb{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;width:84px;height:72px;margin:0 auto 0 22px;padding:0;background:none;border:0;cursor:pointer;flex:none}
+.stbg{position:absolute;left:50%;top:44%;width:76px;height:76px;translate:-50% -50%;border-radius:50%;background:radial-gradient(circle,#ffd24acc,#ff9a1a55 40%,transparent 70%);animation:stbGl 2.2s ease-in-out infinite;pointer-events:none}
+@keyframes stbGl{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+.tb .stb img{position:relative;width:64px;height:64px;margin:0 0 -12px;object-fit:contain;filter:none;animation:none;transform:translateZ(0)}
+.tb .stb .dqtx{position:relative;z-index:2;padding:3px 8px;white-space:nowrap;font:900 9.5px/1 Cinzel,Georgia,serif;letter-spacing:.05em;color:#fff3c4;text-shadow:0 1px 1px #000;border:1.5px solid #ffd24a;border-radius:4px;background:linear-gradient(#3a6aff,#1a2a9a);box-shadow:0 2px 4px #000a,0 0 10px #5a8aff88}
+.tb .stb em.stp{position:absolute;top:2px;right:-6px;bottom:auto;padding:1px 6px;border-radius:9px;font:900 11px/16px system-ui;font-style:normal;color:#3a1d04;background:linear-gradient(#fff2b8,#ffb43a);border:2px solid #fff;box-shadow:0 2px 4px #0009;animation:dx2 1.6s ease-in-out infinite}
+.tb .stb:hover img{transform:scale(1.06)}.tb .stb:active{transform:scale(.95)}
+.tb .rs .dqb{height:64px;justify-content:flex-end;margin-top:0}
+.tb .rs .dqb>svg{width:56px;height:47px;flex:none}
+.tb .rs .dqb .dqtx{margin-top:-9px}
+@container (max-height:520px){.tb .stb{width:60px;height:52px;margin-left:10px}.stbg{width:54px;height:54px}.tb .stb img{width:46px;height:46px;margin-bottom:-9px}.tb .stb .dqtx{font-size:7.5px;padding:2px 5px}.tb .stb em.stp{font-size:9px;line-height:12px;right:-8px}
+ .tb .rs .dqb{height:48px}.tb .rs .dqb>svg{width:40px;height:34px}.tb .rs .dqb .dqtx{margin-top:-6px}}
+@media (prefers-reduced-motion:reduce){.stbg,.tb .stb em.stp{animation:none}}
+@container (max-height:520px){.tb .stb{width:54px;margin-left:6px}.tb .rs{gap:4px}}
+.rs #snh[hidden]{display:none!important}
+@container (max-height:520px){.tb{gap:4px}}
+@container (max-height:520px){.tb .rsi.cur{padding-left:6px;padding-right:8px}.tb .rsi.cur b{min-width:7.6ch}.tb .rs{gap:3px}.tb .stb{margin-right:auto}}
+@container (max-height:520px){.tb .rs .dqb{width:48px}}
 </style>
 </head><body>
 <div id="gw">
@@ -2628,8 +2648,8 @@ function tbH(){const ri=rkI(PD.pts),tl=HD.reduce((a,h)=>{const s=hs(h);return a+
  const st=Math.max(1,CFG.rankStep),into=(PD.pts|0)%st;
  return `<div class="tb"><button class="pf2" id="pfb" title="Open player info"><span class="pfav">${avH(PROF,'var(--pfs)')}<b class="pflv">Lv ${tl}</b></span>
   <span class="pfi"><b class="pnm">${esc(myName()==='You'?'Guest':myName())}</b><span class="pfs2">${ME?'🏆 '+(PD.w|0)+' W · 💀 '+(PD.l|0)+' L':'Guest · log in to save online'}</span><span class="pfxp" title="Rank points to the next rank"><i style="width:${into/st*100}%"></i><em>${into} / ${st} RP</em></span></span>
-  <span class="pfsep"></span><span class="pfrk">${rkFx(ri,'var(--pfs)')}<b class="rkn" style="--rc:${rkC(ri)}">${esc((RANKS[ri]||{}).n||'')}</b></span></button>
-  <div class="rs"><span id="snh" hidden>🔊 Tap anywhere for music</span>${stbH()}${DQ.tasks.length?(()=>{const n=dqBadge();return `<button class="dqb${n?' hot':''}" id="dqb" title="Daily quests">${CHESTB}<span class="dqtx">Daily Quest</span>${n?`<em>${n}</em>`:''}</button>`})():''}${mlbH()}<button class="dqb ivb" id="ivb" title="Inventory">${BAGI}<span class="dqtx">Inventory</span></button>${resH()}</div></div>`}
+  <span class="pfsep"></span><span class="pfrk">${rkFx(ri,'var(--pfs)')}<b class="rkn" style="--rc:${rkC(ri)}">${esc((RANKS[ri]||{}).n||'')}</b></span></button>${stbH()}
+  <div class="rs"><span id="snh" hidden>🔊 Tap anywhere for music</span>${DQ.tasks.length?(()=>{const n=dqBadge();return `<button class="dqb${n?' hot':''}" id="dqb" title="Daily quests">${CHESTB}<span class="dqtx">Daily Quest</span>${n?`<em>${n}</em>`:''}</button>`})():''}${mlbH()}<button class="dqb ivb" id="ivb" title="Inventory">${BAGI}<span class="dqtx">Inventory</span></button>${resH()}</div></div>`}
 function dispHero(){let h=PD.disp&&HD.find(x=>hk(x)===PD.disp&&owned(x));if(!h){const l=PD.lineups[PD.sel]||{};h=(l.h||[]).map(k=>HD[hidx(k)]).find(Boolean)}return h||HD.find(owned)}
 const MIC={std:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6M16 16l4 4M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6M8 16l-4 4M5 21l-2-2"/></svg>',story:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>',rank:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 20h12"/></svg>'};
 const RCY='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15.5 6.2L21 16"/><path d="M21 21v-5h-5"/></svg>';
@@ -3281,7 +3301,7 @@ const mon=()=>new Date(Date.now()+8*36e5).toISOString().slice(0,7);
 
 const dHead=(ic,t,sub)=>'<div class="dhd"><span class="dhi">'+ic+'</span><div class="dht"><b>'+t+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</div></div>';
 const starterCard=(on,inModal)=>{const w=DWAIT&&DWAIT.pack==='starter';
- return '<div class="dof st glw'+(inModal?' inm':'')+'">'+sash('BEST DEAL','hot')+'<div class="dofim"><img src="'+IMG_STARTER+'" alt="" referrerpolicy="no-referrer"></div>'+
+ return '<div class="dof st glw'+(inModal?' inm':'')+'">'+sash('BEST DEAL','hot')+'<div class="dofim">'+crispImg(IMG_STARTER,inModal?150:118)+'</div>'+
  '<div class="doft"><em class="dtag">ONE TIME ONLY</em><b>Starter Pack</b><ul class="dofl"><li>'+dI+'<b>300</b> diamonds</li><li><span class="dfmini">'+avH({...(PROF||{}),frame:'pioneer'},24)+'</span><b>Pioneer</b> animated frame</li><li>'+STNI+'<b>2</b> Transcendence stones</li></ul><small class="dworth">Worth <b>880</b>'+dI+' · 8× the value</small></div>'+
  '<button class="dsp big"'+(on?' data-dbuy="starter"':' disabled')+'>'+(w?'Waiting…':peso(99))+'</button></div>'};
 /* Weekly Pass tracker: 7 days in a row, like the rank road. Claimed days are ticked, days ready to claim glow, today is marked. */
@@ -3298,7 +3318,7 @@ function passTrack(){const p=passCur();if(!p)return '';const t=dKey(),n=p.n,ti=M
 async function passClaimReady(ids){ids=ids||passReady();if(!ids.length)return;try{const j=await dPost('/mail',{ids});const o={};ids.forEach(i=>{const k=mKey(i);if(!MST[k]){MST[k]='r';o[k]='r'}});if(Object.keys(o).length)fb('cardgame/mstate/'+ME,'PATCH',o).catch(()=>{});
  rewardFx(rwList(j.got||{}),'Weekly Pass','Diamonds collected. Keep coming back every day!');renderHome()}catch(e){toast(e.message)}}
 function pgDShop(){clearInterval(shTm);const on=!!CFG.payApi&&!!ME,P=DPRICE,pl=passLeft(),pw=DWAIT&&DWAIT.pack==='weekly';
- const wk='<div class="dof wk'+(pl?'':' glw')+'">'+(pl?'':sash('3× VALUE','pass'))+'<div class="dofim"><img src="'+IMG_WEEKLY+'" alt="" referrerpolicy="no-referrer"><i class="wk7">7 DAYS</i></div>'+
+ const wk='<div class="dof wk'+(pl?'':' glw')+'">'+(pl?'':sash('3× VALUE','pass'))+'<div class="dofim">'+crispImg(IMG_WEEKLY,118)+'<i class="wk7">7 DAYS</i></div>'+
   '<div class="doft">'+(pl?'<em class="dtag on">ACTIVE</em>':'')+'<b>Weekly Pass</b>'+(pl?'<ul class="dofl"><li>📬 <b>20</b>'+dI+' every day · claim here or in your <b>Mail</b></li><li>⏳ <b>'+pl+'</b> day'+(pl===1?'':'s')+' left</li></ul><small class="dworth">Missed a day? It waits in your Mail until you claim it.</small>'
    :'<ul class="dofl"><li>'+dI+'<b>60</b> diamonds right away</li><li>📬 <b>+20</b>'+dI+' in your Mail every day for 7 days</li></ul><small class="dworth"><b>200</b>'+dI+' in total for '+peso(59)+'</small>')+'</div>'+
   (pl?'<div class="wkbtns">'+(passReady().length?'<button class="dsp big go" data-wkclaim="1">Claim '+g$(passReady().length*20)+' 💎</button>':'<button class="dsp big wkdone" disabled>✓ Claimed</button><small class="wknx">Next in <b id="wknx">'+fmtLeft(dLeft())+'</b></small>')+
@@ -3505,7 +3525,20 @@ $('#home').addEventListener('click',e=>{
  if(e.target.closest('#chbk')){FRS.sel='';chatStop();SND.click();frRender();return}
  if(e.target.closest('#chs')){chatSend();return}});
 $('#home').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-wkday]')){e.target.click();return}if(e.key==='Enter'&&e.target.id==='chi'){e.preventDefault();chatSend()}else if(e.key==='Enter'&&e.target.matches('[data-chat]'))e.target.click()});
-const stbH=()=>ME&&CFG.payApi&&!WAL.starter?'<button class="dqb stb" id="stb" title="Starter Pack"><img src="'+IMG_STARTER+'" alt="" referrerpolicy="no-referrer"><span class="dqtx">Starter Pack</span><em class="stp">₱99</em></button>':'';
+/* sharp icons: big artwork shrunk to icon size by the browser can look jagged, so it is resized once here in high quality */
+const CRISP={};
+function crisp(url,px){const k=url+'|'+px;if(CRISP[k])return Promise.resolve(CRISP[k]);
+ return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{let c=document.createElement('canvas'),w=im.naturalWidth,h=im.naturalHeight,src=im;
+   const tw=Math.max(1,Math.round(w*px/Math.max(w,h))),th=Math.max(1,Math.round(h*px/Math.max(w,h)));
+   while(w/2>=tw*1.5){const n=document.createElement('canvas');n.width=Math.round(w/2);n.height=Math.round(h/2);const x=n.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(src,0,0,n.width,n.height);src=n;w=n.width;h=n.height}
+   c.width=tw;c.height=th;const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(src,0,0,tw,th);CRISP[k]=c.toDataURL('image/png');res(CRISP[k])}catch(e){res('')}};im.onerror=()=>res('');im.src=url})}
+const crispPx=css=>Math.round(css*Math.min(3,Math.max(2,window.devicePixelRatio||1)));
+function crispAll(){document.querySelectorAll('img[data-crisp]:not([data-cr])').forEach(im=>{im.dataset.cr=1;const u=im.dataset.src||im.getAttribute('src'),px=crispPx(+im.dataset.crisp);
+ if(CRISP[u+'|'+px]){im.src=CRISP[u+'|'+px];return}crisp(u,px).then(d=>{if(d&&im.isConnected)im.src=d})})}
+new MutationObserver(()=>{cancelAnimationFrame(crispAll.r);crispAll.r=requestAnimationFrame(crispAll)}).observe($('#gw'),{childList:true,subtree:true});
+const crispImg=(url,css,extra)=>{const d=CRISP[url+'|'+crispPx(css)];return '<img src="'+(d||url)+'" data-src="'+url+'" data-crisp="'+css+'"'+(d?' data-cr="1"':'')+' alt="" referrerpolicy="no-referrer"'+(extra||'')+'>'};
+/* Starter Pack button: sits on its own next to the profile, hidden while the Diamond Shop is open */
+const stbH=()=>ME&&CFG.payApi&&!WAL.starter&&pgNow!=='dshop'?'<button class="stb" id="stb" title="Starter Pack"><span class="stbg"></span>'+crispImg(IMG_STARTER,64)+'<span class="dqtx">Starter Pack</span><em class="stp">₱99</em></button>':'';
 const mlbH=()=>{if(!ME)return '';const n=mailN();return '<button class="dqb mlb'+(n?' hot':'')+'" id="mlb" title="Mail">'+MAILI+'<span class="dqtx">Mail</span>'+(n?'<em>'+(n>99?'99+':n)+'</em>':'')+'</button>'};
 
 /* match clock + turn timer */
