@@ -2968,7 +2968,7 @@ addEventListener('pagehide',()=>{try{
 /* ================= DIAMOND SHOP (PayMongo) =================
    Diamonds are kept in cardgame/wallet/{user}. Only the payment server can write there,
    after PayMongo confirms the payment, so diamonds cannot be faked from the browser. */
-const DPACKS=[{id:'d50',n:'Few Diamonds',p:49,d:50,b:0,on:1},{id:'d165',n:'Small Diamonds',p:149,d:165,b:15},{id:'d600',n:'Medium Diamonds',p:499,d:600,b:100,tag:'MOST POPULAR',cl:'pop'},{id:'d3200',n:'Big Diamonds',p:2490,d:3200,b:700,tag:'BEST VALUE',cl:'best'}];
+const DPACKS=[{id:'d50',n:'Few Diamonds',p:49,d:50,b:0,on:1},{id:'d165',n:'Small Diamonds',p:149,d:165,b:15,on:1},{id:'d600',n:'Medium Diamonds',p:499,d:600,b:100,on:1,tag:'MOST POPULAR',cl:'pop'},{id:'d3200',n:'Big Diamonds',p:2490,d:3200,b:700,on:1,tag:'BEST VALUE',cl:'best'}];
 let WAL={dia:0},DWAIT=null;
 const diaN=()=>Math.max(0,WAL.dia|0);
 async function walLoad(){if(!ME)return;try{const w=await fb('cardgame/wallet/'+ME);WAL={dia:+(w&&w.dia)||0}}catch(e){}}
