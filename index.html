@@ -560,6 +560,14 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .cg-tog input:checked+.cg-sl{background:var(--ok);border-color:var(--ok)}
 .cg-tog input:checked+.cg-sl:before{transform:translateX(24px);background:#fff}
 
+@property --fa{syntax:'<angle>';inherits:false;initial-value:0deg}
+.av.prem,.fb.prem{animation:frR 4s linear infinite}@keyframes frR{to{--fa:360deg}}
+.av.fr-pioneer{background:conic-gradient(from var(--fa),#ffe27a,#1fb47a,#fff7c8,#c47f00,#1fb47a,#ffe27a)}
+.av.fr-aurora{background:conic-gradient(from var(--fa),#2affb0,#2ac8ff,#9a5aff,#ff6ad8,#2affb0)}
+.av.fr-phoenix{background:conic-gradient(from var(--fa),#fff1a0,#ff9a1a,#e01a00,#ff9a1a,#fff1a0,#ff4a00,#fff1a0)}
+.av.fr-abyss{background:conic-gradient(from var(--fa),#0a0418,#5a1aa8,#d080ff,#1a0838,#3a0a80,#0a0418)}
+.av.fr-royal{background:conic-gradient(from var(--fa),#ffe27a,#b0102a,#fff3c0,#c47f00,#b0102a,#ffe27a)}
+@media (prefers-reduced-motion:reduce){.av.prem{animation:none}}
 </style>
 <style>
 .gcs{display:flex;flex-wrap:wrap;gap:16px;margin:8px 0 4px}
@@ -680,7 +688,8 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 <script>
 const DB='https://dafreta-network-default-rtdb.asia-southeast1.firebasedatabase.app';
 const AV=['🧙','⚔️','🏹','🐉','🦊','🤖','👹','🧛','🥷','🐺','🦅','💀','🧝','🐲','👽','🦁'];
-const F={none:'#26364d',bronze:'linear-gradient(135deg,#d98a3d,#6b3d12)',silver:'linear-gradient(135deg,#fff,#7d8590)',gold:'linear-gradient(135deg,#ffe27a,#c47f00,#ffe27a)',neon:'linear-gradient(135deg,#00f0ff,#0050ff)',flame:'linear-gradient(0deg,#ff2d00,#ffb300)',rainbow:'conic-gradient(#f33,#fd3,#3f6,#3df,#35f,#f3d,#f33)',void:'linear-gradient(135deg,#fff,#111 50%,#fff)'};
+const F={none:'#26364d',bronze:'linear-gradient(135deg,#d98a3d,#6b3d12)',silver:'linear-gradient(135deg,#fff,#7d8590)',gold:'linear-gradient(135deg,#ffe27a,#c47f00,#ffe27a)',neon:'linear-gradient(135deg,#00f0ff,#0050ff)',flame:'linear-gradient(0deg,#ff2d00,#ffb300)',rainbow:'conic-gradient(#f33,#fd3,#3f6,#3df,#35f,#f3d,#f33)',void:'linear-gradient(135deg,#fff,#111 50%,#fff)',pioneer:'linear-gradient(135deg,#ffe27a,#1fb47a)',aurora:'linear-gradient(135deg,#2affb0,#9a5aff)',phoenix:'linear-gradient(135deg,#ffb31a,#e01a00)',abyss:'linear-gradient(135deg,#5a1aa8,#0a0418)',royal:'linear-gradient(135deg,#ffe27a,#b0102a)'};
+const PREMF=['pioneer','aurora','phoenix','abyss','royal'];
 const RC={common:'#7f93ad',rare:'#2f8bff',epic:'#a24dff',legendary:'#ff8a1f'};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -709,7 +718,7 @@ const SYS={'@mod':{name:'MODERATOR',img:FAV,frame:'gold'},'@news':{name:'News',i
 const nm=k=>SYS[k]?SYS[k].name:k;
 const gp=k=>SYS[k]?Promise.resolve(SYS[k]):getProf(k);
 const ago=t=>{const s=(Date.now()-t)/1000;return s<60?'just now':s<3600?Math.floor(s/60)+'m':s<86400?Math.floor(s/3600)+'h':fmt(t)};
-const av=(p,s=100)=>{p=p||{};return `<div class="av" style="--s:${s}px;--f:${F[p.frame]||F.none}"><span${hasImg(p)?` style="background:center/cover url(${p.img})"`:''}>${hasImg(p)?'':AV[p.avatar]||AV[0]}</span></div>`};
+const av=(p,s=100)=>{p=p||{};return `<div class="av${PREMF.includes(p.frame)?' prem fr-'+p.frame:''}" style="--s:${s}px;--f:${F[p.frame]||F.none}"><span${hasImg(p)?` style="background:center/cover url(${p.img})"`:''}>${hasImg(p)?'':AV[p.avatar]||AV[0]}</span></div>`};
 const cnt=p=>Object.keys((p&&p.badges)||{}).length;
 const fmt=t=>t?new Date(t).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'-';
 const normCode=c=>String(c).toUpperCase().replace(/[^A-Z0-9_-]/g,'');
@@ -926,7 +935,7 @@ function picker(p){
   return `<div class="pk"><div id="prev"></div><div><h4>Character</h4><div class="grid" id="avg">${AV.map((e,i)=>`<button class="ch" data-i="${i}" onclick="pick('avatar',${i})">${e}</button>`).join('')}</div>
   <div class="row" style="margin-bottom:14px"><button class="s" onclick="$('#af').click()">Upload my own image</button><button class="g s" onclick="pick('img','')">Remove image</button></div>
   <input id="af" type="file" accept="image/*" hidden onchange="upImg(this)">
-  <h4>Frame</h4><div class="grid" id="frg">${Object.keys(F).map(k=>`<button class="ch fb" style="--f:${F[k]}" title="${k}" data-k="${k}" onclick="pick('frame','${k}')"></button>`).join('')}</div></div></div>`;
+  <h4>Frame</h4><div class="grid" id="frg">${Object.keys(F).filter(k=>!PREMF.includes(k)||tmp.frame===k).map(k=>`<button class="ch fb" style="--f:${F[k]}" title="${k}" data-k="${k}" onclick="pick('frame','${k}')"></button>`).join('')}</div><p class="mut" style="font-size:12px;margin:6px 0 0">✨ Animated premium frames are in the Diamond Shop of Dafreta Card Battle.</p></div></div>`;
 }
 const pick=(t,v)=>{tmp[t]=v;if(t==='avatar')tmp.img='';paint()};
 function paint(){$('#prev').innerHTML=av(tmp,150);
@@ -1142,17 +1151,17 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
-  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};
+  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};DSHOP=dsh||{};SKINSA=skn||{};SALES=null;
   if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec','weakPct','empPct','brkPct','bolPct','fatMax','blkMax','burnDur','burnPer','atkCost','atkPct','botMin','botMax','botTag'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','stones','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);CGC[k]=CGD[k].map((d,i)=>a[i]!==undefined&&!isNaN(a[i])?a[i]:d)}});if(!cf.stones&&cf.stone!==undefined&&!isNaN(+cf.stone))CGC.stones[3]=+cf.stone;if(typeof cf.payApi==='string')CGC.payApi=cf.payApi}
   if(!bts){try{const nb=await seedBots();if(nb)toast(nb+' starter bots created for Ranked')}catch(e){}}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();DF=emptyDF();
   const n=o=>Object.keys(o).length;
-  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
-  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
+  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['dshop','💎','Diamond Shop',Object.keys(SKINSA).length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
+  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,dshop:()=>`<div class="cgp" id="dssec">${dshopInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
   return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
     <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
       <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
@@ -1552,6 +1561,62 @@ async function addStarter(){try{const n=await seedBots(1);toast(n?n+' starter bo
 async function saveBotCfg(){const a=Math.floor(+$('#bmin').value||0),b=Math.floor(+$('#bmax').value||0);
   if(a<10||b>600||b-a<6)return toast('Earliest must be at least 10s, latest at most 600s, and at least 6s apart');
   CGC.botMin=a;CGC.botMax=b;CGC.botTag=$('#btag').checked?1:0;try{await saveCfg();toast('Matchmaking saved')}catch(x){toast(x.message)}}
+
+/* ---------------- diamond shop (prices, hero skins, sales) ---------------- */
+const DPD={refresh:20,frag15:45,frag50:140,stone:150,slot:199,frame:280},
+ DPL={frag15:'15 hero fragments (player picks the hero)',frag50:'50 hero fragments (player picks the hero)',stone:'Transcendence stone · max 2 per player per week',refresh:'New Gold Shop offers (refresh)',slot:'Extra line-up slot · max 5 extra',frame:'Premium animated frame (Aurora, Phoenix, Abyss, Royal)'},
+ PKN={d50:'Few Diamonds ₱49',d165:'Small Diamonds ₱149',d600:'Medium Diamonds ₱499',d1250:'Large Diamonds ₱999',d3300:'Big Diamonds ₱2,490',starter:'Starter Pack ₱99',weekly:'Weekly Pass ₱59',d3200:'Big Diamonds (old)'},
+ SKDEF={normal:599,legendary:1199};
+let DSHOP={},SKINSA={},SALES=null,SKF=null;
+const emptySKF=()=>({id:null,hero:'',name:'',rar:'normal',price:599,img:'',face:null,ar:0,on:true});
+const paintDS=()=>{const e=$('#dssec');if(e)e.innerHTML=dshopInner()};
+const php2=v=>'₱'+(+v||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+async function loadSales(){try{SALES=(await api('cardgame/purchases'))||{}}catch(e){SALES={}}paintDS()}
+function salesHTML(){if(SALES===null)return '<p class="mut">Loading sales…</p>';
+  const L=Object.entries(SALES).map(([id,p])=>({id,...p})).filter(p=>p.status==='credited').sort((a,b)=>(+b.paidAt||0)-(+a.paidAt||0)),pend=Object.values(SALES).filter(p=>p&&p.status!=='credited').length;
+  const mk=t=>new Date((+t||0)+8*36e5).toISOString().slice(0,7),now=mk(Date.now()),by={},mo={};
+  L.forEach(p=>{const m=mk(p.paidAt||p.t),v=(+p.price||0)/100;mo[m]=(mo[m]||0)+v;if(m===now)by[p.user]=(by[p.user]||0)+v});
+  const tot=L.reduce((a,p)=>a+(+p.price||0)/100,0),top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  return `<div class="f2" style="gap:8px;margin:0 0 10px"><div class="bx2"><small class="mut">This month</small><div style="font-size:22px;font-weight:800">${php2(mo[now]||0)}</div><small class="mut">${L.filter(p=>mk(p.paidAt||p.t)===now).length} payments · ${Object.keys(by).length} buyers</small></div>
+   <div class="bx2"><small class="mut">All time</small><div style="font-size:22px;font-weight:800">${php2(tot)}</div><small class="mut">${L.length} payments${pend?' · '+pend+' started but not paid':''}</small></div></div>
+  <p class="mut" style="font-size:12px;margin:0 0 8px">Amounts are before PayMongo fees. Check your PayMongo dashboard for payouts.</p>
+  ${Object.keys(mo).length?`<b>By month</b><div class="mut" style="font-size:13px;margin:4px 0 10px">${Object.entries(mo).sort((a,b)=>b[0]<a[0]?-1:1).slice(0,12).map(([m,v])=>`${m}: <b>${php2(v)}</b>`).join(' · ')}</div>`:''}
+  ${top.length?`<b>Top buyers this month</b><div class="mut" style="font-size:13px;margin:4px 0 10px">${top.map(([u,v])=>`${esc(u)}: <b>${php2(v)}</b>`).join(' · ')}</div>`:''}
+  <b>Latest payments</b>${L.length?L.slice(0,40).map(p=>`<div class="qrow" style="margin:6px 0 0;font-size:13px"><span style="width:118px" class="mut">${new Date(+p.paidAt||+p.t||0).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span><b style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">${esc(p.user)}</b><span style="flex:1.4">${esc(PKN[p.pack]||p.pack)}</span><span>💎 ${+p.dia||0}</span><b style="width:84px;text-align:right">${php2((+p.price||0)/100)}</b></div>`).join(''):'<p class="mut">No payments yet.</p>'}
+  <div class="row" style="margin-top:8px"><button class="g s" onclick="SALES=null;paintDS();loadSales()">↻ Refresh sales</button></div>`}
+function dshopInner(){if(!SKF)SKF=emptySKF();if(SALES===null)setTimeout(loadSales,0);
+  const P={...DPD,...((DSHOP&&DSHOP.prices)||{})},f=SKF,heroName=k=>{const h=HLIST['hd_'+k]||HLIST[k];return h?h.name:k},
+  sk=Object.entries(SKINSA).filter(([,s])=>s&&s.hero);
+  return `<h4>💎 Diamond Shop</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Diamonds are bought with real money through PayMongo. The diamond packs, Starter Pack and Weekly Pass are set in the payment server (Cloudflare Worker). Here you set what diamonds buy, add hero skins and see sales. Skins and frames only change looks, never stats.</p>
+  <div class="bx2"><b>Diamond prices</b><div class="f2" style="margin:8px 0 0;gap:8px">${Object.keys(DPD).map(k=>`<div><label>${DPL[k]}</label><input id="dp_${k}" type="number" min="1" max="99999" value="${+P[k]||DPD[k]}"><small class="mut">default ${DPD[k]} 💎 · about ${php2(+P[k]*499/600)}</small></div>`).join('')}</div>
+   <div class="row" style="margin-top:8px"><button class="s" onclick="saveDPrices()">💾 Save prices</button><button class="g s" onclick="resetDPrices()">Use defaults</button></div></div>
+  <h4 style="margin-top:16px">Hero skins <span class="cgn">${sk.length}</span></h4>
+  ${sk.length?sk.map(([id,s])=>`<div class="bx2 qrow" style="${s.on===false?'opacity:.55':''}"><span style="width:64px;height:64px;border-radius:8px;overflow:hidden;flex:none;position:relative;display:block;background:#0b1626">${s.img?faceTag(s.img,s.face):''}</span>
+   <div style="flex:1;min-width:0"><b>${esc(s.name)}</b> <span class="cgpill${s.on===false?'':' on'}">${s.on===false?'Hidden':'For sale'}</span>${s.rar==='legendary'?' <span class="cgpill" style="background:#5a2a8a;color:#fff">Legendary</span>':''}<div class="mut" style="font-size:13px">${esc(heroName(s.hero))} · 💎 ${+s.price||0}</div></div>
+   <div class="row"><button class="s" onclick="editSkin('${esc(id)}')">Edit</button><button class="g s" onclick="toggleSkin('${esc(id)}')">${s.on===false?'Show':'Hide'}</button><button class="d s" onclick="delSkin('${esc(id)}')">✕</button></div></div>`).join(''):'<p class="mut">No skins yet. Add the first one below.</p>'}
+  <div class="bx2" style="margin-top:12px"><b>${f.id?'✏️ Edit skin':'➕ New skin'}</b>
+   <div class="f2" style="margin:8px 0 0;gap:8px">
+    <div><label>Hero</label><select onchange="SKF.hero=this.value">${'<option value="">Choose a hero…</option>'+Object.entries(HLIST).map(([k,h])=>{const v=k.replace(/^hd_/,'');return `<option value="${esc(v)}"${f.hero===v?' selected':''}>${esc(h.name)}</option>`}).join('')}</select></div>
+    <div><label>Skin name</label><input value="${esc(f.name)}" maxlength="30" oninput="SKF.name=this.value" placeholder="e.g. Inferno Lord"></div>
+    <div><label>Rarity</label><select onchange="SKF.rar=this.value;if(Object.values(SKDEF).includes(+SKF.price))SKF.price=SKDEF[this.value];paintDS()"><option value="normal"${f.rar!=='legendary'?' selected':''}>Hero skin</option><option value="legendary"${f.rar==='legendary'?' selected':''}>Legendary skin</option></select></div>
+    <div><label>Price in diamonds</label><input type="number" min="1" max="99999" value="${+f.price||SKDEF[f.rar]}" oninput="SKF.price=+this.value"><small class="mut">suggested ${SKDEF[f.rar]} 💎</small></div>
+    <div style="grid-column:1/-1"><label>Skin image (full body, transparent PNG works best; the face is found automatically)</label><input type="file" accept="image/*" onchange="skinImg(this)">
+     ${f.img?`<div style="display:flex;gap:10px;align-items:flex-end;margin-top:8px"><img src="${esc(f.img)}" style="height:140px;border-radius:8px;background:#0b1626"><span style="width:80px;height:80px;border-radius:8px;overflow:hidden;position:relative;display:block;background:#0b1626">${faceTag(f.img,f.face)}</span><small class="mut">face crop</small></div>`:''}</div>
+    <div style="display:flex;align-items:flex-end"><label class="chk"><input type="checkbox" ${f.on!==false?'checked':''} onchange="SKF.on=this.checked"> For sale in the Diamond Shop</label></div></div>
+   <div class="row" style="margin-top:10px"><button onclick="saveSkin()">💾 Save skin</button>${f.id?'<button class="g" onclick="SKF=emptySKF();paintDS()">Cancel</button>':''}</div></div>
+  <h4 style="margin-top:16px">Sales</h4><div class="bx2">${salesHTML()}</div>`}
+async function saveDPrices(){const o={};for(const k in DPD){const v=Math.floor(+$('#dp_'+k).value||0);if(v<1||v>99999)return toast('Prices must be between 1 and 99,999');o[k]=v}
+  try{await api('cardgame/dshop/prices','PUT',o);DSHOP.prices=o;paintDS();toast('Prices saved. Players see them next time they open the game.')}catch(x){toast(x.message)}}
+async function resetDPrices(){try{await api('cardgame/dshop/prices','DELETE');DSHOP.prices=null;paintDS();toast('Default prices restored')}catch(x){toast(x.message)}}
+async function skinImg(inp){const fl=inp.files&&inp.files[0];if(!fl)return;toast('Processing image…');try{const r=await procHeroImg(fl);SKF.img=r.img;SKF.face=r.face;SKF.ar=r.ar;paintDS();toast('Image ready ('+r.kb+' KB)')}catch(x){toast(x.message)}}
+function editSkin(id){const s=SKINSA[id];if(!s)return;SKF={id,hero:s.hero||'',name:s.name||'',rar:s.rar==='legendary'?'legendary':'normal',price:+s.price||599,img:s.img||'',face:s.face||null,ar:+s.ar||0,on:s.on!==false};paintDS();const e=$('#dssec');if(e)e.querySelectorAll('.bx2')[Object.keys(SKINSA).length+1]?.scrollIntoView({behavior:'smooth'})}
+async function saveSkin(){const f=SKF,n=(f.name||'').trim();if(!f.hero)return toast('Choose a hero');if(n.length<2)return toast('Give the skin a name');if(!f.img)return toast('Upload the skin image');
+  const price=Math.floor(+f.price||0);if(price<1)return toast('Set a price');
+  const id=f.id||'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),old=SKINSA[id]||{};
+  const d={hero:f.hero,name:n,rar:f.rar,price,img:f.img,face:f.face||null,ar:+f.ar||0,on:f.on!==false,created:old.created||Date.now()};
+  try{await api('cardgame/skins/'+id,'PUT',d);SKINSA[id]=d;SKF=emptySKF();paintDS();toast('Skin saved')}catch(x){toast(x.message)}}
+async function toggleSkin(id){const s=SKINSA[id];if(!s)return;const on=s.on===false;try{await api('cardgame/skins/'+id+'/on','PUT',on);s.on=on;paintDS();toast(on?'Skin is for sale':'Skin hidden from the shop (players who bought it keep it)')}catch(x){toast(x.message)}}
+async function delSkin(id){if(!confirm('Delete this skin? Players who bought it will lose it. Usually it is better to Hide it.'))return;try{await api('cardgame/skins/'+id,'DELETE');delete SKINSA[id];if(SKF&&SKF.id===id)SKF=emptySKF();paintDS()}catch(x){toast(x.message)}}
 
 /* ---------------- appearance ---------------- */
 function lookInner(){
