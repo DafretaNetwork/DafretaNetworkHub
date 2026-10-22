@@ -1587,7 +1587,7 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 @media(prefers-reduced-motion:reduce){.cnc{animation:none}.cnc.flip{animation-duration:.3s}}
 /* ===================== TRANSCENDENCE LEVEL numeral on the emblem gem ===================== */
 .tce{container-type:inline-size}
-.tcn{position:absolute;left:calc(50% + var(--tcx,0) * 100%);top:calc(var(--tcc,.5) * 100%);z-index:7;translate:-50% -50%;pointer-events:none;font:900 calc(var(--nf,9) * 1cqw / var(--tcs,1))/1 Cinzel,Georgia,serif;letter-spacing:.02em}
+.tcn{position:absolute;left:calc(var(--gx,.5) * 100%);top:calc(var(--gy,.5) * 100%);z-index:7;translate:-50% -46%;pointer-events:none;font:900 calc(var(--gw,.12) * var(--nf,.5) * 100cqw)/1 Cinzel,Georgia,serif;letter-spacing:.02em}
 .tcn i{position:relative;display:block;font-style:normal;color:transparent;background:linear-gradient(#fff8d0 8%,#ffd24a 45%,#c47f00 62%,#ffe9a0 92%);-webkit-background-clip:text;background-clip:text;
  -webkit-text-stroke:.035em rgba(255,58,36,.85);filter:drop-shadow(0 0 .05em rgba(255,40,20,.85)) drop-shadow(0 .04em .05em #000c)}
 .tcn::after,.tcn::before{content:"";position:absolute;aspect-ratio:1;background:radial-gradient(circle,#fff 0 22%,#fff6c8 58%);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);filter:drop-shadow(0 0 .05em #ffd24a);opacity:0;animation:tctw 1.9s ease-in-out infinite}
@@ -2237,13 +2237,17 @@ function validLU(l){const ids=((l&&l.h)||[]).map(hidx);if(ids.length!=4||ids.som
 const lvH=l=>'<span class="lvx"><small>LEVEL</small><b>'+l+'</b></span>';
 const TCB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Wingsssed%20Gem%20Emblem.png',TCG='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/Luminous%20Golden%20Winged%20asdasdGem%20Emblem.png';
 let TCBs=TCB,TCGs=TCG;
-const tcNum=e=>{const r=RMN[Math.max(1,Math.min(5,(e|0)-3))];return '<b class="tcn" style="--nf:'+({I:11,II:9.6,III:7.8,IV:8.8,V:10.6}[r])+'"><i>'+r+'</i></b>'};
+const tcNum=e=>{const r=RMN[Math.max(1,Math.min(5,(e|0)-3))];return '<b class="tcn" style="--nf:'+({I:.62,II:.5,III:.4,IV:.46,V:.56}[r])+'"><i>'+r+'</i></b>'};
 const tcEmb=e=>'<span class="tce" aria-label="Transcendent '+RMN[Math.max(1,Math.min(5,(e|0)-3))]+'"><img class="tcb" src="'+TCBs+'" alt="" referrerpolicy="no-referrer"><i class="tcbs"></i><span class="tcsp"><i></i><i></i><i></i></span><img class="tcg" src="'+TCGs+'" alt="" referrerpolicy="no-referrer"><i class="tcgs"></i><span class="tcgl"><i></i><i></i><i></i><i></i><i></i></span>'+tcNum(e)+'</span>';
 /* measure the emblem's visible area once, so it sits centred on the tile edge at the right size whatever padding the PNG has */
 (function(){const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const W=240,H=Math.max(1,Math.round(W*im.naturalHeight/im.naturalWidth)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(im,0,0,W,H);const d=x.getImageData(0,0,W,H).data;let x0=W,x1=-1,y0=H,y1=-1;
  for(let y=0;y<H;y++)for(let k=0;k<W;k++)if(d[(y*W+k)*4+3]>40){if(k<x0)x0=k;if(k>x1)x1=k;if(y<y0)y0=y;if(y>y1)y1=y}if(x1<0)return;
  const r=document.documentElement.style,p=v=>(v*100).toFixed(2)+'%';r.setProperty('--tcs',(W/(x1-x0+1)).toFixed(3));r.setProperty('--tcx',((x0+x1+1)/2/W-.5).toFixed(4));r.setProperty('--tcc',((y0+y1+1)/2/H).toFixed(4));
  r.setProperty('--tl',p(x0/W));r.setProperty('--tt',p(y0/H));r.setProperty('--tw2',p((x1-x0+1)/W));r.setProperty('--th2',p((y1-y0+1)/H))}catch(e){}};im.src=TCB})();
+/* find the gem in the gem layer: the numeral is centred on it and sized to it */
+(function(){const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const W=300,H=Math.max(1,Math.round(W*im.naturalHeight/im.naturalWidth)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(im,0,0,W,H);const d=x.getImageData(0,0,W,H).data;
+ let sx=0,sy=0,n=0,x0=W,x1=-1;for(let y=0;y<H;y++)for(let k=0;k<W;k++)if(d[(y*W+k)*4+3]>200){sx+=k;sy+=y;n++;if(k<x0)x0=k;if(k>x1)x1=k}if(!n)return;
+ const r=document.documentElement.style;r.setProperty('--gx',((sx/n+.5)/W).toFixed(4));r.setProperty('--gy',((sy/n+.5)/H).toFixed(4));r.setProperty('--gw',((x1-x0+1)/W).toFixed(4))}catch(e){}};im.src=TCG})();
 /* small copies of the emblem art (the originals are very large; dozens of them on one screen ran phones out of graphics memory) */
 [[TCB,u=>{TCBs=u;document.documentElement.style.setProperty('--tcbm','url("'+u+'")');document.querySelectorAll('img.tcb').forEach(e=>e.src=u)}],[TCG,u=>{TCGs=u;document.documentElement.style.setProperty('--tcgm','url("'+u+'")');document.querySelectorAll('img.tcg').forEach(e=>e.src=u)}]].forEach(([src,done])=>{const im=new Image();im.crossOrigin='anonymous';
  im.onload=()=>{try{const W=640,H=Math.max(1,Math.round(W*im.naturalHeight/im.naturalWidth));if(im.naturalWidth<=W*1.2)return;const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(im,0,0,W,H);done(c.toDataURL('image/png'))}catch(e){}};im.src=src});
