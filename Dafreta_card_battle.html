@@ -2910,7 +2910,7 @@ async function pvApply(a){if(!a||!PVS)return;const s=a.s;
  if(!T||s!==PVS.turn)return;
  if(a.t==='end'){if(SRCH)srPick(0);if(over)return;if(a.af&&!PVS.acted[s]){if(++PVS.afk[s]>=3){fin(s===PVS.me?'Defeat · away too long':'Victory! Opp left');return}}else PVS.afk[s]=0;pvEnd(T);return}
  PVS.acted[s]=1;PVS.afk[s]=0;
- if(a.t==='play'){const c=T.hand.find(x=>x.u===a.u);if(!c||!ok(T,c)||SRCH){if(T===P&&!SRCH)busy=0;ui();return}play(T,c,fromRef(a.tg),T===P);ui();chk();if(T===P)busy=SRCH?1:0;return}
+ if(a.t==='play'){const c=T.hand.find(x=>x.u===a.u);if(!c||!ok(T,c)||SRCH){if(T===P&&!SRCH)busy=0;ui();return}play(T,c,fromRef(a.tg),T===P);if(T===P)busy=SRCH?1:0;ui();chk();return}
  if(a.t==='ex'){const S=T.u[a.i|0];if(!S||!xr(S)||SRCH){if(T===P&&!SRCH)busy=0;ui();return}await ult(T,S,fromRef(a.tg),T===P);if(T!==P)busy=1;return}
  if(a.t==='pick'){if(SRCH)srPick(a.i|0);return}}
 function pvEnd(T){const dn=trimHand(T);if(dn&&T===P)discardNote(dn);endT(T);const ns=PVS.turn==='A'?'B':'A',O=PVS.T[ns];PVS.turn=ns;PVS.acted[ns]=0;PVS.endSent=0;PVS.autoSent=0;
