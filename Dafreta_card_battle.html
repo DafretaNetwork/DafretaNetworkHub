@@ -1704,6 +1704,207 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .frc.lk{opacity:.85}.frc.lk span{color:#9fd8ff}.frc.prm{border-color:#ffd24a55}
 .ivfr{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 11px system-ui}
 .ptw-many .pt{padding:9px 13px}
+/* ===================== Diamond Shop v3 ===================== */
+.dsh{padding:16px 18px;background:radial-gradient(90% 40% at 50% 0,#2a4a8a55,transparent 70%),linear-gradient(#2c1c10f2,#170e07f6)}
+.dshh{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-2px 0 6px;flex-wrap:wrap}
+.dshl{display:flex;align-items:center;gap:10px;min-width:0}.dshl h3{margin:0;font:900 30px/1 Cinzel,Georgia,serif;letter-spacing:.06em;background:linear-gradient(#fffbe6,#ffd36b 55%,#d9881a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #000) drop-shadow(0 0 12px #ffc83a55)}
+.dshl small{display:block;margin-top:5px;color:#c9b08a;font:600 12px system-ui}
+.dshic{width:64px;flex:none;filter:drop-shadow(0 0 10px #5a8cff88)}
+.dbal{display:flex;flex-direction:column;align-items:flex-end;padding:7px 16px;border-radius:14px;background:linear-gradient(#0f1a35,#070c1c);border:2px solid #4a8ad6;box-shadow:0 0 16px #3a7ad655,inset 0 1px 0 #bfe3ff33}
+.dbal span{font:800 10px system-ui;letter-spacing:.14em;text-transform:uppercase;color:#8fb8e8}.dbal b{font:900 22px/1.1 system-ui;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 10px #5ad0ff88}
+/* section banners */
+.dhd{position:relative;display:flex;align-items:center;gap:12px;margin:22px 0 12px;padding:8px 18px 8px 10px;border-radius:12px;
+ background:linear-gradient(90deg,#6b3a14,#3a200c 60%,transparent);border-left:4px solid #ffc83a;box-shadow:inset 0 1px 0 #ffe3a333}
+.dhd::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:linear-gradient(90deg,#ffd24a,#ffd24a33 55%,transparent)}
+.dhi{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;font-size:22px;background:radial-gradient(circle at 50% 35%,#ffe8a8,#d98a1a 60%,#6a3a08);box-shadow:0 0 0 2px #2a1206,0 0 14px #ffc83a88}
+.dhi .dmi{width:26px;height:24px;margin:0}
+.dht{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dht b{font:900 21px/1.1 Cinzel,Georgia,serif;letter-spacing:.07em;text-transform:uppercase;color:#fff3c4;text-shadow:0 2px 0 #000,0 0 14px #ffc83a66}
+.dht small{font:600 12.5px system-ui;color:#d8bf98}
+.dsh .dhd:first-of-type{margin-top:10px}
+/* offers */
+.dofs{grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.dof{grid-template-columns:auto 1fr auto;padding:14px 66px 14px 14px;border-radius:18px;min-height:150px;isolation:isolate}
+.dof.st{border:2px solid #ffb04a;background:radial-gradient(70% 120% at 12% 50%,#3a6aff55,transparent 70%),linear-gradient(115deg,#1a1440,#2a1030 55%,#3a140a)}
+.dof.wk{border:2px solid #3ad27a;background:radial-gradient(70% 120% at 12% 50%,#3ad27a44,transparent 70%),linear-gradient(115deg,#0b2a22,#0a1a14)}
+.dof.glw::before{content:"";position:absolute;inset:-2px;z-index:-1;border-radius:inherit;padding:2px;background:conic-gradient(from var(--fa),transparent 0 60%,#fff6 70%,#ffd24a 78%,transparent 86%);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:frR 3.2s linear infinite}
+.dof.st.glw{animation:stG 2.2s ease-in-out infinite}.dof.wk.glw{animation:wkG 2.4s ease-in-out infinite}
+@keyframes stG{0%,100%{box-shadow:0 0 0 1px #ffb04a55,0 0 18px #ff8a2a55,0 8px 20px #000b}50%{box-shadow:0 0 0 2px #ffd24a,0 0 34px #ff9a2aaa,0 8px 20px #000b}}
+@keyframes wkG{0%,100%{box-shadow:0 0 0 1px #3ad27a55,0 0 16px #3ad27a44,0 8px 20px #000b}50%{box-shadow:0 0 0 2px #7affb0,0 0 30px #3ad27a99,0 8px 20px #000b}}
+.dofim{position:relative;width:118px;height:118px;display:grid;place-items:center}
+.dofim::before{content:"";position:absolute;inset:6%;border-radius:50%;background:radial-gradient(circle,#ffe08a66,transparent 68%);animation:dsg 2.4s ease-in-out infinite}
+.dof.wk .dofim::before{background:radial-gradient(circle,#7affb055,transparent 68%)}
+.dofim img{position:relative;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 8px #000a);animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px) rotate(-2deg)}}
+.wk7{position:absolute;bottom:2px;left:50%;translate:-50% 0;padding:2px 9px;border-radius:8px;font:900 11px system-ui;letter-spacing:.08em;font-style:normal;color:#fff;background:linear-gradient(#3ad27a,#0d7a3a);border:1.5px solid #c8ffd8;box-shadow:0 2px 6px #000a;white-space:nowrap}
+.doft{gap:5px}.doft>b{font:900 22px/1.05 Cinzel,Georgia,serif;color:#fff;text-shadow:0 2px 0 #000}
+.dtag{align-self:flex-start;padding:2px 9px;border-radius:20px;font:900 10px system-ui;letter-spacing:.12em;font-style:normal;color:#3a1d04;background:linear-gradient(#fff2b8,#ffb43a);box-shadow:0 0 10px #ffc83a88}.dtag.on{color:#fff;background:linear-gradient(#5ae89a,#108a48);box-shadow:0 0 10px #3ad27a88}
+.dofl{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:3px;font:600 13.5px system-ui;color:#f1e3cf}
+.dofl li{display:block}.dofl li>svg,.dofl .dfmini{vertical-align:-.25em;margin-right:5px}.dofl b{font:900 14.5px system-ui;color:#ffe3a3;margin-right:3px}.dofl .pzi{width:18px;height:18px}.dofl .dmi{width:16px;height:15px}
+.dfmini{display:inline-grid}.dfmini .av{--s:20px!important}
+.dworth{font:700 12px system-ui!important;color:#9fe0b8!important}.dof.st .dworth{color:#ffcf8a!important}
+.dof .dsp.big{min-width:140px;font-size:19px;padding:12px 18px}
+.dof.st .dsp.big{background:linear-gradient(#fff2b8,#ffb43a 55%,#e07a10);border-color:#fff3c8;color:#3a1d04;box-shadow:inset 0 1px 0 #fff8,0 3px 0 #7a3a04,0 0 18px #ffb43a77}
+/* packs */
+.dsg{gap:12px}
+.dso{padding:24px 10px 12px;border-radius:16px;background:radial-gradient(90% 55% at 50% 30%,#3a6ad866,transparent 72%),linear-gradient(#1a2648,#0b1124)}
+.dsi{height:118px;margin:4px 0 2px}.dsi::before{width:86%}
+.dsi .lim{position:relative;display:block;height:calc(100% * var(--z,1));max-width:100%;filter:drop-shadow(0 0 10px #5a9cffaa) drop-shadow(0 6px 6px #000b);animation:limG 2.6s ease-in-out infinite;transition:transform .2s}
+.dso:hover .lim{transform:scale(1.06) translateY(-3px)}
+@keyframes limG{50%{filter:drop-shadow(0 0 18px #7ab8ffee) drop-shadow(0 6px 6px #000b)}}
+.lim{background-repeat:no-repeat}
+.dsn{font:800 14px/1.15 Cinzel,Georgia,serif;color:#cfe6ff;min-height:32px;display:flex;align-items:center}
+.dsa{display:flex;align-items:center;gap:4px;font-size:30px}.dsa .dmi{width:22px;height:20px}
+.dsb b{color:#7dff9a}
+.dso.pop .dsp{background:linear-gradient(#fff2b8,#ffc83a 55%,#e08a14);border-color:#fff3c8;color:#3a1d04;box-shadow:inset 0 1px 0 #fff8,0 3px 0 #7a3a04}
+.dso.best .dsp{background:linear-gradient(#f3dcff,#b56dff 55%,#7a2fd8);border-color:#f3dcff;color:#fff;text-shadow:0 1px 2px #3a0a6a;box-shadow:inset 0 1px 0 #fff8,0 3px 0 #3a0a6a}
+.dso.best{--gl:#b36bffcc}.dso.best .lim{animation-name:limP}@keyframes limP{50%{filter:drop-shadow(0 0 22px #c58bffee) drop-shadow(0 6px 6px #000b)}}
+.dx2{box-shadow:0 2px 6px #000a,0 0 14px #ff5a2aaa}
+/* spend / frames / skins */
+.dit,.dfr,.dsk{border-radius:14px;transition:transform .15s,border-color .15s}.dit:hover,.dfr:hover,.dsk:hover{transform:translateY(-2px);border-color:#5a9ae0}
+.dit b{font-size:14px}
+/* starter pop-up */
+.mdb.stm{max-width:min(660px,94cqw);padding:0;background:none;border:0;overflow:visible}
+.mdb.stm .mdx{right:-6px;top:-10px;z-index:9;background:#2a1206;border:2px solid #ffb04a}
+.stpw .dof{min-height:200px}.stpw .dofim{width:150px;height:150px}.stpw .doft>b{font-size:26px}
+.stpn{margin:8px 0 0;text-align:center;font:600 12px system-ui;color:#e8d8c8;text-shadow:0 1px 2px #000}
+@container (max-width:560px){.stpw .dof{grid-template-columns:auto 1fr}.stpw .dof .dsp{grid-column:1/-1;width:100%}.stpw .dofim{width:110px;height:110px}}
+@container (max-width:900px){.dofim{width:96px;height:96px}}
+@container (max-height:520px){.dhd{margin:14px 0 8px;padding:5px 12px 5px 8px}.dhi{width:32px;height:32px;font-size:17px}.dht b{font-size:16px}.dht small{font-size:11px}.dshl h3{font-size:22px}.dshic{width:44px}.dbal b{font-size:17px}
+ .dsi{height:76px}.dofim{width:80px;height:80px}.dof{min-height:0}.doft>b{font-size:17px}.dofl{font-size:12px}.dof .dsp.big{font-size:15px;padding:8px 12px}.dsn{font-size:11px;min-height:26px}.dsa{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.dof.glw,.dof.glw::before,.dofim img,.dofim::before,.dsi .lim{animation:none!important}}
+
+/* ===================== top bar: Starter + Mail ===================== */
+.stb img{width:70px;height:52px;margin-top:-8px;object-fit:contain;margin-bottom:-2px;filter:drop-shadow(0 3px 3px #000b);animation:stbB 2.4s ease-in-out infinite}
+@keyframes stbB{0%,100%{filter:drop-shadow(0 3px 3px #000b) drop-shadow(0 0 2px #ffd24a00)}50%{filter:drop-shadow(0 3px 3px #000b) drop-shadow(0 0 10px #ffd24a) drop-shadow(0 0 4px #fff3b0)}}
+.stb .dqtx{background:linear-gradient(#3a6aff,#1a2a9a);border-color:#ffd24a}
+.stb em.stp{background:linear-gradient(#ffe08a,#e08a14);color:#3a1d04;border-color:#fff;top:auto;bottom:14px;right:-8px;min-width:30px;font-size:10px;animation:dx2 1.6s ease-in-out infinite}
+.mlb svg{width:58px}.mlb .dqtx{background:linear-gradient(#2a6a9a,#123a5a);border-color:#9fd8ff}
+.mlb.hot svg{animation:dqcg 1.2s ease-in-out infinite alternate}
+@container (max-height:520px){.stb img{width:42px;height:34px}.mlb svg{width:38px}}
+/* sidebar badge */
+.sbn{position:relative}
+.sbd{position:absolute;top:6px;right:calc(50% - 30px);min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#e0302a;color:#fff;font:900 11px/16px system-ui;font-style:normal;text-align:center;border:2px solid #fff;box-shadow:0 2px 4px #0009,0 0 10px #ff3a2aaa;animation:sbdP 1.4s ease-in-out infinite;z-index:3}
+@keyframes sbdP{50%{transform:scale(1.15)}}
+@container (max-height:520px){.sbd{top:2px;right:calc(50% - 24px);min-width:16px;height:16px;font-size:9px;line-height:12px}}
+
+/* ===================== Mail ===================== */
+.mdb.mlm{max-width:min(860px,96cqw);width:100%;height:min(560px,90cqh);display:flex;flex-direction:column;padding:14px 16px 12px;color:#f3e3c8;
+ background:radial-gradient(120% 50% at 50% 0,#6b3c1a,transparent 70%),linear-gradient(#3e2412,#1f1108);border:3px solid #c9893a;border-radius:18px;box-shadow:0 0 0 3px #2a1206,0 0 0 5px #e0a84a55,0 24px 60px #000;overflow:hidden;container-type:inline-size}
+.mlh{display:flex;align-items:center;gap:12px;margin:0 44px 10px 0}.mlh svg{width:54px;flex:none;filter:drop-shadow(0 3px 3px #000a)}
+.mlh h3{margin:0;font:900 24px Cinzel,Georgia,serif;letter-spacing:.08em;text-transform:uppercase;color:#ffe3a3;text-shadow:0 2px 0 #000}.mlh small{color:#c9a47a;font:600 12.5px system-ui}
+.mlw{flex:1;min-height:0;display:grid;grid-template-columns:minmax(220px,38%) 1fr;gap:12px}
+.mll{overflow:auto;display:flex;flex-direction:column;gap:6px;padding:2px 4px 2px 2px}
+.mli{position:relative;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;cursor:pointer;background:linear-gradient(#2e1a0c,#1e1108);border:2px solid #5a3a1e;transition:border-color .15s,transform .15s}
+.mli:hover{border-color:#a8763a}.mli.on{border-color:#ffc83a;background:linear-gradient(#5a3410,#2e1a0a);box-shadow:0 0 12px #ffc83a44}
+.mli.cl{opacity:.62}.mli.gift .mlic{animation:mlg 1.6s ease-in-out infinite}
+@keyframes mlg{50%{transform:scale(1.12) rotate(-6deg)}}
+.mlic{flex:none;width:36px;height:36px;display:grid;place-items:center;font-size:22px;border-radius:10px;background:#0006;border:1px solid #ffffff1a}.mlic.big{width:46px;height:46px;font-size:28px}
+.mlit{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.mlit b{font:800 13.5px system-ui;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mlit small{font:600 11px system-ui;color:#c9a47a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mli.new .mlit b{color:#ffe3a3}
+.mldot{position:absolute;top:7px;right:8px;width:9px;height:9px;border-radius:50%;background:#ff3a2a;box-shadow:0 0 6px #ff3a2a}
+.mlrw{flex:none;font-style:normal;font-size:16px}.mlrw .dmi{width:18px;height:17px}.mlck{flex:none;font-style:normal;color:#7dff9a;font-weight:900}
+.mlnone{margin:auto;color:#c9a47a;font:600 13px system-ui}
+.mld{min-height:0;overflow:auto;padding:14px;border-radius:14px;background:linear-gradient(#f3e4c2,#dcc493);color:#3a2410;border:2px solid #8a5a2a;box-shadow:inset 0 0 30px #a8763a55;display:flex;flex-direction:column;gap:10px}
+.mldh{display:flex;align-items:center;gap:10px}.mldh h4{margin:0;font:900 19px Cinzel,Georgia,serif;color:#3a1d04}.mldh small{font:600 12px system-ui;color:#6a4a2a}
+.mldh .mlic{background:#3a1d0418;border-color:#3a1d0422}
+.mlbk{display:none;flex:none;width:34px;height:34px;border-radius:50%;border:0;background:#3a2410;color:#fff;font:900 22px/1 system-ui;cursor:pointer}
+.mlexp{align-self:flex-start;padding:3px 10px;border-radius:20px;background:#a8200a18;border:1px solid #a8200a44;color:#8a1a08;font:700 12px system-ui}
+.mlbody{font:500 14.5px/1.55 system-ui;color:#3a2410;white-space:normal;overflow-wrap:anywhere}
+.mlrws{margin-top:auto;padding-top:10px;border-top:1px dashed #8a5a2a66}.mlrl{display:block;margin-bottom:6px;font:900 11px system-ui;letter-spacing:.14em;text-transform:uppercase;color:#6a4a2a}
+.mlcb{align-self:center;min-width:180px;padding:11px 26px;border-radius:12px;border:2px solid #1f5a0c;font:900 17px system-ui;color:#fff;cursor:pointer;text-shadow:0 1px 2px #000a;background:linear-gradient(#8be04a,#3f9a1c);box-shadow:inset 0 1px 0 #fff6,0 3px 0 #1f5a0c,0 0 16px #8be04a77;animation:evg 1s ease-in-out infinite alternate}
+.mlcb.done{background:#8a7a5a;border-color:#5a4a2a;box-shadow:none;animation:none;cursor:default}
+.mlemp{margin:auto;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:#6a4a2a}.mlemp svg{width:80px;opacity:.8}.mlemp b{font:900 17px Cinzel,serif;color:#3a2410}.mlemp small{font:600 13px system-ui}
+.mlf{display:flex;justify-content:space-between;gap:10px;margin-top:10px}
+.mlfb{padding:10px 18px;border-radius:10px;cursor:pointer;font:800 14px system-ui;color:#fff;border:2px solid #1e0f05;box-shadow:inset 0 1px 0 #ffffff33,0 3px 0 #1e0f05;text-shadow:0 1px 2px #000a}
+.mlfb.del{background:linear-gradient(#6d4426,#3a2312)}.mlfb.all{background:linear-gradient(#ffb43a,#d9780f);border-color:#7a3a04;box-shadow:inset 0 1px 0 #fff6,0 3px 0 #7a3a04}
+.mlfb.all:not(:disabled){animation:evg 1.1s ease-in-out infinite alternate}
+.mlfb:disabled{opacity:.45;cursor:default;animation:none}
+@container (max-width:620px){.mlw{grid-template-columns:1fr}.mlw .mld{display:none}.mlw.det .mll{display:none}.mlw.det .mld{display:flex}.mlbk{display:block}}
+@container (max-height:520px){.mdb.mlm{height:94cqh;padding:8px 10px}.mlh{margin-bottom:6px}.mlh svg{width:36px}.mlh h3{font-size:18px}.mli{padding:6px 8px}.mlic{width:30px;height:30px;font-size:18px}.mld{padding:10px}.mldh h4{font-size:16px}.mlbody{font-size:13px}.mlcb{padding:8px 18px;font-size:15px}.mlfb{padding:7px 12px;font-size:12px}.mlf{margin-top:6px}}
+/* reward chips + pop-up */
+.rwg{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.rwc{display:flex;flex-direction:column;align-items:center;gap:3px;width:104px;padding:10px 6px 8px;border-radius:14px;background:radial-gradient(circle at 50% 30%,#5a3a8a,#1a1030 75%);border:2px solid #c58bff;box-shadow:0 0 14px #a85aff55,0 4px 8px #0008;color:#fff}
+.rwc.rw-dia{background:radial-gradient(circle at 50% 30%,#2a6ad8,#0b1630 75%);border-color:#7ab8ff;box-shadow:0 0 14px #5a9cff66,0 4px 8px #0008}
+.rwc.rw-gold{background:radial-gradient(circle at 50% 30%,#b8801a,#2a1806 75%);border-color:#ffd24a;box-shadow:0 0 14px #ffc83a66,0 4px 8px #0008}
+.rwc.rw-fr{background:radial-gradient(circle at 50% 30%,#2a8a4a,#0a2014 75%);border-color:#7dff9a;box-shadow:0 0 14px #5ad07a66,0 4px 8px #0008}
+.rwi{height:44px;display:grid;place-items:center}.rwi svg{width:40px;height:40px}.rwi .dmi{width:40px;height:37px}.rwf{display:block;width:44px;height:44px;border-radius:10px}
+.rwc b{font:900 18px system-ui;text-shadow:0 2px 0 #000}.rwc small{font:700 10.5px/1.15 system-ui;color:#e8dcff;text-align:center}
+.rwg.sm .rwc{width:90px;padding:7px 4px 6px}.rwg.sm .rwi{height:34px}.rwg.sm .rwi svg{width:32px;height:32px}.rwg.sm .rwc b{font-size:15px}.rwg.dim2{filter:grayscale(.7);opacity:.7}
+#rfx{position:absolute;inset:0;z-index:80;display:grid;place-items:center;background:#000c;opacity:0;transition:opacity .25s;cursor:pointer;overflow:hidden}#rfx.on{opacity:1}
+.rwr{position:absolute;left:50%;top:50%;width:160vmax;height:160vmax;translate:-50% -50%;background:repeating-conic-gradient(#ffd24a22 0 8deg,transparent 8deg 22deg);animation:rfspin 18s linear infinite;-webkit-mask:radial-gradient(circle,#000 10%,transparent 45%);mask:radial-gradient(circle,#000 10%,transparent 45%)}
+.rwx{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;text-align:center}
+.rwx h2{margin:0;font:900 clamp(26px,6cqw,44px) Cinzel,Georgia,serif;letter-spacing:.06em;background:linear-gradient(#fffbe6,#ffd36b 55%,#d9881a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #000) drop-shadow(0 0 18px #ffc83a88);animation:rfIn .5s cubic-bezier(.2,1.6,.4,1) both}
+.rwx p{margin:0;font:600 14px system-ui;color:#f1e3cf}
+.rwx .rwc{animation:rfIn .45s cubic-bezier(.2,1.6,.4,1) both;animation-delay:var(--d,0s)}
+@keyframes rfIn{from{opacity:0;transform:scale(.3) translateY(20px)}}
+.rwt{margin-top:8px;font:700 12px system-ui;color:#c9a47a;animation:dsg 1.6s ease-in-out infinite}
+
+/* ===================== Friends + chat ===================== */
+.frp{display:grid;grid-template-columns:minmax(260px,36%) 1fr;gap:12px;margin:8px 16px;height:calc(100cqh - 120px);min-height:360px}
+.frlw,.chw{min-height:0;display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:2px solid #a8763a;background:radial-gradient(120% 40% at 50% 0,#5a3a2066,transparent 70%),linear-gradient(#3a2414f5,#1c1007f8);box-shadow:0 0 0 2px #1a0d05,0 12px 26px #000b}
+.frh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid #ffffff14;background:linear-gradient(#5a3410aa,transparent)}
+.frh h3{margin:0;font:900 22px Cinzel,Georgia,serif;letter-spacing:.06em;color:#ffe3a3;text-shadow:0 2px 0 #000}.frh small{font:600 12px system-ui;color:#c9a47a}
+.frhb{font-style:normal;padding:3px 10px;border-radius:20px;background:#e0302a;color:#fff;font:900 11px system-ui;box-shadow:0 0 10px #ff3a2a88;animation:sbdP 1.4s ease-in-out infinite}
+.frl{flex:1;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:6px}
+.frr{position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;cursor:pointer;background:#0004;border:2px solid transparent;transition:background .15s,border-color .15s}
+.frr:hover{background:#ffffff0d}.frr.sel{border-color:#ffc83a;background:linear-gradient(90deg,#6b3a1488,#0003)}.frr.un{background:linear-gradient(90deg,#8a1a0a55,#0003)}
+.frav{position:relative;flex:none;display:grid}.frav::after{content:"";position:absolute;right:0;bottom:1px;width:12px;height:12px;border-radius:50%;background:#7a7f8a;border:2px solid #1c1007}.frav.on::after{background:#3ad27a;box-shadow:0 0 6px #3ad27a}
+.fri{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.fri b{font:800 14.5px system-ui;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fri small{display:flex;align-items:center;gap:4px;font:600 11.5px system-ui;color:#c9a47a;white-space:nowrap;overflow:hidden}.frpv{color:#ffd0b0;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.prs{color:#a8a8b0}.prs.on{color:#5ae89a;font-weight:800}
+.frn{flex:none;font-style:normal;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#e0302a;color:#fff;font:900 11px/20px system-ui;text-align:center;box-shadow:0 0 8px #ff3a2a99}
+.frinv{flex:none;padding:6px 10px;border-radius:8px;border:0;cursor:pointer;font:800 12px system-ui;color:#fff;background:linear-gradient(#ffb43a,#d9780f)}.frinv:disabled{background:#4a3a2a;color:#aaa}
+.frgo{flex:none;font-size:18px;opacity:.7}
+.frem,.chemp{margin:auto;display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px;text-align:center;color:#c9a47a}.frem span,.chemp span{font-size:44px}.frem b,.chemp b{font:900 18px Cinzel,serif;color:#ffe3a3}.frem small,.chemp small{font:600 13px system-ui;max-width:300px}
+.chh{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #ffffff14;background:linear-gradient(#5a3410aa,transparent)}
+.chn{min-width:0;display:flex;flex-direction:column}.chn b{font:900 17px system-ui;color:#fff}.chn small{display:flex;align-items:center;gap:4px;font:600 12px system-ui;color:#c9a47a}
+.chbk{display:none;flex:none;width:34px;height:34px;border-radius:50%;border:0;background:#0006;color:#fff;font:900 22px/1 system-ui;cursor:pointer}
+.chm{flex:1;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:radial-gradient(80% 60% at 50% 100%,#00000044,transparent)}
+.chld,.chnone{margin:auto;color:#c9a47a;font:600 13px system-ui;text-align:center}.chnone span{display:block;font-size:40px;margin-bottom:4px}
+.chday{display:flex;justify-content:center;margin:6px 0}.chday span{padding:2px 10px;border-radius:20px;background:#0006;font:700 11px system-ui;color:#c9a47a}
+.chb{display:flex;align-items:flex-end;gap:6px;max-width:82%}.chb.me{align-self:flex-end;flex-direction:row-reverse}
+.chav{flex:none;display:grid}
+.chx{padding:8px 12px 5px;border-radius:16px 16px 16px 4px;background:linear-gradient(#f3e4c2,#dcc493);color:#2a1606;font:500 14px/1.4 system-ui;overflow-wrap:anywhere;box-shadow:0 2px 4px #0006;animation:chIn .2s ease-out}
+.chb.me .chx{border-radius:16px 16px 4px 16px;background:linear-gradient(#ffc85a,#e08a14);color:#2a1206}
+.chx small{display:block;margin-top:2px;text-align:right;font:600 10px system-ui;opacity:.6}
+@keyframes chIn{from{opacity:0;transform:translateY(6px)}}
+.chf{display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid #ffffff14;background:#0005}.chf small{color:#c9a47a;font:600 13px system-ui;margin:auto}
+.chf input{flex:1;min-width:0;padding:11px 14px;border-radius:22px;border:2px solid #8a5a2a;background:#1a0e06;color:#fff;font:500 15px system-ui;outline:none}.chf input:focus{border-color:#ffc83a;box-shadow:0 0 10px #ffc83a55}
+.chf button{flex:none;width:44px;height:44px;border-radius:50%;border:0;cursor:pointer;color:#3a1d04;background:linear-gradient(#ffe08a,#e08a14);box-shadow:0 3px 0 #7a3a04;display:grid;place-items:center}.chf button:active{transform:translateY(2px);box-shadow:0 1px 0 #7a3a04}
+@container (max-width:760px){.frp{grid-template-columns:1fr}.frp .chw{display:none}.frp.chat .frlw{display:none}.frp.chat .chw{display:flex}.chbk{display:block}}
+@container (max-height:520px){.frp{height:calc(100cqh - 76px);min-height:0;margin:4px 8px;gap:8px}.frh{padding:6px 10px}.frh h3{font-size:17px}.frr{padding:5px 8px}.frr .av{--s:36px!important}.chh{padding:6px 10px}.chm{padding:8px 10px}.chf{padding:6px 8px}.chf input{padding:8px 12px;font-size:14px}.chf button{width:38px;height:38px}}
+.dsr{top:30px;right:-44px}@keyframes dsrW{0%,70%,100%{transform:scale(1) rotate(0)}76%{transform:scale(1.07) rotate(-2deg)}82%{transform:scale(1.07) rotate(2deg)}88%{transform:scale(1.04) rotate(-1deg)}94%{transform:scale(1)}}
+
+@container (max-height:520px){.tb .rs{gap:5px}.tb .dqb{width:52px;margin-left:0;margin-right:0}.stb em.stp{right:-4px}}
+@container (max-width:900px){.dofs{grid-template-columns:1fr}.dof{grid-template-columns:auto 1fr auto;padding-right:66px}.dof .dsp{grid-column:auto;width:auto}.dof .doft{padding-right:0}}
+@container (max-height:520px){.dsr{top:22px;right:-40px;width:150px;font-size:8.5px;letter-spacing:.03em;padding:3px 0}}
+/* Weekly Pass tracker */
+.wkt{grid-column:1/-1;margin-top:4px;padding:10px 12px 8px;border-radius:14px;background:#0006;border:1px solid #3ad27a55}
+.wkth{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}.wkth b{font:900 13px Cinzel,Georgia,serif;letter-spacing:.08em;text-transform:uppercase;color:#c8ffd8}
+.wkth span{font:600 12px system-ui;color:#bfe8cf}.wkth em{font-style:normal;font-weight:900;color:#fff;padding:1px 7px;border-radius:10px;background:#108a48}
+.wkr{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding-top:16px}
+.wkbar{position:absolute;left:7%;right:7%;top:34px;height:8px;border-radius:4px;background:#0a1a12;border:1px solid #000;box-shadow:inset 0 1px 3px #000}
+.wkbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#1fa85a,#7affb0);box-shadow:0 0 8px #3ad27a}
+.wkn{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.wkc{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;font:900 17px system-ui;color:#fff;background:#24302a;border:2px solid #4a5a50;box-shadow:0 2px 4px #000a}
+.wkc .dmi{width:20px;height:19px;margin:0}
+.wkn b{font:800 11.5px system-ui;color:#e8f5ec}.wkn small{font:700 10px system-ui;color:#9ab8a6;white-space:nowrap}
+.wkn.done .wkc{background:linear-gradient(#5ae89a,#108a48);border-color:#c8ffd8}.wkn.done small{color:#7dff9a}
+.wkn.rdy{cursor:pointer}.wkn.rdy .wkc{background:radial-gradient(circle at 50% 35%,#2a6ad8,#0b1630);border-color:#ffd24a;animation:wkp 1.1s ease-in-out infinite}.wkn.rdy small{color:#ffe08a}
+@keyframes wkp{50%{box-shadow:0 0 0 3px #ffd24a66,0 0 16px #ffd24a;transform:scale(1.08)}}
+.wkn.lock .wkc{font-size:14px;opacity:.75}
+.wkn.now .wkc{outline:3px solid #fff;outline-offset:2px}
+.wknow{position:absolute;top:-17px;left:50%;translate:-50% 0;font:900 9px system-ui;letter-spacing:.08em;font-style:normal;color:#04301a;background:#c8ffd8;padding:1px 6px;border-radius:6px;white-space:nowrap}
+.wknow::after{content:"";position:absolute;left:50%;bottom:-4px;translate:-50% 0;border:4px solid transparent;border-bottom:0;border-top-color:#c8ffd8}
+@container (max-height:520px){.wkc{width:30px;height:30px;font-size:14px}.wkbar{top:30px}.wkn b{font-size:10px}.wkn small{font-size:8.5px}.wkt{padding:6px 8px}}
+@media (prefers-reduced-motion:reduce){.wkn.rdy .wkc{animation:none}}
+
+.wkbtns{display:flex;flex-direction:column;align-items:center;gap:6px}
+.dsp.wkdone{background:#26352c!important;border-color:#4a6a56!important;color:#9fd8b4!important;box-shadow:none!important;animation:none!important;opacity:1;cursor:default}
+.wknx{font:700 11px system-ui;color:#9fd8b4}.wknx b{color:#fff;font-variant-numeric:tabular-nums}
+.dsp.wkren{width:auto;margin:0;padding:6px 14px;font-size:12px}
 </style>
 </head><body>
 <div id="gw">
@@ -2428,7 +2629,7 @@ function tbH(){const ri=rkI(PD.pts),tl=HD.reduce((a,h)=>{const s=hs(h);return a+
  return `<div class="tb"><button class="pf2" id="pfb" title="Open player info"><span class="pfav">${avH(PROF,'var(--pfs)')}<b class="pflv">Lv ${tl}</b></span>
   <span class="pfi"><b class="pnm">${esc(myName()==='You'?'Guest':myName())}</b><span class="pfs2">${ME?'🏆 '+(PD.w|0)+' W · 💀 '+(PD.l|0)+' L':'Guest · log in to save online'}</span><span class="pfxp" title="Rank points to the next rank"><i style="width:${into/st*100}%"></i><em>${into} / ${st} RP</em></span></span>
   <span class="pfsep"></span><span class="pfrk">${rkFx(ri,'var(--pfs)')}<b class="rkn" style="--rc:${rkC(ri)}">${esc((RANKS[ri]||{}).n||'')}</b></span></button>
-  <div class="rs"><span id="snh" hidden>🔊 Tap anywhere for music</span>${DQ.tasks.length?(()=>{const n=dqBadge();return `<button class="dqb${n?' hot':''}" id="dqb" title="Daily quests">${CHESTB}<span class="dqtx">Daily Quest</span>${n?`<em>${n}</em>`:''}</button>`})():''}<button class="dqb ivb" id="ivb" title="Inventory">${BAGI}<span class="dqtx">Inventory</span></button>${resH()}</div></div>`}
+  <div class="rs"><span id="snh" hidden>🔊 Tap anywhere for music</span>${stbH()}${DQ.tasks.length?(()=>{const n=dqBadge();return `<button class="dqb${n?' hot':''}" id="dqb" title="Daily quests">${CHESTB}<span class="dqtx">Daily Quest</span>${n?`<em>${n}</em>`:''}</button>`})():''}${mlbH()}<button class="dqb ivb" id="ivb" title="Inventory">${BAGI}<span class="dqtx">Inventory</span></button>${resH()}</div></div>`}
 function dispHero(){let h=PD.disp&&HD.find(x=>hk(x)===PD.disp&&owned(x));if(!h){const l=PD.lineups[PD.sel]||{};h=(l.h||[]).map(k=>HD[hidx(k)]).find(Boolean)}return h||HD.find(owned)}
 const MIC={std:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6M16 16l4 4M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6M8 16l-4 4M5 21l-2-2"/></svg>',story:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>',rank:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 20h12"/></svg>'};
 const RCY='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15.5 6.2L21 16"/><path d="M21 21v-5h-5"/></svg>';
@@ -2441,11 +2642,6 @@ function pgBattle(){const l=PD.lineups[PD.sel]||{h:[],r:{},g:[]},dh=dispHero(),d
  <div class="qs qbd"><div class="qsi${qAct().length?' on':''}" aria-hidden="true">${QSCROLL}${qAct().length?`<em>${qAct().length}</em>`:''}</div><div class="qbx"><div class="qhd"><h3>Quests</h3><small>${qAct().length?'Tap a quest for details':''}</small></div>${qAct().length?qAct().map(qH).join(''):QUESTS.length?'<p class="qdn">✓ All quests complete! New ones are on the way.</p>':'<p class="qemp">No quests right now. Check back soon!</p>'}</div></div>
  <div class="bb"><div class="lu pnl"><div class="lt">${tabs}</div><div class="lg">${deckHTML(l,false)}</div></div>
  <div class="mp">${PD.mode==='rank'?`<button class="rkib" id="rkinfo">${rkFx(rkI(PD.pts),24)}<span>See Rank Levels</span><i>›</i></button>`:''}<div class="mds${MM.on?' lk':''}">${md.map(([k,n,ic])=>`<button class="md${PD.mode===k?' on':''}" data-m="${k}"><i>${ic}</i><span>${n}</span>${k==='story'?'<em class="msoon">Soon</em>':''}</button>`).join('')}</div>${MM.on?mmHTML():'<button class="play" id="play">Play</button>'}</div></div></div>`}
-async function pgFriends(){if(!ME)return '<div class="pnl pad"><h3>Friends</h3><p class="sub">Log in on Dafreta Network to see your friends here.</p></div>';
- const fr=Object.keys(await fb('inbox/'+ME+'/fr').catch(()=>null)||{}),lb=await ensureLB(),pr=await Promise.all(fr.map(k=>fb('profiles/'+k).catch(()=>null)));
- const rows=fr.map((k,i)=>{const p=pr[i]||{},l=lb[k],inv=(+localStorage['dfinv_'+k]||0)>Date.now()-864e5;
-  return `<div class="fr">${avH(p,46)}<div class="fi"><b>${esc(p.name||k)}</b><small>${l?rkE(rkI(l.pts),16)+' '+esc((RANKS[rkI(l.pts)]||{}).n||'')+' · '+(l.w|0)+' wins':'Hasn’t played Card Battle yet'}</small></div>${l?'<span class="tag">Playing</span>':`<button class="inv" data-k="${esc(k)}" ${inv?'disabled':''}>${inv?'Invited ✓':'Invite to play'}</button>`}</div>`}).join('');
- return `<div class="pnl pad"><h3>Friends</h3>${rows||'<p class="sub">No friends yet. Add friends on Dafreta Network and they will show up here.</p>'}</div>`}
 async function pgLB(){const lb=await ensureLB(),ar=Object.entries(lb).map(([k,v])=>({k,...v})).sort((a,b)=>(b.pts-a.pts)||(b.w-a.w)),top=ar.slice(0,50),
  pr=await Promise.all(top.slice(0,20).map(r=>r.bot?null:fb('profiles/'+r.k).catch(()=>null))),mine=ar.findIndex(r=>r.k===ME);
  const rows=top.map((r,i)=>{const p=i<20&&pr[i]?pr[i]:{avatar:r.a,frame:r.f},ri=rkI(r.pts);return `<div class="fr lbr lbr2${r.k===ME?' me':''}"><span class="pos">${i+1}</span>${avH(p,52)}<div class="fi"><b>${esc(r.n||r.k)}${r.bot&&+CFG.botTag?' <span class="tag">AI</span>':''}</b><small style="color:${rkC(ri)}">${esc((RANKS[ri]||{}).n||'')}</small></div><div class="pts"><b>${r.pts|0}</b><small>pts</small></div><span class="lbe">${rkFx(ri,52)}<b class="rkn" style="--rc:${rkC(ri)};font-size:${(n=>n>13?8.5:n>10?9.5:11)(String((RANKS[ri]||{}).n||'').length)}px">${esc((RANKS[ri]||{}).n||'')}</b></span></div>`}).join('');
@@ -3050,43 +3246,69 @@ addEventListener('pagehide',()=>{try{
    Diamonds, owned premium frames/skins, extra line-up slots and Gold Shop refreshes are kept in
    cardgame/wallet/{user}. Only the payment server can change them, so they cannot be faked from the
    browser. Fragments and stones bought with diamonds arrive in cardgame/grants/{user} and are picked up here. */
-const DPACKS=[{id:'d50',n:'Few Diamonds',p:49,d:50},{id:'d165',n:'Small Diamonds',p:149,d:165,b:15},{id:'d600',n:'Medium Diamonds',p:499,d:600,b:100,tag:'MOST POPULAR',cl:'pop'},{id:'d1250',n:'Large Diamonds',p:999,d:1250,b:250},{id:'d3300',n:'Big Diamonds',p:2490,d:3300,b:800,tag:'BEST VALUE',cl:'best'}];
+const DPACKS=[{id:'d50',n:'Handful of Diamonds',p:49,d:50,im:'s',z:.74},{id:'d165',n:'Diamond Pouch',p:149,d:165,b:15,im:'s',z:.9},{id:'d600',n:'Diamond Satchel',p:499,d:600,b:100,tag:'MOST POPULAR',cl:'pop',im:'m',z:.92},{id:'d1250',n:'Merchant\u2019s Hoard',p:999,d:1250,b:250,im:'m',z:1.06},{id:'d3300',n:'Royal Treasure Chest',p:2490,d:3300,b:800,tag:'BEST VALUE',cl:'best',im:'l',z:1.12}];
+/* artwork (hosted on GitHub). The loot sheet holds 6 icons; each pack shows one of the 3 diamond icons of the bottom row */
+const GH='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/aseets/image/logo/',
+ IMG_LOOT=GH+'Fantasy%20Treasure%20and%20Gem%20Loot%20Icons.webp',IMG_STARTER=GH+'Royal%20Blue%20Treasure%20Gift%20Bundle.webp',IMG_WEEKLY=GH+'Royal%20Blue%20Treasure%20Gift%20Bundle.webp',
+ LOOT={s:[15,636,360,360],m:[407,548,470,470],l:[880,530,640,494]};
+const lootI=(k,cl)=>{const [x,y,w,h]=LOOT[k],W=1536,H=1024;return '<i class="lim '+(cl||'')+'" style="aspect-ratio:'+w+'/'+h+';background-image:url(\''+IMG_LOOT+'\');background-size:'+(W/w*100).toFixed(3)+'% '+(H/h*100).toFixed(3)+'%;background-position:'+(x/(W-w)*100).toFixed(3)+'% '+(y/(H-h)*100).toFixed(3)+'%"></i>'};
 const DPRICE_DEF={refresh:20,frag15:45,frag50:140,stone:150,slot:199,frame:280},SHOPF=['aurora','phoenix','abyss','royal'],STONE_LIM=2,MAX_XSLOT=5;
 let WAL={},DPRICE={...DPRICE_DEF},SKINS={},DWAIT=null,DCONF=null;
 const diaN=()=>Math.max(0,WAL.dia|0),ownF=k=>!PREMF.includes(k)||!!(WAL.own&&WAL.own.frames&&WAL.own.frames[k]),ownS=id=>!!(WAL.own&&WAL.own.skins&&WAL.own.skins[id]);
 const nSlots=()=>5+Math.min(MAX_XSLOT,WAL.slots|0),refN=()=>WAL.shr&&WAL.shr.day===dKey()?WAL.shr.n|0:0,shopK=()=>dKey()+(refN()?'#'+refN():'');
 const stoneN=()=>{const w=WAL.stw;if(!w)return 0;const d=new Date(Date.now()+2*36e5);d.setUTCHours(0,0,0,0);d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7));return w.week===d.toISOString().slice(0,10)?w.n|0:0};
-const passOn=()=>!!(WAL.pass&&WAL.pass.until>Date.now()),passDays=()=>Math.max(0,Math.ceil(((WAL.pass&&WAL.pass.until)||0)-Date.now())/864e5|0);
+/* Weekly Passes (same rules as the payment server): every day of a pass is a mail that stays until it is claimed */
+const addDay=(d,n)=>new Date(Date.parse(d+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
+function passes(){const o={...(WAL.passes||{})};if(WAL.pass&&WAL.pass.until){const from=new Date(WAL.pass.until-7*864e5+2*36e5).toISOString().slice(0,10),got={};for(let i=0;i<7;i++)if(WAL.pass.last&&addDay(from,i)<=WAL.pass.last)got[i]=true;o.legacy={from,n:7,daily:WAL.pass.daily||20,got}}return o}
+const passLeft=()=>{const t=dKey();let n=0;for(const p of Object.values(passes())){const e=addDay(p.from,p.n-1);if(e>=t)n=Math.max(n,Math.round((Date.parse(e)-Date.parse(t))/864e5)+1)}return n};
+const passOn=()=>passLeft()>0,canRenew=()=>passLeft()<=2;
 async function walLoad(){if(!ME)return;try{WAL=(await fb('cardgame/wallet/'+ME))||{}}catch(e){}}
 /* fragments / stones bought with diamonds */
-async function grantsClaim(){if(!ME||!PD)return;const g=await fb('cardgame/grants/'+ME).catch(()=>null);if(!g)return;GUARD.check();let n=0,txt=[];
+async function grantsClaim(silent){if(!ME||!PD)return;const g=await fb('cardgame/grants/'+ME).catch(()=>null);if(!g)return;GUARD.check();let n=0,txt=[];
  for(const [id,v] of Object.entries(g)){if(!v)continue;try{await fb('cardgame/grants/'+ME+'/'+id,'DELETE')}catch(e){continue}
   if(v.fr)for(const k in v.fr){const a=+v.fr[k]||0;PD.fr[k]=(PD.fr[k]||0)+a;const h=HD.find(x=>hk(x)===k);txt.push(a+' '+(h?h.n:'hero')+' fragments')}
-  if(v.st){PD.st=(PD.st|0)+(+v.st||0);txt.push(v.st+' Transcendence stone'+(v.st>1?'s':''))}n++}
- if(n){saveP('fr','st');toast('🎁 Received '+txt.join(', '))}}
+  if(v.st){PD.st=(PD.st|0)+(+v.st||0);txt.push(v.st+' Transcendence stone'+(v.st>1?'s':''))}
+  if(v.gold){PD.gold=(PD.gold|0)+(+v.gold||0);txt.push(g$(+v.gold)+' gold')}n++}
+ if(n){saveP('fr','st','gold');if(!silent)toast('🎁 Received '+txt.join(', '))}}
 /* a hero wearing a skin: same stats, different look (a copy, the original hero is never changed) */
 function applySkin(o,id,any){const k=id&&SKINS[id];if(!k||!k.img||(!any&&!ownS(id)))return o;return{...o,img:k.img,face:nFace(k.face),ar:+k.ar||0,bs:+k.bs||o.bs,atkImg:'',exImg:'',skin:id}}
 const skinOf=h=>{const id=PD&&PD.skin&&PD.skin[hk(h)];return id&&SKINS[id]&&ownS(id)?id:''};
 
-const DGEM=(s,x,y)=>'<svg viewBox="0 0 48 44" width="'+s+'" height="'+s*44/48+'" style="left:calc(50% + '+x+'px - '+s/2+'px);top:'+y+'px"><path d="M12 3h24l10 12-22 26L2 15z" fill="url(#dmG)" stroke="#0d2c6a" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 15h44M12 3l6 12 6 26M36 3l-6 12-6 26M18 15l6-12 6 12" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.1"/></svg>';
-const DPILE=[[[44,0,14]],[[38,-16,22],[42,14,12]],[[34,-22,30],[40,0,10],[34,22,30]],[[30,-30,36],[34,-12,16],[44,8,8],[30,28,34]],[[28,-36,40],[32,-20,18],[46,0,4],[32,20,18],[28,36,40]]];
 const peso=v=>'₱'+v.toLocaleString('en-PH',{minimumFractionDigits:2});
 const dI='<svg class="dmi" viewBox="0 0 48 44" aria-hidden="true"><path d="M12 3h24l10 12-22 26L2 15z" fill="url(#dmG)" stroke="#0d2c6a" stroke-width="2"/></svg>';
 const sash=(t,c)=>'<i class="dsr '+(c||'')+'"><b>'+t+'</b></i>';
 const mon=()=>new Date(Date.now()+8*36e5).toISOString().slice(0,7);
 
-function pgDShop(){clearInterval(shTm);const on=!!CFG.payApi&&!!ME,P=DPRICE;
- const offer=(cls,title,sub,body,btn,s)=>'<div class="dof '+cls+'">'+(s||'')+'<div class="dofi">'+body+'</div><div class="doft"><b>'+title+'</b><small>'+sub+'</small></div>'+btn+'</div>';
- const st=WAL.starter?'':offer('st','Starter Pack','<b>300</b>'+dI+' + exclusive <b>Pioneer</b> frame + <b>2</b> Transcendence stones · worth <b>880</b>'+dI+' · one time only',avH({...(PROF||{}),frame:'pioneer'},64),
-  '<button class="dsp big" data-dbuy="starter"'+(on?'':' disabled')+'>'+(DWAIT&&DWAIT.pack==='starter'?'Waiting…':peso(99))+'</button>',sash('BEST DEAL','hot'));
- const wk=passOn()?offer('wk','Weekly Pass · '+passDays()+' day'+(passDays()===1?'':'s')+' left','Collect <b>20</b>'+dI+' every day while it lasts','<span class="wkb">20'+dI+'</span>',
-   WAL.pass.last===dKey()?'<button class="dsp big" disabled>Collected today ✓</button>':'<button class="dsp big go" data-dclaim="1">Collect 20 💎</button>')
-  :offer('wk','Weekly Pass','<b>60</b>'+dI+' now + <b>20</b>'+dI+' every day for 7 days = <b>200</b>'+dI,'<span class="wkb">7×</span>',
-   '<button class="dsp big" data-dbuy="weekly"'+(on?'':' disabled')+'>'+(DWAIT&&DWAIT.pack==='weekly'?'Waiting…':peso(59))+'</button>',sash('3× VALUE','pass'));
- const packs=DPACKS.map((k,i)=>{const w=DWAIT&&DWAIT.pack===k.id,f2=!(WAL.first&&WAL.first[k.id]);
-  return '<div class="dso '+(k.cl||'')+'">'+(k.tag?sash(k.tag,k.cl):'')+(f2?'<i class="dx2"><b>2×</b><small>FIRST<br>TOP-UP</small></i>':'')+'<div class="dsi">'+DPILE[i].map(([s2,x,y])=>DGEM(s2,x,y)).join('')+'</div><b class="dsn">'+k.n+'</b>'+
-  '<span class="dsa">'+g$(f2?k.d*2:k.d)+'</span><span class="dsb">'+(f2?'<s>'+g$(k.d)+'</s> +'+g$(k.d)+' FREE':k.b?(k.d-k.b)+' + '+k.b+' bonus':'&nbsp;')+'</span>'+
-  '<button class="dsp'+(w?' wait':'')+'" data-dbuy="'+k.id+'"'+(on?'':' disabled')+'>'+(w?'Waiting for payment…':peso(k.p))+'</button></div>'}).join('');
+const dHead=(ic,t,sub)=>'<div class="dhd"><span class="dhi">'+ic+'</span><div class="dht"><b>'+t+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</div></div>';
+const starterCard=(on,inModal)=>{const w=DWAIT&&DWAIT.pack==='starter';
+ return '<div class="dof st glw'+(inModal?' inm':'')+'">'+sash('BEST DEAL','hot')+'<div class="dofim"><img src="'+IMG_STARTER+'" alt="" referrerpolicy="no-referrer"></div>'+
+ '<div class="doft"><em class="dtag">ONE TIME ONLY</em><b>Starter Pack</b><ul class="dofl"><li>'+dI+'<b>300</b> diamonds</li><li><span class="dfmini">'+avH({...(PROF||{}),frame:'pioneer'},24)+'</span><b>Pioneer</b> animated frame</li><li>'+STNI+'<b>2</b> Transcendence stones</li></ul><small class="dworth">Worth <b>880</b>'+dI+' · 8× the value</small></div>'+
+ '<button class="dsp big"'+(on?' data-dbuy="starter"':' disabled')+'>'+(w?'Waiting…':peso(99))+'</button></div>'};
+/* Weekly Pass tracker: 7 days in a row, like the rank road. Claimed days are ticked, days ready to claim glow, today is marked. */
+function passCur(){const t=dKey(),L=Object.entries(passes()).map(([id,p])=>({id,...p,got:p.got||{}})).sort((a,b)=>a.from<b.from?-1:1);
+ return L.find(p=>p.from<=t&&addDay(p.from,p.n-1)>=t)||L.find(p=>Object.keys(p.got).length<p.n)||null}
+const passReady=()=>{const t=dKey(),o=[];for(const [id,p] of Object.entries(passes()))for(let i=0;i<p.n;i++)if(addDay(p.from,i)<=t&&!(p.got&&p.got[i]))o.push('p:'+id+':'+i);return o};
+function passTrack(){const p=passCur();if(!p)return '';const t=dKey(),n=p.n,ti=Math.round((Date.parse(t)-Date.parse(p.from))/864e5),done=Object.keys(p.got).filter(i=>p.got[i]).length,
+ pos=Math.max(0,Math.min(n-1,ti)),fill=ti<0?0:n>1?pos/(n-1)*100:100;
+ const nodes=Array.from({length:n},(_,i)=>{const d=addDay(p.from,i),st=p.got[i]?'done':d<=t?'rdy':'lock';
+  return '<div class="wkn '+st+(i===ti?' now':'')+'"'+(st==='rdy'?' data-wkday="p:'+p.id+':'+i+'" role="button" tabindex="0" title="Claim"':'')+'>'+(i===ti?'<i class="wknow">TODAY</i>':'')+
+  '<span class="wkc">'+(st==='done'?'✓':st==='rdy'?dI:'🔒')+'</span><b>Day '+(i+1)+'</b><small>'+(st==='done'?'Claimed':st==='rdy'?'+20 · Claim':new Date(d+'T12:00:00Z').toLocaleDateString(undefined,{weekday:'short'}))+'</small></div>'}).join('');
+ return '<div class="wkt"><div class="wkth"><b>Pass progress</b><span>Claimed <em>'+done+' / '+n+'</em> days · '+g$(60+done*20)+' of '+g$(60+n*20)+' 💎 collected</span></div>'+
+ '<div class="wkr"><div class="wkbar"><i style="width:'+fill+'%"></i></div>'+nodes+'</div></div>'}
+async function passClaimReady(ids){ids=ids||passReady();if(!ids.length)return;try{const j=await dPost('/mail',{ids});const o={};ids.forEach(i=>{const k=mKey(i);if(!MST[k]){MST[k]='r';o[k]='r'}});if(Object.keys(o).length)fb('cardgame/mstate/'+ME,'PATCH',o).catch(()=>{});
+ rewardFx(rwList(j.got||{}),'Weekly Pass','Diamonds collected. Keep coming back every day!');renderHome()}catch(e){toast(e.message)}}
+function pgDShop(){clearInterval(shTm);const on=!!CFG.payApi&&!!ME,P=DPRICE,pl=passLeft(),pw=DWAIT&&DWAIT.pack==='weekly';
+ const wk='<div class="dof wk'+(pl?'':' glw')+'">'+(pl?'':sash('3× VALUE','pass'))+'<div class="dofim"><img src="'+IMG_WEEKLY+'" alt="" referrerpolicy="no-referrer"><i class="wk7">7 DAYS</i></div>'+
+  '<div class="doft">'+(pl?'<em class="dtag on">ACTIVE</em>':'')+'<b>Weekly Pass</b>'+(pl?'<ul class="dofl"><li>📬 <b>20</b>'+dI+' every day · claim here or in your <b>Mail</b></li><li>⏳ <b>'+pl+'</b> day'+(pl===1?'':'s')+' left</li></ul><small class="dworth">Missed a day? It waits in your Mail until you claim it.</small>'
+   :'<ul class="dofl"><li>'+dI+'<b>60</b> diamonds right away</li><li>📬 <b>+20</b>'+dI+' in your Mail every day for 7 days</li></ul><small class="dworth"><b>200</b>'+dI+' in total for '+peso(59)+'</small>')+'</div>'+
+  (pl?'<div class="wkbtns">'+(passReady().length?'<button class="dsp big go" data-wkclaim="1">Claim '+g$(passReady().length*20)+' 💎</button>':'<button class="dsp big wkdone" disabled>✓ Claimed</button><small class="wknx">Next in <b id="wknx">'+fmtLeft(dLeft())+'</b></small>')+
+   (canRenew()?'<button class="dsp sm wkren"'+(on?' data-dbuy="weekly"':' disabled')+'>'+(pw?'Waiting…':'Renew '+peso(59))+'</button>':'')+'</div>'
+   :'<button class="dsp big"'+(on?' data-dbuy="weekly"':' disabled')+'>'+(pw?'Waiting…':peso(59))+'</button>')+(pl?passTrack():'')+'</div>';
+ if(pl&&!passReady().length){const k0=dKey();shTm=setInterval(()=>{const e=$('#wknx');if(!e){clearInterval(shTm);return}if(dKey()!==k0){clearInterval(shTm);renderHome();return}e.textContent=fmtLeft(dLeft())},1000)}
+ const packs=DPACKS.map(k=>{const w=DWAIT&&DWAIT.pack===k.id,f2=!(WAL.first&&WAL.first[k.id]);
+  return '<div class="dso '+(k.cl||'')+'">'+(k.tag?sash(k.tag,k.cl):'')+(f2?'<i class="dx2"><b>2×</b><small>FIRST<br>TOP-UP</small></i>':'')+'<div class="dsi" style="--z:'+k.z+'">'+lootI(k.im)+'</div><b class="dsn">'+k.n+'</b>'+
+  '<span class="dsa">'+dI+g$(f2?k.d*2:k.d)+'</span><span class="dsb">'+(f2?'<s>'+g$(k.d)+'</s> +'+g$(k.d)+' FREE':k.b?(k.d-k.b)+' + <b>'+k.b+' bonus</b>':'&nbsp;')+'</span>'+
+  '<button class="dsp'+(w?' wait':'')+'"'+(on?' data-dbuy="'+k.id+'"':' disabled')+'>'+(w?'Waiting for payment…':peso(k.p))+'</button></div>'}).join('');
  const it=(ic,t,sub,price,attr,dis,note)=>'<div class="dit"><span class="dii">'+ic+'</span><b>'+t+'</b><small>'+sub+'</small><button class="dsp sm" '+attr+(dis||!on?' disabled':'')+'>'+(note||dI+g$(price))+'</button></div>';
  const items=it(PUZI,'15 Hero Fragments','pick any hero',P.frag15,'data-dspend="frag15"')+it(PUZI+'<em>50</em>','50 Hero Fragments','pick any hero · best value',P.frag50,'data-dspend="frag50"')+
   it(STNI,'Transcendence Stone',stoneN()+' / '+STONE_LIM+' bought this week',P.stone,'data-dspend="stone"',stoneN()>=STONE_LIM,stoneN()>=STONE_LIM?'Limit reached':'')+
@@ -3098,13 +3320,14 @@ function pgDShop(){clearInterval(shTm);const on=!!CFG.payApi&&!!ME,P=DPRICE;
   return '<div class="dsk '+(s.rar==='legendary'?'leg':'')+'" style="--c:'+h.col+'">'+(s.rar==='legendary'?sash('LEGENDARY','best'):'')+'<div class="zf dskf">'+faceImgT(x)+'</div><b>'+esc(s.name)+'</b><small>'+esc(h.n)+' skin</small>'+
   (ownS(id)?(PD.skin&&PD.skin[s.hero]===id?'<button class="dsp sm" data-skeq="" data-skh="'+esc(s.hero)+'">Equipped ✓</button>':'<button class="dsp sm" data-skeq="'+esc(id)+'" data-skh="'+esc(s.hero)+'">Equip</button>'):'<button class="dsp sm" data-dspend="skin" data-arg="'+esc(id)+'"'+(on?'':' disabled')+'>'+dI+g$(+s.price||0)+'</button>')+'</div>'}).join(''):'<p class="dsem">New hero skins are on the way!</p>';
  const sp=(WAL.spent&&WAL.spent[mon()])||0;
- return '<div class="pnl pad dsh"><div class="shh"><div><h3>Diamond Shop</h3><small>Paid securely with PayMongo</small></div><div class="shr"><span>Your diamonds</span><b>'+dI+g$(diaN())+'</b></div></div>'+
- '<h4 class="dsec">Special offers</h4><div class="dofs">'+st+wk+'</div>'+
- '<h4 class="dsec">Top up diamonds</h4><div class="dsg">'+packs+'</div>'+
- '<h4 class="dsec">Spend diamonds</h4><div class="dits">'+items+'</div>'+
- '<h4 class="dsec">Premium frames</h4><div class="dfrs">'+frames+'</div>'+
- '<h4 class="dsec">Hero skins</h4><div class="dsks">'+skins+'</div>'+
+ return '<div class="pnl pad dsh"><div class="dshh"><div class="dshl">'+lootI('m','dshic')+'<div><h3>Diamond Shop</h3><small>🔒 Paid securely with PayMongo · GCash · Maya · QR Ph · Card</small></div></div><div class="dbal"><span>Your diamonds</span><b>'+dI+g$(diaN())+'</b></div></div>'+
+ dHead('🎁','Special Offers','Limited deals with the most value')+'<div class="dofs">'+(WAL.starter?'':starterCard(on))+wk+'</div>'+
+ dHead(dI,'Top Up Diamonds','First top-up of every pack is doubled')+'<div class="dsg">'+packs+'</div>'+
+ dHead('🛒','Spend Diamonds','Fragments, stones and handy extras')+'<div class="dits">'+items+'</div>'+
+ dHead('✨','Premium Frames','Animated frames everyone sees')+'<div class="dfrs">'+frames+'</div>'+
+ dHead('👕','Hero Skins','New looks · stats never change')+'<div class="dsks">'+skins+'</div>'+
  '<p class="dsft">'+(ME?(CFG.payApi?'<span>After paying, come back here. Diamonds are added automatically within a few seconds.</span><span>This month you spent <b>'+peso(sp)+'</b> on diamonds.</span>':'<span>The Diamond Shop is being set up. Check back soon!</span>'):'<span>Log in on Dafreta Network to buy diamonds.</span>')+'</p></div>'}
+function openStarter(){SND.click();openMdl('<div class="stpw">'+starterCard(!!CFG.payApi&&!!ME,1)+'<p class="stpn">Only once per account. Paid securely with PayMongo.</p></div>','stm')}
 
 async function buyDia(id){if(!ME)return toast('Log in on Dafreta Network to buy diamonds');if(!CFG.payApi)return toast('The Diamond Shop is not ready yet');
  const win=window.open('','_blank');if(win)win.document.write('<p style="font:16px system-ui;padding:20px">Opening secure PayMongo checkout…</p>');
@@ -3112,10 +3335,10 @@ async function buyDia(id){if(!ME)return toast('Log in on Dafreta Network to buy 
   const r=await fetch(CFG.payApi+'/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pack:id,token:t})}),j=await r.json().catch(()=>({}));
   if(!r.ok||!j.url)throw new Error(j.error||'Could not start the payment');
   if(win&&!win.closed)win.location.href=j.url;else location.href=j.url;
-  DWAIT={pack:id,base:diaN(),pass:passOn(),st:!!WAL.starter,t:Date.now()};diaPoll();renderHome()}catch(e){if(win&&!win.closed)win.close();toast(e.message)}}
+  DWAIT={pack:id,base:diaN(),t:Date.now()};closeMdl();diaPoll();renderHome()}catch(e){if(win&&!win.closed)win.close();toast(e.message)}}
 let dpT=0;
 function diaPoll(){clearInterval(dpT);dpT=setInterval(async()=>{if(!DWAIT){clearInterval(dpT);return}if(Date.now()-DWAIT.t>15*60e3){DWAIT=null;clearInterval(dpT);renderHome();return}
- await walLoad();if(diaN()>DWAIT.base){const got=diaN()-DWAIT.base;DWAIT=null;clearInterval(dpT);await grantsClaim();SND.levelup();toast('💎 Payment received! +'+g$(got)+' diamonds');if(!$('#home').hidden)renderHome()}},4000)}
+ await walLoad();if(diaN()>DWAIT.base){const got=diaN()-DWAIT.base,pk=DWAIT.pack;DWAIT=null;clearInterval(dpT);await grantsClaim();SND.levelup();rewardFx([{k:'dia',n:got}],pk==='starter'?'Starter Pack unlocked!':pk==='weekly'?'Weekly Pass active!':'Payment received!',pk==='weekly'?'Your daily 20 diamonds arrive in your Mail.':pk==='starter'?'The Pioneer frame is yours. Equip it in Player Info.':'');mailBadge();if(!$('#home').hidden)renderHome()}},4000)}
 async function dPost(path,body){const t=await gtok();if(!t)throw new Error('Please log in again');
  const r=await fetch(CFG.payApi+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,token:t})}),j=await r.json().catch(()=>({}));
  if(!r.ok)throw new Error(j.error||'Something went wrong. Please try again.');if(j.wallet)WAL=j.wallet;return j}
@@ -3132,16 +3355,158 @@ async function dSpendGo(){const c=DCONF;DCONF=null;closeMdl();if(!c)return;
   toast(c.item==='refresh'?'🔄 New Gold Shop offers are ready!':c.item==='slot'?'🗂️ New line-up slot unlocked!':c.item==='frame'?'✨ Frame unlocked! Tap Equip to wear it.':c.item==='skin'?'✨ Skin unlocked! Equip it in Hero Details.':'✓ Purchase complete');
   if(!$('#hd').hidden)hdRender();else renderHome()}catch(e){toast(e.message)}}
 function skinEquip(hero,id){if(!PD)return;PD.skin=PD.skin||{};if(id&&!ownS(id))return;if(id)PD.skin[hero]=id;else delete PD.skin[hero];saveP('skin');toast(id?'✨ Skin equipped!':'Default look restored');if(!$('#hd').hidden)hdRender();else renderHome()}
-async function dClaim(){try{const j=await dPost('/claim',{});SND.levelup();toast('💎 +'+j.got+' diamonds collected!');renderHome()}catch(e){toast(e.message)}}
 function dSpendClick(b){if(!ME)return toast('Log in on Dafreta Network first');if(!CFG.payApi)return toast('The Diamond Shop is not ready yet');const it=b.dataset.dspend;if(it==='frag15'||it==='frag50')return dPickHero(it);dConfirm(it,b.dataset.arg||'')}
-$('#mdl').addEventListener('click',e=>{if(e.target.id==='dcok'){SND.click();dSpendGo();return}if(e.target.id==='dcno'){DCONF=null;closeMdl();return}
+$('#mdl').addEventListener('click',e=>{const db=e.target.closest('[data-dbuy]');if(db&&!db.disabled){SND.click();buyDia(db.dataset.dbuy);return}
+ if(e.target.id==='dcok'){SND.click();dSpendGo();return}if(e.target.id==='dcno'){DCONF=null;closeMdl();return}
  if(e.target.id==='dcget'){closeMdl();pgNow='dshop';$('#hd').hidden=true;$('#menu').hidden=true;$('#home').hidden=false;renderHome();return}
  const fh=e.target.closest('[data-fh]');if(fh){SND.click();dConfirm(fh.dataset.it,'',HD[+fh.dataset.fh])}});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)walLoad().then(grantsClaim).then(()=>{if(!$('#home').hidden&&!inB&&!MM.on)renderHome()})});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)walLoad().then(()=>grantsClaim()).then(()=>mailLoad(true)).then(()=>{if(!$('#home').hidden&&!inB&&!MM.on)renderHome()})});
 $('#home').addEventListener('click',e=>{const b=e.target.closest('[data-dbuy]');if(b&&!b.disabled){SND.click();buyDia(b.dataset.dbuy);return}
- const c=e.target.closest('[data-dclaim]');if(c&&!c.disabled){SND.click();dClaim();return}
+ const c=e.target.closest('[data-mail]');if(c){SND.click();openMail();return}
  const s=e.target.closest('[data-dspend]');if(s&&!s.disabled){SND.click();dSpendClick(s);return}
  const q=e.target.closest('[data-skeq]');if(q){SND.click();skinEquip(q.dataset.skh,q.dataset.skeq)}});
+/* ================= REWARD POP-UP ================= */
+const rwChip=(k,n,h)=>{const hero=h&&HD.find(x=>hk(x)===h);
+ const ic=k==='dia'?dI:k==='gold'?GOLDI:k==='st'?STNI:hero?'<span class="zf rwf">'+faceImgT(evH(hero))+'</span>':PUZI;
+ const lb=k==='dia'?'Diamonds':k==='gold'?'Gold':k==='st'?'Transcendence Stone'+(n>1?'s':''):(hero?hero.n:'Hero')+' Fragments';
+ return '<div class="rwc rw-'+k+'"><span class="rwi">'+ic+'</span><b>×'+g$(n)+'</b><small>'+esc(lb)+'</small></div>'};
+const rwList=rw=>{const L=[];if(!rw)return L;if(+rw.dia>0)L.push({k:'dia',n:+rw.dia});if(+rw.gold>0)L.push({k:'gold',n:+rw.gold});if(+rw.st>0)L.push({k:'st',n:+rw.st});for(const h in (rw.fr||{}))if(+rw.fr[h]>0)L.push({k:'fr',n:+rw.fr[h],h});return L};
+function rewardFx(items,title,sub){let o=$('#rfx');if(!o){o=document.createElement('div');o.id='rfx';$('#gw').appendChild(o);o.addEventListener('click',()=>{o.classList.remove('on');setTimeout(()=>{o.hidden=true},250)})}
+ o.innerHTML='<div class="rwr"></div><div class="rwx"><h2>'+esc(title||'Rewards')+'</h2>'+(sub?'<p>'+esc(sub)+'</p>':'')+'<div class="rwg">'+items.map((x,i)=>rwChip(x.k,x.n,x.h).replace('class="rwc','style="--d:'+(i*.09+.15)+'s" class="rwc')).join('')+'</div><span class="rwt">Tap to continue</span></div>';
+ o.hidden=false;requestAnimationFrame(()=>o.classList.add('on'));try{SND.levelup()}catch(e){}}
+
+/* ================= MAIL =================
+   Admin mail: cardgame/mail/{id} = {title, body, from, rw:{dia,gold,st,fr:{hero:n}}, t, exp, to?}  (gone for everyone after exp)
+   Weekly Pass: every day of a pass is a mail that never expires until it is claimed.
+   Read / deleted marks: cardgame/mstate/{user}/{key} = 'r' | 'd'. Claims go through the payment server (one claim per mail). */
+let MAILS={},MST={},MLsel='',MLt=0,MLdel=0;
+const MAILI='<svg viewBox="0 0 64 54" aria-hidden="true"><defs><linearGradient id="mlG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6dc"/><stop offset="1" stop-color="#d6ad6a"/></linearGradient><linearGradient id="mlS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5a3a"/><stop offset="1" stop-color="#9a1408"/></linearGradient></defs><rect x="6" y="13" width="52" height="35" rx="4" fill="url(#mlG)" stroke="#3a1a08" stroke-width="2.6"/><path d="M8 46l17-14M56 46L39 32" stroke="#a8763a" stroke-width="2"/><path d="M7 15l25 19 25-19" fill="#efd39c" stroke="#3a1a08" stroke-width="2.6" stroke-linejoin="round"/><circle cx="32" cy="33" r="7.5" fill="url(#mlS)" stroke="#4a0804" stroke-width="2"/><path d="M28.5 33h7M32 29.5v7" stroke="#ffc0a8" stroke-width="1.7" stroke-linecap="round"/><path d="M11 17h10" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></svg>';
+const mKey=id=>id.replace(/:/g,'_'),hasRw=rw=>rwList(rw).length>0;
+async function mailLoad(force){if(!ME)return;if(!force&&Date.now()-MLt<60000)return;MLt=Date.now();
+ const [m,s]=await Promise.all([fb('cardgame/mail').catch(()=>null),fb('cardgame/mstate/'+ME).catch(()=>null)]);MAILS=m||{};MST=s||{};mailBadge()}
+function mailList(){if(!ME)return[];const now=Date.now(),t=dKey(),L=[];
+ for(const [id,m] of Object.entries(MAILS)){if(!m||!(+m.exp>now)||+m.t>now||(m.to&&m.to!==ME))continue;const k='m:'+id;if(MST[mKey(k)]==='d')continue;
+  const rw=m.rw||{};L.push({id:k,title:m.title||'Message',body:m.body||'',rw,has:hasRw(rw),from:m.from||'Dafreta Team',t:+m.t||0,exp:+m.exp,cl:!!(WAL.mailc&&WAL.mailc[id]),rd:!!MST[mKey(k)]})}
+ for(const [pid,p] of Object.entries(passes()))for(let i=0;i<p.n;i++){const d=addDay(p.from,i);if(d>t)break;const k='p:'+pid+':'+i;if(MST[mKey(k)]==='d')continue;
+  L.push({id:k,title:'Weekly Pass · Day '+(i+1),body:'Your Weekly Pass diamonds for '+new Date(d+'T12:00:00Z').toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'})+'.\nWeekly Pass rewards stay in your Mail until you claim them.',rw:{dia:p.daily||20},has:true,from:'Weekly Pass',t:Date.parse(d+'T00:00:00Z')-2*36e5,exp:0,cl:!!(p.got&&p.got[i]),rd:!!MST[mKey(k)],pass:1})}
+ const pri=x=>(x.has&&!x.cl?2:0)+(x.rd?0:1);return L.sort((a,b)=>(pri(b)-pri(a))||(b.t-a.t))}
+const mailN=()=>mailList().filter(x=>!x.rd||(x.has&&!x.cl)).length;
+function mailBadge(){const b=$('#mlb');if(!b)return;const n=mailN();let e=b.querySelector('em');b.classList.toggle('hot',n>0);if(!n){e&&e.remove();return}if(!e){e=document.createElement('em');b.appendChild(e)}e.textContent=n>99?'99+':n}
+const leftTxt=ms=>{const m=Math.max(0,ms/6e4|0),d=m/1440|0,h=(m%1440)/60|0;return d?d+'d '+h+'h':h?h+'h '+(m%60)+'m':Math.max(1,m)+'m'};
+const mlIcon=x=>x.pass?'📅':x.has?(x.cl?'📭':'🎁'):'✉️';
+function mailHTML(){const L=mailList(),sel=L.find(x=>x.id===MLsel)||null,unc=L.filter(x=>x.has&&!x.cl),rdn=L.filter(x=>x.rd&&(!x.has||x.cl)).length,un=L.filter(x=>!x.rd).length;
+ const row=x=>'<div class="mli'+(x.id===MLsel?' on':'')+(x.rd?'':' new')+(x.has&&!x.cl?' gift':'')+(x.cl?' cl':'')+'" data-ml="'+esc(x.id)+'" role="button" tabindex="0"><span class="mlic">'+mlIcon(x)+'</span><div class="mlit"><b>'+esc(x.title)+'</b><small>'+esc(x.from)+' · '+(x.exp?'⏳ '+leftTxt(x.exp-Date.now()):'never expires')+'</small></div>'+(x.has?(x.cl?'<i class="mlck">✓</i>':'<i class="mlrw">'+(rwList(x.rw)[0].k==='dia'?dI:'🎁')+'</i>'):'')+(x.rd?'':'<i class="mldot"></i>')+'</div>';
+ const det=sel?'<div class="mldh"><button class="mlbk" id="mlbk" aria-label="Back">‹</button><span class="mlic big">'+mlIcon(sel)+'</span><div><h4>'+esc(sel.title)+'</h4><small>From <b>'+esc(sel.from)+'</b> · '+new Date(sel.t).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})+'</small></div></div>'+
+  (sel.exp?'<div class="mlexp">⏳ Expires in <b>'+leftTxt(sel.exp-Date.now())+'</b>'+(sel.has&&!sel.cl?' · claim before it is gone':'')+'</div>':'')+
+  '<div class="mlbody">'+esc(sel.body).replace(/\n/g,'<br>')+'</div>'+
+  (sel.has?'<div class="mlrws"><span class="mlrl">'+(sel.cl?'Claimed rewards':'Rewards')+'</span><div class="rwg sm'+(sel.cl?' dim2':'')+'">'+rwList(sel.rw).map(r=>rwChip(r.k,r.n,r.h)).join('')+'</div></div>'+
+   (sel.cl?'<button class="mlcb done" disabled>Claimed ✓</button>':'<button class="mlcb" id="mlclaim">Claim</button>'):'')
+  :'<div class="mlemp">'+MAILI+'<b>'+(L.length?'Select a mail':'No mail')+'</b><small>'+(L.length?'Tap a mail on the left to read it.':'Messages and rewards from the Dafreta team will arrive here.')+'</small></div>';
+ return '<div class="mlh">'+MAILI+'<div><h3>Mail</h3><small>'+(un?un+' unread':'All read')+(unc.length?' · '+unc.length+' reward'+(unc.length>1?'s':'')+' to claim':'')+'</small></div></div>'+
+ '<div class="mlw'+(sel?' det':'')+'"><div class="mll">'+(L.length?L.map(row).join(''):'<p class="mlnone">Your mailbox is empty.</p>')+'</div><div class="mld">'+det+'</div></div>'+
+ '<div class="mlf"><button class="mlfb del" id="mldel"'+(rdn?'':' disabled')+'>'+(MLdel?'Tap again to delete '+rdn:'🗑 Delete read ('+rdn+')')+'</button><button class="mlfb all" id="mlall"'+(unc.length?'':' disabled')+'>🎁 Claim all'+(unc.length?' ('+unc.length+')':'')+'</button></div>'}
+function mailPaint(){const b=$('#mdl .mdb.mlm');if(!b)return;const sc=(b.querySelector('.mll')||{}).scrollTop||0;b.innerHTML='<button class="mdx" id="mdx" aria-label="Close">✕</button>'+mailHTML();const l=b.querySelector('.mll');if(l)l.scrollTop=sc;mailBadge()}
+async function openMail(){if(!ME)return toast('Log in on Dafreta Network to get mail');SND.click();MLdel=0;
+ const L=mailList();if(!L.find(x=>x.id===MLsel))MLsel='';openMdl(mailHTML(),'mlm');await Promise.all([walLoad(),mailLoad(true)]);mailPaint()}
+function mailRead(id){const k=mKey(id);if(MST[k])return;MST[k]='r';fb('cardgame/mstate/'+ME,'PATCH',{[k]:'r'}).catch(()=>{})}
+async function mailClaim(ids){if(!ids.length)return;if(!CFG.payApi)return toast('Mail rewards are not ready yet');
+ const bt=$('#mlclaim')||$('#mlall');if(bt){bt.disabled=true;bt.textContent='Claiming…'}
+ try{const j=await dPost('/mail',{ids});const o={};ids.forEach(i=>{const k=mKey(i);if(!MST[k]){MST[k]='r';o[k]='r'}});if(Object.keys(o).length)fb('cardgame/mstate/'+ME,'PATCH',o).catch(()=>{});
+  await grantsClaim(1);const g=j.got||{};rewardFx(rwList(g),'Rewards claimed!','');mailPaint();if(!$('#home').hidden)$('#tbw').innerHTML=tbH()}catch(e){toast(e.message);mailPaint()}}
+async function mailDelRead(){const L=mailList().filter(x=>x.rd&&(!x.has||x.cl));if(!L.length)return;
+ if(!MLdel){MLdel=1;mailPaint();setTimeout(()=>{if(MLdel){MLdel=0;mailPaint()}},4000);return}MLdel=0;
+ const o={},live=new Set(mailList().map(x=>mKey(x.id)));L.forEach(x=>{o[mKey(x.id)]='d';MST[mKey(x.id)]='d'});
+ for(const k in MST)if(!live.has(k)&&!o[k]&&k.startsWith('m_')&&!MAILS[k.slice(2)]){o[k]=null;delete MST[k]}   // tidy marks of expired mail
+ if(L.some(x=>x.id===MLsel))MLsel='';mailPaint();SND.click();toast('🗑 Deleted '+L.length+' mail'+(L.length>1?'s':''));fb('cardgame/mstate/'+ME,'PATCH',o).catch(()=>toast('Could not delete. Check your connection.'))}
+$('#mdl').addEventListener('click',e=>{if(!e.target.closest('.mdb.mlm'))return;
+ const r=e.target.closest('[data-ml]');if(r){MLsel=r.dataset.ml;mailRead(MLsel);SND.click();mailPaint();return}
+ if(e.target.closest('#mlbk')){MLsel='';mailPaint();return}
+ if(e.target.closest('#mlclaim')){const x=mailList().find(y=>y.id===MLsel);if(x&&x.has&&!x.cl){SND.click();mailClaim([x.id])}return}
+ if(e.target.closest('#mlall')){SND.click();mailClaim(mailList().filter(x=>x.has&&!x.cl).map(x=>x.id));return}
+ if(e.target.closest('#mldel')){mailDelRead();return}});
+$('#mdl').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-ml]'))e.target.click()});
+setInterval(()=>{if(ME&&!document.hidden)mailLoad(true).catch(()=>{})},180000);
+
+/* ================= FRIENDS + CHAT (shared with the Dafreta Network website chat) =================
+   inbox/{me}/fr {friend:true}, inbox/{me}/th {user:ts}, inbox/{me}/unread {from:{t,p}}, chats/{a~b}/{id} = {f,t,ts}, presence/{user} = {t,on} */
+let FRS={fr:{},th:{},p:{},l:{},pr:{},at:0,sel:''},UNR={},UES=null,CHS=null,CHM={},UNRok=false;
+const pairK=(a,b)=>[a,b].sort().join('~'),frOn=k=>{const p=FRS.pr[k];return !!(p&&p.on&&Date.now()-p.t<180000)};
+const frPres=k=>{if(frOn(k))return '<span class="prs on">● Online</span>';const p=FRS.pr[k];if(!p||!p.t)return '<span class="prs">Offline</span>';const d=(Date.now()-p.t)/6e4|0;return '<span class="prs">Active '+(d<60?Math.max(1,d)+'m':d<1440?(d/60|0)+'h':(d/1440|0)+'d')+' ago</span>'};
+async function frLoad(force){if(!ME)return;if(!force&&Date.now()-FRS.at<30000)return;
+ const [fr,th,lb]=await Promise.all([fb('inbox/'+ME+'/fr').catch(()=>null),fb('inbox/'+ME+'/th').catch(()=>null),ensureLB()]);FRS.fr=fr||{};FRS.th={};for(const k in (th||{}))if(k[0]!=='@')FRS.th[k]=th[k];FRS.l=lb||{};
+ const ks=frKeys();await Promise.all(ks.map(async k=>{if(!FRS.p[k])FRS.p[k]=(await fb('profiles/'+k).catch(()=>null))||{};FRS.pr[k]=(await fb('presence/'+k).catch(()=>null))||{}}));FRS.at=Date.now()}
+const frKeys=()=>[...new Set([...Object.keys(FRS.fr),...Object.keys(FRS.th)])].filter(k=>k&&k[0]!=='@'&&k!==ME);
+const frUnr=()=>Object.keys(UNR).filter(k=>k[0]!=='@'&&k!==ME);
+function frBadge(){const b=document.querySelector('.sbn[data-pg="friends"]');if(!b)return;const n=frUnr().length;let e=b.querySelector('.sbd');if(!n){e&&e.remove();return}if(!e){e=document.createElement('em');e.className='sbd';b.appendChild(e)}e.textContent=n>9?'9+':n}
+function frRow(k){const p=FRS.p[k]||{},l=FRS.l[k],u=UNR[k],inv=(+localStorage['dfinv_'+k]||0)>Date.now()-864e5,ri=l?rkI(l.pts):-1;
+ return '<div class="frr'+(FRS.sel===k?' sel':'')+(u?' un':'')+'" data-chat="'+esc(k)+'" role="button" tabindex="0"><span class="frav'+(frOn(k)?' on':'')+'">'+avH(p,46)+'</span>'+
+ '<div class="fri"><b>'+esc(p.name||k)+'</b><small>'+(u?'<span class="frpv">💬 '+esc(u.p||'New message')+'</span>':(l?rkE(ri,15)+' '+esc((RANKS[ri]||{}).n||'')+' · ':'')+frPres(k))+'</small></div>'+
+ (u?'<em class="frn">1</em>':'')+(l||!FRS.fr[k]?'':'<button class="frinv inv" data-k="'+esc(k)+'"'+(inv?' disabled':'')+'>'+(inv?'Invited ✓':'Invite')+'</button>')+'<span class="frgo">💬</span></div>'}
+function frList(){const ks=frKeys().sort((a,b)=>(!!UNR[b]-!!UNR[a])||(frOn(b)-frOn(a))||((FRS.th[b]||0)-(FRS.th[a]||0))||String((FRS.p[a]||{}).name||a).localeCompare(String((FRS.p[b]||{}).name||b)));
+ return ks.length?ks.map(frRow).join(''):'<div class="frem"><span>🤝</span><b>No friends yet</b><small>Add friends on Dafreta Network. They show up here and you can chat with them.</small></div>'}
+function chatHTML(){const k=FRS.sel;if(!k)return '<div class="chemp"><span>💬</span><b>Chat with your friends</b><small>Pick a friend to start chatting. Messages also appear in the Dafreta Network chat.</small></div>';
+ const p=FRS.p[k]||{},l=FRS.l[k],ri=l?rkI(l.pts):-1;
+ return '<div class="chh"><button class="chbk" id="chbk" aria-label="Back">‹</button><span class="frav'+(frOn(k)?' on':'')+'">'+avH(p,40)+'</span><div class="chn"><b>'+esc(p.name||k)+'</b><small>'+(l?rkE(ri,14)+' '+esc((RANKS[ri]||{}).n||'')+' · ':'')+frPres(k)+'</small></div></div>'+
+ '<div class="chm" id="chm"><p class="chld">Loading messages…</p></div>'+
+ (FRS.fr[k]||FRS.th[k]?'<div class="chf"><input id="chi" maxlength="500" autocomplete="off" placeholder="Message '+esc(p.name||k)+'…" enterkeyhint="send"><button id="chs" aria-label="Send"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 11.5L21 3l-6.5 18-3.2-7.3z" fill="currentColor"/></svg></button></div>':'<div class="chf"><small>You can only chat with friends.</small></div>')}
+function frHTML(){const ks=frKeys(),on=ks.filter(frOn).length;
+ return '<div class="frp'+(FRS.sel?' chat':'')+'"><div class="frlw pnl"><div class="frh"><div><h3>Friends</h3><small>'+ks.length+' friend'+(ks.length===1?'':'s')+' · <span class="prs on">'+on+' online</span></small></div>'+(frUnr().length?'<em class="frhb">'+frUnr().length+' new</em>':'')+'</div><div class="frl" id="frl">'+frList()+'</div></div>'+
+ '<div class="chw pnl" id="chw">'+chatHTML()+'</div></div>'}
+async function pgFriends(){if(!ME)return '<div class="pnl pad frlog"><h3>Friends</h3><p class="sub">Log in on Dafreta Network to see your friends and chat with them here.</p></div>';
+ await frLoad();setTimeout(chatMount,0);return frHTML()}
+function frRender(){if(pgNow!=='friends'||!$('.frp'))return;$('#pgv').innerHTML=frHTML();chatMount()}
+function frRows(){const l=$('#frl');if(l)l.innerHTML=frList();const h=$('.frh small');if(h){}frBadge()}
+function chatMount(){const k=FRS.sel;if(!k||!$('#chm')){chatStop();return}if(!CHS||CHS.k!==k)chatStart(k);else chatPaint(1);const i=$('#chi');if(i&&matchMedia('(pointer:fine)').matches)i.focus()}
+function chatStop(){if(CHS){CHS.close();CHS=null}}
+function chatStart(k){chatStop();CHM={};gtok().then(t=>{if(FRS.sel!==k||!$('#chm'))return;
+ const es=new EventSource(FB+'/chats/'+pairK(ME,k)+'.json?orderBy=%22$key%22&limitToLast=60'+(t?'&auth='+encodeURIComponent(t):''));es.k=k;CHS=es;
+ const h=ev=>{try{const {path,data}=JSON.parse(ev.data),pt=path.split('/').filter(Boolean);
+  if(!pt.length){if(ev.type==='put')CHM=data||{};else Object.assign(CHM,data||{})}else if(pt.length===1){if(data===null)delete CHM[pt[0]];else CHM[pt[0]]={...(ev.type==='patch'?CHM[pt[0]]:{}),...data}}
+  chatPaint()}catch(x){}};
+ es.addEventListener('put',h);es.addEventListener('patch',h);es.addEventListener('auth_revoked',()=>{if(FRS.sel===k)chatStart(k)});
+ es.onerror=()=>{if(es.readyState===2&&CHS===es)setTimeout(()=>{if(CHS===es&&FRS.sel===k)chatStart(k)},4000)}})}
+function chatPaint(force){const m=$('#chm');if(!m)return;const near=force||m.scrollHeight-m.scrollTop-m.clientHeight<80,ids=Object.keys(CHM).sort();let last='',h='';
+ const p=FRS.p[FRS.sel]||{};
+ for(const id of ids){const x=CHM[id];if(!x||!x.t)continue;const d=new Date(+x.ts||0),day=d.toDateString();
+  if(day!==last){last=day;const td=new Date().toDateString(),yd=new Date(Date.now()-864e5).toDateString();h+='<div class="chday"><span>'+(day===td?'Today':day===yd?'Yesterday':d.toLocaleDateString(undefined,{month:'short',day:'numeric'}))+'</span></div>'}
+  const me=x.f===ME;h+='<div class="chb'+(me?' me':'')+'">'+(me?'':'<span class="chav">'+avH(p,28)+'</span>')+'<div class="chx">'+esc(x.t)+'<small>'+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})+'</small></div></div>'}
+ m.innerHTML=h||'<div class="chnone"><span>👋</span>Say hi to '+esc(p.name||FRS.sel)+'!</div>';if(near)m.scrollTop=m.scrollHeight}
+async function chatSend(){const i=$('#chi'),to=FRS.sel;if(!i||!to)return;const t=i.value.trim().slice(0,500);if(!t)return;
+ if(!(FRS.fr[to]||FRS.th[to]))return toast('You can only chat with friends');
+ const ts=Date.now(),id=mid(),msg={f:ME,t,ts};CHM[id]=msg;i.value='';chatPaint(1);
+ try{await fb('','PATCH',{['chats/'+pairK(ME,to)+'/'+id]:msg,['inbox/'+to+'/unread/'+ME]:{t:ts,p:t.slice(0,60)},['inbox/'+to+'/th/'+ME]:ts,['inbox/'+ME+'/th/'+to]:ts});FRS.th[to]=ts}
+ catch(e){delete CHM[id];chatPaint();i.value=t;toast('Message not sent. Check your connection.')}}
+function chatOpen(k){FRS.sel=k;CHM={};chatStop();if(UNR[k]){delete UNR[k];fb('inbox/'+ME+'/unread/'+k,'DELETE').catch(()=>{});frBadge()}SND.click();frRender()}
+/* live unread messages: red badge on Friends with the number of friends who wrote */
+function unrStop(){if(UES){UES.close();UES=null}}
+function unrStart(){unrStop();if(!ME||document.hidden)return;gtok().then(t=>{if(!t||UES)return;
+ const es=new EventSource(FB+'/inbox/'+ME+'/unread.json?auth='+encodeURIComponent(t));UES=es;
+ const h=ev=>{try{const {path,data}=JSON.parse(ev.data);onUnr(ev.type,path,data)}catch(x){}};
+ es.addEventListener('put',h);es.addEventListener('patch',h);es.addEventListener('auth_revoked',()=>{UES=null;es.close();unrStart()});
+ es.onerror=()=>{if(es.readyState===2&&UES===es){UES=null;setTimeout(unrStart,5000)}}})}
+function onUnr(type,path,data){const was=new Set(Object.keys(UNR)),pt=(path||'/').split('/').filter(Boolean);
+ if(!pt.length){if(type==='put')UNR=data||{};else for(const k in (data||{})){if(data[k]===null)delete UNR[k];else UNR[k]=data[k]}}
+ else if(pt.length===1){if(type==='put'){if(data===null)delete UNR[pt[0]];else UNR[pt[0]]=data}else UNR[pt[0]]={...(UNR[pt[0]]||{}),...data}}
+ else{const e=UNR[pt[0]]=UNR[pt[0]]||{};e[pt[1]]=data}
+ const open=FRS.sel&&$('#chm')&&!document.hidden?FRS.sel:'';
+ if(open&&UNR[open]){delete UNR[open];fb('inbox/'+ME+'/unread/'+open,'DELETE').catch(()=>{})}
+ const fresh=Object.keys(UNR).filter(k=>!was.has(k)&&k[0]!=='@');
+ if(UNRok&&fresh.length){try{SND.click()}catch(e){}const k=fresh[0],nm=(FRS.p[k]&&FRS.p[k].name)||k;toast('💬 '+nm+': '+String(UNR[k].p||'').slice(0,50));if(!FRS.p[k]||!FRS.th[k]){FRS.th[k]=Date.now();FRS.at=0}}
+ UNRok=true;frBadge();if(pgNow==='friends'){if(fresh.some(k=>!FRS.p[k]))frLoad(1).then(frRows);else frRows()}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){unrStop();chatStop()}else if(ME){unrStart();chatMount()}});
+setInterval(()=>{if(CHS&&!$('#chm'))chatStop()},2000);
+$('#home').addEventListener('click',e=>{
+ if(e.target.closest('#stb')){openStarter();return}
+ if(e.target.closest('#mlb')){openMail();return}
+ const wc=e.target.closest('[data-wkclaim]');if(wc){SND.click();wc.disabled=true;passClaimReady();return}
+ const wd=e.target.closest('[data-wkday]');if(wd){SND.click();passClaimReady([wd.dataset.wkday]);return}
+ if(e.target.closest('.frinv'))return;
+ const c=e.target.closest('[data-chat]');if(c){chatOpen(c.dataset.chat);return}
+ if(e.target.closest('#chbk')){FRS.sel='';chatStop();SND.click();frRender();return}
+ if(e.target.closest('#chs')){chatSend();return}});
+$('#home').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-wkday]')){e.target.click();return}if(e.key==='Enter'&&e.target.id==='chi'){e.preventDefault();chatSend()}else if(e.key==='Enter'&&e.target.matches('[data-chat]'))e.target.click()});
+const stbH=()=>ME&&CFG.payApi&&!WAL.starter?'<button class="dqb stb" id="stb" title="Starter Pack"><img src="'+IMG_STARTER+'" alt="" referrerpolicy="no-referrer"><span class="dqtx">Starter Pack</span><em class="stp">₱99</em></button>':'';
+const mlbH=()=>{if(!ME)return '';const n=mailN();return '<button class="dqb mlb'+(n?' hot':'')+'" id="mlb" title="Mail">'+MAILI+'<span class="dqtx">Mail</span>'+(n?'<em>'+(n>99?'99+':n)+'</em>':'')+'</button>'};
 
 /* match clock + turn timer */
 setInterval(()=>{if(over||!P)return;BG.check();M--;if(PV){pvTick();return}if(turn=='p'&&!busy){tt--;if(tt<=0){endTurn();return}}
@@ -3179,7 +3544,7 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
  if(!RANKS.length)RANKS=defRanks();
  await loadPD();dqSync();await walLoad();
  try{const [pr,sk]=await Promise.all([fb('cardgame/dshop/prices').catch(()=>null),fb('cardgame/skins').catch(()=>null)]);if(pr)for(const k in DPRICE_DEF)if(+pr[k]>0)DPRICE[k]=+pr[k];SKINS=sk||{};Object.values(SKINS).forEach(q=>q&&q.img&&calcFt(q.img))}catch(e){}
- if(PD.sel>=nSlots())PD.sel=0;grantsClaim();
+ if(PD.sel>=nSlots())PD.sel=0;grantsClaim();if(ME){mailLoad(true).then(()=>{if(!$('#home').hidden)$('#tbw').innerHTML=tbH()}).catch(()=>{});unrStart()}
  if(!PD.lineups[0]){const f=[],u=new Set();HD.forEach(h=>{if(owned(h)&&f.length<4&&!u.has(h.cl)){u.add(h.cl);f.push(hk(h))}});if(f.length==4)PD.lineups[0]={h:f,r:{},g:GEN.filter(gAvail).slice(0,needGen()).map(g=>g.id)}}
  leg();renderHome()})();
 
