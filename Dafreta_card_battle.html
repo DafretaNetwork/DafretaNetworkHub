@@ -1952,6 +1952,7 @@ body.sel .sdim{z-index:7!important}
 body.sel #bat .unit:not(.tg) .fw{filter:brightness(.45) saturate(.7)}
 body.sel #bat .unit.tg .fw{z-index:calc(25 + var(--li,0))!important}
 #hand.zm .card:not(.zh){pointer-events:none}
+#fpsm{position:absolute;left:6px;bottom:6px;z-index:99;padding:2px 8px;border-radius:6px;background:#000b;font:800 12px/1.4 system-ui;pointer-events:none}
 </style>
 </head><body>
 <div id="gw">
@@ -2507,21 +2508,27 @@ const DRIG=(()=>{
   if(!pt.wp){p.wp=0;p.wpS=1}if(!pt.shd)p.shd=0;
   return p}
  /* ---------- WebGL renderer (one per canvas) ---------- */
- const VS='attribute vec2 p;attribute vec2 u;uniform vec4 T;uniform vec2 V;uniform vec2 O;varying vec2 v;void main(){vec2 q=vec2(T.x*p.x+T.z,T.y*p.y+T.w)+O;gl_Position=vec4(q.x/V.x*2.-1.,1.-q.y/V.y*2.,0,1);v=u;}';
+ /* the bending (skinning) runs on the graphics chip: each point follows up to 4 bones, same math as deform() */
+ const NB=BONES.length,VS='attribute vec2 p;attribute vec2 u;attribute vec4 bi;attribute vec4 bw;uniform vec3 M['+(NB*2)+'];uniform vec4 T;uniform vec2 V;uniform vec2 O;varying vec2 v;'+
+  'vec2 sk(float i,vec2 a){int k=int(i+.5)*2;vec3 h=vec3(a,1.);return vec2(dot(M[k],h),dot(M[k+1],h));}'+
+  'void main(){vec2 s=sk(bi.x,p)*bw.x+sk(bi.y,p)*bw.y+sk(bi.z,p)*bw.z+sk(bi.w,p)*bw.w;vec2 q=vec2(T.x*s.x+T.z,T.y*s.y+T.w)+O;gl_Position=vec4(q.x/V.x*2.-1.,1.-q.y/V.y*2.,0,1);v=u;}';
  const FS='precision mediump float;varying vec2 v;uniform sampler2D s;uniform vec4 C;uniform vec4 G;uniform float F;void main(){vec4 c=texture2D(s,v);if(G.a>0.){gl_FragColor=vec4(G.rgb,1.)*c.a*G.a;return;}vec3 r=mix(c.rgb*C.rgb,vec3(c.a),F);gl_FragColor=vec4(r,c.a)*C.a;}';
  function renderer(cv){const gl=cv.getContext('webgl',{premultipliedAlpha:true,alpha:true,antialias:true});if(!gl)return null;
   const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o},pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);gl.useProgram(pr);
-  const L=n=>gl.getUniformLocation(pr,n),A={p:gl.getAttribLocation(pr,'p'),u:gl.getAttribLocation(pr,'u')},U={T:L('T'),V:L('V'),O:L('O'),C:L('C'),G:L('G'),F:L('F')};
+  const L=n=>gl.getUniformLocation(pr,n),A={p:gl.getAttribLocation(pr,'p'),u:gl.getAttribLocation(pr,'u'),bi:gl.getAttribLocation(pr,'bi'),bw:gl.getAttribLocation(pr,'bw')},U={M:L('M[0]'),T:L('T'),V:L('V'),O:L('O'),C:L('C'),G:L('G'),F:L('F')};
   gl.enable(gl.BLEND);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);
   const R={gl,tex:new Map(),bufs:new Map(),
    texture(img){let t=R.tex.get(img);if(t)return t;t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);R.tex.set(img,t);return t},
-   buffers(mesh){let b=R.bufs.get(mesh);if(b)return b;b={p:gl.createBuffer(),u:gl.createBuffer(),i:gl.createBuffer()};gl.bindBuffer(gl.ARRAY_BUFFER,b.u);gl.bufferData(gl.ARRAY_BUFFER,mesh.UV,gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.i);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,mesh.I,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,b.p);gl.bufferData(gl.ARRAY_BUFFER,mesh.n*8,gl.DYNAMIC_DRAW);R.bufs.set(mesh,b);return b},
+   buffers(mesh){let b=R.bufs.get(mesh);if(b)return b;const n=mesh.n,BI=new Float32Array(n*4),BW=new Float32Array(n*4);for(let v=0;v<n;v++)for(let k=0;k<4;k++){BI[v*4+k]=mesh.W[(v*4+k)*2];BW[v*4+k]=mesh.W[(v*4+k)*2+1]}
+    const mk=d=>{const o=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,o);gl.bufferData(gl.ARRAY_BUFFER,d,gl.STATIC_DRAW);return o};
+    b={p:mk(mesh.P),u:mk(mesh.UV),bi:mk(BI),bw:mk(BW),i:gl.createBuffer()};gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.i);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,mesh.I,gl.STATIC_DRAW);R.bufs.set(mesh,b);return b},
+   /* bone matrices for one pose (missing bones = no movement) */
+   bones(mats){const F=R._m||(R._m=new Float32Array(NB*6));for(let i=0;i<NB;i++){const m=mats[i]||[1,0,0,1,0,0];F.set([m[0],m[2],m[4],m[1],m[3],m[5]],i*6)}gl.uniform3fv(U.M,F)},
    begin(){const w=cv.width,h=cv.height;gl.viewport(0,0,w,h);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.uniform2f(U.V,w,h)},
    /* draw one deformed figure. tr = [scaleX, scaleY, offsetX, offsetY] maps model units -> canvas pixels */
-   draw(mesh,img,verts,tr,o){const b=R.buffers(mesh),t=R.texture(img);gl.bindTexture(gl.TEXTURE_2D,t);gl.bindBuffer(gl.ARRAY_BUFFER,b.p);gl.bufferSubData(gl.ARRAY_BUFFER,0,verts);
-    gl.enableVertexAttribArray(A.p);gl.vertexAttribPointer(A.p,2,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,b.u);gl.enableVertexAttribArray(A.u);gl.vertexAttribPointer(A.u,2,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.i);
+   draw(mesh,img,mats,tr,o){const b=R.buffers(mesh),t=R.texture(img);gl.bindTexture(gl.TEXTURE_2D,t);if(mats)R.bones(mats);
+    [['p',2],['u',2],['bi',4],['bw',4]].forEach(([k,n])=>{gl.bindBuffer(gl.ARRAY_BUFFER,b[k]);gl.enableVertexAttribArray(A[k]);gl.vertexAttribPointer(A[k],n,gl.FLOAT,false,0,0)});gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.i);
     gl.uniform4f(U.T,tr[0],tr[1],tr[2],tr[3]);
     if(o.glow>0.01){gl.blendFunc(gl.ONE,gl.ONE);const gc=o.glowC||[1,.85,.35],r=o.glowR||3,N=8;for(let k=0;k<N;k++){const a=k/N*Math.PI*2;gl.uniform2f(U.O,Math.cos(a)*r,Math.sin(a)*r);gl.uniform4f(U.G,gc[0],gc[1],gc[2],Math.min(1,o.glow)*.32);gl.drawElements(gl.TRIANGLES,mesh.I.length,gl.UNSIGNED_SHORT,0)}}
     gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);gl.uniform2f(U.O,0,0);gl.uniform4f(U.G,0,0,0,0);const c=o.tint||[1,1,1];gl.uniform4f(U.C,c[0],c[1],c[2],o.alpha==null?1:o.alpha);gl.uniform1f(U.F,o.flash||0);
@@ -2563,9 +2570,10 @@ const DRIG=(()=>{
    parts.forEach(q=>{const m=Math.round(W*.02);inpaint(g,W,H,hole,Math.max(0,q.box[0]-m),Math.max(0,q.box[1]-m),Math.min(W,q.box[2]+m),Math.min(H,q.box[3]+m))});tex=cv}
   const mesh=buildMesh(mk.mask,mk.mw,mk.mh,mk.ar,r);return{img:tex,src:img,rig:r,mesh,ar:mk.ar,buf:new Float32Array(mesh.n*2),parts,swBase:swAngle(r.j,mk.ar)}}
  /* layers in draw order (pieces behind, body, pieces in front) with their bent points */
- function layers(md,mats){const L=[];md.parts.forEach(q=>{if(!q.front)L.push({mesh:q.mesh,img:q.img,v:deform(q.mesh,mats,q.buf)})});L.push({mesh:md.mesh,img:md.img,v:deform(md.mesh,mats,md.buf)});
-  md.parts.slice().sort((a,b)=>(a.k==='wp')-(b.k==='wp')).forEach(q=>{if(q.front)L.push({mesh:q.mesh,img:q.img,v:deform(q.mesh,mats,q.buf)})});return L}
- function drawModel(R,md,mats,tr,o){const L=layers(md,mats);L.forEach(l=>R.draw(l.mesh,l.img,l.v,tr,o));return L}
+ function layers(md){if(md._L)return md._L;const L=[];md.parts.forEach(q=>{if(!q.front)L.push({mesh:q.mesh,img:q.img})});L.push({mesh:md.mesh,img:md.img});
+  md.parts.slice().sort((a,b)=>(a.k==='wp')-(b.k==='wp')).forEach(q=>{if(q.front)L.push({mesh:q.mesh,img:q.img})});return md._L=L}
+ /* pieces + body in draw order; the bones are sent once, every layer reuses them */
+ function drawModel(R,md,mats,tr,o){const L=layers(md);R.bones(mats);L.forEach(l=>R.draw(l.mesh,l.img,null,tr,o));return L}
  return{J,JN,BONES,CLIPS,EZ,autoRig,maskOf,model,pose,poseMats,deform,ptAt,renderer,evalClip,sample,drawModel,layers,partPoly}})();
 
 /* ================= 2.5D ANIMATED HEROES IN BATTLE =================
@@ -2579,16 +2587,19 @@ const rigKey=h=>hk(h)+'_'+((h.st|0)>=4?'tc':(h.st|0));
 function rigOf(h){if(!h||!h.img)return null;if(h.skin)return{auto:1};const r=RIGS[rigKey(h)];if(r&&r.on===false)return null;if(r&&r.j)return r;return{auto:1}}
 function rigModel(h){const rd=rigOf(h);if(!rd)return null;const key=h.img+'|'+(rd.j?JSON.stringify([rd.j,rd.parts||0]):'auto');let m=RG.models.get(key);if(m)return m.ok?m:null;
  m={ok:0};RG.models.set(key,m);const im=new Image();if(!/^data:/.test(h.img))im.crossOrigin='anonymous';
- im.onload=()=>{try{Object.assign(m,DRIG.model(im,rd.j?rd:{face:h.face}),{ok:1});if(inB)ui()}catch(e){m.ok=0;m.bad=1;console.warn('rig',e)}};im.onerror=()=>{m.bad=1};im.src=h.img;return null}
+ im.onload=()=>{try{Object.assign(m,DRIG.model(fitTex(im),rd.j?rd:{face:h.face}),{ok:1});if(inB)ui()}catch(e){m.ok=0;m.bad=1;console.warn('rig',e)}};im.onerror=()=>{m.bad=1};im.src=h.img;return null}
 const rigOn=S=>S&&S.hp>0&&inB&&!!rigModel(S.h);
 /* ---------- layers ---------- */
-function rigSync(){const cam=document.querySelector('#stage .cam');if(!cam)return;let any=false;P&&P.u.concat(E.u).forEach(S=>{if(S.hp>0&&rigOf(S.h)){rigModel(S.h);any=true}});if(!any&&!RG.fxs.length&&!RG.parts.length)return;
+function rigSync(){RG.fn=(RG.fn||0)+1;const cam=document.querySelector('#stage .cam');if(!cam)return;let any=false;P&&P.u.concat(E.u).forEach(S=>{if(S.hp>0&&rigOf(S.h)){rigModel(S.h);any=true}});if(!any&&!RG.fxs.length&&!RG.parts.length)return;
  if(!RG.cv||!RG.cv.isConnected){const mk=c=>{const e=document.createElement('canvas');e.className=c;cam.insertBefore(e,cam.querySelector('.fxl'));return e};
   RG.sv=mk('rigs');RG.cv=mk('rigl');RG.gv=mk('rigv');RG.R=DRIG.renderer(RG.cv);if(!RG.R){RG.cv.remove();RG.cv=null}}
  if(!RG.raf){RG.lt=performance.now();RG.raf=requestAnimationFrame(rigFrame)}}
 /* where an element really is inside the battle camera (includes CSS transforms like the centring translate) */
 function camBox(el,cam){const c=cam.getBoundingClientRect(),k=(c.width/(cam.offsetWidth||1))||1,r=el.getBoundingClientRect();return{x:(r.left-c.left)/k,y:(r.top-c.top)/k,w:r.width/k,h:r.height/k}}
-const posOf=S=>{const k=uKey(S),el=k&&$('#'+k),cam=document.querySelector('#stage .cam');if(!el||!cam)return null;const tg=el.querySelector('img.fig')||el.querySelector('.fgw,.tomb')||el,b=camBox(tg,cam),o={x:b.x,y:b.y},w=b.w,h=b.h;
+/* positions are measured at most once per frame and reused (measuring forces the browser to recalculate the page) */
+const PC=new Map();let PCf=-1;const pcFresh=()=>{if(PCf!==RG.fn){PC.clear();PCf=RG.fn}};
+const posOf=S=>{pcFresh();if(PC.has(S))return PC.get(S);const v=posOf0(S);PC.set(S,v);return v};
+const posOf0=S=>{const k=uKey(S),el=k&&$('#'+k),cam=document.querySelector('#stage .cam');if(!el||!cam)return null;const tg=el.querySelector('img.fig')||el.querySelector('.fgw,.tomb')||el,b=camBox(tg,cam),o={x:b.x,y:b.y},w=b.w,h=b.h;
  return{x:o.x+w/2,y:o.y+h*.45,top:o.y,gy:o.y+h,w,h,l:o.x,foe:k[1]==='e'}};
 /* ---------- actions ---------- */
 /* move set per class: [one target, multi-hit, pierce, all enemies, ultimate] */
@@ -2680,13 +2691,13 @@ function vLightning(p,c){const pts=[];let x=p.x,y=-30;const n=9;for(let i=0;i<=n
 function vCross(p,c){fxAdd(1000,(g,u)=>{const a=u<.15?u/.15:1-(u-.15)/.85,s=.8+u*.4,H=p.h*1.3*s,W=p.w*.9*s,cy=p.top+p.h*.35,w=Math.max(10,p.w*.12);g.save();g.globalCompositeOperation='lighter';g.globalAlpha=a;g.shadowColor=c;g.shadowBlur=30;g.fillStyle=c;
   g.fillRect(p.x-w/2,cy-H*.55,w,H);g.fillRect(p.x-W/2,cy-H*.22,W,w);g.fillStyle='#fff';g.fillRect(p.x-w*.18,cy-H*.55,w*.36,H);g.fillRect(p.x-W/2,cy-H*.22+w*.32,W,w*.36);g.restore()},'v')}
 /* ---------- frame ---------- */
-function rigFrame(now){RG.raf=0;if(!inB||!P){RG.acts.clear();RG.parts.length=0;RG.fxs.length=0;return}
+function rigFrame(now){RG.raf=0;RG.fn=(RG.fn||0)+1;fpsTick(now);if(!inB||!P){RG.acts.clear();RG.parts.length=0;RG.fxs.length=0;return}
  const cam=document.querySelector('#stage .cam');if(!cam||!RG.cv){return}
  let dt=Math.min(120,now-RG.lt);RG.lt=now;if(RG.hs>0){RG.hs-=dt;dt*=.06}RG.vt+=dt;const vt=RG.vt;
  const dpr=Math.min(2,window.devicePixelRatio||1),W=cam.offsetWidth,H=cam.offsetHeight;[RG.cv,RG.gv,RG.sv].forEach(c=>{if(c.width!==Math.round(W*dpr)||c.height!==Math.round(H*dpr)){c.width=Math.round(W*dpr);c.height=Math.round(H*dpr)}});
  const g=RG.gv.getContext('2d'),s=RG.sv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);s.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);s.clearRect(0,0,W,H);
  RG.R.begin();const sel=document.body.classList.contains('sel'),zp=$('#stage').classList.contains('zp');let alive2=0;
- [[P,'p'],[E,'e']].forEach(([T,sd])=>T.u.map((S,i)=>[S,i]).forEach(([S,i])=>{if(S.hp<=0)return;const md=rigModel(S.h);const el=$('#u'+sd+i);if(!md||!el)return;el.classList.add('rig');const img=el.querySelector('img.fig');if(!img)return;alive2++;
+ [[P,'p'],[E,'e']].forEach(([T,sd])=>T.u.map((S,i)=>[S,i]).forEach(([S,i])=>{if(S.hp<=0)return;const md=rigModel(S.h);const el=$('#u'+sd+i);if(!md||!el)return;if(!el.classList.contains('rig'))el.classList.add('rig');const img=el.querySelector('img.fig');if(!img)return;alive2++;
   const bx=camBox(img,cam),o={x:bx.x,y:bx.y},h=bx.h||1,w=bx.w,foe=sd==='e';if(!RG.ph.has(S))RG.ph.set(S,Math.random()*6);
   let a=RG.acts.get(S);const c=a&&DRIG.CLIPS[a.k];if(a&&(!c||vt-a.t>c.d)){RG.acts.delete(S);a=null}
   const p=DRIG.pose(md,vt,a,RG.ph.get(S));
@@ -2699,12 +2710,12 @@ function rigFrame(now){RG.raf=0;if(!inB||!P){RG.acts.clear();RG.parts.length=0;R
   const mats=DRIG.poseMats(md.rig,md.ar,p),tr=[(foe?-h:h)*dpr,h*dpr,(foe?o.x+w:o.x)*dpr,o.y*dpr];
   const toC=q=>q&&{x:(foe?o.x+w-q.x*h:o.x+q.x*h),y:o.y+q.y*h};
   /* ground shadow (shrinks while airborne) */
-  {const lift=Math.max(0,-(p.py||0)),fx=toC({x:(md.rig.j.hip.x*md.ar)+(p.px||0),y:1});s.save();s.globalAlpha=.42*(1-Math.min(.7,lift*2));s.fillStyle='#000';s.filter='blur(3px)';s.beginPath();s.ellipse(fx.x,o.y+h*.99,w*.36*(1-lift*.8),h*.035,0,0,Math.PI*2);s.fill();s.restore()}
+  {const lift=Math.max(0,-(p.py||0)),fx=toC({x:(md.rig.j.hip.x*md.ar)+(p.px||0),y:1});shadowAt(s,fx.x,o.y+h*.99,w*.36*(1-lift*.8),h*.035,.42*(1-Math.min(.7,lift*2)))}
   /* after-images while dashing / swinging */
-  let gh=RG.ghosts.get(S);if(!gh){gh=[];RG.ghosts.set(S,gh)}const LY=DRIG.layers(md,mats);if((p.trail||0)>.5&&(!gh.lt||vt-gh.lt>34)){gh.push({L:LY.map(l=>({mesh:l.mesh,img:l.img,v:l.v.slice()})),t:vt,tr});gh.lt=vt;if(gh.length>5)gh.shift()}
-  for(let k=gh.length-1;k>=0;k--){const q=gh[k],age=(vt-q.t)/220;if(age>=1){gh.splice(k,1);continue}q.L.forEach(l=>RG.R.draw(l.mesh,l.img,l.v,q.tr,{tint:a&&a.ex?[1,.85,.4]:[.55,.8,1.2],alpha:(1-age)*.35,flash:.35}))}
+  let gh=RG.ghosts.get(S);if(!gh){gh=[];RG.ghosts.set(S,gh)}if((p.trail||0)>.5&&(!gh.lt||vt-gh.lt>34)){gh.push({md,mats,t:vt,tr});gh.lt=vt;if(gh.length>5)gh.shift()}
+  for(let k=gh.length-1;k>=0;k--){const q=gh[k],age=(vt-q.t)/220;if(age>=1){gh.splice(k,1);continue}DRIG.drawModel(RG.R,q.md,q.mats,q.tr,{tint:a&&a.ex?[1,.85,.4]:[.55,.8,1.2],alpha:(1-age)*.35,flash:.35})}
   const dim=sel&&!el.classList.contains('tg')?.42:(zp?foe:!foe)?.8:1;
-  {const op={glow:p.glow||0,glowC:a&&a.ex||a&&a.k==='charge'?[1,.8,.25]:a&&RGRP[a.k]==='w'?[.75,.55,1]:a&&RGRP[a.k]==='p'?[1,.95,.6]:a&&(a.k==='cast'||a.k==='guard')?[.6,.85,1]:[1,.95,.75],glowR:(2+(p.glow||0)*2.5)*dpr,flash:Math.min(1,p.flash||0),tint:[dim,dim,dim]};LY.forEach(l=>RG.R.draw(l.mesh,l.img,l.v,tr,op))}
+  {const op={glow:p.glow||0,glowC:a&&a.ex||a&&a.k==='charge'?[1,.8,.25]:a&&RGRP[a.k]==='w'?[.75,.55,1]:a&&RGRP[a.k]==='p'?[1,.95,.6]:a&&(a.k==='cast'||a.k==='guard')?[.6,.85,1]:[1,.95,.75],glowR:(2+(p.glow||0)*2.5)*dpr,flash:Math.min(1,p.flash||0),tint:[dim,dim,dim]};DRIG.drawModel(RG.R,md,mats,tr,op)}
   /* weapon trail ribbon */
   const tip=toC(DRIG.ptAt(mats,'wp',md.rig.j.wT,md.ar)),hand=toC(DRIG.ptAt(mats,'faF',md.rig.j.hF,md.ar));S._tip=tip;S._tip2=toC(DRIG.ptAt(mats,'faB',md.rig.j.hB,md.ar));{const ch=toC(DRIG.ptAt(mats,'chest',md.rig.j.chest,md.ar));S._chest=ch&&{x:ch.x+(foe?-1:1)*w*.18,y:ch.y};S._wp=!!(md.rig.parts&&md.rig.parts.wp)}let tl=RG.trails.get(S);if(!tl){tl=[];RG.trails.set(S,tl)}
   if((p.trail||0)>.5&&tip&&hand)tl.push({a:tip,b:hand,t:vt});while(tl.length&&vt-tl[0].t>150)tl.shift();if(tl.length>1)vTrail(g,tl,vt,a&&a.ex?'#ffd24a':a&&a.sp&&a.sp.ap?ELC[a.sp.ap[0]]||'#bfe8ff':'#bfe8ff');
@@ -2717,7 +2728,7 @@ function rigFrame(now){RG.raf=0;if(!inB||!P){RG.acts.clear();RG.parts.length=0;R
  if(RG.shake>0&&vt<RG.shT){const m=RG.shake*(RG.shT-vt)/RG.shD;cam.style.translate=((Math.random()-.5)*m).toFixed(1)+'px '+((Math.random()-.5)*m*.6).toFixed(1)+'px'}else if(cam.style.translate){cam.style.translate='';RG.shake=0}
  if(alive2||RG.fxs.length||RG.parts.length)RG.raf=requestAnimationFrame(rigFrame)}
 /* ---------- effects library (2D canvas, additive light) ---------- */
-const pt=(x,y,vx,vy,d,s,c,gr)=>({x,y,vx,vy,t0:RG.vt,d,s,c,gr:gr==null?.12:gr});
+const PMAX=900;const pt=(x,y,vx,vy,d,s,c,gr)=>(RG.parts.length>PMAX&&RG.parts.splice(0,RG.parts.length-PMAX),0)||({x,y,vx,vy,t0:RG.vt,d,s,c,gr:gr==null?.12:gr});
 const fxAdd=(d,draw,l,delay)=>RG.fxs.push({t0:RG.vt+(delay||0),d,draw,l});
 function vShake(m,d){RG.shake=Math.max(RG.shake,m);RG.shD=d;RG.shT=RG.vt+d}
 function vFlash(c,a,d){fxAdd(d,(g,u)=>{g.save();g.globalAlpha=a*(1-u)*(1-u);g.fillStyle=c;g.fillRect(-50,-50,g.canvas.width,g.canvas.height);g.restore()})}
@@ -2750,6 +2761,23 @@ function vAura(S,d,c){fxAdd(d,(g,u)=>{const p=posOf(S);if(!p)return;g.save();g.g
 function vTrail(g,tl,vt,c){g.save();g.globalCompositeOperation='lighter';for(let i=1;i<tl.length;i++){const p0=tl[i-1],p1=tl[i],al=1-(vt-p1.t)/150;if(al<=0)continue;
   g.globalAlpha=al*.85;const gr=g.createLinearGradient(p1.b.x,p1.b.y,p1.a.x,p1.a.y);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(.6,c);gr.addColorStop(1,'#ffffff');g.fillStyle=gr;
   g.beginPath();g.moveTo(p0.a.x,p0.a.y);g.lineTo(p1.a.x,p1.a.y);g.lineTo(p1.b.x,p1.b.y);g.lineTo(p0.b.x,p0.b.y);g.closePath();g.fill()}g.restore()}
+
+/* hero picture prepared once at the largest size the screen can show (high-quality steps, never upscaled):
+   lighter on memory and upload, same sharpness on screen */
+function fitTex(im){const W=im.naturalWidth,H=im.naturalHeight,dpr=Math.min(2,window.devicePixelRatio||1),need=Math.ceil(Math.max(window.innerWidth,window.innerHeight)*dpr);
+ if(H<=need*1.15)return im;let w=W,h=H,src=im;const tw=Math.round(W*need/H),th=need;
+ while(h/2>=th){const c=document.createElement('canvas');c.width=Math.round(w/2);c.height=Math.round(h/2);const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(src,0,0,c.width,c.height);src=c;w=c.width;h=c.height}
+ const c=document.createElement('canvas');c.width=tw;c.height=th;const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(src,0,0,tw,th);c.naturalWidth=tw;c.naturalHeight=th;return c}
+/* soft ground shadow: the same blurred ellipse, drawn once and reused */
+const SHC=new Map();
+function shadowAt(g,x,y,rx,ry,al){if(rx<1||ry<.5||al<=0)return;const dpr=Math.min(2,window.devicePixelRatio||1),k=Math.round(rx)+'|'+Math.round(ry*2)/2+'|'+dpr;let c=SHC.get(k);
+ if(!c){const R=Math.round(rx),Y=Math.round(ry*2)/2,pad=8;c=document.createElement('canvas');c.width=Math.ceil((R+pad)*2*dpr);c.height=Math.ceil((Y+pad)*2*dpr);const q=c.getContext('2d');q.scale(dpr,dpr);q.fillStyle='#000';q.filter='blur(3px)';q.beginPath();q.ellipse(R+pad,Y+pad,R,Y,0,0,Math.PI*2);q.fill();c.R=R+pad;c.Y=Y+pad;
+  if(SHC.size>80)SHC.delete(SHC.keys().next().value);SHC.set(k,c)}
+ g.save();g.globalAlpha=al;g.drawImage(c,x-c.R,y-c.Y,c.R*2,c.Y*2);g.restore()}
+/* hidden FPS meter: tap the battle clock 5 times quickly (or add #fps to the address) */
+const FPS={on:/fps/.test(location.hash)||(()=>{try{return localStorage.dfps==='1'}catch(e){return false}})(),n:0,t:0,el:null,taps:[]};
+function fpsTick(now){if(!FPS.on)return;FPS.n++;if(now-FPS.t>=500){const v=Math.round(FPS.n*1000/(now-FPS.t||1));FPS.n=0;FPS.t=now;if(!FPS.el||!FPS.el.isConnected){FPS.el=document.createElement('div');FPS.el.id='fpsm';$('#gw').appendChild(FPS.el)}FPS.el.textContent=v+' FPS';FPS.el.style.color=v>=55?'#7dff9a':v>=40?'#ffd24a':'#ff6a5a'}}
+document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('#hmid'))return;const n=performance.now();FPS.taps=FPS.taps.filter(t=>n-t<1500);FPS.taps.push(n);if(FPS.taps.length>=5){FPS.taps=[];FPS.on=!FPS.on;try{localStorage.dfps=FPS.on?'1':'0'}catch(x){}if(!FPS.on&&FPS.el){FPS.el.remove();FPS.el=null}toast(FPS.on?'FPS meter on':'FPS meter off')}});
 
 async function exPose(S){if(!uKey(S))return;setPose(S,'ex',1000);rigCharge(S);SND.mana();ui();await sl(1000)}
 /* evolution badge (shown above the health bar and on the VS screen) */
@@ -4021,7 +4049,7 @@ function crisp(url,px){const k=url+'|'+px;if(CRISP[k])return Promise.resolve(CRI
 const crispPx=css=>Math.round(css*Math.min(3,Math.max(2,window.devicePixelRatio||1)));
 function crispAll(){document.querySelectorAll('img[data-crisp]:not([data-cr])').forEach(im=>{im.dataset.cr=1;const u=im.dataset.src||im.getAttribute('src'),px=crispPx(+im.dataset.crisp);
  if(CRISP[u+'|'+px]){im.src=CRISP[u+'|'+px];return}crisp(u,px).then(d=>{if(d&&im.isConnected)im.src=d})})}
-new MutationObserver(()=>{cancelAnimationFrame(crispAll.r);crispAll.r=requestAnimationFrame(crispAll)}).observe($('#gw'),{childList:true,subtree:true});
+new MutationObserver(()=>{if(inB)return;cancelAnimationFrame(crispAll.r);crispAll.r=requestAnimationFrame(crispAll)}).observe($('#gw'),{childList:true,subtree:true});
 const crispImg=(url,css,extra)=>{const d=CRISP[url+'|'+crispPx(css)];return '<img src="'+(d||url)+'" data-src="'+url+'" data-crisp="'+css+'"'+(d?' data-cr="1"':'')+' alt="" referrerpolicy="no-referrer"'+(extra||'')+'>'};
 /* Starter Pack button: on the Battle page, to the right of the Quests panel */
 const stbH=()=>ME&&CFG.payApi&&!WAL.starter?'<button class="stb" id="stb" title="Starter Pack"><span class="stbg"></span><span class="stbi">'+crispImg(IMG_STARTER,matchMedia('(max-height:520px)').matches?72:104)+'</span><span class="stbt">Starter Pack</span><em class="stp">₱99</em></button>':'';
