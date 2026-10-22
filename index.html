@@ -1217,7 +1217,7 @@ async function mntOptimize(){if(MNT.busy)return;if(!confirm('Optimize every imag
     await doLook(o,'');if(o.evo){o.evo={...o.evo};for(const i of Object.keys(o.evo)){if(!o.evo[i])continue;o.evo[i]={...o.evo[i]};await doLook(o.evo[i],' evolution '+i)}}
     if(Array.isArray(o.cards)||o.cards){const cs=cardsOf(o);for(const c of cs)if(c.art)c.art=await step(nm+' card art',c.art,843,634,.9);o.cards=cs}
     await api('cardgame/heroes/'+id,'PUT',o);mntLog('✓ '+nm)}
-   const rk=await api('cardgame/ranks').catch(()=>null);if(rk){const L=Array.isArray(rk)?rk.slice():Object.values(rk);for(const r of L)if(r&&r.img)r.img=await step('rank emblem',r.img,512,512,.93);await api('cardgame/ranks','PUT',L);mntLog('✓ Rank emblems')}
+   mntLog('· Rank emblems are kept exactly as uploaded (never re-compressed)');
    for(const [node,fields,mw,mh] of [['relics',['icon'],192,192],['ailments',['icon'],192,192],['general',['icon','art'],843,634]]){const d=await api('cardgame/'+node).catch(()=>null);if(!d)continue;
     for(const [k,v] of Object.entries(d)){if(!v)continue;let ch=0;for(const f of fields)if(v[f]&&/^data:image\//.test(v[f])){const big=f==='art';const n=await step(node+' '+f,v[f],big?843:mw,big?634:mh,.9);if(n!==v[f]){v[f]=n;ch=1}}if(ch)await api('cardgame/'+node+'/'+k,'PUT',v)}mntLog('✓ '+node[0].toUpperCase()+node.slice(1))}
    mntLog('<b>Done! Images: '+kb(before)+' → '+kb(after)+' ('+(before?Math.round((1-after/before)*100):0)+'% lighter).</b>');toast('Optimization finished')
@@ -1470,12 +1470,12 @@ function rankSecInner(){
   <div class="row" style="margin-top:10px"><button class="s" onclick="rkAdd()">＋ Add rank</button><button class="g s" onclick="rkDel()">Remove last</button><button class="g s" onclick="rkReset()">Reset to defaults</button><button onclick="saveRanks()">💾 Save ranks</button></div>`}
 const paintRanks=()=>{const e=$('#ranksec');if(e)e.innerHTML=rankSecInner()};
 /* rank emblems are kept sharp: trimmed, up to 512px, WebP with transparency (PNG fallback) */
-const shrinkHQ=(f,max)=>new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);
+const shrinkHQ=(f,max,lossless)=>new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);
   im.onload=()=>{const c0=trimCanvas(im),k=Math.min(1,max/Math.max(c0.width,c0.height)),c=document.createElement('canvas');c.width=Math.round(c0.width*k);c.height=Math.round(c0.height*k);
     const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(c0,0,0,c.width,c.height);URL.revokeObjectURL(u);
-    let d=c.toDataURL('image/webp',.95);if(!/^data:image\/webp/.test(d))d=c.toDataURL('image/png');ok(d)};
+    let d=lossless?c.toDataURL('image/png'):c.toDataURL('image/webp',.95);if(!/^data:image\/(webp|png)/.test(d))d=c.toDataURL('image/png');ok(d)};
   im.onerror=()=>no(new Error('Could not read that image.'));im.src=u});
-async function upRkImg(i,inp){const f=inp.files[0];inp.value='';if(!f)return;try{RKS[i].img=await shrinkHQ(f,512);paintRanks();toast('High-resolution emblem ready. Press Save ranks to keep it.')}catch(e){toast(e.message)}}
+async function upRkImg(i,inp){const f=inp.files[0];inp.value='';if(!f)return;try{RKS[i].img=await shrinkHQ(f,768,1);paintRanks();toast('High-resolution emblem ready. Press Save ranks to keep it.')}catch(e){toast(e.message)}}
 function rkAdd(){RKS.push({n:'New rank '+(RKS.length+1)});paintRanks()}
 function rkDel(){if(RKS.length<=1)return toast('Keep at least one rank');RKS.pop();paintRanks()}
 function rkReset(){if(!confirm('Reset all rank names and emblems to the defaults (Copper I – Diamond V)?'))return;RKS=defRanksA();paintRanks()}
