@@ -568,6 +568,9 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .av.fr-abyss{background:conic-gradient(from var(--fa),#0a0418,#5a1aa8,#d080ff,#1a0838,#3a0a80,#0a0418)}
 .av.fr-royal{background:conic-gradient(from var(--fa),#ffe27a,#b0102a,#fff3c0,#c47f00,#b0102a,#ffe27a)}
 @media (prefers-reduced-motion:reduce){.av.prem{animation:none}}
+.rgw{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}.rgbox{display:flex;flex-direction:column;gap:4px}.rgbox canvas{width:360px;max-width:100%;border-radius:10px;border:1px solid var(--line);background:#0b1626}
+.rgbox small{color:var(--mut,#8aa)}.rgcl{display:flex;flex-wrap:wrap;gap:6px;max-width:360px;margin-top:6px}
+.rglg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px}.rglg span{display:flex;align-items:center;gap:5px}.rglg i{width:11px;height:11px;border-radius:50%;border:1px solid #000}
 </style>
 <style>
 .gcs{display:flex;flex-wrap:wrap;gap:16px;margin:8px 0 4px}
@@ -1151,17 +1154,17 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn,mlx]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins','mail'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn,mlx,rgs]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins','mail','rigs'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
-  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};DSHOP=dsh||{};SKINSA=skn||{};SALES=null;MAILA=mlx||{};
+  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};DSHOP=dsh||{};SKINSA=skn||{};SALES=null;MAILA=mlx||{};RIGSA=rgs||{};
   if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec','weakPct','empPct','brkPct','bolPct','fatMax','blkMax','burnDur','burnPer','atkCost','atkPct','botMin','botMax','botTag'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','stones','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);CGC[k]=CGD[k].map((d,i)=>a[i]!==undefined&&!isNaN(a[i])?a[i]:d)}});if(!cf.stones&&cf.stone!==undefined&&!isNaN(+cf.stone))CGC.stones[3]=+cf.stone;if(typeof cf.payApi==='string')CGC.payApi=cf.payApi}
   if(!bts){try{const nb=await seedBots();if(nb)toast(nb+' starter bots created for Ranked')}catch(e){}}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();DF=emptyDF();
   const n=o=>Object.keys(o).length;
-  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['dshop','💎','Diamond Shop',Object.keys(SKINSA).length],['mail','📬','Mail',Object.values(MAILA).filter(m=>m&&+m.exp>Date.now()).length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
-  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,dshop:()=>`<div class="cgp" id="dssec">${dshopInner()}</div>`,mail:()=>`<div class="cgp" id="mlsec">${mailInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
+  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['dshop','💎','Diamond Shop',Object.keys(SKINSA).length],['anim','🦴','Animation',Object.keys(RIGSA).length],['mail','📬','Mail',Object.values(MAILA).filter(m=>m&&+m.exp>Date.now()).length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
+  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,dshop:()=>`<div class="cgp" id="dssec">${dshopInner()}</div>`,mail:()=>`<div class="cgp" id="mlsec">${mailInner()}</div>`,anim:()=>{setTimeout(rigMount,0);return `<div class="cgp" id="rigsec">${rigInner()}</div>`},look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
   return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
     <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
       <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
@@ -1665,6 +1668,222 @@ async function mailExp(id){const m=MAILA[id],v=Math.floor(+($('#mx_'+id)||{}).va
   try{await api('cardgame/mail/'+id+'/exp','PUT',exp);m.exp=exp;paintML();toast('Mail now expires in '+v+' day'+(v>1?'s':''))}catch(x){toast(x.message)}}
 async function delMail(id){if(!confirm('Delete this mail from every mailbox now? Unclaimed rewards will be gone.'))return;try{await api('cardgame/mail/'+id,'DELETE');delete MAILA[id];paintML()}catch(x){toast(x.message)}}
 async function delExpired(){const now=Date.now(),o={};Object.entries(MAILA).forEach(([k,m])=>{if(!m||!(+m.exp>now))o['cardgame/mail/'+k]=null});if(!Object.keys(o).length)return;try{await mp(o);Object.keys(o).forEach(k=>delete MAILA[k.split('/').pop()]);paintML();toast('Expired mail deleted')}catch(x){toast(x.message)}}
+
+/* ================= DRIG: 2.5D skeletal animation for single-PNG heroes =================
+   One picture + a skeleton (joints placed on the art). A fine mesh is laid over the picture and every
+   mesh point follows nearby bones (smooth skin weights), so the art bends naturally when bones rotate.
+   Rendered with WebGL: glow outline, hit flash, after-images. Motion clips are keyframed with easing.
+   Joints are stored in picture coordinates 0..1 (x across, y down). */
+const DRIG=(()=>{
+ const J=['head','neck','chest','hip','sF','eF','hF','wT','sB','eB','hB','kF','fF','kB','fB','cape','hair'];
+ const JN={head:'Head (centre)',neck:'Neck',chest:'Chest',hip:'Hips',sF:'Weapon shoulder',eF:'Weapon elbow',hF:'Weapon hand',wT:'Weapon tip',sB:'Other shoulder',eB:'Other elbow',hB:'Other hand',kF:'Front knee',fF:'Front foot',kB:'Back knee',fB:'Back foot',cape:'Cape end (optional)',hair:'Hair end (optional)'};
+ /* bones: name, parent, from joint, to joint, skin radius (× head size) */
+ const BONES=[['pelvis',null,'hip','hip',0],['spine','pelvis','hip','chest',1.15],['chest','spine','chest','neck',1.05],['head','chest','neck','head',1.05],
+  ['uaF','chest','sF','eF',.62],['faF','uaF','eF','hF',.58],['wp','faF','hF','wT',.42],['uaB','chest','sB','eB',.62],['faB','uaB','eB','hB',.66],
+  ['thF','pelvis','hip','kF',.75],['shF','thF','kF','fF',.62],['thB','pelvis','hip','kB',.75],['shB','thB','kB','fB',.62],['cape','chest','neck','cape',1.1],['hair','head','head','hair',.7]];
+ const lerp=(a,b,t)=>a+(b-a)*t,cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+ /* ---------- auto rig: guesses joints from the picture outline + the face found in the admin panel ---------- */
+ function autoRig(mask,mw,mh,face){const op=(x,y)=>x>=0&&y>=0&&x<mw&&y<mh&&mask[y*mw+x];
+  const row=y=>{y=cl(Math.round(y*mh),0,mh-1);let a=-1,b=-1,s=0,n=0;for(let x=0;x<mw;x++)if(op(x,y)){if(a<0)a=x;b=x;s+=x;n++}return n?{a:a/mw,b:b/mw,c:s/n/mw}:{a:.4,b:.6,c:.5}};
+  const fz=face&&face.z>0?face.z:5.5,hs=cl(1/fz,.08,.3),fx=face?cl(face.x,.1,.9):row(.1).c,fy=face?cl(face.y,.04,.5):.1;
+  const neckY=fy+hs*.55,hipY=neckY+(1-neckY)*.42,chestY=lerp(neckY,hipY,.3),hip=row(hipY),ch=row(chestY);
+  let cx;const tw=Math.max(hs*.75,Math.min((ch.b-ch.a)*.32,hs*1.3));cx=lerp(fx,ch.c,.35);
+  /* weapon side: the side whose outline reaches furthest from the body centre */
+  let best={d:-1,x:.5,y:.5};for(let y=0;y<mh;y+=2)for(let x=0;x<mw;x+=2)if(op(x,y)){const px=x/mw,py=y/mh,dd=Math.hypot(px-cx,(py-chestY)*.8);if(Math.abs(px-cx)>tw*.8&&py<hipY+(1-hipY)*.4&&dd>best.d)best={d:dd,x:px,y:py}}
+  const side=best.x>=cx?1:-1,shY=lerp(neckY,chestY,.55),sF={x:cx+side*tw,y:shY},sB={x:cx-side*tw*.85,y:shY+.01};
+  const tip=best,armL=(1-neckY)*.3,v={x:tip.x-sF.x,y:tip.y-sF.y},vl=Math.hypot(v.x,v.y)||1,ux=v.x/vl,uy=v.y/vl;
+  const hF={x:sF.x+ux*Math.min(armL,vl*.6),y:sF.y+uy*Math.min(armL,vl*.6)},eF={x:lerp(sF.x,hF.x,.5)+side*.01,y:lerp(sF.y,hF.y,.5)+armL*.18};
+  const hB={x:sB.x-side*tw*.25,y:hipY-.02},eB={x:lerp(sB.x,hB.x,.5)-side*.03,y:lerp(sB.y,hB.y,.5)};
+  const kY=lerp(hipY,1,.5),bot=row(.985),fw=Math.max(.05,(bot.b-bot.a)*.3);
+  const nx=lerp(fx,cx,.35),j={head:{x:fx,y:fy},neck:{x:nx,y:neckY},chest:{x:lerp(nx,ch.c,.3),y:chestY},hip:{x:lerp(nx,hip.c,.3),y:hipY},sF,eF,hF,wT:{x:tip.x,y:tip.y},sB,eB,hB,
+   kF:{x:lerp(nx,hip.c,.3)+side*fw*.8,y:kY},fF:{x:bot.c+side*fw,y:.985},kB:{x:lerp(nx,hip.c,.3)-side*fw*.8,y:kY},fB:{x:bot.c-side*fw,y:.985}};
+  for(const k in j){j[k].x=+cl(j[k].x,0,1).toFixed(4);j[k].y=+cl(j[k].y,0,1).toFixed(4)}return{j,side,auto:1}}
+ /* ---------- mesh over the opaque part of the picture ---------- */
+ function buildMesh(mask,mw,mh,ar,rig){const GX=Math.round(cl(34*Math.sqrt(ar),18,48)),GY=Math.round(GX/ar);
+  const used=new Uint8Array((GX+1)*(GY+1)),cells=[];
+  for(let gy=0;gy<GY;gy++)for(let gx=0;gx<GX;gx++){let on=0;const x0=Math.floor((gx-1)/GX*mw),x1=Math.ceil((gx+2)/GX*mw),y0=Math.floor((gy-1)/GY*mh),y1=Math.ceil((gy+2)/GY*mh);
+   for(let y=Math.max(0,y0);y<Math.min(mh,y1)&&!on;y++)for(let x=Math.max(0,x0);x<Math.min(mw,x1);x++)if(mask[y*mw+x]){on=1;break}
+   if(on){cells.push([gx,gy]);used[gy*(GX+1)+gx]=used[gy*(GX+1)+gx+1]=used[(gy+1)*(GX+1)+gx]=used[(gy+1)*(GX+1)+gx+1]=1}}
+  const vid=new Int32Array((GX+1)*(GY+1)).fill(-1),pos=[],uv=[];
+  for(let gy=0;gy<=GY;gy++)for(let gx=0;gx<=GX;gx++){const k=gy*(GX+1)+gx;if(!used[k])continue;vid[k]=pos.length/2;pos.push(gx/GX*ar,gy/GY);uv.push(gx/GX,gy/GY)}
+  const idx=[];cells.forEach(([gx,gy])=>{const a=vid[gy*(GX+1)+gx],b=vid[gy*(GX+1)+gx+1],c=vid[(gy+1)*(GX+1)+gx],d=vid[(gy+1)*(GX+1)+gx+1];idx.push(a,b,c,b,d,c)});
+  const n=pos.length/2,P=new Float32Array(pos),W=skin(P,n,ar,rig);return{n,P,UV:new Float32Array(uv),I:new Uint16Array(idx),W,ar}}
+ /* skin weights: each mesh point listens to its 4 nearest bones (smooth falloff) */
+ function bonesOf(rig,ar){const j=rig.j,hs=Math.max(.06,Math.hypot((j.neck.x-j.head.x)*ar,j.neck.y-j.head.y)*1.6);
+  return BONES.map(([n,p,f,t,r],i)=>{const A=j[f],B=j[t]||A;if(!A||(t!==f&&!j[t]))return null;return{i,n,p,ax:A.x*ar,ay:A.y,bx:B.x*ar,by:B.y,r:r*hs}})}
+ function skin(P,n,ar,rig){const bs=bonesOf(rig,ar),K=4,W=new Float32Array(n*K*2);
+  for(let v=0;v<n;v++){const x=P[v*2],y=P[v*2+1],c=[];
+   bs.forEach(b=>{if(!b||!b.r)return;const dx=b.bx-b.ax,dy=b.by-b.ay,l2=dx*dx+dy*dy||1e-9,t=cl(((x-b.ax)*dx+(y-b.ay)*dy)/l2,0,1),ex=b.ax+dx*t-x,ey=b.ay+dy*t-y,d=Math.sqrt(ex*ex+ey*ey);c.push([b.i,Math.exp(-(d*d)/(2*b.r*b.r*.36))+1e-7*(1/(d+.01))])});
+   c.sort((a,b)=>b[1]-a[1]);let top=c.slice(0,K),s=top.reduce((a,q)=>a+q[1],0)||1;top=top.map(q=>[q[0],Math.pow(q[1]/s,1.8)]);s=top.reduce((a,q)=>a+q[1],0)||1;
+   /* the weapon is rigid: blade points follow only the weapon bone so the sword never bends */
+   const wi=BONES.findIndex(b=>b[0]==='wp'),tw=top.find(q=>q[0]===wi);if(tw&&tw[1]/s>.42){top=[[wi,1]];s=1}
+   for(let k=0;k<K;k++){const q=top[k];W[(v*K+k)*2]=q?q[0]:0;W[(v*K+k)*2+1]=q?q[1]/s:0}}
+  return W}
+ /* ---------- pose: bone rotations (deg), body squash/stretch, lean ---------- */
+ const M=(a=1,b=0,c=0,d=1,e=0,f=0)=>[a,b,c,d,e,f],mul=(m,n)=>[m[0]*n[0]+m[2]*n[1],m[1]*n[0]+m[3]*n[1],m[0]*n[2]+m[2]*n[3],m[1]*n[2]+m[3]*n[3],m[0]*n[4]+m[2]*n[5]+m[4],m[1]*n[4]+m[3]*n[5]+m[5]];
+ const rotAt=(x,y,deg,s=1)=>{const r=deg*Math.PI/180,c=Math.cos(r)*s,si=Math.sin(r)*s;return[c,si,-si,c,x-c*x+si*y,y-si*x-c*y]};
+ function poseMats(rig,ar,p){const j=rig.j,bs=bonesOf(rig,ar),out=new Array(BONES.length),gx=(j.fF&&j.fB?(j.fF.x+j.fB.x)/2:j.hip.x)*ar,gy=1;
+  bs.forEach((b,i)=>{if(!b){out[i]=null;return}let m;
+   if(b.n==='pelvis'){const sx=(p.psx||1)*(p.ps||1),sy=(p.psy||1)*(p.ps||1);m=[sx,0,0,sy,gx-sx*gx+(p.px||0),gy-sy*gy+(p.py||0)];if(p.tilt)m=mul(m,rotAt(gx,gy,p.tilt))}
+   else{const par=out[BONES.findIndex(q=>q[0]===b.p)]||M();m=mul(par,rotAt(b.ax,b.ay,p[b.n]||0,b.n==='wp'?(p.wpS||1):1))}out[i]=m});return out}
+ function deform(mesh,mats,out){const{n,P,W}=mesh,K=4;for(let v=0;v<n;v++){const x=P[v*2],y=P[v*2+1];let X=0,Y=0;
+   for(let k=0;k<K;k++){const w=W[(v*K+k)*2+1];if(!w)continue;const m=mats[W[(v*K+k)*2]];if(!m){X+=x*w;Y+=y*w;continue}X+=(m[0]*x+m[2]*y+m[4])*w;Y+=(m[1]*x+m[3]*y+m[5])*w}out[v*2]=X;out[v*2+1]=Y}return out}
+ const ptAt=(mats,bone,pt,ar)=>{const m=mats[BONES.findIndex(q=>q[0]===bone)];if(!m||!pt)return null;const x=pt.x*ar,y=pt.y;return{x:m[0]*x+m[2]*y+m[4],y:m[1]*x+m[3]*y+m[5]}};
+ /* ---------- keyframed clips ----------
+   channel: [[ms, value, ease], ...]   ease: 'io' in-out, 'o' out, 'i' in, 'b' overshoot, 'l' linear, 's' snap (very fast out) */
+ const EZ={l:t=>t,i:t=>t*t*t,o:t=>1-Math.pow(1-t,3),io:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,b:t=>{const c=1.9;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)},s:t=>1-Math.pow(1-t,6),e:t=>t===1?1:1-Math.pow(2,-10*t)};
+ function sample(tr,t){if(!tr||!tr.length)return 0;if(t<=tr[0][0])return tr[0][1];for(let i=1;i<tr.length;i++){const a=tr[i-1],b=tr[i];if(t<=b[0]){const u=(t-a[0])/Math.max(1,b[0]-a[0]);return a[1]+(b[1]-a[1])*(EZ[b[2]||'io']||EZ.io)(u)}}return tr[tr.length-1][1]}
+ const K0=(v,t=0)=>[t,v];
+ const CLIPS={
+  /* basic sword strike: crouch & wind up -> dash in -> big diagonal slash -> follow through -> jump back */
+  slash:{d:980,hit:[[372,1]],ch:{
+   dash:[[0,0],[200,0],[300,1,'i'],[600,1],[900,0,'io']],py:[[0,0],[190,.03,'o'],[300,-.035,'o'],[380,0,'b'],[640,0],[760,-.05,'o'],[900,0,'i']],
+   psx:[[0,1],[190,1.06,'o'],[300,.93,'o'],[390,1.04,'b'],[520,1],[900,1]],psy:[[0,1],[190,.92,'o'],[300,1.07,'o'],[390,.97,'b'],[520,1],[900,1]],
+   spine:[[0,0],[200,-12,'o'],[330,6],[400,16,'s'],[600,12],[900,0]],chest:[[0,0],[200,-6],[400,8,'s'],[620,5],[900,0]],head:[[0,0],[200,6],[400,-6,'s'],[900,0]],
+   uaF:[[0,0],[210,-46,'o'],[340,-52],[410,44,'s'],[620,36],[900,0,'io']],faF:[[0,0],[210,-26,'o'],[340,-30],[410,20,'s'],[620,16],[900,0]],wp:[[0,0],[210,-14,'o'],[340,-18],[410,30,'s'],[620,22],[900,0]],wpS:[[0,1],[330,1],[410,1.12,'s'],[600,1.04],[900,1]],
+   uaB:[[0,0],[200,18],[400,-16,'s'],[900,0]],faB:[[0,0],[200,14],[400,-10],[900,0]],thF:[[0,0],[200,-10],[400,14,'s'],[900,0]],shF:[[0,0],[200,14],[400,-6],[900,0]],thB:[[0,0],[200,8],[400,-16,'s'],[900,0]],shB:[[0,0],[200,-8],[400,10],[900,0]],
+   glow:[[0,0],[200,.7],[420,1],[700,.2],[980,0]],trail:[[0,0],[300,1,'l'],[640,1],[660,0,'l']]}},
+  /* fast 3-hit combo */
+  combo:{d:1300,hit:[[330,1],[560,1],[800,1.4]],ch:{
+   dash:[[0,0],[170,0],[260,1,'i'],[980,1],[1240,0]],py:[[0,0],[160,.025],[260,-.02],[330,0],[690,0],[760,-.08,'o'],[800,0,'i'],[1000,0],[1110,-.04],[1240,0]],
+   psx:[[0,1],[160,1.05],[260,.95],[330,1.03],[800,1],[830,1.08,'s'],[1000,1]],psy:[[0,1],[160,.93],[260,1.06],[330,.98],[800,1],[830,.9,'s'],[1000,1]],
+   spine:[[0,0],[160,-10],[330,14,'s'],[460,-6],[560,14,'s'],[700,-14],[800,18,'s'],[1000,10],[1240,0]],
+   uaF:[[0,0],[170,-55],[330,42,'s'],[460,46],[560,-38,'s'],[700,-72,'o'],[800,52,'s'],[1000,40],[1240,0]],faF:[[0,0],[170,-30],[330,20,'s'],[460,24],[560,-20,'s'],[700,-44],[800,26,'s'],[1240,0]],
+   wp:[[0,0],[170,-26],[330,30,'s'],[460,34],[560,-30,'s'],[700,-38],[800,40,'s'],[1000,28],[1240,0]],wpS:[[0,1],[320,1.1],[700,1],[800,1.16,'s'],[1100,1]],
+   head:[[0,0],[330,-6],[560,4],[800,-8],[1240,0]],uaB:[[0,0],[330,-14],[560,10],[800,-18],[1240,0]],thF:[[0,0],[330,12],[560,-6],[800,16],[1240,0]],thB:[[0,0],[330,-12],[560,8],[800,-18],[1240,0]],
+   glow:[[0,0],[250,.8],[800,1],[1100,.2],[1300,0]],trail:[[0,0],[260,1,'l'],[1000,1],[1020,0,'l']]}},
+  /* piercing lunge straight through */
+  thrust:{d:1000,hit:[[400,1.2]],ch:{
+   dash:[[0,0],[240,-.08,'o'],[380,1.15,'i'],[640,1.15],[940,0]],py:[[0,0],[240,.035,'o'],[380,.01],[640,0],[760,-.05],[940,0]],
+   psx:[[0,1],[240,1.08,'o'],[380,.9,'i'],[460,1.05,'b'],[700,1]],psy:[[0,1],[240,.9,'o'],[380,1.06,'i'],[460,.97,'b'],[700,1]],tilt:[[0,0],[240,-4],[400,9,'s'],[640,6],[940,0]],
+   spine:[[0,0],[240,-14,'o'],[400,20,'s'],[640,16],[940,0]],uaF:[[0,0],[240,-30,'o'],[400,-8,'s'],[640,-6],[940,0]],faF:[[0,0],[240,-55,'o'],[400,-2,'s'],[940,0]],wp:[[0,0],[240,-10],[400,-26,'s'],[640,-22],[940,0]],
+   wpS:[[0,1],[380,1],[420,1.25,'s'],[640,1.15],[940,1]],head:[[0,0],[240,8],[400,-8],[940,0]],thF:[[0,0],[240,-14],[400,22,'s'],[940,0]],thB:[[0,0],[240,10],[400,-24,'s'],[940,0]],
+   glow:[[0,0],[240,.9],[420,1],[760,.1],[1000,0]],trail:[[0,0],[300,1,'l'],[640,1],[660,0,'l']]}},
+  /* spinning cleave that hits the whole enemy team */
+  whirl:{d:1300,hit:[[520,.8],[700,.8],[880,1.3]],ch:{
+   dash:[[0,0],[220,0],[380,1,'i'],[1000,1],[1260,0]],py:[[0,0],[220,.035],[380,-.12,'o'],[880,-.04],[940,0,'i'],[1100,0],[1180,-.04],[1260,0]],
+   psx:[[0,1],[220,1.08],[380,.94],[470,0,'l'],[520,-1,'o'],[610,0,'i'],[700,1,'o'],[790,0,'i'],[880,-1,'o'],[960,1,'b'],[1300,1]],psy:[[0,1],[220,.92],[380,1.05],[880,1],[940,.9,'s'],[1080,1]],
+   spine:[[0,0],[220,-12],[400,10],[880,16],[1260,0]],uaF:[[0,0],[220,-40],[400,58,'s'],[880,60],[1260,0]],faF:[[0,0],[220,-20],[400,20],[1260,0]],wp:[[0,0],[220,-20],[400,30,'s'],[1260,0]],wpS:[[0,1],[400,1.18],[960,1.1],[1260,1]],
+   uaB:[[0,0],[400,-40],[1260,0]],thF:[[0,0],[400,-20],[940,16],[1260,0]],thB:[[0,0],[400,20],[940,-16],[1260,0]],
+   glow:[[0,0],[300,1],[960,1],[1300,0]],trail:[[0,0],[380,1,'l'],[960,1],[980,0,'l']]}},
+  /* raise the blade to the sky: shields, heals, buffs for allies */
+  cast:{d:1050,hit:[[520,1]],ch:{
+   py:[[0,0],[220,.025],[480,-.06,'o'],[760,-.04],[1050,0]],psx:[[0,1],[220,1.05],[480,.97],[560,1.02,'b'],[1050,1]],psy:[[0,1],[220,.94],[480,1.05],[560,.99,'b'],[1050,1]],
+   spine:[[0,0],[220,6],[500,-12,'o'],[780,-8],[1050,0]],chest:[[0,0],[500,-8],[1050,0]],head:[[0,0],[220,8],[500,-14,'o'],[800,-8],[1050,0]],
+   uaF:[[0,0],[220,10],[500,-95,'b'],[800,-88],[1050,0]],faF:[[0,0],[220,10],[500,-20,'b'],[1050,0]],wp:[[0,0],[500,-40,'b'],[800,-36],[1050,0]],wpS:[[0,1],[500,1.1],[800,1.06],[1050,1]],
+   uaB:[[0,0],[500,-30],[1050,0]],faB:[[0,0],[500,-20],[1050,0]],glow:[[0,0],[300,.6],[520,1.4],[860,.6],[1050,0]],flash:[[0,0],[500,0],[540,.35],[700,0]]}},
+  /* war cry: power up (attack buffs, taunt) */
+  roar:{d:1000,hit:[[430,1]],ch:{
+   py:[[0,0],[240,.04,'o'],[430,-.02,'s'],[800,0],[1000,0]],psx:[[0,1],[240,1.08,'o'],[430,1.1,'s'],[700,1.04],[1000,1]],psy:[[0,1],[240,.9,'o'],[430,1.1,'s'],[700,1.03],[1000,1]],
+   spine:[[0,0],[240,14,'o'],[430,-14,'s'],[760,-8],[1000,0]],chest:[[0,0],[240,8],[430,-10,'s'],[1000,0]],head:[[0,0],[240,14],[430,-20,'s'],[760,-14],[1000,0]],
+   uaF:[[0,0],[240,24],[430,-36,'s'],[760,-30],[1000,0]],faF:[[0,0],[430,-30,'s'],[1000,0]],wp:[[0,0],[430,-20,'s'],[1000,0]],uaB:[[0,0],[240,-20],[430,30,'s'],[1000,0]],faB:[[0,0],[430,26,'s'],[1000,0]],
+   thF:[[0,0],[240,-12],[430,10],[1000,0]],thB:[[0,0],[240,12],[430,-10],[1000,0]],glow:[[0,0],[240,.6],[430,1.5],[760,.8],[1000,0]],flash:[[0,0],[430,.25],[600,0]]}},
+  /* gathering power before the ultimate */
+  charge:{d:1000,ch:{
+   py:[[0,0],[300,.035,'o'],[1000,-.07,'io']],psx:[[0,1],[300,1.07],[1000,.98]],psy:[[0,1],[300,.92],[1000,1.06]],tilt:[[0,0],[500,-2],[1000,1]],
+   spine:[[0,0],[300,10],[1000,-12]],chest:[[0,0],[1000,-8]],head:[[0,0],[300,10],[1000,-16]],uaF:[[0,0],[300,20],[1000,-100,'io']],faF:[[0,0],[1000,-24]],wp:[[0,0],[1000,-44]],wpS:[[0,1],[1000,1.15]],
+   uaB:[[0,0],[300,-14],[1000,24]],faB:[[0,0],[1000,20]],thF:[[0,0],[300,-14],[1000,6]],thB:[[0,0],[300,12],[1000,-6]],glow:[[0,0],[200,.8],[600,1.2],[1000,2]]}},
+  /* ultimate: leap high, flip, crash the blade down onto the target */
+  ult:{d:1500,hit:[[720,2.2]],ch:{
+   dash:[[0,0],[160,.2,'o'],[560,.75,'l'],[720,1,'i'],[1180,1],[1460,0]],py:[[0,-.07],[160,-.2,'o'],[470,-.3,'o'],[620,-.24,'i'],[720,0,'i'],[780,0],[1180,0],[1300,-.06],[1460,0]],
+   psx:[[0,.98],[300,1],[400,0,'i'],[470,-1,'o'],[540,0,'i'],[610,1,'o'],[720,1.12,'s'],[860,1,'b'],[1460,1]],psy:[[0,1.06],[620,1.05],[720,.82,'s'],[860,1.02,'b'],[1460,1]],
+   tilt:[[0,0],[600,-6],[720,6,'s'],[1100,0]],spine:[[0,0],[300,-16],[620,-18],[720,22,'s'],[1100,14],[1460,0]],chest:[[0,0],[620,-10],[720,12,'s'],[1460,0]],head:[[0,-16],[620,-14],[720,-4,'s'],[1460,0]],
+   uaF:[[0,-100],[580,-118],[720,58,'s'],[1100,52],[1460,0]],faF:[[0,-24],[580,-30],[720,26,'s'],[1460,0]],wp:[[0,-44],[580,-50],[720,40,'s'],[1100,30],[1460,0]],wpS:[[0,1.15],[600,1.25],[720,1.38,'s'],[1100,1.16],[1460,1]],
+   uaB:[[0,24],[600,-30],[720,20],[1460,0]],thF:[[0,6],[300,-30],[620,-20],[720,18,'s'],[1460,0]],shF:[[0,0],[300,40],[700,10],[1460,0]],thB:[[0,-6],[300,-10],[720,-24,'s'],[1460,0]],shB:[[0,0],[300,30],[720,0],[1460,0]],
+   glow:[[0,2],[700,2.4],[900,1.2],[1460,0]],flash:[[0,0],[700,0],[730,.8],[960,0]],trail:[[0,0],[420,1,'l'],[1000,1],[1020,0,'l']]}},
+  /* getting hit */
+  hit:{d:520,ch:{px:[[0,0],[90,-.06,'s'],[520,0,'io']],py:[[0,0],[90,-.015,'s'],[520,0]],spine:[[0,0],[90,-14,'s'],[520,0,'io']],chest:[[0,0],[90,-8,'s'],[520,0]],head:[[0,0],[90,-18,'s'],[200,-12],[520,0]],
+   uaF:[[0,0],[90,14,'s'],[520,0]],uaB:[[0,0],[90,18,'s'],[520,0]],psx:[[0,1],[90,.95,'s'],[260,1.02],[520,1]],psy:[[0,1],[90,1.04,'s'],[260,.98],[520,1]],flash:[[0,0],[40,1,'s'],[300,0]],tilt:[[0,0],[90,-5,'s'],[520,0]]}},
+  /* receiving a shield or heal */
+  brace:{d:600,ch:{py:[[0,0],[150,.02],[600,0]],psy:[[0,1],[150,.95],[330,1.03],[600,1]],spine:[[0,0],[150,6],[600,0]],head:[[0,0],[150,6],[400,-6],[600,0]],glow:[[0,0],[200,1],[600,0]]}}};
+ /* idle: breathing, sword sway, cape and hair drift (procedural so it never looks the same twice) */
+ function idle(t,ph){const s=Math.sin,b=t/2600*Math.PI*2+ph;return{spine:s(b)*1.4,chest:s(b-.5)*1.1,head:s(b-1.1)*2,uaF:s(b-.7)*2.4,faF:s(b-1)*2,wp:s(b-1.3)*2.6,uaB:s(b-.4)*-2,faB:s(b-.9)*-2.2,
+  psy:1+s(b)*.012,psx:1-s(b)*.006,py:-Math.max(0,s(b))*.004,cape:s(b*1.3-1.6)*4.5,hair:s(b*1.6-2)*5}}
+ function evalClip(name,t){const c=CLIPS[name],o={};if(!c)return o;for(const k in c.ch)o[k]=sample(c.ch[k],t);return o}
+ /* ---------- WebGL renderer (one per canvas) ---------- */
+ const VS='attribute vec2 p;attribute vec2 u;uniform vec4 T;uniform vec2 V;uniform vec2 O;varying vec2 v;void main(){vec2 q=vec2(T.x*p.x+T.z,T.y*p.y+T.w)+O;gl_Position=vec4(q.x/V.x*2.-1.,1.-q.y/V.y*2.,0,1);v=u;}';
+ const FS='precision mediump float;varying vec2 v;uniform sampler2D s;uniform vec4 C;uniform vec4 G;uniform float F;void main(){vec4 c=texture2D(s,v);if(G.a>0.){gl_FragColor=vec4(G.rgb,1.)*c.a*G.a;return;}vec3 r=mix(c.rgb*C.rgb,vec3(c.a),F);gl_FragColor=vec4(r,c.a)*C.a;}';
+ function renderer(cv){const gl=cv.getContext('webgl',{premultipliedAlpha:true,alpha:true,antialias:true});if(!gl)return null;
+  const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o},pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);gl.useProgram(pr);
+  const L=n=>gl.getUniformLocation(pr,n),A={p:gl.getAttribLocation(pr,'p'),u:gl.getAttribLocation(pr,'u')},U={T:L('T'),V:L('V'),O:L('O'),C:L('C'),G:L('G'),F:L('F')};
+  gl.enable(gl.BLEND);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);
+  const R={gl,tex:new Map(),bufs:new Map(),
+   texture(img){let t=R.tex.get(img);if(t)return t;t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);R.tex.set(img,t);return t},
+   buffers(mesh){let b=R.bufs.get(mesh);if(b)return b;b={p:gl.createBuffer(),u:gl.createBuffer(),i:gl.createBuffer()};gl.bindBuffer(gl.ARRAY_BUFFER,b.u);gl.bufferData(gl.ARRAY_BUFFER,mesh.UV,gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.i);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,mesh.I,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,b.p);gl.bufferData(gl.ARRAY_BUFFER,mesh.n*8,gl.DYNAMIC_DRAW);R.bufs.set(mesh,b);return b},
+   begin(){const w=cv.width,h=cv.height;gl.viewport(0,0,w,h);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.uniform2f(U.V,w,h)},
+   /* draw one deformed figure. tr = [scaleX, scaleY, offsetX, offsetY] maps model units -> canvas pixels */
+   draw(mesh,img,verts,tr,o){const b=R.buffers(mesh),t=R.texture(img);gl.bindTexture(gl.TEXTURE_2D,t);gl.bindBuffer(gl.ARRAY_BUFFER,b.p);gl.bufferSubData(gl.ARRAY_BUFFER,0,verts);
+    gl.enableVertexAttribArray(A.p);gl.vertexAttribPointer(A.p,2,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,b.u);gl.enableVertexAttribArray(A.u);gl.vertexAttribPointer(A.u,2,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.i);
+    gl.uniform4f(U.T,tr[0],tr[1],tr[2],tr[3]);
+    if(o.glow>0.01){gl.blendFunc(gl.ONE,gl.ONE);const gc=o.glowC||[1,.85,.35],r=o.glowR||3,N=8;for(let k=0;k<N;k++){const a=k/N*Math.PI*2;gl.uniform2f(U.O,Math.cos(a)*r,Math.sin(a)*r);gl.uniform4f(U.G,gc[0],gc[1],gc[2],Math.min(1,o.glow)*.32);gl.drawElements(gl.TRIANGLES,mesh.I.length,gl.UNSIGNED_SHORT,0)}}
+    gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);gl.uniform2f(U.O,0,0);gl.uniform4f(U.G,0,0,0,0);const c=o.tint||[1,1,1];gl.uniform4f(U.C,c[0],c[1],c[2],o.alpha==null?1:o.alpha);gl.uniform1f(U.F,o.flash||0);
+    gl.drawElements(gl.TRIANGLES,mesh.I.length,gl.UNSIGNED_SHORT,0)}};
+  return R}
+ /* picture -> alpha mask (for mesh + auto rig) */
+ function maskOf(img,max=180){const W=img.naturalWidth||img.width,H=img.naturalHeight||img.height,k=max/Math.max(W,H),mw=Math.max(8,Math.round(W*k)),mh=Math.max(8,Math.round(H*k)),c=document.createElement('canvas');c.width=mw;c.height=mh;const g=c.getContext('2d');g.drawImage(img,0,0,mw,mh);
+  const d=g.getImageData(0,0,mw,mh).data,m=new Uint8Array(mw*mh);for(let i=0;i<mw*mh;i++)m[i]=d[i*4+3]>24?1:0;return{mask:m,mw,mh,ar:W/H}}
+ /* everything needed to draw one rigged picture */
+ function model(img,rig){const mk=maskOf(img),r=rig&&rig.j&&rig.j.head?rig:autoRig(mk.mask,mk.mw,mk.mh,rig&&rig.face);const mesh=buildMesh(mk.mask,mk.mw,mk.mh,mk.ar,r);return{img,rig:r,mesh,ar:mk.ar,buf:new Float32Array(mesh.n*2)}}
+ /* pose for time: idle + active clip (blended in/out) */
+ function pose(md,now,act,ph){const p=idle(now,ph||0);if(act){const c=CLIPS[act.k],t=now-act.t;if(c&&t<=c.d){const w=Math.min(1,t/60,(c.d-t)/90),q=evalClip(act.k,t);
+   for(const k in q){if(k==='psx'||k==='psy'||k==='ps'||k==='wpS'){p[k]=(p[k]==null?1:p[k])*(1+(q[k]-1)*w)}else p[k]=(p[k]||0)*(1-w*.7)+q[k]*w}p.act=1}}return p}
+ return{J,JN,BONES,CLIPS,EZ,autoRig,maskOf,model,pose,poseMats,deform,ptAt,renderer,evalClip,sample}})();
+
+/* ---------------- 2.5D animation rig editor ---------------- */
+/* cardgame/rigs/{heroKey}_{stage} = {j:{joint:{x,y}}, on, t}. The game bends the hero picture along these bones. */
+let RIGSA={},RGE={hid:'',st:'tc',j:null,on:true,model:null,img:null,clip:'slash',drag:null,t0:0,raf:0,R:null,opt:{cape:0,hair:0}};
+const RJC={head:'#ffd24a',neck:'#ffb43a',chest:'#ff8a3a',hip:'#ff5a5a',sF:'#5ad0ff',eF:'#3ab0ff',hF:'#2a8aff',wT:'#ffffff',sB:'#9a7aff',eB:'#8a5aff',hB:'#7a3aff',kF:'#5ae89a',fF:'#2ac87a',kB:'#b8e85a',fB:'#98c83a',cape:'#ff5ad0',hair:'#ff9ae0'};
+const RSTN={0:'Base',1:'II',2:'III',3:'IV',tc:'Transcendence (I–V)'};
+const rigKeyA=(id,st)=>String(id).replace(/^hd_/,'')+'_'+st;
+function rigImgOf(id,st){const h=HLIST[id];if(!h)return {img:'',face:null};if(st==='tc'){const e=(h.evo||{})[4]||{};return{img:e.img||e.imgS||'',face:e.face||null}}if(+st>0){const e=(h.evo||{})[st]||{};if(e.img)return{img:e.img,face:e.face||null}}return{img:h.img||h.imgS||'',face:h.face||null}}
+function rigInner(){if(!RGE.hid){const k=Object.keys(HLIST).find(k=>/knight/i.test(HLIST[k].name||''))||Object.keys(HLIST)[0]||'';RGE.hid=k}
+ const key=rigKeyA(RGE.hid,RGE.st),saved=RIGSA[key],src=rigImgOf(RGE.hid,RGE.st);
+ return `<h4>🦴 2.5D animation</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Heroes with an animation rig move like a 2.5D gacha game in battle: breathing, wind-up, dash, sword slashes with trails, spins, the ultimate leap, and a hit reaction. The game bends the hero picture along a skeleton, so no extra art is needed. Drag each coloured joint onto the right spot of the picture (head, neck, shoulders, elbows, hands, the weapon tip, hips, knees, feet), watch the preview, then Save.
+  <br><b>Knight Transcendence</b> is already animated with automatic joints. Saving your own joints makes it look much better.</p>
+ <div class="row" style="gap:8px;flex-wrap:wrap"><select onchange="rigSel(this.value,RGE.st)" style="min-width:180px">${Object.entries(HLIST).map(([k,h])=>`<option value="${esc(k)}"${k===RGE.hid?' selected':''}>${esc(h.name||k)}</option>`).join('')}</select>
+  <select onchange="rigSel(RGE.hid,this.value)">${['0','1','2','3','tc'].map(s=>`<option value="${s}"${String(RGE.st)===s?' selected':''}>${RSTN[s]}</option>`).join('')}</select>
+  <span class="cgpill${saved&&saved.on!==false?' on':''}">${saved?(saved.on===false?'Saved · turned off':'Saved rig · on in battle'):(RGE.st==='tc'&&/knight/i.test((HLIST[RGE.hid]||{}).name||'')?'Automatic joints · on in battle':'Not animated')}</span></div>
+ ${src.img?`<div class="rgw"><div class="rgbox"><b>Joints</b><small>Drag the dots. Lines show the bones.</small><canvas id="rged" width="360" height="460"></canvas></div>
+  <div class="rgbox"><b>Preview</b><small>Tap a move to play it.</small><canvas id="rgpv" width="360" height="460"></canvas>
+  <div class="rgcl">${[['idle','Idle'],['slash','Slash'],['combo','3-hit combo'],['thrust','Thrust'],['whirl','Spin cleave'],['cast','Cast / shield'],['roar','War cry'],['charge','EX charge'],['ult','Ultimate'],['hit','Get hit']].map(([k,l])=>`<button class="${RGE.clip===k?'':'g '}s" onclick="RGE.clip='${k}';RGE.t0=performance.now();document.querySelectorAll('.rgcl button').forEach(b=>b.classList.toggle('g',b!==this));this.classList.remove('g')">${l}</button>`).join('')}</div></div></div>
+ <div class="row" style="gap:8px;margin-top:10px;flex-wrap:wrap"><button class="g s" onclick="rigAuto()">✨ Auto-place joints</button>
+  <label class="chk"><input type="checkbox" ${RGE.opt.cape?'checked':''} onchange="rigOpt('cape',this.checked)"> Cape point</label><label class="chk"><input type="checkbox" ${RGE.opt.hair?'checked':''} onchange="rigOpt('hair',this.checked)"> Hair point</label>
+  <label class="chk"><input type="checkbox" id="rgon" ${RGE.on?'checked':''} onchange="RGE.on=this.checked"> Animate in battle</label>
+  <button onclick="rigSave()">💾 Save rig</button>${saved?'<button class="d s" onclick="rigDel()">Delete saved rig</button>':''}</div>
+ <div class="rglg">${DRIG.J.filter(k=>k!=='cape'&&k!=='hair'||RGE.opt[k]).map(k=>`<span><i style="background:${RJC[k]}"></i>${DRIG.JN[k]}</span>`).join('')}</div>
+ <p class="mut" style="font-size:12px;margin-top:8px">Tips: put the weapon hand where the hand grips the weapon and the weapon tip at the very end of the blade. If the hero holds the weapon in the other hand, just swap: the "weapon" arm is always the arm that holds the weapon. Parts that overlap in the picture (an arm in front of the chest) bend together, so keep arm joints on the arm itself.</p>`
+ :'<p class="mut">This hero has no picture for that stage yet.</p>'}`}
+function rigSel(id,st){RGE.hid=id;RGE.st=st;RGE.j=null;RGE.model=null;RGE.img=null;paintRig()}
+const paintRig=()=>{const e=$('#rigsec');if(e){e.innerHTML=rigInner();rigMount()}};
+function rigMount(){const src=rigImgOf(RGE.hid,RGE.st);if(!src.img||!$('#rged'))return;const key=rigKeyA(RGE.hid,RGE.st),saved=RIGSA[key];
+ const go=im=>{RGE.img=im;if(!RGE.j){const mk=DRIG.maskOf(im);RGE.j=saved&&saved.j?JSON.parse(JSON.stringify(saved.j)):DRIG.autoRig(mk.mask,mk.mw,mk.mh,src.face).j;RGE.on=saved?saved.on!==false:true;RGE.opt={cape:!!RGE.j.cape,hair:!!RGE.j.hair}}
+  rigRebuild();rigEdDraw();rigBind();if(!RGE.raf)RGE.raf=requestAnimationFrame(rigPv)};
+ if(RGE.img&&RGE.img.dataset.src===src.img)return go(RGE.img);const im=new Image();if(!/^data:/.test(src.img))im.crossOrigin='anonymous';im.dataset.src=src.img;im.onload=()=>go(im);im.onerror=()=>toast('Could not load the picture');im.src=src.img}
+function rigRebuild(){try{RGE.model=DRIG.model(RGE.img,{j:RGE.j})}catch(e){console.warn(e)}}
+const rigFit=(cv,im)=>{const k=Math.min((cv.width-20)/im.naturalWidth,(cv.height-20)/im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;return{x:(cv.width-w)/2,y:(cv.height-h)/2,w,h}};
+function rigEdDraw(){const cv=$('#rged');if(!cv||!RGE.img)return;const g=cv.getContext('2d'),f=rigFit(cv,RGE.img),j=RGE.j,P=k=>j[k]&&{x:f.x+j[k].x*f.w,y:f.y+j[k].y*f.h};
+ g.clearRect(0,0,cv.width,cv.height);g.fillStyle='#0b1626';g.fillRect(0,0,cv.width,cv.height);g.drawImage(RGE.img,f.x,f.y,f.w,f.h);
+ g.lineWidth=3;DRIG.BONES.forEach(([n,p,a,b])=>{const A=P(a),B=P(b);if(!A||!B||a===b)return;g.strokeStyle='#000a';g.lineWidth=5;g.beginPath();g.moveTo(A.x,A.y);g.lineTo(B.x,B.y);g.stroke();g.strokeStyle=RJC[b]||'#fff';g.lineWidth=2.5;g.stroke()});
+ DRIG.J.forEach(k=>{const q=P(k);if(!q)return;g.beginPath();g.arc(q.x,q.y,k===RGE.drag?9:7,0,7);g.fillStyle=RJC[k];g.fill();g.lineWidth=2;g.strokeStyle='#000';g.stroke()});
+ if(RGE.drag&&P(RGE.drag)){const q=P(RGE.drag);g.font='700 12px system-ui';g.fillStyle='#000a';const t=DRIG.JN[RGE.drag],w=g.measureText(t).width+10;g.fillRect(q.x+12,q.y-22,w,18);g.fillStyle='#fff';g.fillText(t,q.x+17,q.y-9)}}
+function rigBind(){const cv=$('#rged');if(!cv||cv.dataset.b)return;cv.dataset.b=1;cv.style.touchAction='none';
+ const loc=e=>{const r=cv.getBoundingClientRect(),f=rigFit(cv,RGE.img);return{x:((e.clientX-r.left)*cv.width/r.width-f.x)/f.w,y:((e.clientY-r.top)*cv.height/r.height-f.y)/f.h,f}};
+ cv.addEventListener('pointerdown',e=>{const p=loc(e);let best=null,bd=1e9;DRIG.J.forEach(k=>{const q=RGE.j[k];if(!q)return;const d=Math.hypot((q.x-p.x)*p.f.w,(q.y-p.y)*p.f.h);if(d<bd){bd=d;best=k}});if(best&&bd<18){RGE.drag=best;cv.setPointerCapture(e.pointerId);rigEdDraw()}});
+ cv.addEventListener('pointermove',e=>{if(!RGE.drag)return;const p=loc(e);RGE.j[RGE.drag]={x:+Math.max(0,Math.min(1,p.x)).toFixed(4),y:+Math.max(0,Math.min(1,p.y)).toFixed(4)};rigEdDraw()});
+ const up=()=>{if(!RGE.drag)return;RGE.drag=null;rigRebuild();rigEdDraw()};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up)}
+function rigPv(now){RGE.raf=0;const cv=$('#rgpv');if(!cv||!RGE.model)return;if(!RGE.R)RGE.R=DRIG.renderer(cv);if(!RGE.R||RGE.R.gl.canvas!==cv){RGE.R=DRIG.renderer(cv);if(!RGE.R)return}
+ const md=RGE.model,c=DRIG.CLIPS[RGE.clip],d=c?c.d+700:2600,t=(now-RGE.t0)%d,act=c&&t<c.d,p=DRIG.pose(md,act?t:now,act?{k:RGE.clip,t:0}:null,0);
+ if(act)p.px=(p.px||0)+(p.dash||0)*.25;
+ const mats=DRIG.poseMats(md.rig,md.ar,p),v=DRIG.deform(md.mesh,mats,md.buf),f=rigFit({width:cv.width*.8,height:cv.height*.8},RGE.img),h=f.h,x0=(cv.width-f.w)/2-(p.dash?f.w*.1:0),y0=cv.height*.12;
+ RGE.R.begin();RGE.R.draw(md.mesh,md.img,v,[h,h,x0,y0],{glow:p.glow||0,glowC:RGE.clip==='ult'||RGE.clip==='charge'?[1,.8,.25]:[1,.95,.75],glowR:3,flash:Math.min(1,p.flash||0)});
+ RGE.raf=requestAnimationFrame(rigPv)}
+function rigAuto(){if(!RGE.img)return;const mk=DRIG.maskOf(RGE.img),src=rigImgOf(RGE.hid,RGE.st);const keep={cape:RGE.j&&RGE.j.cape,hair:RGE.j&&RGE.j.hair};RGE.j=DRIG.autoRig(mk.mask,mk.mw,mk.mh,src.face).j;if(RGE.opt.cape&&keep.cape)RGE.j.cape=keep.cape;if(RGE.opt.hair&&keep.hair)RGE.j.hair=keep.hair;rigRebuild();rigEdDraw();toast('Joints placed automatically. Check them and drag any that are off.')}
+function rigOpt(k,on){RGE.opt[k]=on;if(on&&!RGE.j[k]){const n=RGE.j.neck,h=RGE.j.head,hp=RGE.j.hip;RGE.j[k]=k==='cape'?{x:+(n.x-(RGE.j.sF.x-n.x)*.8).toFixed(4),y:+Math.min(.95,hp.y+.15).toFixed(4)}:{x:+(h.x-(RGE.j.sF.x-n.x)*.5).toFixed(4),y:+Math.max(0,h.y-.02).toFixed(4)}}if(!on)delete RGE.j[k];rigRebuild();paintRig()}
+async function rigSave(){const key=rigKeyA(RGE.hid,RGE.st),j={};DRIG.J.forEach(k=>{if(RGE.j[k])j[k]=RGE.j[k]});const d={j,on:!!RGE.on,t:Date.now()};
+ try{await api('cardgame/rigs/'+key,'PUT',d);RIGSA[key]=d;paintRig();toast('Rig saved. Players see the new moves next time they open the game.')}catch(x){toast(x.message)}}
+async function rigDel(){const key=rigKeyA(RGE.hid,RGE.st);if(!confirm('Delete the saved rig? (Knight Transcendence goes back to automatic joints; other heroes stop animating.)'))return;try{await api('cardgame/rigs/'+key,'DELETE');delete RIGSA[key];RGE.j=null;paintRig()}catch(x){toast(x.message)}}
 
 /* ---------------- appearance ---------------- */
 function lookInner(){
