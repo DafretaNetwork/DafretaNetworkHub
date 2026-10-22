@@ -1129,11 +1129,12 @@ const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===
 /* ======================================================================
    CARD BATTLE ADMIN  (organised into sections)
    ====================================================================== */
-let CGT='overview',CGC={weakPct:50,empPct:50,brkPct:25,bolPct:25,fatMax:5,blkMax:3,burnDur:3,burnPer:1,atkCost:1,atkPct:100,maxLv:10,frag:[20,30,40,50],stone:1,evoB:[1,2,3,4],evoHp:[10,20,30,50],evoAtk:[1,2,3,4],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0,turnSec:30},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
+let CGT='overview',CGC={weakPct:50,empPct:50,brkPct:25,bolPct:25,fatMax:5,blkMax:3,burnDur:3,burnPer:1,atkCost:1,atkPct:100,maxLv:10,frag:[20,30,40,50,60,75,90,110],stone:1,stones:[0,0,0,1,1,2,3,4],evoB:[1,2,3,4,5,6,7,8],evoHp:[10,20,30,50,60,70,85,100],evoAtk:[1,2,3,4,5,6,7,8],rankStep:100,rankWin:25,rankLoss:15,unlock:50,expLv:100,expWin:100,expLoss:0,turnSec:30,botMin:60,botMax:180,botTag:0},APP={},QSTS={},RKS=[],RKSAVED=false,HLIST={},LBN=0;
+const CGD=JSON.parse(JSON.stringify(CGC));
 const emptyQF=()=>({id:null,title:'',desc:'',mode:'any',wins:3,rtype:'frag',hero:'random',gen:'',amt:10});
 let QF=emptyQF();
 const defRanksA=()=>['Copper','Silver','Gold','Platinum','Emerald','Diamond'].flatMap(n=>['I','II','III','IV','V'].map(r=>({n:n+' '+r})));
-const EVN=['II','III','IV','Transcendence'];
+const EVN=['II','III','IV','Transcendence I','Transcendence II','Transcendence III','Transcendence IV','Transcendence V'],TCR5=['','','','','','II','III','IV','V'];
 const MODE_TXT={any:'Standard or Ranked',std:'Standard only',rank:'Ranked only'};
 const cardsOf=h=>(Array.isArray(h&&h.cards)?h.cards:Object.values((h&&h.cards)||{})).filter(c=>c&&c.name);
 const isPlayable=h=>cardsOf(h).some(c=>c.type!=='ultimate');
@@ -1141,16 +1142,17 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
-  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBN=Object.keys(lb||{}).length;
-  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec','weakPct','empPct','brkPct','bolPct','fatMax','blkMax','burnDur','burnPer','atkCost','atkPct'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);if(a.length)CGC[k]=a}})}
+  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};
+  if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec','weakPct','empPct','brkPct','bolPct','fatMax','blkMax','burnDur','burnPer','atkCost','atkPct','botMin','botMax','botTag'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','stones','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);CGC[k]=CGD[k].map((d,i)=>a[i]!==undefined&&!isNaN(a[i])?a[i]:d)}});if(!cf.stones&&cf.stone!==undefined&&!isNaN(+cf.stone))CGC.stones[3]=+cf.stone}
+  if(!bts){try{const nb=await seedBots();if(nb)toast(nb+' starter bots created for Ranked')}catch(e){}}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();DF=emptyDF();
   const n=o=>Object.keys(o).length;
-  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
-  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
+  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
+  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
   return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
     <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
       <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
@@ -1174,13 +1176,16 @@ function maintHTML(){
 const paintMnt=()=>{const e=$('#mntsec');if(e)e.innerHTML=maintHTML()};
 /* ---- flush ---- */
 async function mntScan(){if(MNT.busy)return;MNT.busy=true;MNT.log=[];paintMnt();mntLog('Scanning…');
-  try{const [heroes,ails,gens,cm,lb,own,flg]=await Promise.all(['cardgame/heroes','cardgame/ailments','cardgame/general','cardgame/comments','cardgame/lb','owners','cardgame/flags'].map(p=>api(p).catch(()=>null)));
+  try{const [heroes,ails,gens,cm,lb,own,flg,mq,mt]=await Promise.all(['cardgame/heroes','cardgame/ailments','cardgame/general','cardgame/comments','cardgame/lb','owners','cardgame/flags','cardgame/mmq','cardgame/mt'].map(p=>api(p).catch(()=>null)));
    const H=heroes||{},A=ails||{},items=[];
    const bak=Object.entries(H).filter(([,h])=>h&&h.cardsBak);if(bak.length)items.push({k:'bak',l:'Old card backups from “Apply skill kits” ('+bak.map(([,h])=>esc(h.name)).join(', ')+')',n:bak.reduce((a,[,h])=>a+jlen(h.cardsBak),0),ops:bak.map(([id])=>['cardgame/heroes/'+id+'/cardsBak'])});
    const dc=Object.keys(cm||{}).filter(k=>!H[k]);if(dc.length)items.push({k:'cm',l:'Comments on heroes that were deleted ('+dc.length+')',n:dc.reduce((a,k)=>a+jlen(cm[k]),0),ops:dc.map(k=>['cardgame/comments/'+k])});
    const used=new Set();Object.values(H).forEach(h=>cardsOf(h).forEach(c=>c.ail&&used.add(c.ail)));Object.values(gens||{}).forEach(g=>g&&g.ail&&used.add(g.ail));
    const ua=Object.keys(A).filter(k=>!used.has(k));if(ua.length)items.push({k:'ail',l:'Buffs &amp; debuffs no card uses ('+ua.map(k=>esc(A[k].name||k)).join(', ')+')',n:ua.reduce((a,k)=>a+jlen(A[k]),0),ops:ua.map(k=>['cardgame/ailments/'+k])});
-   const O=own||{},gl=Object.keys(lb||{}).filter(k=>!O[k]);if(gl.length)items.push({k:'lb',l:'Leaderboard entries of accounts that no longer exist ('+gl.length+')',n:gl.reduce((a,k)=>a+jlen(lb[k]),0),ops:gl.map(k=>['cardgame/lb/'+k])});
+   const now=Date.now(),oq=Object.entries(mq||{}).filter(([,v])=>!v||!(+v.t>now-36e5)),om=Object.entries(mt||{}).filter(([,v])=>!v||!(+v.t>now-72e5));
+   if(oq.length)items.push({k:'mq',l:'Old Ranked queue entries ('+oq.length+')',n:oq.reduce((a,[,v])=>a+jlen(v),0),ops:oq.map(([k])=>['cardgame/mmq/'+k])});
+   if(om.length)items.push({k:'mt',l:'Finished or abandoned Ranked matches older than 2 hours ('+om.length+')',n:om.reduce((a,[,v])=>a+jlen(v),0),ops:om.map(([k])=>['cardgame/mt/'+k])});
+   const O=own||{},gl=Object.keys(lb||{}).filter(k=>!O[k]&&!/^bot_/.test(k));if(gl.length)items.push({k:'lb',l:'Leaderboard entries of accounts that no longer exist ('+gl.length+')',n:gl.reduce((a,k)=>a+jlen(lb[k]),0),ops:gl.map(k=>['cardgame/lb/'+k])});
    const gf=Object.keys(flg||{}).filter(k=>!O[k]);if(gf.length)items.push({k:'fl',l:'Cheat flags of accounts that no longer exist ('+gf.length+')',n:gf.reduce((a,k)=>a+jlen(flg[k]),0),ops:gf.map(k=>['cardgame/flags/'+k])});
    /* leftovers: face / size data kept for images that were removed */
    const lo=[];Object.entries(H).forEach(([id,h])=>{if(!h)return;const p='cardgame/heroes/'+id;
@@ -1238,7 +1243,7 @@ function cgOverview(){
   const chk=(ok,t,fix)=>`<div class="cgck ${ok?'ok':'warn'}"><span>${ok?'✓':'⚠'}</span><div>${t}${!ok&&fix?` <a onclick="cgGo('${fix}')">Fix →</a>`:''}</div></div>`;
   return `<div class="cgp"><h4>At a glance</h4><div class="cgts">
     ${tile('🛡️','Heroes',Object.keys(HLIST).length,`${play} playable`,'heroes')}${tile('✨','Buffs & Debuffs',Object.keys(AILS).length,'status effects','ails')}${tile('🔮','Relics',Object.keys(RELS).length,'equipment','relics')}
-    ${tile('🃏','General Cards',Object.keys(GENS).length,`${Object.values(GENS).filter(g=>g.locked).length} reward-only`,'gen')}${tile('📜','Quests',Object.keys(QSTS).length,'win-based','quests')}${tile('🏅','Ranks',RKS.length,RKSAVED?'custom saved':'defaults','ranks')}
+    ${tile('🃏','General Cards',Object.keys(GENS).length,`${Object.values(GENS).filter(g=>g.locked).length} reward-only`,'gen')}${tile('📜','Quests',Object.keys(QSTS).length,'win-based','quests')}${tile('🏅','Ranks',RKS.length,RKSAVED?'custom saved':'defaults','ranks')}${tile('🤖','Bots',botList().filter(([,b])=>b.on!==false).length,'ranked AI opponents','bots')}
     <div class="cgt" style="cursor:default"><span class="ic">👥</span><b>${LBN}</b><span>Players who played</span><small>on the leaderboard</small></div></div></div>
     <div id="mntsec">${maintHTML()}</div>
     <div class="cgp"><h4>🚩 Suspicious activity <span class="cgn">${Object.keys(FLAGS).length}</span></h4><p class="mut" style="font-size:13px;margin:0 0 8px">Accounts the game caught using cheat tools or edited save data. Their changes were already undone; review and clear when handled.</p><div id="flagsec">${flagsHTML()}</div></div>
@@ -1322,7 +1327,7 @@ function heroEditorHTML(){
    <p class="mut" style="margin:8px 0;font-size:13px">Colored automatically by class. A hero needs at least one non-ultimate card to appear in the game.</p>
    <div id="hcards">${renderCardList()}</div><div id="cform" style="margin-top:10px" oninput="cfPrevU()" onchange="cfPrevU()">${renderCardForm()}</div></div>
   <div class="cgstep"><div class="cgsh"><span>3</span><b>Evolutions</b></div>
-   <p class="mut" style="margin:8px 0;font-size:13px">Each evolution can have its own name, image and a stat bonus (+N added to every card’s attack, heal, shield, etc.). Leave a field empty to use the default (<i>“${esc(HF.name||'Hero')} II”</i>, the base portrait, and the default bonus from Settings).</p>
+   <p class="mut" style="margin:8px 0;font-size:13px">Evolutions go Base → II → III → IV → Transcendence I → II → III → IV → V. Each one can have its own name, image (Transcendence II–V reuse the Transcendence I look) and a stat bonus (+N added to every card’s attack, heal, shield, etc.). Leave a field empty to use the default (<i>“${esc(HF.name||'Hero')} II”</i>, the base portrait, and the default bonus from Settings).</p>
    <div id="evsec">${evoHTML()}</div></div>
   ${HF.id?`<div class="cgstep"><div class="cgsh"><span>4</span><b>Player comments</b></div><div id="cmsec">${commentsAdminHTML()}</div></div>`:''}
   <div class="cgsave"><button onclick="saveHero()">💾 ${HF.id?'Save changes':'Create hero'}</button><button class="g" onclick="closeHero()">Cancel</button></div></div>`;
@@ -1338,8 +1343,15 @@ function poseHTML(){
 const paintPose=()=>{const e=$('#posesec');if(e)e.innerHTML=poseHTML()};
 async function upPose(k,inp){const f=inp.files[0];inp.value='';if(!f)return;try{toast('Processing image…');const r=await procHeroImg(f);HF[k+'Img']=r.img;HF[k+'Face']=r.face;paintPose();toast('Pose ready ('+r.w+'×'+r.h+'). Press Save to keep it.')}catch(e){toast(e.message)}}
 async function upEvoPose(i,k,inp){const f=inp.files[0];inp.value='';if(!f)return;try{toast('Processing image…');const r=await procHeroImg(f);evSet(i,k+'Img',r.img);evSet(i,k+'Face',r.face);paintEvo();toast('Pose ready')}catch(e){toast(e.message)}}
+/* Transcendence II-V: same look as Transcendence I, own name and bonuses */
+function evoMini(i,e,need){const v=k=>e[k]===undefined||e[k]===''||e[k]===null?'':+e[k],tc1=(HF.evo&&HF.evo[4]&&HF.evo[4].name)||'Transcendent '+(HF.name||'Hero');
+ return `<div class="evc" style="border-color:#c98a12"><div class="evt"><b>${EVN[i-1]}</b><small class="mut">${need}</small></div>
+  <label>Name</label><input value="${esc(e.name||'')}" maxlength="40" placeholder="${esc(tc1)} ${TCR5[i]}" oninput="evSet(${i},'name',this.value)">
+  <div class="f2" style="gap:6px;margin:0"><div><label>❤️ HP bonus</label><input type="number" min="0" max="99999" value="${v('hpB')}" placeholder="default +${CGC.evoHp[i-1]??0}" oninput="evSet(${i},'hpB',this.value)"></div><div><label>⚔️ ATK bonus</label><input type="number" min="0" max="9999" value="${v('atkB')}" placeholder="default +${CGC.evoAtk[i-1]??0}" oninput="evSet(${i},'atkB',this.value)"></div></div>
+  <label>Stat bonus (+ to every card)</label><input type="number" min="0" max="999" value="${v('bonus')}" placeholder="default +${CGC.evoB[i-1]??0}" oninput="evSet(${i},'bonus',this.value)">
+  <p class="mut" style="font-size:12px;margin:6px 0 0">Uses the Transcendence I look (image, face and poses). A gold <b>${TCR5[i]}</b> shows on the emblem gem.</p></div>`}
 function evoHTML(){
-  return `<div class="evg">${[1,2,3,4].map(i=>{const e=(HF.evo&&HF.evo[i])||{},need=i<4?`Lv ${CGC.maxLv} + ${CGC.frag[i-1]} fragments`:`Lv ${CGC.maxLv} + ${CGC.frag[3]} fragments + ${CGC.stone} stone`;
+  return `<div class="evg">${[1,2,3,4,5,6,7,8].map(i=>{const e=(HF.evo&&HF.evo[i])||{},sn=+CGC.stones[i-1]||0,need=`Lv ${CGC.maxLv} + ${CGC.frag[i-1]??0} fragments${sn?' + '+sn+' stone'+(sn>1?'s':''):''}`;if(i>4)return evoMini(i,e,need);
    return `<div class="evc"><div class="evt"><b>${EVN[i-1]}</b><small class="mut">${need}</small></div>
     <label>Name</label><input value="${esc(e.name||'')}" maxlength="40" placeholder="${esc(HF.name||'Hero')} ${EVN[i-1]}" oninput="evSet(${i},'name',this.value)">
     <div class="f2" style="gap:6px;margin:0"><div><label>❤️ HP bonus</label><input type="number" min="0" max="99999" value="${e.hpB===undefined||e.hpB===''||e.hpB===null?'':+e.hpB}" placeholder="default +${CGC.evoHp[i-1]??0}" oninput="evSet(${i},'hpB',this.value)"></div><div><label>⚔️ ATK bonus</label><input type="number" min="0" max="9999" value="${e.atkB===undefined||e.atkB===''||e.atkB===null?'':+e.atkB}" placeholder="default +${CGC.evoAtk[i-1]??0}" oninput="evSet(${i},'atkB',this.value)"></div></div>
@@ -1484,6 +1496,63 @@ async function saveCfg(){await api('cardgame/config','PUT',CGC)}
 async function saveRankCfg(){const g=id=>+$('#'+id).value;if(!(g('rkstep')>=1))return toast('Points per rank must be at least 1');
   CGC.rankStep=Math.floor(g('rkstep'));CGC.rankWin=Math.max(0,Math.floor(g('rkwin')));CGC.rankLoss=Math.max(0,Math.floor(g('rkloss')));try{await saveCfg();toast('Ranked settings saved')}catch(e){toast(e.message)}}
 
+/* ---------------- bots (AI opponents for Ranked) ----------------
+   cardgame/bots/{id} = {n,a,f,pts,iq,h:[{f,e}x4],on,created}   (settings; pts here is only the starting / parked value)
+   cardgame/lb/bot_{id} = {n,a,f,pts,w,l,bot:true}               (live ranked standing, shown on the leaderboard) */
+let BOTS={},LBA={};
+const BOTN=[['ShadowFang',30,3,'none'],['LunaBlade',120,12,'bronze'],['KaiserX',280,1,'bronze'],['Mochi_Mage',450,0,'silver'],['RuneWalker',700,9,'silver'],['IronPaws',980,15,'gold'],['Zephyr_PH',1350,10,'gold'],['SakuraNova',1720,4,'neon'],['Drakken',2150,13,'flame'],['PixelKnight',2650,7,'rainbow']];
+const IQN={auto:'Auto (by rank)',1:'1 · Beginner',2:'2 · Casual',3:'3 · Skilled',4:'4 · Expert',5:'5 · Master'};
+const STN=['Base','II','III','IV','Transcendence I','Transcendence II','Transcendence III','Transcendence IV','Transcendence V'];
+const emptyBF=()=>({id:null,n:'',a:0,f:'none',pts:0,iq:'auto',h:[0,1,2,3].map(()=>({f:'',e:'auto'})),on:true});
+let BF=emptyBF();
+const botList=()=>Object.entries(BOTS).filter(([k,b])=>k[0]!=='_'&&b&&b.n);
+const rkNameA=p=>{const i=Math.max(0,Math.min(RKS.length-1,Math.floor((p|0)/Math.max(1,CGC.rankStep))));return (RKS[i]||{}).n||''};
+const botPts=(id,b)=>{const e=LBA['bot_'+id];return e&&!isNaN(+e.pts)?+e.pts:(+b.pts||0)};
+async function seedBots(onlyMissing){const have=new Set(botList().map(([,b])=>String(b.n).toLowerCase())),o={};let n=0;
+  BOTN.forEach(([nm,p,a,f],i)=>{if(have.has(nm.toLowerCase()))return;const id='b'+Date.now().toString(36)+i+Math.random().toString(36).slice(2,4);n++;
+    o['cardgame/bots/'+id]={n:nm,a,f,pts:p,iq:'auto',h:[0,1,2,3].map(()=>({f:'',e:'auto'})),on:true,created:Date.now()+i};o['cardgame/lb/bot_'+id]={n:nm,a,f,pts:p,w:0,l:0,bot:true}});
+  o['cardgame/bots/_init']=true;await mp(o);BOTS=await api('cardgame/bots')||{};LBA=await api('cardgame/lb')||{};return n}
+const paintBots=()=>{const e=$('#botsec');if(e)e.innerHTML=botsInner()};
+function botRow(id,b){const e=LBA['bot_'+id]||{},p=botPts(id,b),hs=Object.values(b.h||{}),off=b.on===false,w=off?(b.w|0):(e.w|0),l=off?(b.l|0):(e.l|0);
+  return `<div class="bx2 qrow" style="${off?'opacity:.55':''}"><span style="font-size:30px;width:44px;text-align:center">${AV[+b.a|0]||AV[0]}</span><div style="flex:1;min-width:0"><b>${esc(b.n)}</b> <span class="cgpill${off?'':' on'}">${off?'Off':'Active'}</span>
+  <div class="mut" style="font-size:13px">${esc(rkNameA(p))} · <b>${p}</b> RP · ${w} W / ${l} L · Intelligence: ${esc(IQN[b.iq]||IQN.auto)}</div>
+  <div class="mut" style="font-size:12px">${[0,1,2,3].map(i=>{const x=hs[i]||{};return (x.f&&HLIST[x.f]?esc(HLIST[x.f].name):'Random')+' ('+(x.e===undefined||x.e===''||x.e==='auto'?'auto':STN[+x.e]||'auto')+')'}).join(' · ')}</div></div>
+  <div class="row"><button class="s" onclick="editBot('${esc(id)}')">Edit</button><button class="g s" onclick="toggleBot('${esc(id)}')">${off?'Turn on':'Turn off'}</button><button class="d s" onclick="delBot('${esc(id)}')">✕</button></div></div>`}
+function botsInner(){const L=botList().sort((a,b)=>botPts(b[0],b[1])-botPts(a[0],a[1])),
+  hopt=sel=>'<option value="">🎲 Random hero</option>'+Object.entries(HLIST).map(([k,h])=>`<option value="${esc(k)}"${sel===k?' selected':''}>${esc(h.name)} (${esc(h.class_==='Mage'?'Magic':h.class_||'')})</option>`).join(''),
+  eopt=sel=>'<option value="auto">Auto (by rank)</option>'+STN.map((n,i)=>`<option value="${i}"${String(sel)===String(i)?' selected':''}>${n}</option>`).join(''),f=BF;
+  return `<h4>Bots (AI opponents)</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">When a player has searched Ranked for a while without finding a real opponent, they are matched with the bot whose rank points are closest. The “Match found” appears at a random moment between the two times below, just like a real player. Bots are on the Ranked leaderboard and only gain or lose rank points in Ranked battles against real players. Higher-ranked bots play smarter and bring more evolved heroes (a mix of Base, II, III, IV); Transcendence heroes only appear from Emerald up.</p>
+  <div class="bx2"><b>Matchmaking</b><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Earliest bot match (seconds of searching)</label><input id="bmin" type="number" min="10" max="590" value="${+CGC.botMin||60}"></div><div><label>Latest bot match (seconds, max 600)</label><input id="bmax" type="number" min="15" max="600" value="${+CGC.botMax||180}"></div></div>
+   <label class="chk" style="margin-top:8px"><input type="checkbox" id="btag" ${+CGC.botTag?'checked':''}> Show an “AI” tag next to bots on the leaderboard (off = bots look like normal players)</label>
+   <div class="row" style="margin-top:8px"><button class="s" onclick="saveBotCfg()">💾 Save matchmaking</button>${L.length<BOTN.length?`<button class="g s" onclick="addStarter()">＋ Add starter bots</button>`:''}</div></div>
+  <h4 style="margin-top:16px">Bots <span class="cgn">${L.length}</span></h4>${L.length?L.map(([id,b])=>botRow(id,b)).join(''):'<p class="mut">No bots yet. Press “Add starter bots”.</p>'}
+  <div class="bx2" style="margin-top:12px"><b>${f.id?'✏️ Edit bot':'➕ New bot'}</b>
+   <div class="f2" style="margin:8px 0 0;gap:8px">
+    <div><label>Bot name (shown to players)</label><input value="${esc(f.n)}" maxlength="20" oninput="BF.n=this.value" placeholder="e.g. NightOwl_23"></div>
+    <div><label>Rank points ${f.id?'(live)':''}</label><input type="number" min="0" value="${+f.pts||0}" oninput="BF.pts=+this.value"><small class="mut">${esc(rkNameA(f.pts))}</small></div>
+    <div><label>Avatar</label><select onchange="BF.a=+this.value">${AV.map((e,i)=>`<option value="${i}"${+f.a===i?' selected':''}>${e}</option>`).join('')}</select></div>
+    <div><label>Frame</label><select onchange="BF.f=this.value">${Object.keys(F).map(k=>`<option value="${k}"${f.f===k?' selected':''}>${k}</option>`).join('')}</select></div>
+    <div><label>Intelligence</label><select onchange="BF.iq=this.value">${Object.entries(IQN).map(([k,v])=>`<option value="${k}"${String(f.iq)===k?' selected':''}>${v}</option>`).join('')}</select></div>
+    <div style="display:flex;align-items:flex-end"><label class="chk"><input type="checkbox" ${f.on!==false?'checked':''} onchange="BF.on=this.checked"> Active (can be matched)</label></div></div>
+   <p class="mut" style="font-size:13px;margin:10px 0 4px">Heroes. “Random” picks one hero per class. “Auto” evolution follows the bot’s rank: Copper Base–II, Silver Base–III, Gold II–IV, Platinum III–IV, Emerald III–Transcendence II, Diamond IV–Transcendence V. Below Emerald, Transcendence is never used even if picked.</p>
+   ${[0,1,2,3].map(i=>`<div class="row" style="gap:8px;margin-top:6px;flex-wrap:nowrap"><b style="width:22px">${i+1}</b><select style="flex:2;min-width:0" onchange="BF.h[${i}].f=this.value">${hopt(f.h[i].f)}</select><select style="flex:1;min-width:0" onchange="BF.h[${i}].e=this.value">${eopt(f.h[i].e)}</select></div>`).join('')}
+   <div class="row" style="margin-top:10px"><button onclick="saveBot()">💾 Save bot</button>${f.id?'<button class="g" onclick="BF=emptyBF();paintBots()">Cancel</button>':''}</div></div>`}
+function editBot(id){const b=BOTS[id];if(!b)return;const hs=Object.values(b.h||{});BF={id,n:b.n||'',a:+b.a||0,f:b.f||'none',pts:botPts(id,b),iq:String(b.iq||'auto'),h:[0,1,2,3].map(i=>({f:(hs[i]||{}).f||'',e:(hs[i]||{}).e===undefined?'auto':String(hs[i].e)})),on:b.on!==false};paintBots();const e=$('#botsec');if(e)e.lastElementChild.scrollIntoView({behavior:'smooth'})}
+async function saveBot(){const n=(BF.n||'').trim();if(!/^[\w .\-]{2,20}$/.test(n))return toast('Name: 2-20 letters, numbers, spaces, _ . -');
+  if(botList().some(([k,b])=>k!==BF.id&&String(b.n).toLowerCase()===n.toLowerCase()))return toast('Another bot already uses that name');
+  const id=BF.id||'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,4),old=BOTS[id]||{},e=LBA['bot_'+id]||{},pts=Math.max(0,Math.floor(+BF.pts||0)),on=BF.on!==false;
+  const d={n,a:+BF.a|0,f:BF.f||'none',pts,iq:BF.iq==='auto'?'auto':Math.max(1,Math.min(5,+BF.iq||3)),h:BF.h.map(x=>({f:x.f||'',e:x.e==='auto'||x.e===''?'auto':+x.e})),on,w:(e.w|0)||(old.w|0),l:(e.l|0)||(old.l|0),created:old.created||Date.now()};
+  const lb=on?{n,a:d.a,f:d.f,pts,w:(e.w|0)||(old.w|0),l:(e.l|0)||(old.l|0),bot:true}:null;
+  try{await mp({['cardgame/bots/'+id]:d,['cardgame/lb/bot_'+id]:lb});BOTS[id]=d;if(lb)LBA['bot_'+id]=lb;else delete LBA['bot_'+id];BF=emptyBF();paintBots();toast('Bot saved')}catch(x){toast(x.message)}}
+async function toggleBot(id){const b=BOTS[id];if(!b)return;const on=b.on===false,e=LBA['bot_'+id]||{};
+  const d={...b,on,pts:on?(+b.pts||0):botPts(id,b),w:on?(b.w|0):(e.w|0),l:on?(b.l|0):(e.l|0)},lb=on?{n:b.n,a:+b.a||0,f:b.f||'none',pts:+d.pts||0,w:d.w|0,l:d.l|0,bot:true}:null;
+  try{await mp({['cardgame/bots/'+id]:d,['cardgame/lb/bot_'+id]:lb});BOTS[id]=d;if(lb)LBA['bot_'+id]=lb;else delete LBA['bot_'+id];paintBots();toast(on?'Bot turned on':'Bot turned off (hidden from the leaderboard)')}catch(x){toast(x.message)}}
+async function delBot(id){if(!confirm('Delete this bot and remove it from the leaderboard?'))return;try{await mp({['cardgame/bots/'+id]:null,['cardgame/lb/bot_'+id]:null});delete BOTS[id];delete LBA['bot_'+id];if(BF.id===id)BF=emptyBF();paintBots()}catch(x){toast(x.message)}}
+async function addStarter(){try{const n=await seedBots(1);toast(n?n+' starter bot'+(n>1?'s':'')+' added':'All starter bots already exist');paintBots()}catch(x){toast(x.message)}}
+async function saveBotCfg(){const a=Math.floor(+$('#bmin').value||0),b=Math.floor(+$('#bmax').value||0);
+  if(a<10||b>600||b-a<6)return toast('Earliest must be at least 10s, latest at most 600s, and at least 6s apart');
+  CGC.botMin=a;CGC.botMax=b;CGC.botTag=$('#btag').checked?1:0;try{await saveCfg();toast('Matchmaking saved')}catch(x){toast(x.message)}}
+
 /* ---------------- appearance ---------------- */
 function lookInner(){
   return `<h4>Battle page background</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Upload a photo or artwork. It becomes the background of the players’ Battle page, behind the big hero art. Wide images (16:9) work best; it is resized and compressed automatically.</p>
@@ -1497,13 +1566,14 @@ async function removeBg(){if(!confirm('Remove the background?'))return;try{await
 
 /* ---------------- settings (progression) ---------------- */
 function settingsInner(){
-  return `<h4>Hero progression</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">After a match every hero in the line-up earns EXP. When the bar fills, the hero levels up. At the max level they can evolve by spending card fragments of that hero. Evolving resets the hero to level 1.</p>
-  <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Max hero level</label><input id="smax" type="number" min="1" value="${CGC.maxLv}"></div><div><label>Transcendence stones for the last evolution</label><input id="sstone" type="number" min="0" value="${CGC.stone}"></div></div></div>
+  return `<h4>Hero progression</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">After a match every hero in the line-up earns EXP. When the bar fills, the hero levels up. At the max level they can evolve by spending card fragments of that hero (and Transcendence stones for the Transcendence levels). Evolving resets the hero to level 1. There are 8 evolutions: II, III, IV, then Transcendence I to V.</p>
+  <div class="bx2"><div class="f2" style="margin:0;gap:8px"><div><label>Max hero level</label><input id="smax" type="number" min="1" value="${CGC.maxLv}"></div></div></div>
   <div class="bx2" style="margin-top:10px;border-left:4px solid var(--gold)"><b>⏱ Battle turn timer</b><p class="mut" style="font-size:13px;margin:4px 0 0">How long a player has to act each turn before it ends automatically. <b>Current: ${tsTxt(+CGC.turnSec||30)} per turn.</b> Allowed: 5 seconds to 10 minutes.</p>
    <div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Minutes</label><input id="stm" type="number" min="0" max="10" value="${Math.floor((+CGC.turnSec||30)/60)}"></div><div><label>Seconds</label><input id="sts" type="number" min="0" max="59" value="${(+CGC.turnSec||30)%60}"></div></div></div>
   <div class="bx2" style="margin-top:10px"><b>EXP</b><p class="mut" style="font-size:13px;margin:4px 0 0">With the defaults (100 EXP per level, 100 per win, 0 per loss) every win is exactly one level.</p><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>EXP needed per level</label><input id="sexl" type="number" min="1" value="${CGC.expLv}"></div><div><label>EXP for a win</label><input id="sexw" type="number" min="0" value="${CGC.expWin}"></div><div><label>EXP for a loss</label><input id="sexs" type="number" min="0" value="${CGC.expLoss}"></div></div></div>
   <div class="bx2" style="margin-top:10px"><b>Unlocking locked heroes</b><div class="f2" style="margin:8px 0 0;gap:8px"><div><label>Card fragments needed to unlock a hero</label><input id="sunl" type="number" min="1" value="${CGC.unlock}"></div></div><p class="mut" style="font-size:13px;margin:6px 0 0">A hero is locked when you tick “Locked hero” in its editor. Players get fragments from quests.</p></div>
   <div class="bx2" style="margin-top:10px"><b>Card fragments needed</b><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>→ ${n}</label><input id="sfr${i}" type="number" min="0" value="${CGC.frag[i]??0}"></div>`).join('')}</div></div>
+  <div class="bx2" style="margin-top:10px;border-left:4px solid #c98a12"><b>💠 Transcendence stones needed</b><p class="mut" style="font-size:13px;margin:4px 0 0">Stones spent at each evolution, together with the fragments above. Usually only the Transcendence levels cost stones.</p><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>→ ${n}</label><input id="sst${i}" type="number" min="0" value="${CGC.stones[i]??0}"></div>`).join('')}</div></div>
   <div class="bx2" style="margin-top:10px"><b>Default stat bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to every card number (damage, heal, shield…). A hero can override this in its own Evolutions step.</p><div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}</label><input id="sev${i}" type="number" min="0" value="${CGC.evoB[i]??0}"></div>`).join('')}</div></div>
   <div class="bx2" style="margin-top:10px"><b>Default hero HP / ATK bonus per evolution</b><p class="mut" style="font-size:13px;margin:4px 0 0">Added to the hero's base HP and ATK at that evolution (not added up between stages). Higher ATK makes every damage card and the ultimate hit proportionally harder. A hero can override these in its own Evolutions step.</p>
   <div class="f2" style="margin:8px 0 0;gap:8px">${EVN.map((n,i)=>`<div><label>${n}: ❤️ HP / ⚔️ ATK</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input id="shp${i}" type="number" min="0" value="${CGC.evoHp[i]??0}"><input id="sat${i}" type="number" min="0" value="${CGC.evoAtk[i]??0}"></div></div>`).join('')}</div></div>
@@ -1521,7 +1591,7 @@ async function saveSettings(){const g=id=>Math.max(0,Math.floor(+$('#'+id).value
   const ts=g('stm')*60+Math.min(59,g('sts'));if(ts<5||ts>600)return toast('Turn time must be between 5 seconds and 10 minutes');CGC.turnSec=ts;
   if(!(g('smax')>=1))return toast('Max level must be at least 1');
   const gp=(id,lo,hi)=>Math.max(lo,Math.min(hi,g(id)));CGC.weakPct=gp('rwk',0,100);CGC.empPct=gp('rem',0,500);CGC.brkPct=gp('rbr',0,500);CGC.bolPct=gp('rbo',0,100);CGC.blkMax=gp('rbk',1,20);CGC.fatMax=gp('rft',1,20);CGC.burnDur=gp('rbd',1,20);CGC.burnPer=gp('rbp',0,999);CGC.atkCost=gp('rac',0,10);CGC.atkPct=gp('rap',0,1000);
-  CGC.maxLv=g('smax');CGC.stone=g('sstone');CGC.expLv=Math.max(1,g('sexl'));CGC.expWin=g('sexw');CGC.expLoss=g('sexs');CGC.unlock=Math.max(1,g('sunl'));CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));CGC.evoHp=EVN.map((_,i)=>g('shp'+i));CGC.evoAtk=EVN.map((_,i)=>g('sat'+i));
+  CGC.maxLv=g('smax');CGC.stones=EVN.map((_,i)=>g('sst'+i));CGC.stone=CGC.stones[3]||0;CGC.expLv=Math.max(1,g('sexl'));CGC.expWin=g('sexw');CGC.expLoss=g('sexs');CGC.unlock=Math.max(1,g('sunl'));CGC.frag=EVN.map((_,i)=>g('sfr'+i));CGC.evoB=EVN.map((_,i)=>g('sev'+i));CGC.evoHp=EVN.map((_,i)=>g('shp'+i));CGC.evoAtk=EVN.map((_,i)=>g('sat'+i));
   try{await saveCfg();toast('Settings saved · turn time '+tsTxt(CGC.turnSec));const e=$('#setsec');if(e)e.innerHTML=settingsInner()}catch(e){toast(e.message)}}
 
 /* ---------------- hero list card ---------------- */
@@ -1531,7 +1601,7 @@ function heroCardHTML(id,h){
   return `<div class="cgh2" style="--hc:${hc}">
     <div class="cgh2t${h.img?' zf':''}">${h.img?faceTag(h.img,h.face):`<span>${icon}</span>`}</div>
     <div class="cgh2b"><b>${esc(h.name||'Unnamed')}</b><span class="cgcl">${esc(cls||'')}</span>${h.locked?' <span title="Players unlock this hero with fragments">🔒</span>':''}
-     <div class="mut" style="font-size:12px;margin-top:4px">❤️ ${+h.hp||0} · ⚔️ ${+h.atk||0} · 🃏 ${cs.length} · ✨ ${hasUlt?'ult':'no ult'} · ⬆ ${evn}/4 evo</div>
+     <div class="mut" style="font-size:12px;margin-top:4px">❤️ ${+h.hp||0} · ⚔️ ${+h.atk||0} · 🃏 ${cs.length} · ✨ ${hasUlt?'ult':'no ult'} · ⬆ ${evn}/8 evo</div>
      ${playable?'':'<div class="cgw">⚠ No cards: hidden from players</div>'}
      <div class="row" style="margin-top:8px"><button class="s" onclick="editHero('${esc(id)}')">✏️ Edit</button><button class="d s" onclick="deleteHero('${esc(id)}')">Delete</button></div></div></div>`;
 }
@@ -1543,7 +1613,7 @@ async function saveHero(){
   if(!name)return bad('Hero name is required.');
   if(!(hp>0))return bad('HP must be greater than 0.');
   const isEdit=!!HF.id,evo={};
-  [1,2,3,4].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);['hpB','atkB'].forEach(k=>{if(e[k]!==undefined&&e[k]!==''&&e[k]!==null&&!isNaN(+e[k]))o[k]=Math.max(0,+e[k])});if(e.img){o.img=e.img;if(e.imgS&&e.imgSrc===e.img)o.imgS=e.imgS;if(e.face)o.face=e.face;if(+e.bs)o.bs=+e.bs;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face'];if(+e[k+'Bs']&&+e[k+'Bs']!==100)o[k+'Bs']=+e[k+'Bs']}})}if(Object.keys(o).length)evo[i]=o});
+  [1,2,3,4,5,6,7,8].forEach(i=>{const e=(HF.evo&&HF.evo[i])||{},o={};if((e.name||'').trim())o.name=e.name.trim();if(e.bonus!==undefined&&e.bonus!==''&&e.bonus!==null&&!isNaN(+e.bonus))o.bonus=Math.max(0,+e.bonus);['hpB','atkB'].forEach(k=>{if(e[k]!==undefined&&e[k]!==''&&e[k]!==null&&!isNaN(+e[k]))o[k]=Math.max(0,+e[k])});if(e.img){o.img=e.img;if(e.imgS&&e.imgSrc===e.img)o.imgS=e.imgS;if(e.face)o.face=e.face;if(+e.bs)o.bs=+e.bs;if(+e.ar)o.ar=+e.ar;['atk','ex'].forEach(k=>{if(e[k+'Img']){o[k+'Img']=e[k+'Img'];if(e[k+'Face'])o[k+'Face']=e[k+'Face'];if(+e[k+'Bs']&&+e[k+'Bs']!==100)o[k+'Bs']=+e[k+'Bs']}})}if(Object.keys(o).length)evo[i]=o});
   try{
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
@@ -1556,7 +1626,7 @@ async function saveHero(){
 }
 async function editHero(id){
   try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
-    const evo={};[1,2,3,4].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={imgS:e.imgS||'',imgSrc:e.img||'',name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,bs:+e.bs||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,atkBs:+e.atkBs||0,exImg:e.exImg||'',exFace:e.exFace||null,exBs:+e.exBs||0}});
+    const evo={};[1,2,3,4,5,6,7,8].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={imgS:e.imgS||'',imgSrc:e.img||'',name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,bs:+e.bs||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,atkBs:+e.atkBs||0,exImg:e.exImg||'',exFace:e.exFace||null,exBs:+e.exBs||0}});
     let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
     HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,imgS:h.imgS||'',imgSrc:h.img||'',img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,atkBs:+h.atkBs||0,exImg:h.exImg||'',exFace:h.exFace||null,exBs:+h.exBs||0,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
     CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0);autoFaceMissing()
