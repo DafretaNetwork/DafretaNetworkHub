@@ -1151,17 +1151,17 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn,mlx]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins','mail'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
-  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};DSHOP=dsh||{};SKINSA=skn||{};SALES=null;
+  AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};DSHOP=dsh||{};SKINSA=skn||{};SALES=null;MAILA=mlx||{};
   if(cf){['maxLv','stone','rankStep','rankWin','rankLoss','unlock','expLv','expWin','expLoss','turnSec','weakPct','empPct','brkPct','bolPct','fatMax','blkMax','burnDur','burnPer','atkCost','atkPct','botMin','botMax','botTag'].forEach(k=>{if(cf[k]!==undefined&&cf[k]!==null&&!isNaN(+cf[k]))CGC[k]=+cf[k]});['frag','stones','evoB','evoHp','evoAtk'].forEach(k=>{if(cf[k]){const a=Object.values(cf[k]).map(Number);CGC[k]=CGD[k].map((d,i)=>a[i]!==undefined&&!isNaN(a[i])?a[i]:d)}});if(!cf.stones&&cf.stone!==undefined&&!isNaN(+cf.stone))CGC.stones[3]=+cf.stone;if(typeof cf.payApi==='string')CGC.payApi=cf.payApi}
   if(!bts){try{const nb=await seedBots();if(nb)toast(nb+' starter bots created for Ranked')}catch(e){}}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();DF=emptyDF();
   const n=o=>Object.keys(o).length;
-  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['dshop','💎','Diamond Shop',Object.keys(SKINSA).length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
-  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,dshop:()=>`<div class="cgp" id="dssec">${dshopInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
+  const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['dshop','💎','Diamond Shop',Object.keys(SKINSA).length],['mail','📬','Mail',Object.values(MAILA).filter(m=>m&&+m.exp>Date.now()).length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
+  const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,dshop:()=>`<div class="cgp" id="dssec">${dshopInner()}</div>`,mail:()=>`<div class="cgp" id="mlsec">${mailInner()}</div>`,look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
   return `<div class="cgh"><div><h3 style="margin:0">🃏 Dafreta Card Battle</h3><p class="mut" style="margin:2px 0 0;font-size:13px">Everything for the game in one place. Changes save instantly unless a section has its own Save button.</p></div>
     <div class="cgv"><span id="cg-status" class="cgpill ${CGON?'on':''}">${CGON?'● Live for all players':'○ Admin only'}</span>
       <label class="cg-tog" title="${CGON?'Turn OFF':'Turn ON'}"><input type="checkbox" id="cgon" ${CGON?'checked':''} onchange="toggleCG(this)"><span class="cg-sl"></span></label>
@@ -1565,7 +1565,7 @@ async function saveBotCfg(){const a=Math.floor(+$('#bmin').value||0),b=Math.floo
 /* ---------------- diamond shop (prices, hero skins, sales) ---------------- */
 const DPD={refresh:20,frag15:45,frag50:140,stone:150,slot:199,frame:280},
  DPL={frag15:'15 hero fragments (player picks the hero)',frag50:'50 hero fragments (player picks the hero)',stone:'Transcendence stone · max 2 per player per week',refresh:'New Gold Shop offers (refresh)',slot:'Extra line-up slot · max 5 extra',frame:'Premium animated frame (Aurora, Phoenix, Abyss, Royal)'},
- PKN={d50:'Few Diamonds ₱49',d165:'Small Diamonds ₱149',d600:'Medium Diamonds ₱499',d1250:'Large Diamonds ₱999',d3300:'Big Diamonds ₱2,490',starter:'Starter Pack ₱99',weekly:'Weekly Pass ₱59',d3200:'Big Diamonds (old)'},
+ PKN={d50:'Handful of Diamonds ₱49',d165:'Diamond Pouch ₱149',d600:'Diamond Satchel ₱499',d1250:'Merchant’s Hoard ₱999',d3300:'Royal Treasure Chest ₱2,490',starter:'Starter Pack ₱99',weekly:'Weekly Pass ₱59',d3200:'Big Diamonds (old)'},
  SKDEF={normal:599,legendary:1199};
 let DSHOP={},SKINSA={},SALES=null,SKF=null;
 const emptySKF=()=>({id:null,hero:'',name:'',rar:'normal',price:599,img:'',face:null,ar:0,on:true});
@@ -1617,6 +1617,54 @@ async function saveSkin(){const f=SKF,n=(f.name||'').trim();if(!f.hero)return to
   try{await api('cardgame/skins/'+id,'PUT',d);SKINSA[id]=d;SKF=emptySKF();paintDS();toast('Skin saved')}catch(x){toast(x.message)}}
 async function toggleSkin(id){const s=SKINSA[id];if(!s)return;const on=s.on===false;try{await api('cardgame/skins/'+id+'/on','PUT',on);s.on=on;paintDS();toast(on?'Skin is for sale':'Skin hidden from the shop (players who bought it keep it)')}catch(x){toast(x.message)}}
 async function delSkin(id){if(!confirm('Delete this skin? Players who bought it will lose it. Usually it is better to Hide it.'))return;try{await api('cardgame/skins/'+id,'DELETE');delete SKINSA[id];if(SKF&&SKF.id===id)SKF=emptySKF();paintDS()}catch(x){toast(x.message)}}
+
+/* ---------------- mail to players ---------------- */
+/* cardgame/mail/{id} = {title, body, from, rw:{dia,gold,st,fr:{hero:n}}, t, exp, to?}. Players claim rewards once (checked by the payment server).
+   When a mail expires it disappears from every mailbox, claimed or not. */
+let MAILA={},MF=null;
+const emptyMF=()=>({title:'',body:'',from:'Dafreta Team',to:'',dia:0,gold:0,st:0,fr:[{h:'',n:0}],dur:7,unit:'d'});
+const paintML=()=>{const e=$('#mlsec');if(e)e.innerHTML=mailInner()};
+const mlLeft=ms=>{if(ms<=0)return 'expired';const m=ms/6e4|0,d=m/1440|0,h=(m%1440)/60|0;return d?d+'d '+h+'h left':h?h+'h '+(m%60)+'m left':(m%60)+'m left'};
+const rwTxt=rw=>{const o=[];if(!rw)return 'no rewards';if(+rw.dia)o.push('💎 '+rw.dia);if(+rw.gold)o.push('🪙 '+rw.gold);if(+rw.st)o.push('💠 '+rw.st+' stone'+(rw.st>1?'s':''));for(const h in (rw.fr||{})){const x=HLIST['hd_'+h]||HLIST[h];o.push('🧩 '+rw.fr[h]+' '+(x?x.name:h))}return o.join(' · ')||'no rewards'};
+async function loadMailA(){try{MAILA=(await api('cardgame/mail'))||{}}catch(e){MAILA={}}paintML()}
+function mailInner(){if(!MF)MF=emptyMF();const f=MF,now=Date.now(),L=Object.entries(MAILA).filter(([,m])=>m).sort((a,b)=>(+b[1].t||0)-(+a[1].t||0)),exp=L.filter(([,m])=>!(+m.exp>now));
+  const hopt=sel=>'<option value="">Choose a hero…</option>'+Object.entries(HLIST).map(([k,h])=>{const v=k.replace(/^hd_/,'');return `<option value="${esc(v)}"${sel===v?' selected':''}>${esc(h.name)}</option>`}).join('');
+  return `<h4>📬 Mail</h4><p class="mut" style="margin:4px 0 12px;font-size:13px">Send a message with optional rewards to every player (or one player). It shows in the game’s Mail. Each player can claim the rewards once. When the duration ends, the mail is gone from every mailbox, even if it was not claimed. Weekly Pass diamonds arrive in Mail automatically and never expire.</p>
+  <div class="bx2"><b>✉️ New mail</b>
+   <div class="f2" style="margin:8px 0 0;gap:8px">
+    <div><label>Title</label><input value="${esc(f.title)}" maxlength="60" oninput="MF.title=this.value" placeholder="e.g. Thank you for playing!"></div>
+    <div><label>From (shown to players)</label><input value="${esc(f.from)}" maxlength="30" oninput="MF.from=this.value"></div>
+    <div style="grid-column:1/-1"><label>Message</label><textarea maxlength="1500" style="min-height:110px" oninput="MF.body=this.value" placeholder="Write your message…">${esc(f.body)}</textarea></div>
+    <div><label>Send to</label><select onchange="MF.toAll=this.value==='all';MF.to=MF.toAll?'':MF.to;paintML()"><option value="all"${f.to===''&&f.toAll!==false?' selected':''}>All players</option><option value="one"${f.toAll===false?' selected':''}>One player</option></select></div>
+    ${f.toAll===false?`<div><label>Player username</label><input value="${esc(f.to)}" maxlength="40" oninput="MF.to=this.value.trim()" placeholder="their Dafreta username"></div>`:'<div></div>'}
+    <div><label>Expires after</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input type="number" min="1" max="365" value="${+f.dur||7}" oninput="MF.dur=+this.value" style="flex:1"><select style="flex:1" onchange="MF.unit=this.value"><option value="h"${f.unit==='h'?' selected':''}>hours</option><option value="d"${f.unit!=='h'?' selected':''}>days</option></select></div></div></div>
+   <p class="mut" style="font-size:13px;margin:12px 0 4px"><b>Rewards</b> (leave 0 for a message without rewards)</p>
+   <div class="f2" style="gap:8px;margin:0">
+    <div><label>💎 Diamonds</label><input type="number" min="0" max="100000" value="${+f.dia||0}" oninput="MF.dia=+this.value"></div>
+    <div><label>🪙 Gold</label><input type="number" min="0" max="10000000" value="${+f.gold||0}" oninput="MF.gold=+this.value"></div>
+    <div><label>💠 Transcendence stones</label><input type="number" min="0" max="100" value="${+f.st||0}" oninput="MF.st=+this.value"></div><div></div></div>
+   ${f.fr.map((x,i)=>`<div class="row" style="gap:8px;margin-top:6px;flex-wrap:nowrap"><span style="width:110px">🧩 Fragments</span><select style="flex:2;min-width:0" onchange="MF.fr[${i}].h=this.value">${hopt(x.h)}</select><input type="number" min="0" max="10000" value="${+x.n||0}" oninput="MF.fr[${i}].n=+this.value" style="flex:1;min-width:0"><button class="g s" onclick="MF.fr.splice(${i},1);if(!MF.fr.length)MF.fr.push({h:'',n:0});paintML()">✕</button></div>`).join('')}
+   ${f.fr.length<5?'<button class="g s" style="margin-top:6px" onclick="MF.fr.push({h:\'\',n:0});paintML()">＋ Add fragments for another hero</button>':''}
+   <div class="row" style="margin-top:12px"><button onclick="sendMail()">📨 Send mail</button><button class="g" onclick="MF=emptyMF();paintML()">Clear</button></div></div>
+  <h4 style="margin-top:16px">Sent mail <span class="cgn">${L.length}</span>${exp.length?` <button class="g s" style="margin-left:8px" onclick="delExpired()">🗑 Delete ${exp.length} expired</button>`:''}</h4>
+  ${L.length?L.map(([id,m])=>{const live=+m.exp>now;return `<div class="bx2 qrow" style="${live?'':'opacity:.55'}"><span style="font-size:28px;width:40px;text-align:center">${m.rw&&Object.keys(m.rw).length?'🎁':'✉️'}</span>
+   <div style="flex:1;min-width:0"><b>${esc(m.title||'')}</b> <span class="cgpill${live?' on':''}">${live?mlLeft(m.exp-now):'Expired'}</span>${m.to?` <span class="cgpill">to ${esc(m.to)}</span>`:''}
+   <div class="mut" style="font-size:13px">${esc(rwTxt(m.rw))} · sent ${new Date(+m.t||0).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+   <div class="mut" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(String(m.body||'').slice(0,140))}</div></div>
+   <div class="row" style="flex-wrap:nowrap"><input type="number" min="1" max="365" value="${live?Math.max(1,Math.ceil((m.exp-now)/864e5)):7}" id="mx_${esc(id)}" style="width:64px" title="Days from now"><button class="s" onclick="mailExp('${esc(id)}')" title="Set the expiry to this many days from now">Set days</button><button class="d s" onclick="delMail('${esc(id)}')">✕</button></div></div>`}).join(''):'<p class="mut">No mail sent yet.</p>'}`}
+async function sendMail(){const f=MF,title=(f.title||'').trim(),body=(f.body||'').trim();if(title.length<2)return toast('Add a title');if(!body)return toast('Write a message');
+  if(f.toAll===false&&!/^[\w.\-]{2,40}$/.test(f.to||''))return toast('Type the player username');
+  if(f.toAll===false){try{const ok=await api('profiles/'+f.to+'/name');if(!ok)return toast('No player with that username')}catch(e){}}
+  const dur=Math.max(1,Math.min(365,Math.floor(+f.dur||0)))*(f.unit==='h'?36e5:864e5),rw={};
+  const n=(v,max)=>Math.max(0,Math.min(max,Math.floor(+v||0)));if(n(f.dia,1e5))rw.dia=n(f.dia,1e5);if(n(f.gold,1e7))rw.gold=n(f.gold,1e7);if(n(f.st,100))rw.st=n(f.st,100);
+  const fr={};f.fr.forEach(x=>{if(x.h&&n(x.n,1e4))fr[x.h]=(fr[x.h]||0)+n(x.n,1e4)});if(Object.keys(fr).length)rw.fr=fr;
+  if(rw.dia>=1000&&!confirm('This mail gives '+rw.dia+' diamonds to '+(f.toAll===false?f.to:'EVERY player')+'. Send it?'))return;
+  const id='m'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),now=Date.now(),d={title,body,from:(f.from||'Dafreta Team').trim().slice(0,30),rw,t:now,exp:now+dur,...(f.toAll===false?{to:f.to}:{})};
+  try{await api('cardgame/mail/'+id,'PUT',d);MAILA[id]=d;MF=emptyMF();paintML();toast('Mail sent! Players see it next time they open Mail.')}catch(x){toast(x.message)}}
+async function mailExp(id){const m=MAILA[id],v=Math.floor(+($('#mx_'+id)||{}).value||0);if(!m||v<1||v>365)return toast('Days must be 1 to 365');const exp=Date.now()+v*864e5;
+  try{await api('cardgame/mail/'+id+'/exp','PUT',exp);m.exp=exp;paintML();toast('Mail now expires in '+v+' day'+(v>1?'s':''))}catch(x){toast(x.message)}}
+async function delMail(id){if(!confirm('Delete this mail from every mailbox now? Unclaimed rewards will be gone.'))return;try{await api('cardgame/mail/'+id,'DELETE');delete MAILA[id];paintML()}catch(x){toast(x.message)}}
+async function delExpired(){const now=Date.now(),o={};Object.entries(MAILA).forEach(([k,m])=>{if(!m||!(+m.exp>now))o['cardgame/mail/'+k]=null});if(!Object.keys(o).length)return;try{await mp(o);Object.keys(o).forEach(k=>delete MAILA[k.split('/').pop()]);paintML();toast('Expired mail deleted')}catch(x){toast(x.message)}}
 
 /* ---------------- appearance ---------------- */
 function lookInner(){
