@@ -1618,7 +1618,6 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .dso.pop{border-color:#ffd24a;box-shadow:0 0 0 1px #ffd24a88,0 0 18px #ffc83a55,0 6px 16px #000b}
 .dso.best{border-color:#c58bff;box-shadow:0 0 0 1px #c58bff88,0 0 22px #a85aff66,0 6px 16px #000b}
 .dsr{position:absolute;top:18px;right:-44px;rotate:38deg;padding:3px 0;width:150px;text-align:center;font:900 9px/1.3 system-ui;letter-spacing:.08em;color:#3a1d04;background:linear-gradient(#ffe08a,#e08a14);box-shadow:0 2px 4px #0008;z-index:2}
-.dso.best .dsr{background:linear-gradient(#e2b8ff,#8a3fe0);color:#fff}
 .dsi{position:relative;height:84px;width:100%;display:grid;place-items:center}
 .dsi svg{position:absolute;filter:drop-shadow(0 0 8px #5ad0ffaa) drop-shadow(0 4px 4px #000a)}
 .dsi::before{content:"";position:absolute;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#5ad0ff55,transparent 65%);animation:dsg 2.4s ease-in-out infinite}
@@ -1631,8 +1630,80 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .dsp:disabled{background:#2a3048;border-color:#4a5068;color:#9aa3b8;box-shadow:none;cursor:default}
 .dsp.wait{background:linear-gradient(#ffe08a,#e8a018);color:#3a1d04;border-color:#ffe3a3}
 .dsft{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:14px 0 0;font:600 12.5px system-ui;color:#c9d6ea}.dsft b{color:#bfe3ff}
-@container (max-width:560px){.dsg{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @container (max-height:520px){.dsh{padding:8px 10px}.dsi{height:52px}.dsi svg{transform:scale(.7)}.dsa{font-size:20px}.dsn{font-size:10px}.dsp{padding:5px;font-size:13px}.dso{padding:10px 6px 8px;gap:2px}}
+/* ===== Diamond Shop v2 ===== */
+.dsh{padding:14px 16px}
+.dsec{margin:16px 2px 8px;font:800 14px Cinzel,Georgia,serif;letter-spacing:.06em;color:#ffe3a3;display:flex;align-items:center;gap:10px}
+.dsec::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,#ffd24a88,transparent)}
+.dsh .shh+.dsec{margin-top:6px}
+.dmi{width:1.05em;height:1em;vertical-align:-.14em;margin:0 1px;filter:drop-shadow(0 0 3px #5ad0ffaa)}
+.dsg{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dso{padding-top:20px}
+/* bigger, animated sash */
+.dsr{position:absolute;top:24px;right:-50px;rotate:40deg;width:180px;padding:5px 0;display:block;text-align:center;font:900 11.5px/1.25 system-ui;letter-spacing:.09em;color:#3a1d04;
+ background:linear-gradient(#fff2b8,#ffc83a 45%,#e08a14);border-block:1px solid #fff6;box-shadow:0 3px 6px #0009,0 0 14px #ffc83a88;z-index:3;overflow:hidden;
+ animation:dsrP 2.2s ease-in-out infinite;transform-origin:50% 50%}
+.dsr b{display:inline-block;animation:dsrW 3.2s ease-in-out infinite;text-shadow:0 1px 0 #fff8}
+.dsr::after{content:"";position:absolute;inset:-2px auto -2px -40%;width:35%;background:linear-gradient(100deg,transparent,#fffe 50%,transparent);transform:skewX(-20deg);animation:dsrS 2.6s ease-in-out infinite}
+.dsr.best{background:linear-gradient(#f3dcff,#b56dff 45%,#7a2fd8);color:#fff;box-shadow:0 3px 6px #0009,0 0 16px #b36bffaa}.dsr.best b{text-shadow:0 1px 2px #3a0a6a}
+.dsr.hot{background:linear-gradient(#ffd0b0,#ff6a2a 45%,#d0200a);color:#fff;box-shadow:0 3px 6px #0009,0 0 16px #ff5a2aaa}.dsr.hot b{text-shadow:0 1px 2px #6a0a00}
+.dsr.pass{background:linear-gradient(#c8ffd8,#3ad27a 45%,#108a48);color:#fff;box-shadow:0 3px 6px #0009,0 0 16px #3ad27aaa}.dsr.pass b{text-shadow:0 1px 2px #04401c}
+@keyframes dsrP{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18) saturate(1.15)}}
+@keyframes dsrW{0%,70%,100%{transform:scale(1) rotate(0)}76%{transform:scale(1.14) rotate(-3deg)}82%{transform:scale(1.14) rotate(3deg)}88%{transform:scale(1.08) rotate(-1.5deg)}94%{transform:scale(1)}}
+@keyframes dsrS{0%,40%{left:-40%}75%,100%{left:120%}}
+.dso.pop,.dso.best{animation:dsoG 2.4s ease-in-out infinite}
+@keyframes dsoG{50%{box-shadow:0 0 0 1px #fff6,0 0 30px var(--gl,#ffc83a99),0 6px 16px #000b}}
+.dso.best{--gl:#b36bffbb}
+/* first top-up 2x badge */
+.dx2{position:absolute;left:6px;top:6px;z-index:3;display:flex;align-items:center;gap:3px;padding:3px 7px 3px 5px;border-radius:8px;background:linear-gradient(#ff7a5a,#d0200a);color:#fff;border:1px solid #ffd0b0;box-shadow:0 2px 6px #000a,0 0 10px #ff5a2a88;animation:dx2 1.6s ease-in-out infinite}
+.dx2 b{font:900 19px/1 system-ui}.dx2 small{font:900 8.5px/1.05 system-ui;letter-spacing:.03em;text-align:left}
+@keyframes dx2{50%{transform:scale(1.08)}}
+.dsb s{color:#9aa3b8;margin-right:3px}.dsb{color:#ffb08a}
+.dso:not(:has(.dx2)) .dsb{color:#7dff9a}
+.dso .dsp{margin-top:auto}.dsb{min-height:30px}
+.dsp.sm{font-size:13px;padding:7px 6px;margin-top:auto}
+.dsp.big{width:auto;min-width:130px;margin:0;font-size:17px;padding:10px 16px}.dsp s{opacity:.6;font-size:.8em;margin-right:4px}
+.dsp.go{background:linear-gradient(#c8ffd8,#3ad27a 55%,#108a48);border-color:#d8ffe4;color:#04301a;box-shadow:inset 0 1px 0 #fff8,0 3px 0 #064a24;animation:dsoG 1.6s ease-in-out infinite;--gl:#3ad27a}
+/* special offers */
+.dofs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.dof{position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px 12px;padding:14px 70px 14px 16px;border-radius:14px;border:2px solid #ff8a4a;background:radial-gradient(80% 120% at 0 50%,#ff6a2a44,transparent 70%),linear-gradient(#3a1a10,#160a06);box-shadow:0 6px 16px #000b}
+.dof.wk{border-color:#3ad27a;background:radial-gradient(80% 120% at 0 50%,#3ad27a40,transparent 70%),linear-gradient(#102a1c,#06140c)}
+.dofi{flex:none;display:grid;place-items:center;width:72px}
+.doft{min-width:0;display:flex;flex-direction:column;gap:3px}.doft b{font:900 17px Cinzel,Georgia,serif;color:#fff}.doft small{font:600 12.5px/1.35 system-ui;color:#e8d8c8}.doft small b{font:900 13px system-ui;color:#ffe3a3}
+.dof .dsp{flex:none;position:relative;z-index:4}
+.wkb{display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:linear-gradient(#5ae89a,#108a48);font:900 22px system-ui;color:#fff;text-shadow:0 2px 0 #04401c;box-shadow:0 0 18px #3ad27a88,inset 0 2px 0 #fff6}
+.wkb .dmi{width:.8em}
+/* spend items */
+.dits{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dit,.dfr,.dsk{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:12px 8px 10px;border-radius:12px;background:linear-gradient(#1a2440,#0c1224);border:2px solid #2c4a7a;box-shadow:0 4px 10px #0009}
+.dit b,.dfr b,.dsk b{font:800 13px system-ui;color:#fff}.dit small,.dsk small{font:600 11px system-ui;color:#a9bcd8;min-height:14px}
+.dii{position:relative;height:46px;display:grid;place-items:center;font-size:34px}.dii .pzi{width:40px;height:40px}.dii em{position:absolute;right:-12px;bottom:0;font:900 13px system-ui;color:#fff;background:#14431f;border-radius:6px;padding:0 4px;font-style:normal}
+.dfrs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.dfr{padding-top:14px}
+.dsks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.dsk{border-color:var(--c,#2c4a7a)}.dsk.leg{border-color:#c58bff;box-shadow:0 0 16px #a85aff55,0 4px 10px #0009}
+.dskf{width:100%;height:110px;border-radius:8px}
+.dsem{grid-column:1/-1;margin:0;padding:18px;text-align:center;font:700 13px system-ui;color:#a9bcd8;background:#0005;border-radius:12px}
+/* diamond purchase confirm */
+.dcm{max-width:380px;text-align:center}.dcf{display:flex;flex-direction:column;align-items:center;gap:6px}.dcfi{display:grid;place-items:center;min-height:60px}.dcfi>.dmi{width:56px;height:52px}
+.dcfp{margin:0;font:700 15px system-ui}.dcfp b{font-size:18px}.dcfn{margin:0;font:700 14px system-ui;color:#a8200a}.dcf .lupb{justify-content:center}
+@container (max-width:900px){.dof{grid-template-columns:auto 1fr;padding-right:16px}.dof .doft{padding-right:50px}.dof .dsp{grid-column:1/-1;width:100%}.dsg{grid-template-columns:repeat(3,minmax(0,1fr))}.dits{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container (max-width:560px){.dsg,.dits,.dfrs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container (max-height:520px){.dsr{top:18px;right:-52px;width:160px;font-size:9.5px;padding:3px 0}.dx2 b{font-size:14px}.dx2 small{font-size:7px}.dsb{min-height:24px}.dsec{margin:10px 2px 6px;font-size:12px}.dof{padding:8px 10px}.dofi{width:54px}.dofi .av{--s:50px!important}.wkb{width:48px;height:48px;font-size:17px}.doft b{font-size:14px}.doft small{font-size:11px}.dit,.dfr,.dsk{padding:8px 6px}.dii{height:34px;font-size:26px}.dskf{height:80px}}
+@media (prefers-reduced-motion:reduce){.dsr,.dsr b,.dsr::after,.dso.pop,.dso.best,.dx2,.dsp.go,.av.prem{animation:none!important}}
+/* premium animated avatar frames */
+@property --fa{syntax:'<angle>';inherits:false;initial-value:0deg}
+.av.prem{position:relative;animation:frR 4s linear infinite}
+.av.prem::after{content:"";position:absolute;inset:-3px;border-radius:50%;pointer-events:none;box-shadow:0 0 calc(var(--s)*.12) var(--fg,#fff8);animation:frG 2s ease-in-out infinite}
+@keyframes frR{to{--fa:360deg}}@keyframes frG{50%{opacity:.45}}
+.av.fr-pioneer{--fg:#3ae0a0;background:conic-gradient(from var(--fa),#ffe27a,#1fb47a,#fff7c8,#c47f00,#1fb47a,#ffe27a)}
+.av.fr-aurora{--fg:#7affd8;background:conic-gradient(from var(--fa),#2affb0,#2ac8ff,#9a5aff,#ff6ad8,#2affb0)}
+.av.fr-phoenix{--fg:#ff7a2a;background:conic-gradient(from var(--fa),#fff1a0,#ff9a1a,#e01a00,#ff9a1a,#fff1a0,#ff4a00,#fff1a0)}
+.av.fr-abyss{--fg:#a04aff;background:conic-gradient(from var(--fa),#0a0418,#5a1aa8,#d080ff,#1a0838,#3a0a80,#0a0418)}
+.av.fr-royal{--fg:#ffd24a;background:conic-gradient(from var(--fa),#ffe27a,#b0102a,#fff3c0,#c47f00,#b0102a,#ffe27a)}
+.frc.lk{opacity:.85}.frc.lk span{color:#9fd8ff}.frc.prm{border-color:#ffd24a55}
+.ivfr{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 11px system-ui}
+.ptw-many .pt{padding:9px 13px}
 </style>
 </head><body>
 <div id="gw">
@@ -2097,7 +2168,7 @@ async function loadPD(){let d=null;
  if(ME){try{d=await fb('cardgame/players/'+ME)}catch(e){}try{PROF=await fb('profiles/'+ME)}catch(e){}}
  else{try{d=JSON.parse(localStorage.dfg||'null')}catch(e){}}
  const sv=d&&d._s;PD={...defPD(),...(d||{})};delete PD._s;['lineups','hs','fr','gc','own','qp'].forEach(k=>{if(!PD[k]||typeof PD[k]!=='object')PD[k]={}});
- PD.st=+PD.st||0;PD.days=+PD.days||0;PD.ld=String(PD.ld||'');PD.bio=String(PD.bio||'').slice(0,160);PD.pts=+PD.pts||0;PD.w=+PD.w||0;PD.l=+PD.l||0;PD.sel=Math.max(0,Math.min(4,+PD.sel||0));PD.disp=PD.disp||'';if(!['std','story','rank'].includes(PD.mode))PD.mode='std';
+ PD.st=+PD.st||0;PD.days=+PD.days||0;PD.ld=String(PD.ld||'');PD.bio=String(PD.bio||'').slice(0,160);PD.pts=+PD.pts||0;PD.w=+PD.w||0;PD.l=+PD.l||0;PD.sel=Math.max(0,Math.min(9,+PD.sel||0));if(!PD.skin||typeof PD.skin!=='object')PD.skin={};PD.disp=PD.disp||'';if(!['std','story','rank'].includes(PD.mode))PD.mode='std';
  if(d){if(!sv)saveP();else if(sv!==sign())flag('save-edited')}GUARD.seal()}
 /* ---- anti-cheat: progress values are sealed after every legitimate change; anything else changing them is rolled back ---- */
 const CK=['fr','st','own','hs','pts','w','l','gc','qp','dq','days','gold','dia','sh'],GSALT=['dF7#nT','q9!cB2','Lw$4vX'].join('');
@@ -2120,8 +2191,9 @@ const myName=()=>(PROF&&PROF.name)||ME||'You';
 
 /* ---- avatars (same look as the network site) ---- */
 const AVE=['🧙','⚔️','🏹','🐉','🦊','🤖','👹','🧛','🥷','🐺','🦅','💀','🧝','🐲','👽','🦁'];
-const FRM={none:'#26364d',bronze:'linear-gradient(135deg,#d98a3d,#6b3d12)',silver:'linear-gradient(135deg,#fff,#7d8590)',gold:'linear-gradient(135deg,#ffe27a,#c47f00,#ffe27a)',neon:'linear-gradient(135deg,#00f0ff,#0050ff)',flame:'linear-gradient(0deg,#ff2d00,#ffb300)',rainbow:'conic-gradient(#f33,#fd3,#3f6,#3df,#35f,#f3d,#f33)',void:'linear-gradient(135deg,#fff,#111 50%,#fff)'};
-const avH=(p,s)=>{p=p||{};const im=p.img&&/^(data:image\/|https?:)/.test(p.img);return '<div class="av" style="--s:'+(typeof s=='number'?s+'px':s)+';--f:'+(FRM[p.frame]||FRM.none)+'"><span'+(im?' style="background:center/cover url(\''+p.img+'\')"':'')+'>'+(im?'':AVE[p.avatar|0]||AVE[0])+'</span></div>'};
+const FRM={none:'#26364d',bronze:'linear-gradient(135deg,#d98a3d,#6b3d12)',silver:'linear-gradient(135deg,#fff,#7d8590)',gold:'linear-gradient(135deg,#ffe27a,#c47f00,#ffe27a)',neon:'linear-gradient(135deg,#00f0ff,#0050ff)',flame:'linear-gradient(0deg,#ff2d00,#ffb300)',rainbow:'conic-gradient(#f33,#fd3,#3f6,#3df,#35f,#f3d,#f33)',void:'linear-gradient(135deg,#fff,#111 50%,#fff)',pioneer:'linear-gradient(135deg,#ffe27a,#1fb47a)',aurora:'linear-gradient(135deg,#2affb0,#9a5aff)',phoenix:'linear-gradient(135deg,#ffb31a,#e01a00)',abyss:'linear-gradient(135deg,#5a1aa8,#0a0418)',royal:'linear-gradient(135deg,#ffe27a,#b0102a)'};
+const PREMF=['pioneer','aurora','phoenix','abyss','royal'];
+const avH=(p,s)=>{p=p||{};const im=p.img&&/^(data:image\/|https?:)/.test(p.img);return '<div class="av'+(PREMF.includes(p.frame)?' prem fr-'+p.frame:'')+'" style="--s:'+(typeof s=='number'?s+'px':s)+';--f:'+(FRM[p.frame]||FRM.none)+'"><span'+(im?' style="background:center/cover url(\''+p.img+'\')"':'')+'>'+(im?'':AVE[p.avatar|0]||AVE[0])+'</span></div>'};
 
 /* ---- ranks ---- */
 const RN=['Copper','Silver','Gold','Platinum','Emerald','Diamond'],RC=['#c27c3a','#c3ccd6','#ffd24a','#8fe3d8','#38d27c','#6cd4ff'],RR=['I','II','III','IV','V'];
@@ -2180,7 +2252,7 @@ function buildHero(h,fid,b,name,img,hb,ab){b=+b||0;hb=+hb||0;ab=+ab||0;const cl=
   ex(s);reg(s);if(c.token)return;o.S.push(s)});
  o.atk=at+ab;
  return o.S.length?o:null}
-function evH(h){return evHAt(h,hs(h).ev|0)}
+function evH(h){const o=evHAt(h,hs(h).ev|0),k=skinOf(h);return k?applySkin(o,k):o}
 /* a hero at any evolution stage (0 base, 1-3 = II-IV, 4-8 = Transcendence I-V). TC II-V reuse the TC I look unless they have their own image */
 function evHAt(h,e){e=Math.max(0,Math.min(MAXEV,e|0));if(!e||!h.src)return h;const EVS=h.src.evo||{},ev=EVS[e]||{},lk=ev.img?ev:(e>4&&EVS[4]&&EVS[4].img?EVS[4]:ev),b=(ev.bonus===undefined||ev.bonus===''||ev.bonus===null)?(CFG.evoB[e-1]||0):+ev.bonus;
  const pick=(v,d)=>(v===undefined||v===''||v===null||isNaN(+v))?(+d||0):+v,hb=pick(ev.hpB,CFG.evoHp[e-1]),ab=pick(ev.atkB,CFG.evoAtk[e-1]);
@@ -2362,7 +2434,7 @@ const MIC={std:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const RCY='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15.5 6.2L21 16"/><path d="M21 21v-5h-5"/></svg>';
 const mascSt=x=>{const f=x.face;return f?'--fx:'+f.x+';--fy:'+f.y+';--mh:'+Math.min(340,Math.max(150,f.z*46)).toFixed(1)+'%':'--fx:.5;--fy:.12;--mh:180%'};
 function pgBattle(){const l=PD.lineups[PD.sel]||{h:[],r:{},g:[]},dh=dispHero(),dx=dh&&evH(dh);
- const tabs=[0,1,2,3,4].map(i=>`<button class="pt${i===PD.sel?' on':''}" data-p="${i}">${i+1}</button>`).join('')+'<button class="pt el" id="el">✎ Edit Line-up</button>';
+ const tabs=Array.from({length:nSlots()},(_,i)=>i).map(i=>`<button class="pt${i===PD.sel?' on':''}" data-p="${i}">${i+1}</button>`).join('')+'<button class="pt el" id="el">✎ Edit Line-up</button>';
  const md=[['std','Standard',MIC.std],['story','Story',MIC.story],['rank','Ranked',MIC.rank]],bad=validLU(l);
  return `<div class="bp">${APPR.bg?`<img class="bbg" src="${APPR.bg}" alt=""><div class="bsh"></div>`:''}
  ${dx?`<div class="bartw"><img class="bart" src="${dx.img}" alt="" referrerpolicy="no-referrer" decoding="sync" style="${mascSt(dx)}"></div><button class="rcy" id="rcy" title="Change display hero" aria-label="Change display hero">${RCY}</button>`:''}
@@ -2385,25 +2457,27 @@ function openInv(){const hl=HD.map(h=>({h,n:PD.fr[hk(h)]||0})).sort((a,b)=>b.n-a
  openMdl('<div class="ivh">'+BAGI+'<div><h3>Inventory</h3><small>Everything you have collected</small></div></div>'+
   '<div class="ivs">Currency & items</div><div class="ivg">'+it(GOLDI,PD.gold|0,'Gold','#ffc83a')+it(DIAI,diaN(),'Diamonds','#5ad0ff')+it(STNI,PD.st|0,'Transcendence Stones','#b36bff')+'</div>'+
   '<div class="ivs">Hero fragments</div><div class="ivg">'+hl.map(o=>'<div class="ivf" style="--c:'+o.h.col+'"><div class="zf ivp">'+faceImgT(o.h)+'</div><b>'+cHtml(o.h.n)+'</b><span>'+PUZI+g$(o.n)+'</span></div>').join('')+'</div>'+
+  (()=>{const fs=PREMF.filter(k=>ownF(k)),ss=Object.keys((WAL.own&&WAL.own.skins)||{}).filter(id=>SKINS[id]);return (fs.length?'<div class="ivs">Premium frames</div><div class="ivg">'+fs.map(k=>'<div class="ivfr">'+avH({...(PROF||{}),frame:k},56)+'<b>'+FRN[k]+'</b></div>').join('')+'</div>':'')+
+   (ss.length?'<div class="ivs">Hero skins</div><div class="ivg">'+ss.map(id=>{const q=SKINS[id],h=HD.find(x=>hk(x)===q.hero);return h?'<div class="ivf" style="--c:'+h.col+'"><div class="zf ivp">'+faceImgT(applySkin(h,id,1))+'</div><b>'+esc(q.name||'Skin')+'</b><span>'+esc(h.n)+'</span></div>':''}).join('')+'</div>':'')})()+
   (gens.length?'<div class="ivs">Reward general cards</div><div class="ivg">'+gens.map(g=>'<div class="ivi" style="--ic:#c9ced8"><span class="ivc">'+art(g.s)+'</span><b>'+cHtml(g.s.n)+'</b><small>General card</small></div>').join('')+'</div>':''),'ivm')}
 /* ================= SHOP: daily hero fragment offers (reset 6:00 AM PHT) ================= */
 const SHOP_P={3:120,12:450,20:700};
-function shopDay(){const day=dKey();let h=2166136261;const key=day+'|'+(ME||'guest');for(let i=0;i<key.length;i++){h^=key.charCodeAt(i);h=Math.imul(h,16777619)}let x=h>>>0;const r=()=>{x^=x<<13;x>>>=0;x^=x>>>17;x^=x<<5;x>>>=0;return x/4294967296};
+function shopDay(){const day=shopK();let h=2166136261;const key=day+'|'+(ME||'guest');for(let i=0;i<key.length;i++){h^=key.charCodeAt(i);h=Math.imul(h,16777619)}let x=h>>>0;const r=()=>{x^=x<<13;x>>>=0;x^=x>>>17;x^=x<<5;x>>>=0;return x/4294967296};
  const pool=HD.filter(h=>h&&h.img);if(!pool.length)return{day,o:[]};const ord=pool.map(h=>[r(),h]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]),sm=ord.slice(2).length?ord.slice(2):ord;
  return{day,o:[20,12,3,3,3,3].map((n,i)=>({i,n,h:hk(i<2?ord[i%ord.length]:sm[(i-2)%sm.length]),p:SHOP_P[n]}))}}
-const shopBought=i=>!!(PD.sh&&PD.sh.day===dKey()&&PD.sh.b&&PD.sh.b[i]);
+const shopBought=i=>!!(PD.sh&&PD.sh.day===shopK()&&PD.sh.b&&PD.sh.b[i]);
 function buyOffer(i){GUARD.check();const S=shopDay(),o=S.o[i];if(!o)return;if(shopBought(i))return toast('Already bought today');
  if((PD.gold|0)<o.p){SND.click();return toast('Not enough gold')}const h=HD.find(x=>hk(x)===o.h);if(!h)return;
  PD.gold=(PD.gold|0)-o.p;PD.fr[o.h]=(PD.fr[o.h]||0)+o.n;if(!PD.sh||PD.sh.day!==S.day)PD.sh={day:S.day,b:{}};PD.sh.b[i]=1;saveP('gold','fr','sh');SND.heal();toast('Bought '+o.n+' '+h.n+' fragments!');renderHome()}
 let shTm=0;
-const pgShop=()=>{const S=shopDay();clearInterval(shTm);shTm=setInterval(()=>{const t=$('#sht');if(!t){clearInterval(shTm);return}if(S.day!==dKey()){clearInterval(shTm);renderHome();return}t.textContent=fmtLeft(dLeft())},1000);
+const pgShop=()=>{const S=shopDay();clearInterval(shTm);shTm=setInterval(()=>{const t=$('#sht');if(!t){clearInterval(shTm);return}if(S.day!==shopK()){clearInterval(shTm);renderHome();return}t.textContent=fmtLeft(dLeft())},1000);
  return '<div class="pnl pad shp2"><div class="shh"><div><h3>Gold Shop</h3><small>Hero fragments · new offers every day</small></div><div class="shr"><span>Resets in</span><b id="sht">'+fmtLeft(dLeft())+'</b></div></div>'+
  '<div class="shg">'+S.o.map(o=>{const h=HD.find(x=>hk(x)===o.h);if(!h)return '';const b=shopBought(o.i),aff=(PD.gold|0)>=o.p,x=h,big=o.n>=12;
   return '<div class="sho'+(b?' sold':'')+(big?' big n'+o.n:'')+'" style="--c:'+x.col+'">'+'<i class="shbar"></i><div class="sht zf">'+faceImg(x).replace('<img ','<img decoding="async" ')+'<span class="shq">'+PUZI+'×'+o.n+'</span></div><b class="shn">'+cHtml(x.n)+'</b><small class="shs">'+o.n+' fragments</small>'+
   (b?'<span class="shb sold">SOLD OUT</span>':'<button class="shb'+(aff?'':' no')+'" data-buy="'+o.i+'">'+GOLDI+g$(o.p)+'</button>')+'</div>'}).join('')+'</div>'+
  '<p class="shft">Your gold: '+GOLDI+'<b>'+g$(PD.gold)+'</b> · Earn gold from battles and quests.</p></div>'};
 const pgShop0=()=>'<div class="pnl pad shp"><h3>🛒 Shop</h3><p class="sub big">Coming soon</p><p class="sub">Cards, skins and more will arrive here.</p></div>';
-const FRN={none:'Classic',bronze:'Bronze',silver:'Silver',gold:'Gold',neon:'Neon',flame:'Flame',rainbow:'Rainbow',void:'Void'};
+const FRN={none:'Classic',bronze:'Bronze',silver:'Silver',gold:'Gold',neon:'Neon',flame:'Flame',rainbow:'Rainbow',void:'Void',pioneer:'Pioneer',aurora:'Aurora',phoenix:'Phoenix',abyss:'Abyss',royal:'Royal'};
 function pgProfile(){const ri=rkI(PD.pts),st=Math.max(1,CFG.rankStep),into=(PD.pts|0)%st,nx=RANKS[ri+1],tot=(PD.w|0)+(PD.l|0),wr=tot?Math.round(PD.w/tot*100):0,
  days=Math.max(PD.days|0,tot?1:0),own=HD.filter(owned).length,tl=HD.reduce((a,h)=>{const s=hs(h);return a+s.lv+s.ev*CFG.maxLv},0),fr=(PROF&&PROF.frame)||'none',
  since=PROF&&+PROF.created?new Date(+PROF.created).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'';
@@ -2414,8 +2488,8 @@ function pgProfile(){const ri=rkI(PD.pts),st=Math.max(1,CFG.rankStep),into=(PD.p
   <div class="ppbar"><i style="width:${into/st*100}%"></i><span>${nx?into+' / '+st+' RP to '+esc(nx.n):'Top rank · '+(PD.pts|0)+' RP'}</span></div></div>
  <div class="ppr"><div class="pnl"><h3>Battle record</h3><div class="psg">${tile('📅',days,'Days played')}${tile('⚔️',tot,'Matches')}${tile('🏆',PD.w|0,'Wins','w')}${tile('💀',PD.l|0,'Losses','l')}${tile('📈',wr+'%','Win rate')}${tile('💎',PD.pts|0,'Rank points')}${tile('🦸',own+'/'+HD.length,'Heroes owned')}</div></div>
   <div class="pnl"><h3>Bio</h3><textarea class="biot" id="bio" maxlength="160" placeholder="Tell other players about yourself…">${esc(PD.bio||'')}</textarea><div class="biof"><small id="bioc">${(PD.bio||'').length}/160</small><button id="bios">Save bio</button></div></div>
-  <div class="pnl"><h3>Avatar frame</h3>${ME?'':'<p class="sub" style="margin:0 0 8px;color:#e7c99b">Log in on Dafreta Network to change your frame.</p>'}<div class="frg">${Object.keys(FRM).map(k=>`<div class="frc${fr===k?' on':''}" data-fr="${k}" role="button" tabindex="0">${avH({...(PROF||{}),frame:k},54)}<span>${FRN[k]||k}${fr===k?' ✓':''}</span></div>`).join('')}</div></div></div></div></div>`}
-async function setFrame(k){if(!ME)return toast('Log in on Dafreta Network to change your frame');if(!FRM[k]||(PROF&&PROF.frame)===k)return;PROF=PROF||{};const old=PROF.frame;PROF.frame=k;renderHome();
+  <div class="pnl"><h3>Avatar frame</h3>${ME?'':'<p class="sub" style="margin:0 0 8px;color:#e7c99b">Log in on Dafreta Network to change your frame.</p>'}<div class="frg">${Object.keys(FRM).filter(k=>ownF(k)||k!=='pioneer').map(k=>`<div class="frc${fr===k?' on':''}${PREMF.includes(k)?' prm':''}${ownF(k)?'':' lk'}" data-fr="${k}" role="button" tabindex="0">${avH({...(PROF||{}),frame:k},54)}<span>${ownF(k)?(FRN[k]||k)+(fr===k?' ✓':''):'🔒 '+(FRN[k]||k)}</span></div>`).join('')}</div></div></div></div></div>`}
+async function setFrame(k){if(!ME)return toast('Log in on Dafreta Network to change your frame');if(!FRM[k]||(PROF&&PROF.frame)===k)return;if(!ownF(k)){if(k==='pioneer')return toast('The Pioneer frame comes with the Starter Pack');SND.click();return dConfirm('frame',k)}PROF=PROF||{};const old=PROF.frame;PROF.frame=k;renderHome();
  try{await fb('profiles/'+ME,'PATCH',{frame:k});lbUpd();SND.heal();toast('Frame equipped!')}catch(e){PROF.frame=old;renderHome();toast('Could not save your frame')}}
 function saveBio(){const t=$('#bio');if(!t)return;PD.bio=t.value.trim().slice(0,160);saveP('bio');SND.heal();toast('Bio saved')}
 const PGS={battle:pgBattle,friends:pgFriends,shop:pgShop,dshop:pgDShop,lb:pgLB,profile:pgProfile};
@@ -2558,6 +2632,11 @@ $('#menu').addEventListener('click',e=>{
  const ct=e.target.closest('.ct[data-h]');if(ct){SND.click();openHD(+ct.dataset.h)}});
 
 /* ================= HERO DETAILS ================= */
+function skinTab(b){const k=hk(b),cur=skinOf(b),base=evHAt(b,hs(b).ev|0),L=Object.entries(SKINS).filter(([,q])=>q&&q.hero===k&&q.on!==false&&q.img);
+ const card=(x,name,sub,btn,leg)=>'<div class="dsk'+(leg?' leg':'')+'" style="--c:'+b.col+'">'+(leg?sash('LEGENDARY','best'):'')+'<div class="zf dskf">'+faceImgT(x)+'</div><b>'+esc(name)+'</b><small>'+sub+'</small>'+btn+'</div>',eq='<button class="dsp sm" disabled>Equipped ✓</button>';
+ return '<div class="hds"><div class="dsks hsk">'+card(base,'Default look','Original art',cur?'<button class="dsp sm" data-skeq="" data-skh="'+esc(k)+'">Use default</button>':eq)+
+  L.map(([id,q])=>card(applySkin(base,id,1),q.name||'Skin',q.rar==='legendary'?'Legendary skin':'Hero skin',ownS(id)?(cur===id?eq:'<button class="dsp sm" data-skeq="'+esc(id)+'" data-skh="'+esc(k)+'">Equip</button>'):'<button class="dsp sm" data-dspend="skin" data-arg="'+esc(id)+'">'+dI+g$(+q.price||0)+'</button>',q.rar==='legendary')).join('')+'</div>'+
+  (L.length?'':'<p class="dsem">No skins for this hero yet. New skins arrive in the Diamond Shop.</p>')+'</div>'}
 function openHD(i){hdi=i;hdTab='info';$('#menu').hidden=true;$('#hd').hidden=false;hdRender();$('#hd').scrollTop=0}
 function closeHD(){$('#hd').hidden=true;$('#menu').hidden=false;menu()}
 function hdRender(){const b=HD[hdi],x=evH(b),s=hs(b),own=owned(b),e=s.ev|0,k=hk(b),fr=PD.fr[k]||0,n=evNeed(e),inDeck=hi.includes(hdi),
@@ -2570,7 +2649,7 @@ function hdRender(){const b=HD[hdi],x=evH(b),s=hs(b),own=owned(b),e=s.ev|0,k=hk(
  const tabs=[['info','📄','Info'],['skin','👕','Skin'],['cm','💬','Comments']];
  let body;
  if(hdTab==='info')body=`<div class="hda"><div class="lvbox"><b>${s.lv}</b><small>Level</small></div><div class="hst"><span>❤️ <b>${x.hp}</b></span><span>⚔️ <b>${x.atk}</b></span></div><div class="xpb"><i style="width:${s.lv>=CFG.maxLv?100:xp/CFG.expLv*100}%"></i><span>${s.lv>=CFG.maxLv?'MAX':xp+'/'+CFG.expLv}</span></div><div class="evw">${evBtn}</div></div><div class="skh"><span>Skills</span><small>${hdSk.length} cards · tap ⓘ for details</small></div><div class="hds">${rows}</div>`;
- else if(hdTab==='skin')body='<div class="hds"><div class="soon"><span>👕</span><b>Skins are coming soon</b><small>Cosmetic looks for your heroes will arrive here.</small></div></div>';
+ else if(hdTab==='skin')body=skinTab(b);
  else body=`<div class="hds"><div class="cmw"><div id="cmb"><p class="sub dk2">Loading comments…</p></div>${ME?`<div class="cmi"><textarea id="cmt" maxlength="200" placeholder="Say something about ${esc(b.n)}…"></textarea><button id="cmp">Post</button></div>`:'<p class="sub dk2">Log in on Dafreta Network to comment.</p>'}</div></div>`;
  const lst=visHeroes(),pos=lst.indexOf(hdi);
  $('#hd').innerHTML=`<div class="hdt"><button class="g" id="hdb">←</button><h2>Hero Details</h2><div class="ers">${resH()}</div></div>
@@ -2592,6 +2671,8 @@ async function cmLoad(k){const el=$('#cmb');if(!el)return;let o={};try{o=await f
 async function cmPost(){const t=$('#cmt'),txt=(t.value||'').trim();if(!ME)return toast('Log in on Dafreta Network to comment');if(!txt)return;if(Date.now()-cmT<15000)return toast('Please wait a few seconds before commenting again');
  cmT=Date.now();const k=hk(HD[hdi]);try{await fb('cardgame/comments/'+k+'/'+mid(),'PUT',{u:ME,n:myName(),a:(PROF&&+PROF.avatar)||0,f:(PROF&&PROF.frame)||'none',t:txt.slice(0,200),ts:Date.now()});t.value='';SND.click();cmLoad(k)}catch(e){toast('Could not post your comment')}}
 $('#hd').addEventListener('click',async e=>{
+ const dq=e.target.closest('[data-dspend]');if(dq&&!dq.disabled){SND.click();dSpendClick(dq);return}
+ const sq=e.target.closest('[data-skeq]');if(sq&&!sq.disabled){SND.click();skinEquip(sq.dataset.skh,sq.dataset.skeq);return}
  if(e.target.closest('#hdb')){closeHD();return}
  const nv=e.target.closest('[data-nav]');if(nv){const l=visHeroes(),p=l.indexOf(hdi);hdi=l[(p+ +nv.dataset.nav+l.length)%l.length];SND.click();hdRender();return}
  const tb=e.target.closest('[data-tab]');if(tb){hdTab=tb.dataset.tab;SND.click();hdRender();return}
@@ -2796,9 +2877,9 @@ const pk=n=>'k'+String(n).padStart(4,'0'),mmFmt=s=>Math.floor(s/60)+':'+String(s
 const shuf2=a=>{for(let i=a.length;i>1;){const j=Math.floor(Math.random()*i--);[a[i],a[j]]=[a[j],a[i]]}return a};
 const FAKEN=['NightOwl_23','Kidlat','RiftHunter','Bagwis','xVenomx','Tala_Star','GhostBlade','Ember_PH','Kaiju77','SilentAce'];
 function myTeam(){const l=PD.lineups[PD.sel]||{},ids=(l.h||[]).map(hidx);return{hs:ids.map(i=>evH(HD[i])),rl:ids.map(i=>REL.find(r=>r.id===(l.r||{})[hk(HD[i])])||null),gen:(l.g||[]).map(id=>GEN.find(g=>g.id===id)).filter(g=>gAvail(g))}}
-function myLU(){const l=PD.lineups[PD.sel]||{},ids=(l.h||[]).map(hidx);return{h:ids.map(i=>String(HD[i].fid)),e:ids.map(i=>hs(HD[i]).ev|0),r:ids.map(i=>(l.r||{})[hk(HD[i])]||''),g:(l.g||[]).filter(id=>gAvail(GEN.find(g=>g.id===id)))}}
-function teamFrom(lu){if(!lu)return null;const h=Object.values(lu.h||{}),e=Object.values(lu.e||{}),r=Object.values(lu.r||{}),g=Object.values(lu.g||{});
- const hs2=h.map((f,i)=>{const j=hidx(f);return j<0?null:evHAt(HD[j],+e[i]||0)});if(hs2.length!==4||hs2.some(x=>!x))return null;
+function myLU(){const l=PD.lineups[PD.sel]||{},ids=(l.h||[]).map(hidx);return{h:ids.map(i=>String(HD[i].fid)),e:ids.map(i=>hs(HD[i]).ev|0),r:ids.map(i=>(l.r||{})[hk(HD[i])]||''),s:ids.map(i=>skinOf(HD[i])),g:(l.g||[]).filter(id=>gAvail(GEN.find(g=>g.id===id)))}}
+function teamFrom(lu){if(!lu)return null;const h=Object.values(lu.h||{}),e=Object.values(lu.e||{}),r=Object.values(lu.r||{}),g=Object.values(lu.g||{}),sk=Object.values(lu.s||{});
+ const hs2=h.map((f,i)=>{const j=hidx(f);return j<0?null:applySkin(evHAt(HD[j],+e[i]||0),String(sk[i]||''),1)});if(hs2.length!==4||hs2.some(x=>!x))return null;
  return{hs:hs2,rl:hs2.map((_,i)=>REL.find(x=>x.id===r[i])||null),gen:g.map(id=>GEN.find(x=>x.id===id)).filter(Boolean)}}
 function myCard(){const im=PROF&&PROF.img&&String(PROF.img).length<60000?PROF.img:'';return{u:ME,n:myName(),a:(PROF&&+PROF.avatar)||0,f:(PROF&&PROF.frame)||'none',img:im,pts:PD.pts|0}}
 const cardP=c=>({avatar:+c.a||0,frame:c.f||'none',img:c.img||''});
@@ -2966,33 +3047,101 @@ addEventListener('pagehide',()=>{try{
 
 
 /* ================= DIAMOND SHOP (PayMongo) =================
-   Diamonds are kept in cardgame/wallet/{user}. Only the payment server can write there,
-   after PayMongo confirms the payment, so diamonds cannot be faked from the browser. */
-const DPACKS=[{id:'d50',n:'Few Diamonds',p:49,d:50,b:0,on:1},{id:'d165',n:'Small Diamonds',p:149,d:165,b:15,on:1},{id:'d600',n:'Medium Diamonds',p:499,d:600,b:100,on:1,tag:'MOST POPULAR',cl:'pop'},{id:'d3200',n:'Big Diamonds',p:2490,d:3200,b:700,on:1,tag:'BEST VALUE',cl:'best'}];
-let WAL={dia:0},DWAIT=null;
-const diaN=()=>Math.max(0,WAL.dia|0);
-async function walLoad(){if(!ME)return;try{const w=await fb('cardgame/wallet/'+ME);WAL={dia:+(w&&w.dia)||0}}catch(e){}}
+   Diamonds, owned premium frames/skins, extra line-up slots and Gold Shop refreshes are kept in
+   cardgame/wallet/{user}. Only the payment server can change them, so they cannot be faked from the
+   browser. Fragments and stones bought with diamonds arrive in cardgame/grants/{user} and are picked up here. */
+const DPACKS=[{id:'d50',n:'Few Diamonds',p:49,d:50},{id:'d165',n:'Small Diamonds',p:149,d:165,b:15},{id:'d600',n:'Medium Diamonds',p:499,d:600,b:100,tag:'MOST POPULAR',cl:'pop'},{id:'d1250',n:'Large Diamonds',p:999,d:1250,b:250},{id:'d3300',n:'Big Diamonds',p:2490,d:3300,b:800,tag:'BEST VALUE',cl:'best'}];
+const DPRICE_DEF={refresh:20,frag15:45,frag50:140,stone:150,slot:199,frame:280},SHOPF=['aurora','phoenix','abyss','royal'],STONE_LIM=2,MAX_XSLOT=5;
+let WAL={},DPRICE={...DPRICE_DEF},SKINS={},DWAIT=null,DCONF=null;
+const diaN=()=>Math.max(0,WAL.dia|0),ownF=k=>!PREMF.includes(k)||!!(WAL.own&&WAL.own.frames&&WAL.own.frames[k]),ownS=id=>!!(WAL.own&&WAL.own.skins&&WAL.own.skins[id]);
+const nSlots=()=>5+Math.min(MAX_XSLOT,WAL.slots|0),refN=()=>WAL.shr&&WAL.shr.day===dKey()?WAL.shr.n|0:0,shopK=()=>dKey()+(refN()?'#'+refN():'');
+const stoneN=()=>{const w=WAL.stw;if(!w)return 0;const d=new Date(Date.now()+2*36e5);d.setUTCHours(0,0,0,0);d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7));return w.week===d.toISOString().slice(0,10)?w.n|0:0};
+const passOn=()=>!!(WAL.pass&&WAL.pass.until>Date.now()),passDays=()=>Math.max(0,Math.ceil(((WAL.pass&&WAL.pass.until)||0)-Date.now())/864e5|0);
+async function walLoad(){if(!ME)return;try{WAL=(await fb('cardgame/wallet/'+ME))||{}}catch(e){}}
+/* fragments / stones bought with diamonds */
+async function grantsClaim(){if(!ME||!PD)return;const g=await fb('cardgame/grants/'+ME).catch(()=>null);if(!g)return;GUARD.check();let n=0,txt=[];
+ for(const [id,v] of Object.entries(g)){if(!v)continue;try{await fb('cardgame/grants/'+ME+'/'+id,'DELETE')}catch(e){continue}
+  if(v.fr)for(const k in v.fr){const a=+v.fr[k]||0;PD.fr[k]=(PD.fr[k]||0)+a;const h=HD.find(x=>hk(x)===k);txt.push(a+' '+(h?h.n:'hero')+' fragments')}
+  if(v.st){PD.st=(PD.st|0)+(+v.st||0);txt.push(v.st+' Transcendence stone'+(v.st>1?'s':''))}n++}
+ if(n){saveP('fr','st');toast('🎁 Received '+txt.join(', '))}}
+/* a hero wearing a skin: same stats, different look (a copy, the original hero is never changed) */
+function applySkin(o,id,any){const k=id&&SKINS[id];if(!k||!k.img||(!any&&!ownS(id)))return o;return{...o,img:k.img,face:nFace(k.face),ar:+k.ar||0,bs:+k.bs||o.bs,atkImg:'',exImg:'',skin:id}}
+const skinOf=h=>{const id=PD&&PD.skin&&PD.skin[hk(h)];return id&&SKINS[id]&&ownS(id)?id:''};
+
 const DGEM=(s,x,y)=>'<svg viewBox="0 0 48 44" width="'+s+'" height="'+s*44/48+'" style="left:calc(50% + '+x+'px - '+s/2+'px);top:'+y+'px"><path d="M12 3h24l10 12-22 26L2 15z" fill="url(#dmG)" stroke="#0d2c6a" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 15h44M12 3l6 12 6 26M36 3l-6 12-6 26M18 15l6-12 6 12" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.1"/></svg>';
-const DPILE=[[[44,0,14]],[[38,-16,22],[42,14,12]],[[34,-22,30],[40,0,10],[34,22,30]],[[30,-30,36],[34,-12,16],[46,8,6],[30,28,34]]];
+const DPILE=[[[44,0,14]],[[38,-16,22],[42,14,12]],[[34,-22,30],[40,0,10],[34,22,30]],[[30,-30,36],[34,-12,16],[44,8,8],[30,28,34]],[[28,-36,40],[32,-20,18],[46,0,4],[32,20,18],[28,36,40]]];
 const peso=v=>'₱'+v.toLocaleString('en-PH',{minimumFractionDigits:2});
-function pgDShop(){clearInterval(shTm);const on=!!CFG.payApi;
- return '<div class="pnl pad dsh"><div class="shh"><div><h3>Diamond Shop</h3><small>Premium currency · paid securely with PayMongo (GCash, Maya, card)</small></div><div class="shr"><span>Your diamonds</span><b>'+g$(diaN())+'</b></div></div>'+
- '<div class="dsg">'+DPACKS.map((k,i)=>{const live=on&&k.on&&ME,w=DWAIT&&DWAIT.pack===k.id;
-  return '<div class="dso '+(k.cl||'')+'">'+(k.tag?'<i class="dsr">'+k.tag+'</i>':'')+'<div class="dsi">'+DPILE[i].map(([s2,x,y])=>DGEM(s2,x,y)).join('')+'</div><b class="dsn">'+k.n+'</b><span class="dsa">'+g$(k.d)+'</span>'+
-  '<span class="dsb">'+(k.b?(k.d-k.b)+' + '+k.b+' bonus':'')+'</span><button class="dsp'+(w?' wait':'')+'" data-dbuy="'+k.id+'"'+(live?'':' disabled')+'>'+(w?'Waiting for payment…':k.on?peso(k.p):'Coming soon')+'</button></div>'}).join('')+'</div>'+
- '<p class="dsft">'+(ME?(on?'<span>After paying, come back here. Diamonds are added automatically within a few seconds.</span>':'<span>The Diamond Shop is being set up. Check back soon!</span>'):'<span>Log in on Dafreta Network to buy diamonds.</span>')+'</p></div>'}
-async function buyDia(id){const k=DPACKS.find(x=>x.id===id);if(!k||!k.on)return;if(!ME)return toast('Log in on Dafreta Network to buy diamonds');if(!CFG.payApi)return toast('The Diamond Shop is not ready yet');
+const dI='<svg class="dmi" viewBox="0 0 48 44" aria-hidden="true"><path d="M12 3h24l10 12-22 26L2 15z" fill="url(#dmG)" stroke="#0d2c6a" stroke-width="2"/></svg>';
+const sash=(t,c)=>'<i class="dsr '+(c||'')+'"><b>'+t+'</b></i>';
+const mon=()=>new Date(Date.now()+8*36e5).toISOString().slice(0,7);
+
+function pgDShop(){clearInterval(shTm);const on=!!CFG.payApi&&!!ME,P=DPRICE;
+ const offer=(cls,title,sub,body,btn,s)=>'<div class="dof '+cls+'">'+(s||'')+'<div class="dofi">'+body+'</div><div class="doft"><b>'+title+'</b><small>'+sub+'</small></div>'+btn+'</div>';
+ const st=WAL.starter?'':offer('st','Starter Pack','<b>300</b>'+dI+' + exclusive <b>Pioneer</b> frame + <b>2</b> Transcendence stones · worth <b>880</b>'+dI+' · one time only',avH({...(PROF||{}),frame:'pioneer'},64),
+  '<button class="dsp big" data-dbuy="starter"'+(on?'':' disabled')+'>'+(DWAIT&&DWAIT.pack==='starter'?'Waiting…':peso(99))+'</button>',sash('BEST DEAL','hot'));
+ const wk=passOn()?offer('wk','Weekly Pass · '+passDays()+' day'+(passDays()===1?'':'s')+' left','Collect <b>20</b>'+dI+' every day while it lasts','<span class="wkb">20'+dI+'</span>',
+   WAL.pass.last===dKey()?'<button class="dsp big" disabled>Collected today ✓</button>':'<button class="dsp big go" data-dclaim="1">Collect 20 💎</button>')
+  :offer('wk','Weekly Pass','<b>60</b>'+dI+' now + <b>20</b>'+dI+' every day for 7 days = <b>200</b>'+dI,'<span class="wkb">7×</span>',
+   '<button class="dsp big" data-dbuy="weekly"'+(on?'':' disabled')+'>'+(DWAIT&&DWAIT.pack==='weekly'?'Waiting…':peso(59))+'</button>',sash('3× VALUE','pass'));
+ const packs=DPACKS.map((k,i)=>{const w=DWAIT&&DWAIT.pack===k.id,f2=!(WAL.first&&WAL.first[k.id]);
+  return '<div class="dso '+(k.cl||'')+'">'+(k.tag?sash(k.tag,k.cl):'')+(f2?'<i class="dx2"><b>2×</b><small>FIRST<br>TOP-UP</small></i>':'')+'<div class="dsi">'+DPILE[i].map(([s2,x,y])=>DGEM(s2,x,y)).join('')+'</div><b class="dsn">'+k.n+'</b>'+
+  '<span class="dsa">'+g$(f2?k.d*2:k.d)+'</span><span class="dsb">'+(f2?'<s>'+g$(k.d)+'</s> +'+g$(k.d)+' FREE':k.b?(k.d-k.b)+' + '+k.b+' bonus':'&nbsp;')+'</span>'+
+  '<button class="dsp'+(w?' wait':'')+'" data-dbuy="'+k.id+'"'+(on?'':' disabled')+'>'+(w?'Waiting for payment…':peso(k.p))+'</button></div>'}).join('');
+ const it=(ic,t,sub,price,attr,dis,note)=>'<div class="dit"><span class="dii">'+ic+'</span><b>'+t+'</b><small>'+sub+'</small><button class="dsp sm" '+attr+(dis||!on?' disabled':'')+'>'+(note||dI+g$(price))+'</button></div>';
+ const items=it(PUZI,'15 Hero Fragments','pick any hero',P.frag15,'data-dspend="frag15"')+it(PUZI+'<em>50</em>','50 Hero Fragments','pick any hero · best value',P.frag50,'data-dspend="frag50"')+
+  it(STNI,'Transcendence Stone',stoneN()+' / '+STONE_LIM+' bought this week',P.stone,'data-dspend="stone"',stoneN()>=STONE_LIM,stoneN()>=STONE_LIM?'Limit reached':'')+
+  it('🔄','New Gold Shop offers','refresh today\'s 6 offers',P.refresh,'data-dspend="refresh"')+
+  it('🗂️','Extra Line-up Slot',nSlots()+' / '+(5+MAX_XSLOT)+' slots',P.slot,'data-dspend="slot"',nSlots()>=5+MAX_XSLOT,nSlots()>=5+MAX_XSLOT?'Max slots':'');
+ const frames=SHOPF.map(k=>'<div class="dfr">'+avH({...(PROF||{}),frame:k},70)+'<b>'+FRN[k]+'</b>'+(ownF(k)?'<button class="dsp sm" data-fr="'+k+'">'+((PROF&&PROF.frame)===k?'Equipped ✓':'Equip')+'</button>':'<button class="dsp sm" data-dspend="frame" data-arg="'+k+'"'+(on?'':' disabled')+'>'+dI+g$(P.frame)+'</button>')+'</div>').join('');
+ const sk=Object.entries(SKINS).filter(([,s])=>s&&s.on!==false&&s.img&&HD.some(h=>hk(h)===s.hero));
+ const skins=sk.length?sk.map(([id,s])=>{const h=HD.find(x=>hk(x)===s.hero),x={...h,img:s.img,face:nFace(s.face)};
+  return '<div class="dsk '+(s.rar==='legendary'?'leg':'')+'" style="--c:'+h.col+'">'+(s.rar==='legendary'?sash('LEGENDARY','best'):'')+'<div class="zf dskf">'+faceImgT(x)+'</div><b>'+esc(s.name)+'</b><small>'+esc(h.n)+' skin</small>'+
+  (ownS(id)?(PD.skin&&PD.skin[s.hero]===id?'<button class="dsp sm" data-skeq="" data-skh="'+esc(s.hero)+'">Equipped ✓</button>':'<button class="dsp sm" data-skeq="'+esc(id)+'" data-skh="'+esc(s.hero)+'">Equip</button>'):'<button class="dsp sm" data-dspend="skin" data-arg="'+esc(id)+'"'+(on?'':' disabled')+'>'+dI+g$(+s.price||0)+'</button>')+'</div>'}).join(''):'<p class="dsem">New hero skins are on the way!</p>';
+ const sp=(WAL.spent&&WAL.spent[mon()])||0;
+ return '<div class="pnl pad dsh"><div class="shh"><div><h3>Diamond Shop</h3><small>Paid securely with PayMongo</small></div><div class="shr"><span>Your diamonds</span><b>'+dI+g$(diaN())+'</b></div></div>'+
+ '<h4 class="dsec">Special offers</h4><div class="dofs">'+st+wk+'</div>'+
+ '<h4 class="dsec">Top up diamonds</h4><div class="dsg">'+packs+'</div>'+
+ '<h4 class="dsec">Spend diamonds</h4><div class="dits">'+items+'</div>'+
+ '<h4 class="dsec">Premium frames</h4><div class="dfrs">'+frames+'</div>'+
+ '<h4 class="dsec">Hero skins</h4><div class="dsks">'+skins+'</div>'+
+ '<p class="dsft">'+(ME?(CFG.payApi?'<span>After paying, come back here. Diamonds are added automatically within a few seconds.</span><span>This month you spent <b>'+peso(sp)+'</b> on diamonds.</span>':'<span>The Diamond Shop is being set up. Check back soon!</span>'):'<span>Log in on Dafreta Network to buy diamonds.</span>')+'</p></div>'}
+
+async function buyDia(id){if(!ME)return toast('Log in on Dafreta Network to buy diamonds');if(!CFG.payApi)return toast('The Diamond Shop is not ready yet');
  const win=window.open('','_blank');if(win)win.document.write('<p style="font:16px system-ui;padding:20px">Opening secure PayMongo checkout…</p>');
  try{const t=await gtok();if(!t)throw new Error('Please log in again');
   const r=await fetch(CFG.payApi+'/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pack:id,token:t})}),j=await r.json().catch(()=>({}));
   if(!r.ok||!j.url)throw new Error(j.error||'Could not start the payment');
   if(win&&!win.closed)win.location.href=j.url;else location.href=j.url;
-  DWAIT={pack:id,base:diaN(),t:Date.now()};diaPoll();renderHome()}catch(e){if(win&&!win.closed)win.close();toast(e.message)}}
+  DWAIT={pack:id,base:diaN(),pass:passOn(),st:!!WAL.starter,t:Date.now()};diaPoll();renderHome()}catch(e){if(win&&!win.closed)win.close();toast(e.message)}}
 let dpT=0;
 function diaPoll(){clearInterval(dpT);dpT=setInterval(async()=>{if(!DWAIT){clearInterval(dpT);return}if(Date.now()-DWAIT.t>15*60e3){DWAIT=null;clearInterval(dpT);renderHome();return}
- await walLoad();if(diaN()>DWAIT.base){const got=diaN()-DWAIT.base;DWAIT=null;clearInterval(dpT);SND.levelup();toast('💎 Payment received! +'+g$(got)+' diamonds');if(!$('#home').hidden)renderHome()}},4000)}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)walLoad().then(()=>{if(!$('#home').hidden&&!inB)renderHome()})});
-$('#home').addEventListener('click',e=>{const b=e.target.closest('[data-dbuy]');if(b&&!b.disabled){SND.click();buyDia(b.dataset.dbuy)}});
+ await walLoad();if(diaN()>DWAIT.base){const got=diaN()-DWAIT.base;DWAIT=null;clearInterval(dpT);await grantsClaim();SND.levelup();toast('💎 Payment received! +'+g$(got)+' diamonds');if(!$('#home').hidden)renderHome()}},4000)}
+async function dPost(path,body){const t=await gtok();if(!t)throw new Error('Please log in again');
+ const r=await fetch(CFG.payApi+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,token:t})}),j=await r.json().catch(()=>({}));
+ if(!r.ok)throw new Error(j.error||'Something went wrong. Please try again.');if(j.wallet)WAL=j.wallet;return j}
+const DLBL={frag15:'15 Hero Fragments',frag50:'50 Hero Fragments',stone:'a Transcendence Stone',refresh:'new Gold Shop offers',slot:'an extra line-up slot',frame:'this frame',skin:'this skin'};
+/* every diamond purchase asks first, and shows the exact price */
+function dConfirm(item,arg,hero){const price=item==='skin'?+(SKINS[arg]||{}).price:+DPRICE[item],name=item==='skin'?'the '+((SKINS[arg]||{}).name||'')+' skin':item==='frame'?'the '+FRN[arg]+' frame':DLBL[item]+(hero?' for '+hero.n:''),enough=diaN()>=price;
+ DCONF={item,arg,hero:hero?hk(hero):''};
+ openMdl('<div class="dcf"><div class="dcfi">'+(item==='frame'?avH({...(PROF||{}),frame:arg},90):item==='skin'?'<div class="zf dskf" style="width:120px;height:90px">'+faceImgT({...HD.find(h=>hk(h)===SKINS[arg].hero),img:SKINS[arg].img,face:nFace(SKINS[arg].face)})+'</div>':dI)+'</div>'+
+  '<h3 class="mdh">Buy '+esc(name)+'?</h3><p class="dcfp">'+dI+'<b>'+g$(price)+'</b> diamonds · you have '+g$(diaN())+'</p>'+
+  (enough?'<div class="lupb"><button class="g" id="dcno">Cancel</button><button id="dcok">Buy now</button></div>':'<p class="dcfn">You need '+g$(price-diaN())+' more diamonds.</p><div class="lupb"><button class="g" id="dcno">Close</button><button id="dcget">Get diamonds</button></div>')+'</div>','dcm')}
+function dPickHero(item){openMdl('<h3 class="mdh">Which hero gets the fragments?</h3><p class="sub" style="color:#6a4a2a">Fragments unlock locked heroes and pay for evolutions.</p><div class="cg pk">'+HD.map((b,i)=>{const x=evH(b);return '<div class="ct" data-fh="'+i+'" data-it="'+item+'" style="--c:'+x.col+'"><div class="cth">'+esc(x.n)+'</div><div class="ctf zf">'+faceImgT(x)+'</div><small class="rtx">🧩 '+(PD.fr[hk(b)]||0)+' owned</small></div>'}).join('')+'</div>')}
+async function dSpendGo(){const c=DCONF;DCONF=null;closeMdl();if(!c)return;
+ try{await dPost('/spend',{item:c.item,hero:c.hero,frame:c.item==='frame'?c.arg:undefined,skin:c.item==='skin'?c.arg:undefined});await grantsClaim();SND.levelup();
+  toast(c.item==='refresh'?'🔄 New Gold Shop offers are ready!':c.item==='slot'?'🗂️ New line-up slot unlocked!':c.item==='frame'?'✨ Frame unlocked! Tap Equip to wear it.':c.item==='skin'?'✨ Skin unlocked! Equip it in Hero Details.':'✓ Purchase complete');
+  if(!$('#hd').hidden)hdRender();else renderHome()}catch(e){toast(e.message)}}
+function skinEquip(hero,id){if(!PD)return;PD.skin=PD.skin||{};if(id&&!ownS(id))return;if(id)PD.skin[hero]=id;else delete PD.skin[hero];saveP('skin');toast(id?'✨ Skin equipped!':'Default look restored');if(!$('#hd').hidden)hdRender();else renderHome()}
+async function dClaim(){try{const j=await dPost('/claim',{});SND.levelup();toast('💎 +'+j.got+' diamonds collected!');renderHome()}catch(e){toast(e.message)}}
+function dSpendClick(b){if(!ME)return toast('Log in on Dafreta Network first');if(!CFG.payApi)return toast('The Diamond Shop is not ready yet');const it=b.dataset.dspend;if(it==='frag15'||it==='frag50')return dPickHero(it);dConfirm(it,b.dataset.arg||'')}
+$('#mdl').addEventListener('click',e=>{if(e.target.id==='dcok'){SND.click();dSpendGo();return}if(e.target.id==='dcno'){DCONF=null;closeMdl();return}
+ if(e.target.id==='dcget'){closeMdl();pgNow='dshop';$('#hd').hidden=true;$('#menu').hidden=true;$('#home').hidden=false;renderHome();return}
+ const fh=e.target.closest('[data-fh]');if(fh){SND.click();dConfirm(fh.dataset.it,'',HD[+fh.dataset.fh])}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)walLoad().then(grantsClaim).then(()=>{if(!$('#home').hidden&&!inB&&!MM.on)renderHome()})});
+$('#home').addEventListener('click',e=>{const b=e.target.closest('[data-dbuy]');if(b&&!b.disabled){SND.click();buyDia(b.dataset.dbuy);return}
+ const c=e.target.closest('[data-dclaim]');if(c&&!c.disabled){SND.click();dClaim();return}
+ const s=e.target.closest('[data-dspend]');if(s&&!s.disabled){SND.click();dSpendClick(s);return}
+ const q=e.target.closest('[data-skeq]');if(q){SND.click();skinEquip(q.dataset.skh,q.dataset.skeq)}});
 
 /* match clock + turn timer */
 setInterval(()=>{if(over||!P)return;BG.check();M--;if(PV){pvTick();return}if(turn=='p'&&!busy){tt--;if(tt<=0){endTurn();return}}
@@ -3029,6 +3178,8 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
 }catch(e){console.warn(e)}
  if(!RANKS.length)RANKS=defRanks();
  await loadPD();dqSync();await walLoad();
+ try{const [pr,sk]=await Promise.all([fb('cardgame/dshop/prices').catch(()=>null),fb('cardgame/skins').catch(()=>null)]);if(pr)for(const k in DPRICE_DEF)if(+pr[k]>0)DPRICE[k]=+pr[k];SKINS=sk||{};Object.values(SKINS).forEach(q=>q&&q.img&&calcFt(q.img))}catch(e){}
+ if(PD.sel>=nSlots())PD.sel=0;grantsClaim();
  if(!PD.lineups[0]){const f=[],u=new Set();HD.forEach(h=>{if(owned(h)&&f.length<4&&!u.has(h.cl)){u.add(h.cl);f.push(hk(h))}});if(f.length==4)PD.lineups[0]={h:f,r:{},g:GEN.filter(gAvail).slice(0,needGen()).map(g=>g.id)}}
  leg();renderHome()})();
 
