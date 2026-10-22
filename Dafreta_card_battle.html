@@ -1906,25 +1906,41 @@ body.sel #hand{filter:none!important}body.sel #hand .card:not(.sel){filter:brigh
 .wknx{font:700 11px system-ui;color:#9fd8b4}.wknx b{color:#fff;font-variant-numeric:tabular-nums}
 .dsp.wkren{width:auto;margin:0;padding:6px 14px;font-size:12px}
 
-/* ===== top bar v4: Starter Pack on its own, Daily Quest / Mail / Inventory perfectly lined up ===== */
-.tb .stb{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;width:84px;height:72px;margin:0 auto 0 22px;padding:0;background:none;border:0;cursor:pointer;flex:none}
-.stbg{position:absolute;left:50%;top:44%;width:76px;height:76px;translate:-50% -50%;border-radius:50%;background:radial-gradient(circle,#ffd24acc,#ff9a1a55 40%,transparent 70%);animation:stbGl 2.2s ease-in-out infinite;pointer-events:none}
-@keyframes stbGl{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
-.tb .stb img{position:relative;width:64px;height:64px;margin:0 0 -12px;object-fit:contain;filter:none;animation:none;transform:translateZ(0)}
-.tb .stb .dqtx{position:relative;z-index:2;padding:3px 8px;white-space:nowrap;font:900 9.5px/1 Cinzel,Georgia,serif;letter-spacing:.05em;color:#fff3c4;text-shadow:0 1px 1px #000;border:1.5px solid #ffd24a;border-radius:4px;background:linear-gradient(#3a6aff,#1a2a9a);box-shadow:0 2px 4px #000a,0 0 10px #5a8aff88}
-.tb .stb em.stp{position:absolute;top:2px;right:-6px;bottom:auto;padding:1px 6px;border-radius:9px;font:900 11px/16px system-ui;font-style:normal;color:#3a1d04;background:linear-gradient(#fff2b8,#ffb43a);border:2px solid #fff;box-shadow:0 2px 4px #0009;animation:dx2 1.6s ease-in-out infinite}
-.tb .stb:hover img{transform:scale(1.06)}.tb .stb:active{transform:scale(.95)}
+/* ===== v5: Starter Pack next to Quests, spacing on phones, steady Ranked box, compact offers on phones ===== */
+.rs #snh[hidden]{display:none!important}
 .tb .rs .dqb{height:64px;justify-content:flex-end;margin-top:0}
 .tb .rs .dqb>svg{width:56px;height:47px;flex:none}
 .tb .rs .dqb .dqtx{margin-top:-9px}
-@container (max-height:520px){.tb .stb{width:60px;height:52px;margin-left:10px}.stbg{width:54px;height:54px}.tb .stb img{width:46px;height:46px;margin-bottom:-9px}.tb .stb .dqtx{font-size:7.5px;padding:2px 5px}.tb .stb em.stp{font-size:9px;line-height:12px;right:-8px}
- .tb .rs .dqb{height:48px}.tb .rs .dqb>svg{width:40px;height:34px}.tb .rs .dqb .dqtx{margin-top:-6px}}
-@media (prefers-reduced-motion:reduce){.stbg,.tb .stb em.stp{animation:none}}
-@container (max-height:520px){.tb .stb{width:54px;margin-left:6px}.tb .rs{gap:4px}}
-.rs #snh[hidden]{display:none!important}
-@container (max-height:520px){.tb{gap:4px}}
-@container (max-height:520px){.tb .rsi.cur{padding-left:6px;padding-right:8px}.tb .rsi.cur b{min-width:7.6ch}.tb .rs{gap:3px}.tb .stb{margin-right:auto}}
-@container (max-height:520px){.tb .rs .dqb{width:48px}}
+@container (max-height:520px){.tb{gap:4px}.tb .rs{gap:6px}.tb .rs .dqb{width:56px;height:48px}.tb .rs .dqb+.dqb{margin-left:8px}.tb .rs .dqb>svg{width:40px;height:34px}.tb .rs .dqb .dqtx{margin-top:-6px}
+ .tb .rsi.cur{padding-left:6px;padding-right:8px}.tb .rsi.cur b{min-width:7.6ch}.tb .rs .dqb:last-of-type{margin-right:4px}}
+.qrw{position:relative;z-index:1;display:flex;align-items:flex-start;gap:22px}.qrw .qs{flex:0 1 auto}
+.stb{position:relative;flex:none;display:flex;flex-direction:column;align-items:center;width:124px;margin-top:4px;padding:0;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.stbg{position:absolute;left:50%;top:42%;width:132px;height:132px;translate:-50% -50%;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#5ab4ffcc 0,#2a6aff66 38%,transparent 70%);animation:stbGl 2.6s ease-in-out infinite}
+@keyframes stbGl{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+.stbi{position:relative;display:block;width:104px;height:104px;animation:stbBob 2.6s ease-in-out infinite}
+.stbi img{display:block;width:100%;height:100%;object-fit:contain}
+@keyframes stbBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.stbt{position:relative;z-index:2;margin-top:-10px;padding:4px 12px;white-space:nowrap;font:900 12px/1 Cinzel,Georgia,serif;letter-spacing:.05em;color:#fff;text-shadow:0 1px 2px #000;border:2px solid #9fd8ff;border-radius:6px;background:linear-gradient(#3a7aff,#1a2a9a);box-shadow:0 2px 6px #000a,0 0 14px #3a8affaa}
+.stb em.stp{position:absolute;top:4px;right:2px;bottom:auto;left:auto;min-width:0;animation:none;padding:2px 8px;border-radius:10px;font:900 13px/18px system-ui;font-style:normal;color:#3a1d04;background:linear-gradient(#fff2b8,#ffb43a);border:2px solid #fff;box-shadow:0 2px 6px #0009}
+.stb:hover .stbt{box-shadow:0 2px 6px #000a,0 0 20px #5ab4ff}.stb:active{transform:scale(.95)}
+@container (max-height:520px){.qrw{gap:12px}.stb{width:86px;margin-top:0}.stbg{width:92px;height:92px}.stbi{width:72px;height:72px}.stbt{font-size:9px;padding:3px 7px;margin-top:-8px}.stb em.stp{font-size:10px;line-height:13px;padding:1px 5px;right:-2px;top:0}
+ @keyframes stbBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}}
+@media (prefers-reduced-motion:reduce){.stbg,.stbi{animation:none}}
+/* Ranked: the mode box keeps one width, so searching never stretches it */
+.mp{flex:0 0 380px;width:380px}.mp .mds{justify-content:stretch}.mp .md{flex:1;min-width:0}.mp .rkib{width:100%;box-sizing:border-box}.mp .mmw{min-width:0}
+@container (max-height:520px){.mp{flex:0 0 300px;width:300px}.mmi{min-width:0}.mmi b{font-size:18px}}
+/* 2x FIRST TOP-UP: all white */
+.dx2 small{color:#fff}
+/* Special offers on phones: two compact cards side by side */
+@container (max-height:520px){.dofs{grid-template-columns:1fr 1fr;gap:8px}
+ .dof{grid-template-columns:62px 1fr;align-items:center;gap:4px 8px;padding:8px 10px;min-height:0;border-radius:14px}
+ .dofim{width:62px;height:62px;grid-row:span 2}.dofim::before{inset:0}.wk7{font-size:8px;padding:1px 5px;bottom:-2px}
+ .doft{gap:2px;padding-right:34px}.doft>b{font-size:14px}.dtag{font-size:7.5px;padding:1px 6px}.dofl{font-size:10.5px;gap:1px}.dofl b{font-size:11px}.dofl .dmi{width:12px;height:11px}.dofl .pzi{width:13px;height:13px}.dfmini .av{--s:14px!important}
+ .dworth{font-size:9.5px!important}
+ .dof .dsp.big{grid-column:2;width:100%;min-width:0;font-size:13px;padding:6px 8px}
+ .dof .wkbtns{grid-column:2;flex-direction:row;justify-content:flex-start;align-items:center;gap:6px}.dof .wkbtns .dsp.big{width:auto;flex:1}.wknx{font-size:9px}.dsp.wkren{padding:5px 8px;font-size:10px}
+ .dsr.hot,.dsr.pass{top:14px;right:-46px;width:130px;font-size:7.5px}
+ .wkt{grid-column:1/-1;margin-top:2px;padding:5px 6px 4px}.wkth{margin-bottom:0}.wkth b{font-size:9px}.wkth span{font-size:9px}.wkr{padding-top:12px;gap:1px}.wkbar{top:22px;height:5px}.wkc{width:22px;height:22px;font-size:11px;border-width:1.5px}.wkc .dmi{width:12px;height:11px}.wkn b{font-size:8.5px}.wkn small{display:none}.wknow{top:-12px;font-size:7px;padding:0 4px}}
 </style>
 </head><body>
 <div id="gw">
@@ -2648,7 +2664,7 @@ function tbH(){const ri=rkI(PD.pts),tl=HD.reduce((a,h)=>{const s=hs(h);return a+
  const st=Math.max(1,CFG.rankStep),into=(PD.pts|0)%st;
  return `<div class="tb"><button class="pf2" id="pfb" title="Open player info"><span class="pfav">${avH(PROF,'var(--pfs)')}<b class="pflv">Lv ${tl}</b></span>
   <span class="pfi"><b class="pnm">${esc(myName()==='You'?'Guest':myName())}</b><span class="pfs2">${ME?'🏆 '+(PD.w|0)+' W · 💀 '+(PD.l|0)+' L':'Guest · log in to save online'}</span><span class="pfxp" title="Rank points to the next rank"><i style="width:${into/st*100}%"></i><em>${into} / ${st} RP</em></span></span>
-  <span class="pfsep"></span><span class="pfrk">${rkFx(ri,'var(--pfs)')}<b class="rkn" style="--rc:${rkC(ri)}">${esc((RANKS[ri]||{}).n||'')}</b></span></button>${stbH()}
+  <span class="pfsep"></span><span class="pfrk">${rkFx(ri,'var(--pfs)')}<b class="rkn" style="--rc:${rkC(ri)}">${esc((RANKS[ri]||{}).n||'')}</b></span></button>
   <div class="rs"><span id="snh" hidden>🔊 Tap anywhere for music</span>${DQ.tasks.length?(()=>{const n=dqBadge();return `<button class="dqb${n?' hot':''}" id="dqb" title="Daily quests">${CHESTB}<span class="dqtx">Daily Quest</span>${n?`<em>${n}</em>`:''}</button>`})():''}${mlbH()}<button class="dqb ivb" id="ivb" title="Inventory">${BAGI}<span class="dqtx">Inventory</span></button>${resH()}</div></div>`}
 function dispHero(){let h=PD.disp&&HD.find(x=>hk(x)===PD.disp&&owned(x));if(!h){const l=PD.lineups[PD.sel]||{};h=(l.h||[]).map(k=>HD[hidx(k)]).find(Boolean)}return h||HD.find(owned)}
 const MIC={std:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6M16 16l4 4M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6M8 16l-4 4M5 21l-2-2"/></svg>',story:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>',rank:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 20h12"/></svg>'};
@@ -2659,7 +2675,7 @@ function pgBattle(){const l=PD.lineups[PD.sel]||{h:[],r:{},g:[]},dh=dispHero(),d
  const md=[['std','Standard',MIC.std],['story','Story',MIC.story],['rank','Ranked',MIC.rank]],bad=validLU(l);
  return `<div class="bp">${APPR.bg?`<img class="bbg" src="${APPR.bg}" alt=""><div class="bsh"></div>`:''}
  ${dx?`<div class="bartw"><img class="bart" src="${dx.img}" alt="" referrerpolicy="no-referrer" decoding="sync" style="${mascSt(dx)}"></div><button class="rcy" id="rcy" title="Change display hero" aria-label="Change display hero">${RCY}</button>`:''}
- <div class="qs qbd"><div class="qsi${qAct().length?' on':''}" aria-hidden="true">${QSCROLL}${qAct().length?`<em>${qAct().length}</em>`:''}</div><div class="qbx"><div class="qhd"><h3>Quests</h3><small>${qAct().length?'Tap a quest for details':''}</small></div>${qAct().length?qAct().map(qH).join(''):QUESTS.length?'<p class="qdn">✓ All quests complete! New ones are on the way.</p>':'<p class="qemp">No quests right now. Check back soon!</p>'}</div></div>
+ <div class="qrw"><div class="qs qbd"><div class="qsi${qAct().length?' on':''}" aria-hidden="true">${QSCROLL}${qAct().length?`<em>${qAct().length}</em>`:''}</div><div class="qbx"><div class="qhd"><h3>Quests</h3><small>${qAct().length?'Tap a quest for details':''}</small></div>${qAct().length?qAct().map(qH).join(''):QUESTS.length?'<p class="qdn">✓ All quests complete! New ones are on the way.</p>':'<p class="qemp">No quests right now. Check back soon!</p>'}</div></div>${stbH()}</div>
  <div class="bb"><div class="lu pnl"><div class="lt">${tabs}</div><div class="lg">${deckHTML(l,false)}</div></div>
  <div class="mp">${PD.mode==='rank'?`<button class="rkib" id="rkinfo">${rkFx(rkI(PD.pts),24)}<span>See Rank Levels</span><i>›</i></button>`:''}<div class="mds${MM.on?' lk':''}">${md.map(([k,n,ic])=>`<button class="md${PD.mode===k?' on':''}" data-m="${k}"><i>${ic}</i><span>${n}</span>${k==='story'?'<em class="msoon">Soon</em>':''}</button>`).join('')}</div>${MM.on?mmHTML():'<button class="play" id="play">Play</button>'}</div></div></div>`}
 async function pgLB(){const lb=await ensureLB(),ar=Object.entries(lb).map(([k,v])=>({k,...v})).sort((a,b)=>(b.pts-a.pts)||(b.w-a.w)),top=ar.slice(0,50),
@@ -3537,8 +3553,8 @@ function crispAll(){document.querySelectorAll('img[data-crisp]:not([data-cr])').
  if(CRISP[u+'|'+px]){im.src=CRISP[u+'|'+px];return}crisp(u,px).then(d=>{if(d&&im.isConnected)im.src=d})})}
 new MutationObserver(()=>{cancelAnimationFrame(crispAll.r);crispAll.r=requestAnimationFrame(crispAll)}).observe($('#gw'),{childList:true,subtree:true});
 const crispImg=(url,css,extra)=>{const d=CRISP[url+'|'+crispPx(css)];return '<img src="'+(d||url)+'" data-src="'+url+'" data-crisp="'+css+'"'+(d?' data-cr="1"':'')+' alt="" referrerpolicy="no-referrer"'+(extra||'')+'>'};
-/* Starter Pack button: sits on its own next to the profile, hidden while the Diamond Shop is open */
-const stbH=()=>ME&&CFG.payApi&&!WAL.starter&&pgNow!=='dshop'?'<button class="stb" id="stb" title="Starter Pack"><span class="stbg"></span>'+crispImg(IMG_STARTER,64)+'<span class="dqtx">Starter Pack</span><em class="stp">₱99</em></button>':'';
+/* Starter Pack button: on the Battle page, to the right of the Quests panel */
+const stbH=()=>ME&&CFG.payApi&&!WAL.starter?'<button class="stb" id="stb" title="Starter Pack"><span class="stbg"></span><span class="stbi">'+crispImg(IMG_STARTER,matchMedia('(max-height:520px)').matches?72:104)+'</span><span class="stbt">Starter Pack</span><em class="stp">₱99</em></button>':'';
 const mlbH=()=>{if(!ME)return '';const n=mailN();return '<button class="dqb mlb'+(n?' hot':'')+'" id="mlb" title="Mail">'+MAILI+'<span class="dqtx">Mail</span>'+(n?'<em>'+(n>99?'99+':n)+'</em>':'')+'</button>'};
 
 /* match clock + turn timer */
