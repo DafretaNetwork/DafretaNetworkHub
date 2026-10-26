@@ -262,6 +262,8 @@ body.sel #hand,body.sel #top,body.sel #lg,body.sel #log,body.sel #en,body.sel #e
 .ehint{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px;color:#e7c99b}
 .rtb{background:#3a2414;color:#e7c99b;border:2px solid #0008;border-radius:6px;padding:4px 10px;font:700 12px system-ui;cursor:pointer}.rtb.on{background:#b8651f;color:#fff}
 .rlf{display:grid;place-items:center;font-size:34px;height:66px;background:#241710}.rtx{display:block;padding:4px 6px;font-size:11px;color:#e7c99b;min-height:34px}
+.ct.rl .rli{position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;border:1.5px solid #9fb3d6;background:#2a3260;color:#fff;font:italic 900 12px Georgia,serif;padding:0;cursor:pointer;z-index:3}
+.ct.rl.lk .ctf{filter:grayscale(1) brightness(.6)}
 .ct.rl span.on{position:absolute;right:3px;bottom:3px;background:#ffd24a;color:#2b1b0c;border-radius:4px;font:700 10px system-ui;padding:1px 5px}
 /* ===== hero details page ===== */
 #hd{position:fixed;inset:0;z-index:15;overflow:auto;background:radial-gradient(120% 90% at 22% 18%,#6a4527 0%,#2a1a0e 55%,#0e0804 100%);color:#f3e3c8}
@@ -498,6 +500,13 @@ body.sel .sdim{opacity:1}
 .card.clSpecialist{--cb:url(https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/cards/specialist.webp)}
 .card.clGeneral{--cb:url(https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/cards/defender.webp)}
 #gw .card.clGeneral::before{filter:grayscale(1) brightness(.92)}
+#gw .card.fGen::before{background-image:url(https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/cards/general.webp);filter:none}
+#gw .card.fOrb::before{background-image:url(https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/cards/orb.webp);filter:none}
+#gw .card.fGen .c{display:none}#gw .card.fGen .cn{left:8%;right:8%;justify-content:center}#gw .card.fOrb .c{color:#fff;text-shadow:0 1px 3px #000}
+.card.off.fGen::before,.card.off.fOrb::before{filter:grayscale(1) brightness(.5)}
+#gw .card .cd .kw{color:#ffd84a;font-weight:800;-webkit-text-stroke:.35cqw #000;paint-order:stroke fill}
+#gw .card.ttx{overflow:visible}#gw .card.ttx::after{content:'';position:absolute;inset:-9%;z-index:-1;border-radius:14%;pointer-events:none;background:radial-gradient(60% 50% at 50% 50%,#3aff7a00 55%,#2bd85acc 72%,#1ec24a00 100%);filter:blur(4px);animation:ttx 1.6s ease-in-out infinite alternate}
+@keyframes ttx{0%{opacity:.6;transform:scale(.98)}100%{opacity:1;transform:scale(1.04)}}
 #gw .card>*{position:absolute;z-index:1;margin:0}
 #gw .card .c{left:1%;top:1.1%;width:13.4%;height:8.9%;display:grid;place-items:center;background:none;border-radius:0;color:#1a0d00;font:900 9.5cqw/1 Georgia,serif;text-shadow:0 1px 0 #ffe9c088}
 #gw .card .c.ex{font-size:5.8cqw;font-style:italic}
@@ -2005,6 +2014,7 @@ function ruSet(){const g=(k,d)=>CFG[k]===undefined||CFG[k]===null||CFG[k]===''||
  SD.weak[2]='deals '+p(RU.weak)+' less damage. Cancels Empower';SD.atk[2]='deals '+p(RU.emp)+' more damage. Cancels Weak';SD.brk[2]='takes '+p(RU.brk)+' more damage. Cancels Bolster';SD.bol[2]='takes '+p(RU.bol)+' less damage. Cancels Break';
  SD.blk[2]='blocks all damage from the next attack (used before shield, stacks up to '+RU.blkMax+'). Burn ignores it';SD.burn[2]='takes '+(RU.burnPer==1?'1 damage per Burn stack':RU.burnPer+' damage per Burn stack')+' every turn ('+RU.burnDur+' turns, a new Burn adds a stack and resets the timer)';
  SD.fat[2]='skill and general cards cost +1 per stack for one turn (up to '+RU.fatMax+')'}
+SD.tur=['🔭','Focus Turret','takes a big hit (a share of its max HP) when the countdown ends. Can be dispelled'];
 const RMK=new Set(['atk','weak','brk','bol','blk','burn','frz','ent','tnt','fat']);
 const IMG={'K': 'https://static.wikia.nocookie.net/myturn/images/f/fd/Squire_Full.png/revision/latest/scale-to-width-down/1000?cb=20191211152034', 'M': 'https://static.wikia.nocookie.net/myturn/images/6/66/Apprentice.png/revision/latest?cb=20191208201141', 'H': 'https://static.wikia.nocookie.net/myturn/images/1/14/Priest.png/revision/latest/scale-to-width-down/1000?cb=20191208201245', 'R': 'https://static.wikia.nocookie.net/myturn/images/e/ea/Markswoman.png/revision/latest?cb=20191210075136', 'V': 'https://static.wikia.nocookie.net/myturn/images/c/cc/Adventurer.png/revision/latest/scale-to-width-down/1000?cb=20191210073300'};
 
@@ -2098,25 +2108,39 @@ const T=[{c:1,d:1.2},{c:2,d:1.6,a:1},{c:2,d:1,x:2},{c:2,d:2},{c:3,d:3}];
 const PX={Cleave:'p','Piercing Arrow':'p','Radiant Beam':'p',Flurry:'p',Meteor:'a'};
 const pool=h=>[...h.A.map((n,i)=>({n,c:T[i].c,d:T[i].d,x:T[i].x,ap:T[i].a?h.ap:0,k:PX[n]})),...h.S];
 const REL=[],GEN=[];
-const RELIC_FX={ex_turn:'Gains {v} ultimate meter at the start of every turn',ex_start:'Starts the battle with {v} ultimate meter',ult_freeze:'When using its ultimate, freezes (stuns) all enemies for {v} turn(s)',ult_heal:'When using its ultimate, heals every ally for {v} HP',ult_shield:'When using its ultimate, gains {v} shield',shield_turn:'Gains {v} shield at the start of every turn',regen_turn:'Heals {v} HP at the start of every turn',hp_bonus:'+{v} max HP',atk_bonus:'+{v} ATK',dmg_pct:'Deals {v}% more damage'};
+const RELIC_FX={ex_turn:'Gains {v} ultimate meter at the start of every turn',ex_start:'Starts the battle with {v} ultimate meter',ult_freeze:'When using its ultimate, freezes (stuns) all enemies for {v} turn(s)',ult_heal:'When using its ultimate, heals every ally for {v} HP',ult_shield:'When using its ultimate, gains {v} shield',shield_turn:'Gains {v} shield at the start of every turn',regen_turn:'Heals {v} HP at the start of every turn',hp_bonus:'+{v} max HP',atk_bonus:'+{v} ATK',dmg_pct:'Deals {v}% more damage',end_shield:'At the end of your turn, gain {v} shield',ex_self:'Using EX now gives {v} energy to this hero',dragon_scale:'When this hero dies, give {v} block to the other allies',power25:'Damage, healing and shield increased by {v}%',sage_cloak:'At the end of your turn, gain {v} block',final_blade:'Attack now turns a random skill in your hand into 3 Final Gift'};
 const relicText=(e,v)=>(RELIC_FX[e]||'').replace('{v}',+v||0);
 const ph=c=>'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 160"><rect width="100" height="160" rx="12" fill="'+c+'" opacity=".25"/><circle cx="50" cy="52" r="22" fill="'+c+'"/><rect x="22" y="82" width="56" height="70" rx="24" fill="'+c+'"/></svg>');
 const rIc=r=>r.icon?'<img src="'+r.icon+'" alt="" style="width:1.3em;height:1.3em;object-fit:contain;vertical-align:middle">':'🔮';
 const bm=S=>S.s.bx4?4:S.s.bx3?3:S.s.bx2?2:1,tk=S=>S.s.dx4?4:S.s.dx3?3:S.s.dx2?2:1,
- pw=S=>(S.s.atk?1+RU.emp:1)*(S.s.weak?1-RU.weak:1)*bm(S)*(relOn(S)&&S.r.e=='dmg_pct'?1+(+S.r.v||0)/100:1),
+ pw=S=>(S.s.atk?1+RU.emp:1)*(S.s.weak?1-RU.weak:1)*bm(S)*(relOn(S)&&(S.r.e=='dmg_pct'||S.r.e=='power25')?1+(+S.r.v||0)/100:1),
+ rp=S=>S&&relOn(S)&&S.r.e=='power25'?1+(+S.r.v||0)/100:1,relE=S=>S&&relOn(S)?S.r.e||'':'',
  tkx=x=>tk(x)*(x.s.mark?1.5:1)*(x.s.brk?1+RU.brk:1)*(x.s.bol?1-RU.bol:1),relOn=S=>!!(S&&S.r&&!S.s.ent);
-const kc=s=>s.d?'atk':s.h||s.sh?'sup':'utl',art=s=>s.ic||(s.ba?'⚔️':s.rel?'💍':s.chaos?'🎲':s.srch?'🔍':s.dsp?'✨':s.rev?'👼':s.bomb?'💣':s.d?(s.ap?SD[s.ap[0]][0]:'⚔️'):s.ap?SD[s.ap[0]][0]:s.h?'💚':s.sh?'🛡️':s.cj?'📜':s.dr?'🎴':s.en?'💎':s.me?SD[s.me[0]][0]:'✨');
+const kc=s=>s.d?'atk':s.h||s.sh?'sup':'utl',art=s=>s.ic||(s.fg?'🎁':s.jk?'🃏':s.fta?'😩':s.mmo?'🦋':s.jst?'🤡':s.prc?'📦':s.rb?'👼':s.rrt?'🔀':s.dsa?'🚫':s.tnd?'🩸':s.dpm?'☠️':s.exa?'💢':s.sst?'📜':s.tur?'🔭':s.shp?'🛡️':s.drn?'🌀':s.elx?'🧪':s.ffz?'🧊':s.ttb?'⏳':s.rfw?'⚔️':s.ba?'⚔️':s.rel?'💍':s.chaos?'🎲':s.srch?'🔍':s.dsp?'✨':s.rev?'👼':s.bomb?'💣':s.d?(s.ap?SD[s.ap[0]][0]:'⚔️'):s.ap?SD[s.ap[0]][0]:s.h?'💚':s.sh?'🛡️':s.cj?'📜':s.dr?'🎴':s.en?'💎':s.me?SD[s.me[0]][0]:'✨');
 const bf=(t,b)=>b?'<b class="bf">'+t+'</b>':t;
 const atkTxt=(s,a,b)=>{const n=v=>bf(Math.round(a*v),b);return 'Deal '+(s.d2?n(s.d)+' or '+n(s.d2):n(s.d))+' dmg'};
 const pctTxt=(s)=>'Deal '+Math.round(s.d*100)+'%'+(s.d2?' or '+Math.round(s.d2*100)+'%':'')+' ATK';
 const amt=(o,m,f)=>o?Math.round(o.atk*m)+(f||0):Math.round(m*100)+'% ATK';
 const CLK='<svg class="clk" viewBox="0 0 16 16" aria-label="turns"><circle cx="8" cy="8" r="6.6" fill="#1b2a44" stroke="#e8f1ff" stroke-width="1.6"/><path d="M8 4.2V8l2.6 1.6" fill="none" stroke="#ffd24a" stroke-width="1.8" stroke-linecap="round"/></svg>',trn=n=>'<span class="trn">'+n+CLK+'</span>';
 const apTxt=ap=>{const v=SD[ap[0]]||['✨',ap[0]];return v[0]+' '+v[1]+(/^(burn|blk|fat)$/.test(ap[0])?(ap[1]>1?' ×'+ap[1]:''):' '+trn(ap[1]))};
-const dparts=(s,a,b,o)=>[s.ba&&!s.d&&'',s.rel&&'Equip on '+(o&&o.h?o.h.bn||o.h.n:'its hero')+': '+s.rel.t,s.chaos&&'Look at 3 random general cards (maybe another Chaotic Cube) and add one to your hand',s.srch&&'Look at the top '+s.srch+' cards. Add one to your hand',s.dsp&&'Dispel debuffs from an ally, or buffs from an enemy',s.rev&&'Resurrect an ally',
+const KW=t=>'<span class="kw">'+t+'</span>',PCT=x=>Math.round(x*100)+'%';
+const dpartsNew=s=>s.fg?['Give an ally +'+s.fg+' energy']:s.jk?['A useless card. Play it to get rid of it']:s.fta?['Give '+s.fta+' '+KW('Fatigue')+' to all enemies']:
+ s.mmo?['Raise Max Mana by '+s.mmo,'At the end of this turn, keep and double your remaining mana for next turn']:s.jst?['Add '+s.jst+" Joker Cards to the opponent's hand"]:
+ s.prc?['Shuffle '+s.prc+' random general cards into your deck']:s.rb?['Resurrect an ally with '+PCT(s.rbh)+' HP and give it '+KW('shield')+' equal to '+PCT(s.rb)+' of its max HP']:
+ s.rrt?['Discard your entire hand. Draw that many cards +'+s.rrt]:s.dsa?['Force an enemy to discard its equipped relic back to its hand']:
+ s.tnd?['Sacrifice an ally. '+KW('Bolster')+' and '+KW('Stun')+' the others and give them '+s.tnd+' energy']:
+ s.dpm?['Deal damage equal to '+(s._dpm0!=null&&s.dpm>s._dpm0+1e-4?'<b class="bf">'+PCT(s.dpm)+'</b>':PCT(s.dpm))+' of their max HP to all enemies',KW('Hold')+': +'+PCT(s.dpmg)+' at the end of each of your turns']:
+ s.exa?['Give an ally '+s.exa+' energy']:s.sst?[KW('Empower')+' an ally and give it '+s.sst+' '+KW('Block')+' (2 turns)']:
+ s.tur?[KW('Delay')+' '+s.turd+': deal damage equal to '+PCT(s.tur)+" of the target's max HP",'Can be dispelled']:s.shp?['Give all allies '+KW('shield')+' equal to '+PCT(s.shp)+' of their max HP']:
+ s.drn?['Force an enemy hero to lose all energy']:s.elx?[KW('Bolster')+' an ally and restore '+PCT(s.elx)+' of its max HP']:
+ s.ffz?['Deal '+KW('Frost')+" damage equal to the target's "+KW('Burn')+'. Remove the Burn and '+KW('Freeze')+' it']:
+ s.ttb?[KW('Hold')+': at the end of your turn, become the last skill you played this turn at 0 cost','Shuffle a Time Turbulence into your deck after playing it']:
+ s.rfw?['Shuffle '+s.rfw+' Attacks of the chosen ally into your deck']:null;
+const dparts=(s,a,b,o)=>dpartsNew(s)||[s.ba&&!s.d&&'',s.rel&&'Equip on '+(o&&o.h?o.h.bn||o.h.n:'its hero')+': '+s.rel.t,s.chaos&&'Look at 3 random general cards (maybe another Chaotic Cube) and add one to your hand',s.srch&&'Look at the top '+s.srch+' cards. Add one to your hand',s.dsp&&'Dispel debuffs from an ally, or buffs from an enemy',s.rev&&'Resurrect an ally',
  s.bomb&&'Bomb: explodes after '+s.bomb.t+' turn'+(s.bomb.t>1?'s':'')+', '+s.bomb.d+' dmg to all foes'+(s.bomb.ap?' + '+SD[s.bomb.ap[0]][0]+' '+SD[s.bomb.ap[0]][1]+' '+s.bomb.ap[1]:''),
  s.d&&((a?atkTxt(s,a,b):pctTxt(s))+(s.x>1?' x'+s.x:'')+(s.ba?' to the front enemy':'')),s.k&&(s.k=='a'?'Hits all foes':'Penetrate'),
  (s.sh||s.shm)&&'+'+bf(s.shm?amt(o,s.shm,s.shb):s.sh,b)+' shield '+trn(s.shd||2)+(s.tm?' (whole team)':''),(s.h||s.hm)&&(s.rev?'restore ':'Heal ')+bf(s.hm?amt(o,s.hm,s.hb):s.h,b)+(s.tm?' (whole team)':''),s.dr&&'Draw '+s.dr,s.en&&'+'+s.en+' energy',
- s.me&&(s.tm?'Team':s.self?'Self':'Ally')+': '+apTxt(s.me),s.ap&&apTxt(s.ap),s.cj&&cjTxt(s.cj),s.exg&&'Gain '+s.exg+' energy',s.grow&&'+'+Math.round(s.grow*100)+'% dmg at the end of your turn',s.rch&&'Recharge',s.cht&&'Chant'].filter(Boolean),desc=(s,a,b,o)=>dparts(s,a,b,o).join('. ');
+ s.me&&(s.tm?'Team':s.self?'Self':'Ally')+': '+apTxt(s.me),s.ap&&apTxt(s.ap),s.cj&&cjTxt(s.cj),s.exg&&'Gain '+s.exg+' energy',s.grow&&'+'+Math.round(s.grow*100)+'% dmg at the end of your turn',s.rch&&KW('Recharge'),s.cht&&KW('Chant'),s.ttx&&KW('Time Turbulence')+': a new one is shuffled into your deck after this'].filter(Boolean),desc=(s,a,b,o)=>dparts(s,a,b,o).join('. ');
 
 /* card frames: one base image per class (General cards use a grey version) */
 const CARDB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/refs/heads/main/assets/image/cards/';
@@ -2131,10 +2155,11 @@ const CICE=(()=>{const arm='<path d="M0 0V-46M0-14l-9-9M0-14l9-9M0-28l-10-10M0-2
   f('sf st',18,22,34,10)+f('sf st',78,70,40,-15)+f('sf st',30,82,22,25)+f('sf st',84,18,20,0)+f('sf st',56,46,16,30)+
   f('sf an a1',62,24,42,0)+f('sf an a2',24,56,46,20)+f('sf an a3',72,88,38,-10)+'<i class="csh"></i></i>'})();
 const cardH=(s,cls,at,o)=>{const b=o&&bufS(s,o),cl=(o&&o.h&&o.h.cl)||'General',d=desc(s,o&&(o.atk*(o.s?pw(o):1)),b,o&&o.h&&o.h.cl!=='General'?o:null),pl=d.replace(/<[^>]*>/g,'').length,nm=String(s.n||''),cs=String(s.c);
- return '<div class="card cl'+cl+cls+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+(s._cb!=null&&+s.c>s._cb?' cup':s._cb!=null&&+s.c<s._cb?' cdn':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw"><span class="cdt">'+d+'</span></small>'+(/ fzc/.test(cls)?CICE:'')+'</div>'};
+ const fk=s.jk||(s.rel&&!(o&&o.h&&o.h.cl&&o.h.cl!=='General'))?' fOrb':(cl==='General'||s.gen)?' fGen':'';
+ return '<div class="card cl'+cl+cls+fk+(s.ttx?' ttx':'')+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+(s._cb!=null&&+s.c>s._cb?' cup':s._cb!=null&&+s.c<s._cb?' cdn':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw"><span class="cdt">'+d+'</span></small>'+(/ fzc/.test(cls)?CICE:'')+'</div>'};
 let P,E,turn,over=1,uid=0,M,tt,busy,L=[],fx=[],hi=[0,1,2,3],pend=null,RL={},GS=[],pcur=null,ppin=0;
 const log=m=>{L.push(m);L=L.slice(-3)},xr=S=>S.h.X&&S.ex>=100&&S.hp>0&&!S.s.stun,ea=S=>Math.round(S.atk*pw(S)),alive=T=>T.u.filter(x=>x.hp>0),
- need=s=>s.dsp?'x':s.rev?'ad':s.ba||s.rel||s.srch||s.chaos||s.bomb||s.tm||s.self?0:s.d?(s.k=='a'?0:'e'):s.ap?'e':s.h||s.sh||s.hm||s.shm||s.me?'a':0,
+ need=s=>s.tg?s.tg:s.dsp?'x':s.rev?'ad':s.ba||s.rel||s.srch||s.chaos||s.bomb||s.tm||s.self?0:s.d?(s.k=='a'?0:'e'):s.ap?'e':s.h||s.sh||s.hm||s.shm||s.me?'a':0,
  tauntOf=T=>alive(T).find(x=>x.s.tnt)||null,tgtOf=T=>tauntOf(T)||alive(T)[0]||null,teamOf=x=>P&&P.u.includes(x)?P:E,
  canHit=(x,sp)=>{const F=teamOf(x),f=tauntOf(F);return x.hp>0&&(f?x===f:(x===alive(F)[0]||!!sp.any))};
 const shuf=a=>{for(let i=a.length;i>1;){const j=Math.floor(rn()*i--);[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -2144,13 +2169,16 @@ function draw(T,n){let k=0;while(n-->0){if(!T.deck.length){T.deck=shuf(T.disc.fi
 /* basic Attack card: one per hero, always hits the front enemy (or the taunting one) */
 const atkS=()=>({n:'Attack',c:RU.atkCost,d:RU.atkPct,ba:1});
 /* a relic chosen in the line-up is shuffled into the deck as a card; playing it equips the relic on its hero */
-const relS=r=>{const o={n:r.n,c:Math.max(0,r.c==null?1:+r.c),rel:r};if(r.icon)o.art=r.icon;return o};
+const relS=r=>{const o={n:r.n,c:Math.max(0,r.c==null?1:+r.c),rel:r};if(r.art)o.art=r.art;else if(r.icon)o.art=r.icon;return o};
 function heroCards(T,o,into){pool(o.h).forEach(s=>into.push({u:++uid,s,o}));into.push({u:++uid,s:atkS(),o})}
 function mk(hs,rl,gen){rl=rl||[];const T={u:hs.map((h,i)=>({h,hp:h.hp,mhp:h.hp,atk:h.atk,sh:0,ex:0,s:{},r:null,stt:{d:0,h:0,s:0}})),deck:[],hand:[],disc:[],en:0,rd:0,bombs:[],gl:[],fat:0,pl:0};
- T.u.forEach((o,i)=>{heroCards(T,o,T.deck);if(rl[i])T.deck.push({u:++uid,s:relS(rl[i]),o})});(gen||[]).forEach(g=>{const go={h:{id:'G',cl:'General',n:'General',col:'#c9ced8'},hp:1,mhp:1,atk:1,sh:0,ex:0,s:{},stt:{d:0,h:0,s:0},g};T.gl.push(go);T.deck.push({u:++uid,s:g.s,o:go})});shuf(T.deck);draw(T,4);return T}
-const clean=T=>['deck','hand','disc'].forEach(k=>T[k]=T[k].filter(c=>c.o.hp>0));
+ T.u.forEach((o,i)=>{heroCards(T,o,T.deck);if(rl[i]){o.rid=rl[i].id;T.deck.push({u:++uid,s:relS(rl[i]),o})}});(gen||[]).forEach(g=>{const go={h:{id:'G',cl:'General',n:'General',col:'#c9ced8'},hp:1,mhp:1,atk:1,sh:0,ex:0,s:{},stt:{d:0,h:0,s:0},g};T.gl.push(go);T.deck.push({u:++uid,s:g.s,o:go})});shuf(T.deck);draw(T,4);return T}
+const clean=T=>{T.deck=T.deck.filter(c=>c.o.hp>0);T.hand=T.hand.map(c=>c.o.hp>0?c:{u:++uid,s:finalGiftS(),o:genOwner(T),tmp:1});T.disc=T.disc.filter(c=>c.o.hp>0)};
+const finalGiftS=()=>({n:'Final Gift',c:0,gen:1,fg:10,tg:'a',tok:1}),jokerS=()=>({n:'Joker Card',c:1,jk:1,tok:1});
 function hurt(O,d,pierce,cr,dot){if(!dot&&O.s.blk>0){if(--O.s.blk<=0)delete O.s.blk;fl(O,'Blocked!','#9fd8ff');return 0}
- const ab=pierce?0:Math.min(O.sh,d);O.sh-=ab;O.hp=Math.max(0,O.hp-(d-ab));O.ex=Math.min(100,O.ex+Math.min(25,d*2));fl(O,'-'+d,'#ff5a5a',cr);if(inB&&d>0)rigHit(O);if(O.hp<=0){O.s={};O.sh=0;O.bst=0}return d}
+ const was=O.hp>0,ab=pierce?0:Math.min(O.sh,d);O.sh-=ab;O.hp=Math.max(0,O.hp-(d-ab));if(!dot)O.ex=Math.min(100,O.ex+Math.min(25,d*2));fl(O,'-'+d,'#ff5a5a',cr);if(inB&&d>0)rigHit(O);if(O.hp<=0){if(was)onDeath(O);O.s={};O.sh=0;O.bst=0}return d}
+/* a hero just fell: Dragonic Scale gives block to the allies left standing */
+function onDeath(O){if(relE(O)=='dragon_scale'){const T=teamOf(O),v=Math.max(1,+O.r.v||0);alive(T).forEach(u=>{if(u!==O)applyS(u,'blk',v)});fl(O,'🐉 Dragonic Scale','#9fd8ff')}}
 /* status rules: pairs cancel, Burn/Block/Fatigue stack, a second Entangle knocks the relic off */
 function applyS(x,k,n){if(!x||x.hp<=0||!k)return;n=Math.max(1,+n||1);if(/^(frz|burn|stun)$/.test(k)){if(!x.s[k])(x.fxT||(x.fxT={}))[k]=performance.now();if(inB)SND[k=='frz'?'frost':k=='burn'?'burn':'stun']()}const T=teamOf(x),pr={atk:'weak',weak:'atk',brk:'bol',bol:'brk'}[k];
  if(pr&&x.s[pr]){delete x.s[pr];fl(x,'Nullified','#e8e2d0');return}
@@ -2162,10 +2190,37 @@ function applyS(x,k,n){if(!x||x.hp<=0||!k)return;n=Math.max(1,+n||1);if(/^(frz|b
 function equip(S,r){if(!r||S.hp<=0)return;S.r=r;const v=+r.v||0;if(r.e=='hp_bonus'){S.mhp+=v;S.hp+=v}if(r.e=='atk_bonus')S.atk+=v;if(r.e=='ex_start')S.ex=Math.min(100,S.ex+v);fl(S,'💍 '+r.n,'#ffd24a')}
 function unequip(T,S){const r=S.r;if(!r)return;const v=+r.v||0;if(r.e=='hp_bonus'){S.mhp=Math.max(1,S.mhp-v);S.hp=Math.max(1,Math.min(S.hp,S.mhp))}if(r.e=='atk_bonus')S.atk=Math.max(1,S.atk-v);S.r=null;
  T.deck.splice(Math.floor(rn()*(T.deck.length+1)),0,{u:++uid,s:relS(r),o:S});fl(S,'Relic lost!','#ff9a7a');log((T===P?'Your ':'Foe ')+S.h.n+' lost '+r.n+'. It went back into the deck.')}
-function dispel(T,x){if(!x)return;const mine=teamOf(x)===T,bad=/^(weak|brk|burn|poi|stun|mark|frz|ent|dx\d)$/,good=/^(atk|reg|bol|blk|tnt|bx\d)$/;let n=0;
+function dispel(T,x){if(!x)return;const mine=teamOf(x)===T,bad=/^(weak|brk|burn|poi|stun|mark|frz|ent|tur|dx\d)$/,good=/^(atk|reg|bol|blk|tnt|bx\d)$/;let n=0;
  Object.keys(x.s).forEach(k=>{if((mine?bad:good).test(k)){delete x.s[k];n++}});if(mine){if(!x.s.burn)x.bst=0;if(T.fat){T.fat=0;n++}}fl(x,n?'Dispelled':'Nothing to dispel','#e8f4ff');if(n)fx.push({id:uKey(x),cf:'heal'})}
 function revive(T,x){x.dt=0;x.s={};x.sh=0;x.bst=0;x.ex=0;x.hp=0;heroCards(T,x,T.disc);fl(x,'Revived!','#ffe9a8');log((T===P?'Your ':'Foe ')+x.h.n+' is revived!')}
 const genOwner=T=>{let g=T.gl.find(q=>q.gx);if(!g){g={h:{id:'G',cl:'General',n:'General',col:'#c9ced8'},hp:1,mhp:1,atk:1,sh:0,ex:0,s:{},stt:{d:0,h:0,s:0},gx:1};T.gl.push(g)}return g};
+/* the newer general cards + token cards (Final Gift / Joker); true = handled here */
+function useNew(T,S,sp,t){const F=T===P?E:P,ally=t&&T.u.includes(t)&&t.hp>0?t:S&&T.u.includes(S)&&S.hp>0?S:alive(T)[0]||null,foe=t&&F.u.includes(t)&&t.hp>0?t:tgtOf(F),
+ cf=(u,k,tt)=>{const id=uKey(u);if(id)fx.push({id,cf:k,t:tt})},shd=(u,v,dur)=>{if(v>0){if(!(u.sh>0))(u.fxT||(u.fxT={})).shd=performance.now();u.sh+=v;u.s.shd=Math.max(u.s.shd||0,dur||2);S.stt.s+=v;fl(u,'+'+v,'#fff')}};
+ if(sp.jk)return 1;
+ if(sp.fg){if(ally){ally.ex=Math.min(100,ally.ex+sp.fg);fl(ally,'+'+sp.fg+' ⚡','#ffd24a');cf(ally,'atk',ally!==S)}return 1}
+ if(sp.fta){F.fat=Math.min(RU.fatMax,(F.fat||0)+sp.fta);alive(F).forEach(x=>fl(x,'Fatigue +'+sp.fta,'#d9b3ff'));return 1}
+ if(sp.mmo){T.mxb=(T.mxb||0)+sp.mmo;T.keep=1;SND.mana();return 1}
+ if(sp.jst){const go=genOwner(F);for(let i=0;i<sp.jst;i++)F.hand.push({u:++uid,s:jokerS(),o:go,tmp:1});log('🃏 '+sp.jst+' Joker Cards were slipped into '+(T===P?"the foe's":'your')+' hand!');return 1}
+ if(sp.prc){const gp=GEN.filter(g=>!g.locked),go=genOwner(T);if(gp.length)for(let i=0;i<sp.prc;i++){const g=gp[Math.floor(rn()*gp.length)];T.deck.splice(Math.floor(rn()*(T.deck.length+1)),0,{u:++uid,s:g.s,o:go})}return 1}
+ if(sp.rb){if(t&&T.u.includes(t)&&t.hp<=0){revive(T,t);t.hp=Math.max(1,Math.round(t.mhp*sp.rbh));const v=Math.round(t.mhp*sp.rb*rp(S));if(v>0){(t.fxT||(t.fxT={})).shd=performance.now();t.sh+=v;t.s.shd=Math.max(t.s.shd||0,2);fl(t,'+'+v,'#fff')}cf(t,'heal',t!==S);SND.heal()}return 1}
+ if(sp.rrt){const n=T.hand.length;T.hand.forEach(c=>{if(!c.tmp)T.disc.push(c)});T.hand=[];draw(T,n+sp.rrt);return 1}
+ if(sp.dsa){if(foe&&foe.r)unequipHand(F,foe);else if(foe)fl(foe,'No relic','#e8e2d0');return 1}
+ if(sp.tnd){if(ally){ally.ex=0;ally.sh=0;ally.hp=0;onDeath(ally);ally.s={};ally.bst=0;fl(ally,'Sacrificed','#c04aff');alive(T).forEach(u=>{applyS(u,'bol',2);applyS(u,'stun',1);u.ex=Math.min(100,u.ex+sp.tnd);fl(u,'+'+sp.tnd+' ⚡','#ffd24a')})}return 1}
+ if(sp.dpm){alive(F).forEach(x=>{const dm=Math.max(1,Math.round(x.mhp*sp.dpm*tkx(x))),uk=uKey(x);if(uk)fx.push({id:uk,sl:'mg',big:false});S.stt.d+=Math.min(dm,x.hp+x.sh);hurt(x,dm)});SND.boom();return 1}
+ if(sp.exa){if(ally){ally.ex=Math.min(100,ally.ex+sp.exa);fl(ally,'+'+sp.exa+' ⚡','#ffd24a');cf(ally,'atk',ally!==S)}return 1}
+ if(sp.sst){if(ally){applyS(ally,'atk',2);applyS(ally,'blk',sp.sst);cf(ally,'atk',ally!==S)}return 1}
+ if(sp.tur){if(foe){foe.s.tur=sp.turd;T.bombs.push({n:sp.n,t:sp.turd,x:foe,p:sp.tur,o:S});fl(foe,'🔭 Targeted','#ff9a7a')}return 1}
+ if(sp.shp){alive(T).forEach(u=>{shd(u,Math.round(u.mhp*sp.shp*rp(S)),sp.shd||2);cf(u,'shd',u!==S)});SND.shield();return 1}
+ if(sp.drn){if(foe){foe.ex=0;fl(foe,'Drained','#9fb3d6')}return 1}
+ if(sp.elx){if(ally){applyS(ally,'bol',2);const v=Math.min(Math.round(ally.mhp*sp.elx*rp(S)),ally.mhp-ally.hp);ally.hp+=v;S.stt.h+=v;fl(ally,'+'+v,'#5be39b');cf(ally,'heal',ally!==S);SND.heal()}return 1}
+ if(sp.ffz){if(foe){if(foe.s.burn){const per=Math.round((foe.bst||1)*RU.burnPer),dm=Math.max(1,per*foe.s.burn);delete foe.s.burn;foe.bst=0;S.stt.d+=Math.min(dm,foe.hp+foe.sh);hurt(foe,dm)}if(foe.hp>0)applyS(foe,'frz',2)}return 1}
+ if(sp.ttb)return 1;
+ if(sp.rfw){if(ally){for(let i=0;i<sp.rfw;i++)T.deck.splice(Math.floor(rn()*(T.deck.length+1)),0,{u:++uid,s:atkS(),o:ally});fl(ally,'⚔️ ×'+sp.rfw,'#ffd24a')}return 1}
+ return 0}
+/* Disarmed: the relic goes back to its owner's HAND */
+function unequipHand(T,S){const r=S.r;if(!r)return;const v=+r.v||0;if(r.e=='hp_bonus'){S.mhp=Math.max(1,S.mhp-v);S.hp=Math.max(1,Math.min(S.hp,S.mhp))}if(r.e=='atk_bonus')S.atk=Math.max(1,S.atk-v);S.r=null;
+ T.hand.push({u:++uid,s:relS(r),o:S});fl(S,'Disarmed!','#ff9a7a');log((T===P?'Your ':'Foe ')+S.h.n+' was disarmed: '+r.n+' went back to the hand.')}
 /* Chaotic Cube: 3 random general cards (sometimes another Chaotic Cube), keep one in your hand */
 function chaos(T,S,sp){const gp=GEN.filter(g=>!g.locked||(!PV&&T===P&&gAvail(g))),opts=[];
  for(let i=0;i<3;i++){if(!gp.length||rn()<1/(gp.length+1)){opts.push({u:++uid,s:sp,o:S,tmp:1})}else{const g=gp[rn()*gp.length|0];opts.push({u:++uid,s:g.s,o:T.gl.find(q=>q.g&&q.g.id===g.id)||genOwner(T),tmp:1})}}
@@ -2177,7 +2232,7 @@ function search(T,n){if(T.deck.length<n){T.deck=shuf(T.deck.concat(T.disc.filter
  choose(T,top,'Tactical Search','Choose one card to add to your hand. The others are shuffled back into your deck.',c=>{T.hand.push(c);T.deck=shuf(T.deck.concat(top.filter(x=>x!==c)));SND.draw(1,T===P)})}
 function srPick(i){if(!SRCH)return;const c=SRCH.top[i]||SRCH.top[0];SRCH.done(c);SRCH=null;$('#srch').hidden=true;busy=turn=='p'?0:1;ui();chk()}
 const shAmt=(S,sp)=>sp.shm?Math.max(1,Math.round(S.atk*sp.shm)+(sp.shb||0)):sp.sh||0,hlAmt=(S,sp)=>sp.hm?Math.max(1,Math.round(S.atk*sp.hm)+(sp.hb||0)):sp.h||0;
-function use(T,S,sp,t){let a=sp.self?S:t;const F=T===P?E:P;
+function use(T,S,sp,t){if(useNew(T,S,sp,t))return;let a=sp.self?S:t;const F=T===P?E:P;
  if(sp.bomb){T.bombs.push({n:sp.n,t:sp.bomb.t,d:sp.bomb.d,ap:sp.bomb.ap,o:S});return}
  if(sp.rel){equip(S,sp.rel);fx.push({id:uKey(S),cf:'atk'});return}
  if(sp.chaos){chaos(T,S,sp);return}
@@ -2186,39 +2241,61 @@ function use(T,S,sp,t){let a=sp.self?S:t;const F=T===P?E:P;
  if((sp.d||sp.ap)&&!(sp.dsp&&teamOf(t)===T)){const fu=alive(F);if(!t||t.hp<=0||!fu.includes(t)||(sp.ba||!sp.any)&&tauntOf(F)&&t!==tauntOf(F))t=sp.any&&t&&fu.includes(t)&&!tauntOf(F)?t:tgtOf(F);
   const ts=sp.k=='a'?fu:sp.k=='p'?[t,fu[fu.indexOf(t)+1]].filter(Boolean):[t].filter(Boolean),dd=sp.d2&&rn()<.5?sp.d2:sp.d,frT=sp.ap&&sp.ap[0]=='frz';
   ts.forEach((x,j)=>{let got=0;if(sp.d){const uk=uKey(x);if(uk)fx.push({id:uk,sl:slK(S),big:sp===S.h.X});const m=(j&&sp.k=='p'?.5:1)*(frT&&x.s.frz?2:1);
-    for(let i=0;i<(sp.x||1)&&x.hp>0;i++){const cr=rn()<.1,dm=Math.max(1,Math.round(S.atk*dd*m*pw(S)*tkx(x)*(cr?1.5:1)));const rl=Math.min(dm,x.hp+x.sh),g=hurt(x,dm,0,cr);if(g){got+=g;S.stt.d+=rl;SND.hit(dm,cr,i+j)}}}
+    for(let i=0;i<(sp.x||1)&&x.hp>0;i++){const cr=0,dm=Math.max(1,Math.round(S.atk*dd*m*pw(S)*tkx(x)));const rl=Math.min(dm,x.hp+x.sh),g=hurt(x,dm,0,cr);if(g){got+=g;S.stt.d+=rl;SND.hit(dm,cr,i+j)}}}
    if(sp.ap&&x.hp>0&&(got||!sp.d))applyS(x,sp.ap[0],sp.ap[1])});a=S}
- const SH=shAmt(S,sp),HL=hlAmt(S,sp),tl=sp.tm?alive(T):a?[a]:[],ab=sp.me&&/^(atk|bx\d)$/.test(sp.me[0]),cf=(u,k,t)=>{const id=uKey(u);if(id)fx.push({id,cf:k,t})};
+ const rq=rp(S),SH=rq!==1&&shAmt(S,sp)?Math.round(shAmt(S,sp)*rq):shAmt(S,sp),HL=rq!==1&&hlAmt(S,sp)?Math.round(hlAmt(S,sp)*rq):hlAmt(S,sp),tl=sp.tm?alive(T):a?[a]:[],ab=sp.me&&/^(atk|bx\d)$/.test(sp.me[0]),cf=(u,k,t)=>{const id=uKey(u);if(id)fx.push({id,cf:k,t})};
  if(SH){cf(S,'shd');tl.forEach(u=>u!==S&&cf(u,'shd',1))}if(HL){cf(S,'heal');tl.forEach(u=>u!==S&&cf(u,'heal',1))}if(ab){cf(S,'atk');tl.forEach(u=>u!==S&&cf(u,'atk',1))}
  tl.forEach(u=>{if(u.hp<=0&&!(sp.rev&&HL))return;if(SH){if(!(u.sh>0))(u.fxT||(u.fxT={})).shd=performance.now();u.sh+=SH;u.s.shd=Math.max(u.s.shd||0,sp.shd||2);S.stt.s+=SH;fl(u,'+'+SH,'#fff')}if(HL){const n=Math.min(HL,u.mhp-u.hp);u.hp+=n;if(u.hp<=0)u.hp=1;S.stt.h+=n;fl(u,'+'+n,'#5be39b')}if(sp.me)applyS(u,sp.me[0],sp.me[1])});
  if(SH)SND.shield();if(HL)SND.heal();if(sp.en)SND.mana();
  if(sp.cj)conjure(T,S,sp.cj);if(sp.dr)draw(T,sp.dr);if(sp.en)T.en+=sp.en;if(sp.exg)S.ex=Math.min(100,S.ex+sp.exg);if(sp.srch)search(T,sp.srch)}
 /* card cost now: Fatigue (+1 per stack, not Attack/relic cards), Recharge (-1 per card already played this turn), Chant (-1 per turn held) */
 const costOf=(T,c)=>{let v=+c.s.c||0;if(!c.s.ba&&!c.s.rel)v+=T.fat||0;if(c.s.rch)v-=T.pl||0;if(c.s.cht)v-=c.ch||0;return Math.max(0,v)};
-const spOf=c=>c.gm&&c.s.d?{...c.s,d:c.s.d*(1+c.gm),d2:c.s.d2?c.s.d2*(1+c.gm):0}:c.s;
+const spOf=c=>c.gm&&c.s.dpm?{...c.s,dpm:c.s.dpm+c.gm}:c.gm&&c.s.d?{...c.s,d:c.s.d*(1+c.gm),d2:c.s.d2?c.s.d2*(1+c.gm):0}:c.s;
 const ok=(T,c)=>T.en>=costOf(T,c)&&c.o.hp>0&&!c.o.s.stun&&!(c.s.ba&&c.o.s.frz)&&!(c.s.rel&&c.o.r);
-function play(T,c,t,me){rigPlay(T,c.o,c.s,t);if(T===P)MS.cards++;if(c.s.d&&uKey(c.o)){setPose(c.o,'atk',720);SND.whoosh()}const sp=spOf(c),cc=costOf(T,c);T.en-=cc;T.pl=(T.pl||0)+1;c.ch=0;c.gm=0;T.hand=T.hand.filter(x=>x!==c);if(!c.tmp&&!c.s.rel)T.disc.push(c);hist.push({s:sp,o:c.o,mine:T===P});if(hist.length>14)hist.shift();c.o.ex=Math.min(100,c.o.ex+(+c.s.c||0)*6+4);use(T,c.o,sp,t);log((me?'You: ':'Foe: ')+c.o.h.n+' uses '+c.s.n+(t&&t!==c.o&&t.h?' on '+t.h.n:''))}
-function exu(T,S,t,me){rigPlay(T,S,S.h.X,t,1);if(T===P)MS.ex++;S.ex=0;SND.ult();hist.push({s:{...S.h.X,c:'EX'},o:S,mine:T===P,ex:1});if(hist.length>14)hist.shift();use(T,S,S.h.X,t);const r=relOn(S)?S.r:null;
+function play(T,c,t,me){rigPlay(T,c.o,c.s,t);if(T===P)MS.cards++;if(c.s.d&&uKey(c.o)){setPose(c.o,'atk',720);SND.whoosh()}const sp=spOf(c),cc=costOf(T,c);T.en-=cc;T.pl=(T.pl||0)+1;c.ch=0;c.gm=0;T.hand=T.hand.filter(x=>x!==c);if(!c.tmp&&!c.s.rel)T.disc.push(c);hist.push({s:sp,o:c.o,mine:T===P});if(hist.length>14)hist.shift();if(c.s.ba&&c.o.hp>0)c.o.ex=Math.min(100,c.o.ex+20);if(isSkill(c))T.ls={s:c.s.ttsrc_base||c.s,o:c.o};use(T,c.o,sp,t);if(c.s.ba&&relE(c.o)=='final_blade')finalBlade(T,c.o);if(c.s.ttx&&c.s.ttsrc)T.deck.splice(Math.floor(rn()*(T.deck.length+1)),0,{u:++uid,s:c.s.ttsrc,o:genOwner(T)});log((me?'You: ':'Foe: ')+c.o.h.n+' uses '+c.s.n+(t&&t!==c.o&&t.h?' on '+t.h.n:''))}
+const isSkill=c=>!c.s.ba&&!c.s.rel&&!c.s.gen&&!c.s.tok&&!c.o.g&&!c.o.gx&&c.o.h.id!=='G';
+/* Blade of the Final Gift: playing Attack turns a random skill in hand into 3 Final Gifts */
+function finalBlade(T,S){const sk=T.hand.filter(isSkill);if(!sk.length)return;const c=sk[Math.floor(rn()*sk.length)];T.hand=T.hand.filter(x=>x!==c);if(!c.tmp)T.disc.push(c);for(let i=0;i<3;i++)T.hand.push({u:++uid,s:finalGiftS(),o:genOwner(T),tmp:1});fl(S,'🎁 Final Gift ×3','#ffd24a')}
+function exu(T,S,t,me){rigPlay(T,S,S.h.X,t,1);if(T===P)MS.ex++;S.ex=0;SND.ult();hist.push({s:{...S.h.X,c:'EX'},o:S,mine:T===P,ex:1});if(hist.length>14)hist.shift();use(T,S,S.h.X,t);const r=relOn(S)?S.r:null;if(r&&r.e=='ex_self'){S.ex=Math.min(100,Math.max(0,+r.v||0));fl(S,'+'+S.ex+' ⚡','#ffd24a')}
  if(r){const v=+r.v||0,F=T===P?E:P;
   if(r.e=='ult_freeze')alive(F).forEach(x=>{x.s.stun=Math.max(x.s.stun||0,Math.max(1,v));fl(x,'❄️','#9fe')});
   if(r.e=='ult_heal')alive(T).forEach(x=>{const n=Math.min(v,x.mhp-x.hp);x.hp+=n;S.stt.h+=n;if(n)fl(x,'+'+n,'#5be39b')});
   if(r.e=='ult_shield'){S.sh+=v;S.s.shd=Math.max(S.s.shd||0,2);S.stt.s+=v;fl(S,'+'+v,'#fff');fx.push({id:uKey(S),cf:'shd'})}}
  log((me?'You: ':'Foe: ')+S.h.n+' unleashes '+S.h.X.n+'!'+(r&&r.e=='ult_freeze'?' (relic: all enemies frozen)':''))}
 function boom(T,b){SND.boom();const F=T===P?E:P;alive(F).forEach(x=>{const dm=Math.max(1,Math.round(b.d*tk(x)));if(b.o)b.o.stt.d+=Math.min(dm,x.hp+x.sh);hurt(x,dm);if(b.ap&&x.hp>0)applyS(x,b.ap[0],b.ap[1])});log('💣 '+(T===P?'Your':'Foe')+' '+b.n+' explodes!')}
-function start(T){T.rd++;T.en=Math.min(10,T.rd);T.pl=0;T.hand.forEach(c=>{if(c.s.cht)c.ch=(c.ch||0)+1});
+function start(T){T.rd++;T.en=Math.min(10,T.rd)+(T.mxb||0)+(T.carry||0);T.carry=0;T.ls=null;T.pl=0;T.hand.forEach(c=>{if(c.s.cht)c.ch=(c.ch||0)+1});
  T.u.forEach(S=>{if(S.hp<=0)return;['tnt','bol'].forEach(k=>{if(S.s[k]&&--S.s[k]<=0)delete S.s[k]});if(S.s.shd&&--S.s.shd<=0){delete S.s.shd;if(S.sh){S.sh=0;fl(S,'Shield gone','#9fe')}}if(S.s.burn){const bd=Math.round((S.bst||1)*RU.burnPer);if(bd){hurt(S,bd,0,0,1);if(inB)SND.burnTick()}if(S.hp>0&&--S.s.burn<=0){delete S.s.burn;S.bst=0}}if(S.s.poi&&S.hp>0)hurt(S,2,1,0,1);if(S.s.reg&&S.hp>0){const a=Math.min(3,S.mhp-S.hp);S.hp+=a;fl(S,'+'+a,'#5be39b')}
   const r=relOn(S)?S.r:null;if(r&&S.hp>0){const v=+r.v||0;if(r.e=='ex_turn')S.ex=Math.min(100,S.ex+v);if(r.e=='shield_turn'){S.sh+=v;S.s.shd=Math.max(S.s.shd||0,1);fl(S,'+'+v,'#fff')}if(r.e=='regen_turn'){const a=Math.min(v,S.mhp-S.hp);if(a){S.hp+=a;fl(S,'+'+a,'#5be39b')}}}});
- T.bombs=T.bombs.filter(b=>{if(--b.t>0)return 1;boom(T,b);return 0});
+ T.bombs=T.bombs.filter(b=>{--b.t;if(b.x){const x=b.x;if(x.hp<=0||!x.s.tur)return 0;if(b.t>0){x.s.tur=b.t;return 1}delete x.s.tur;const dm=Math.max(1,Math.round(x.mhp*b.p*tk(x)));if(b.o)b.o.stt.d+=Math.min(dm,x.hp+x.sh);SND.boom();hurt(x,dm);log('🔭 '+b.n+' fires at '+x.h.n+'!');return 0}if(b.t>0)return 1;boom(T,b);return 0});
  clean(T);draw(T,2)}
-const endT=T=>{T.fat=0;T.hand.forEach(c=>{if(c.s.grow)c.gm=(c.gm||0)+c.s.grow});T.u.forEach(S=>{for(const k in S.s)if(!/^(shd|blk|tnt|bol|burn)$/.test(k)&&--S.s[k]<=0)delete S.s[k]})};
+const endT=T=>{T.fat=0;if(T.keep){T.carry=T.en*2;T.keep=0}T.hand.forEach(c=>{if(c.s.grow)c.gm=(c.gm||0)+c.s.grow;if(c.s.dpmg)c.gm=(c.gm||0)+c.s.dpmg;if(c.s.ttb&&T.ls&&T.ls.o.hp>0){c.s={...T.ls.s,c:0,ttx:1,ttsrc:c.s,ttsrc_base:T.ls.s};c.o=T.ls.o}});alive(T).forEach(S=>{const re=relE(S);if(re=='end_shield'){const v=Math.round(+S.r.v||0);if(v>0){if(!(S.sh>0))(S.fxT||(S.fxT={})).shd=performance.now();S.sh+=v;S.s.shd=Math.max(S.s.shd||0,1);S.stt.s+=v;fl(S,'+'+v,'#fff')}}else if(re=='sage_cloak')applyS(S,'blk',Math.max(1,+S.r.v||0))});T.u.forEach(S=>{for(const k in S.s)if(!/^(shd|blk|tnt|bol|burn|tur)$/.test(k)&&--S.s[k]<=0)delete S.s[k]})};
 function chk(){clean(P);clean(E);const p=alive(P).length,e=alive(E).length;if(p&&e)return 0;fin(p?'Victory!':e?'Defeat':'Draw');return 1}
 function fin(m){over=1;pend=null;if(PV)pvDone();if(SRCH){SRCH=null;$('#srch').hidden=true}hideU();ui();SND.music(null);const win=/Victory/.test(m),draw=!win&&/Draw/.test(m);SND.end(win);zoomHide();setTimeout(()=>endBanner(win,draw,m),650)}
 function endBanner(win,draw,m){const x=$('#endx');x.className=win?'w':draw?'d':'l';x.querySelector('h1').textContent=win?'VICTORY':draw?'DRAW':'DEFEAT';
  x.querySelector('.exs').textContent=/Opp surrendered/.test(m)?'Your opponent surrendered':/Opp left/.test(m)?'Your opponent left the match':/away too long/.test(m)?'You were away for 3 turns':/Surrender/.test(m)?'You surrendered':/Time up/.test(m)?'Time is up':(win?'The enemy team has fallen':draw?'Both teams fell':'Your team has fallen');x.dataset.r='';x.hidden=false;void x.offsetWidth;x.classList.add('go');
  if(win)setTimeout(()=>SND.levelup(),250);setTimeout(()=>{x.dataset.r='1'},1100);
  x.onclick=()=>{if(x.dataset.r!=='1')return;x.dataset.r='';x.hidden=true;x.classList.remove('go');SND.click();showResult(win,m)}}
+function estNew(S,s,al,en,dead){const hiEx=(L,low)=>L.reduce((b,x)=>!b||(low?x.ex<b.ex:x.ex>b.ex)?x:b,null),
+ me=S.hp>0&&al.includes(S)?S:al[0]||null;
+ if(s.jk)return{v:1.5+rn()*.3,t:null};
+ if(s.fg){const tg=hiEx(al.filter(x=>x.ex<100));return{v:tg?3+rn():-1,t:tg}}
+ if(s.fta)return{v:4+rn()*2,t:null};if(s.mmo)return{v:3+rn()*2,t:null};if(s.jst)return{v:4+rn()*2,t:null};
+ if(s.prc)return{v:GEN.length?3+rn()*2:-1,t:null};if(s.rb)return{v:dead.length?28+rn():-1,t:dead[0]||null};if(s.rrt)return{v:2+rn(),t:null};
+ if(s.dsa){const wr=en.filter(x=>x.r);return{v:wr.length?7+rn():-1,t:wr[0]||null}}
+ if(s.tnd)return{v:-1,t:null};
+ if(s.dpm)return{v:en.reduce((a,x)=>a+x.mhp*s.dpm,0)+rn()*AIN(),t:null};
+ if(s.exa){const tg=hiEx(al.filter(x=>x.ex<100&&x.h.X));return{v:tg?5+rn():-1,t:tg}}
+ if(s.sst)return{v:6+rn()*2,t:me};
+ if(s.tur){const big=en.reduce((b,x)=>!b||x.mhp>b.mhp?x:b,null);return{v:(big?big.mhp*s.tur*.6:-1)+rn(),t:big}}
+ if(s.shp)return{v:al.reduce((a,x)=>a+x.mhp*s.shp,0)*.5+rn()*AIN(),t:null};
+ if(s.drn){const tg=hiEx(en);return{v:(tg?tg.ex/8:-1)+rn(),t:tg}}
+ if(s.elx){const srt=al.slice().sort((p,q)=>p.hp/p.mhp-q.hp/q.mhp);return{v:srt.length?5+rn()*2:-1,t:srt[0]||null}}
+ if(s.ffz){let bt=null,bv=0;en.forEach(x=>{if(x.s.burn){const d=Math.round((x.bst||1)*RU.burnPer)*x.s.burn;if(d>bv){bv=d;bt=x}}});return{v:(bt?bv*1.2+3:2)+rn(),t:bt||tgtOf(P)}}
+ if(s.ttb)return{v:-1,t:null};
+ if(s.rfw)return{v:3+rn()*2,t:me};
+ return null}
 function best(){let b=null,bs=1;const al=alive(E),en=alive(P),dead=E.u.filter(x=>x.hp<=0);
- const est=(S,s)=>{let v=0,t=null,a=S;
+ const est=(S,s)=>{let v=0,t=null,a=S;{const q=estNew(S,s,al,en,dead);if(q)return q}
   if(s.rel)return{v:S.r?-1:7+rn(),t:null};if(s.chaos)return{v:GEN.length?5+rn()*2:-1,t:null};if(s.srch)return{v:4+rn()*2,t:null};
   if(s.dsp){const bad=x=>Object.keys(x.s).filter(k=>/^(weak|brk|burn|poi|stun|mark|frz|ent)$/.test(k)).length,good=x=>Object.keys(x.s).filter(k=>/^(atk|reg|bol|blk|tnt)$/.test(k)).length;
    let bt=null,bv=0;al.forEach(x=>{const q=bad(x)*4;if(q>bv){bv=q;bt=x}});en.forEach(x=>{const q=good(x)*4;if(q>bv){bv=q;bt=x}});return{v:bv?bv+rn():-1,t:bt}}
@@ -2289,7 +2366,7 @@ function discardNote(n){const d=$('#dsn');d.innerHTML='<span class="dsc"><i></i>
 async function endTurn(){if(PV){if(over||turn!='p'||!PVS||PVS.endSent)return;PVS.endSent=1;busy=1;pend=null;ui();pvSend({t:'end',s:PVS.me});return}if(over||turn!='p'||busy)return;busy=1;pend=null;{const dn=trimHand(P);if(dn)discardNote(dn)}endT(P);turn='e';ui();await aiTurn()}
 const psp=()=>pend?(pend.c?pend.c.s:pend.o.h.X):null;
 function tile(S,m,i){const h=S.h,es=ea(S),now=performance.now(),pz=S.pose&&now-S.pose.t<S.pose.d?S.pose:null,rgd=S.hp>0&&inB&&!RG.lost&&!!rigModel(h),ps=pz&&!rgd?(pz.k=='atk'?h.atkImg:h.exImg):'',pf=pz?(pz.k=='atk'?h.atkFace:h.exFace):null,sc=Math.max(S.mhp,S.hp+S.sh),sp=psp(),nd=sp&&need(sp),
- tg=nd&&((nd=='e'&&!m&&canHit(S,sp))||(nd=='a'&&m&&S.hp>0)||(nd=='x'&&S.hp>0)||(nd=='ad'&&m&&(S.hp>0||!!sp.rev))),
+ tg=nd&&((nd=='e'&&!m&&canHit(S,sp))||(nd=='a'&&m&&S.hp>0)||(nd=='x'&&S.hp>0)||(nd=='ad'&&m&&(S.hp>0||!!sp.rev))||(nd=='dd'&&m&&S.hp<=0)),
  chips=Object.keys(S.s).map(k=>'<span class="stc'+(/^(burn|poi)$/.test(k)?' dot':'')+(/^(atk|reg|bol|blk|tnt|bx\d)$/.test(k)?' gd':'')+'" data-st="'+(m?'p':'e')+i+'">'+(SD[k]||['✨'])[0]+'<sub>'+(k=='burn'?(S.bst||1):S.s[k])+'</sub></span>').join(''),
  dl=-(((performance.now()/1000)+i*.7+(m?0:.35))%3.2).toFixed(2);
  return '<div class="unit'+(S.hp<=0?' dead':'')+(S.hp>0&&S.s.burn?' st-burn':'')+(S.hp>0&&S.s.frz?' st-frz':'')+(xr(S)?' exr':'')+(tg?' tg':'')+(m?'':' foe')+(S===alive(m?P:E)[0]?' fr':'')+(pz?' pz-'+pz.k:'')+(h.st?' evo':'')+(S.hp>0&&inB&&!RG.lost&&rigModel(h)?' rig':'')+'" style="--pd:-'+(pz?Math.round(now-pz.t):0)+'ms" id="u'+(m?'p':'e')+i+'" data-t="'+(m?'p':'e')+'" data-i="'+i+'">'+
@@ -2899,13 +2976,13 @@ function ui(){if(!P)return;P.u.concat(E.u).forEach(u=>{if(u.hp<=0&&(u.sh||Object
  const st=$('#stage');st.className=turn=='p'?'zp':'ze';
  if(!st.querySelector('.cam'))st.innerHTML='<div class="camd"><div class="cam"><i class="spot"></i><div class="team p"></div><div class="team e"></div><i class="sdim"></i><div class="fxl"></div></div></div>';if(!st.querySelector('.fxl')){const l=document.createElement('div');l.className='fxl';st.querySelector('.cam').appendChild(l)}
  st.querySelector('.team.p').innerHTML=P.u.map((u,i)=>tile(u,1,i)).reverse().join('');st.querySelector('.team.e').innerHTML=E.u.map((u,i)=>tile(u,0,i)).join('');
- $('#en').textContent=P.en+'/'+Math.min(10,P.rd);
+ $('#en').textContent=P.en+'/'+(Math.min(10,P.rd)+(P.mxb||0));
  {const base=hist.length-Math.min(8,hist.length);$('#hist').innerHTML=hist.slice(-8).map((h,k)=>'<div class="hc '+(h.mine?'me':'foe')+' cl'+(h.o.h.cl||'General')+'" data-k="'+(base+k)+'" title="'+esc(h.s.n)+'"><span>'+art(h.s)+'</span></div>').join('')}
- $('#fi').innerHTML='<div class="dmn" title="Foe mana">'+E.en+'/'+Math.min(10,E.rd)+'</div><div class="who"><b>'+esc(OPP?OPP.n:'Foe')+'</b><span>📕 '+E.deck.length+' · ✋ '+E.hand.length+' '+bmb(E)+(E.fat?' · 😩+'+E.fat:'')+'</span></div>'+(OPP?avH(OPP.p,'var(--avs)'):'<div class="av" style="--s:var(--avs);--f:#7a2a2a"><span style="background:center/cover url(\''+E.u[0].h.img+'\')"></span></div>');
+ $('#fi').innerHTML='<div class="dmn" title="Foe mana">'+E.en+'/'+(Math.min(10,E.rd)+(E.mxb||0))+'</div><div class="who"><b>'+esc(OPP?OPP.n:'Foe')+'</b><span>📕 '+E.deck.length+' · ✋ '+E.hand.length+' '+bmb(E)+(E.fat?' · 😩+'+E.fat:'')+'</span></div>'+(OPP?avH(OPP.p,'var(--avs)'):'<div class="av" style="--s:var(--avs);--f:#7a2a2a"><span style="background:center/cover url(\''+E.u[0].h.img+'\')"></span></div>');
  $('#pi').innerHTML=avH(PROF,'calc(var(--foot)*.3)')+'<b>'+esc(myName())+'</b>';
  $('#dk').innerHTML=(P.fat?'<span class="fatb" title="Fatigue: skill and general cards cost +'+P.fat+' this turn">😩 +'+P.fat+'</span>':'')+'<span>📕 '+P.deck.length+'</span><span'+(P.hand.length>10?' class="over" title="Over the 10-card limit: extra cards are discarded when you end your turn">✋ '+P.hand.length+'/10':'>✋ '+P.hand.length)+'</span>'+bmb(P);
  {const hd=$('#hand'),n=P.hand.length,hh=hd.clientHeight||150,W=hd.clientWidth||600,cw=Math.max(44,Math.round(Math.min(hh*.8,W/(1+Math.max(0,n-1)*.5)))),step=n>1?Math.min(cw*.8,(W-cw)/(n-1)):0;hd.style.setProperty('--cw',cw+'px');
-  hd.innerHTML=P.hand.map((c,i)=>{const k=i-(n-1)/2,pl=turn=='p'&&!busy&&ok(P,c),bf=bufC(c),cc=costOf(P,c);return cardH({...spOf(c),c:cc,_cb:+c.s.c||0},((pend&&pend.c===c)?' sel':pl?(bf?' rdy buf':' rdy'):' off')+(c.s.ba&&c.o.s.frz&&c.o.hp>0?' fzc':''),'data-u="'+c.u+'" style="--x:'+(k*step).toFixed(1)+'px;--r:'+(k*Math.min(4.5,34/n)).toFixed(1)+'deg;--y:'+(k*k*cw*.012).toFixed(1)+'px;--z:'+(i+1)+'"',c.o)}).join('')}
+  hd.innerHTML=P.hand.map((c,i)=>{const k=i-(n-1)/2,pl=turn=='p'&&!busy&&ok(P,c),bf=bufC(c),cc=costOf(P,c);return cardH({...spOf(c),c:cc,_cb:+c.s.c||0,...(c.s.dpm?{_dpm0:c.s.dpm}:{})},((pend&&pend.c===c)?' sel':pl?(bf?' rdy buf':' rdy'):' off')+(c.s.ba&&c.o.s.frz&&c.o.hp>0?' fzc':''),'data-u="'+c.u+'" style="--x:'+(k*step).toFixed(1)+'px;--r:'+(k*Math.min(4.5,34/n)).toFixed(1)+'deg;--y:'+(k*k*cw*.012).toFixed(1)+'px;--z:'+(i+1)+'"',c.o)}).join('')}
  if(typeof zMark==='function')zMark();
  if(uiId){const T=uiId[0]=='p'?P:E,S=T.u[+uiId.slice(1)];if(S)$('#uinf').innerHTML=uinfH(T,S)}
  const hn=hintTxt(),hi2=$('#hint');hi2.textContent=hn;hi2.hidden=!hn;
@@ -2953,15 +3030,31 @@ const CFG={maxLv:10,frag:[20,30,40,50,60,75,90,110],stone:1,stones:[0,0,0,1,1,2,
 const COL={Defender:'#f5c451',Magic:'#5aa9ff',Healer:'#5be39b',Attacker:'#ff5a5a',Specialist:'#b07cff'};
 const CI={Defender:'🛡️',Healer:'➕',Magic:'✦',Attacker:'⚔️',Specialist:'★'};
 try{const s=JSON.parse(localStorage.dn_s||'null');if(s&&s.u&&s.rt)ME=s.u}catch(e){}
-const defPD=()=>({played:false,sel:0,mode:'std',lineups:{},hs:{},fr:{},st:0,gc:{},own:{},disp:'',w:0,l:0,pts:0,qp:{},days:0,ld:'',bio:''});
+const defPD=()=>({played:false,sel:0,mode:'std',lineups:{},hs:{},fr:{},st:0,gc:{},own:{},disp:'',w:0,l:0,pts:0,qp:{},days:0,ld:'',bio:'',rf:{},rs:{}});
+/* newer general card effects (admin "effect"): fills the card spec; false = a classic effect */
+function genFx(s,fx,v,v2,g){const P=(x,d)=>(x>0?x:d)/100;switch(fx){
+ case 'fatigue_all':s.fta=v>0?v:2;break;case 'mana_moth':s.mmo=v>0?v:1;break;case 'jester':s.jst=v>0?v:3;break;case 'parcel':s.prc=v>0?v:2;break;
+ case 'chaos':s.chaos=1;break;case 'rebirth':s.rb=P(v,50);s.rbh=P(v2,20);s.tg='dd';break;case 'reroute':s.rrt=v>0?v:1;break;
+ case 'disarm':s.dsa=1;s.tg='e';s.any=1;break;case 'tainted':s.tnd=v>0?v:20;s.tg='a';break;
+ case 'certain_death':s.dpm=P(v,10);s.dpmg=P(v2,5);break;case 'anger':s.exa=v>0?v:30;s.tg='a';break;case 'scroll_str':s.sst=v>0?v:3;s.tg='a';break;
+ case 'focus_turret':s.tur=P(v,50);s.turd=Math.max(1,+g.delay||2);s.tg='e';s.any=1;break;
+ case 'aegis':s.shp=P(v,30);s.tm=1;s.shd=Math.max(1,Math.min(9,+g.shDur||2));break;
+ case 'drained':s.drn=1;s.tg='e';s.any=1;break;case 'elixir':s.elx=P(v,10);s.tg='a';break;case 'frostfire':s.ffz=1;s.tg='e';s.any=1;break;
+ case 'time_turb':s.ttb=1;break;case 'ready_war':s.rfw=v>0?v:5;s.tg='a';break;default:return false}return true}
+/* ---- relics: unlocked with relic fragments, level up in battles they are equipped in, evolve Base..Transcendent V like heroes ---- */
+const rsOf=id=>{const x=(PD.rs||{})[id];return x&&typeof x==='object'?{lv:+x.lv||1,ev:+x.ev||0,xp:+x.xp||0}:{lv:1,ev:0,xp:0}},
+ rOwned=id=>!!(PD.rs&&PD.rs[id]&&typeof PD.rs[id]==='object'),
+ relAt=(r,ev)=>{if(!r)return null;const o={...r,st:ev,v:(+r.v||0)+(+r.vs||0)*ev};if(!r.dsc)o.t=relicText(r.e,o.v);return o},
+ myRel=id=>{const r=REL.find(x=>x.id===id);return r&&rOwned(id)?relAt(r,rsOf(id).ev):null};
+function relMigrate(){if(!PD.rs)PD.rs={};let add=0;Object.values(PD.lineups||{}).forEach(l=>Object.values((l&&l.r)||{}).forEach(id=>{if(id&&REL.find(r=>r.id===id)&&!PD.rs[id]){PD.rs[id]={lv:1,ev:0,xp:0};add=1}}));if(add)saveP('rs')}
 async function loadPD(){let d=null;
  if(ME){try{d=await fb('cardgame/players/'+ME)}catch(e){}try{PROF=await fb('profiles/'+ME)}catch(e){}}
  else{try{d=JSON.parse(localStorage.dfg||'null')}catch(e){}}
- const sv=d&&d._s;PD={...defPD(),...(d||{})};delete PD._s;['lineups','hs','fr','gc','own','qp'].forEach(k=>{if(!PD[k]||typeof PD[k]!=='object')PD[k]={}});
+ const sv=d&&d._s;PD={...defPD(),...(d||{})};delete PD._s;['lineups','hs','fr','gc','own','qp','rf','rs'].forEach(k=>{if(!PD[k]||typeof PD[k]!=='object')PD[k]={}});
  PD.st=+PD.st||0;PD.days=+PD.days||0;PD.ld=String(PD.ld||'');PD.bio=String(PD.bio||'').slice(0,160);PD.pts=+PD.pts||0;PD.w=+PD.w||0;PD.l=+PD.l||0;PD.sel=Math.max(0,Math.min(9,+PD.sel||0));if(!PD.skin||typeof PD.skin!=='object')PD.skin={};PD.disp=PD.disp||'';if(!['std','story','rank'].includes(PD.mode))PD.mode='std';
  if(d){if(!sv)saveP();else if(sv!==sign())flag('save-edited')}GUARD.seal()}
 /* ---- anti-cheat: progress values are sealed after every legitimate change; anything else changing them is rolled back ---- */
-const CK=['fr','st','own','hs','pts','w','l','gc','qp','dq','days','gold','dia','sh'],GSALT=['dF7#nT','q9!cB2','Lw$4vX'].join('');
+const CK=['fr','st','own','hs','pts','w','l','gc','qp','dq','days','gold','dia','sh','rf','rs'],GSALT=['dF7#nT','q9!cB2','Lw$4vX'].join('');
 function canon(v){if(v===null||v===undefined)return undefined;if(typeof v!=='object')return typeof v==='number'?+v.toFixed(6):v;const o={};(Array.isArray(v)?v.map((x,i)=>[String(i),x]):Object.entries(v)).forEach(([k,x])=>{const c=canon(x);if(c!==undefined&&!(c&&typeof c==='object'&&!Object.keys(c).length))o[k]=c});return Object.keys(o).sort().reduce((a,k)=>(a[k]=o[k],a),{})}
 const fnv=(t,k)=>{let a=(0x811c9dc5^k)>>>0;for(let i=0;i<t.length;i++){a^=t.charCodeAt(i);a=Math.imul(a,16777619)}return (a>>>0).toString(36)};
 const critStr=()=>JSON.stringify(canon(CK.reduce((o,k)=>(o[k]=PD[k],o),{}))||{});
@@ -3051,6 +3144,22 @@ const evNeed=e=>({fr:+CFG.frag[e]||0,st:+CFG.stones[e]||0});
 function evolve(k){GUARD.check();const h=HD.find(x=>hk(x)===k);if(!h)return;const s=PD.hs[k]||{lv:1,ev:0},e=s.ev|0;if(e>=MAXEV)return;const n=evNeed(e);
  if(s.lv<CFG.maxLv)return toast('Reach level '+CFG.maxLv+' first');if((PD.fr[k]||0)<n.fr)return toast('Not enough card fragments');if(PD.st<n.st)return toast('You need a Transcendence stone');
  PD.fr[k]=(PD.fr[k]||0)-n.fr;PD.st-=n.st;PD.hs[k]={lv:1,ev:e+1,xp:0};saveP('fr','st','hs');SND.ult();toast('✨ '+h.n+' evolved to '+evName(h,e+1)+'!');hdRender()}
+const ICS=h=>'<span style="display:inline-block;width:1.2em;height:1.2em;vertical-align:-.2em">'+h+'</span>',rIcB=r=>r.art?'<img src="'+r.art+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:9px">':r.icon?'<img src="'+r.icon+'" alt="" style="width:64px;height:64px;object-fit:contain">':'💍';
+function openRelic(id){const r=REL.find(x=>x.id===id);if(!r)return;SND.click();const own=rOwned(id),st=rsOf(id),e=st.ev,n=own?evNeed(e):{fr:CFG.unlock,st:0},
+ mx=own&&e>=MAXEV,useSt=own&&!mx&&!n.fr&&n.st>0,cur=useSt?(PD.st|0):((PD.rf||{})[id]||0),need=Math.max(1,useSt?n.st:n.fr),nx=relAt(r,Math.min(e+1,MAXEV));
+ openMdl('<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start"><div style="width:120px;height:150px;border-radius:12px;display:grid;place-items:center;font-size:56px;background:linear-gradient(#6b6f78,#2a2d33);border:3px solid #c9893a;box-shadow:inset 0 0 0 2px #000">'+rIcB(r)+'</div>'+
+  '<div style="flex:1;min-width:200px"><h3 class="mdh" style="margin:0 0 6px">'+esc(r.n)+'</h3>'+
+  (own?'<p><b>'+(e?STG[e]:'Base')+'</b> · Level '+st.lv+' / '+CFG.maxLv+'</p>'+(e<MAXEV?'<p>'+(+r.vs>0?'Next evolution: '+esc(nx.t):'Evolving raises its rank (this relic\'s effect stays the same).')+'</p>':'')+
+   '<p class="sub">Levels up in battles where it is equipped. At level '+CFG.maxLv+' it can evolve with relic fragments (and Transcendence stones from IV on).</p>'
+   :'<p style="color:#ff9a7a"><b>Locked</b></p><p class="sub">Collect '+CFG.unlock+' relic fragments to unlock it. Relic fragments are sold in the Gold Shop.</p>')+
+  '<p><b>'+(mx?'MAX':ICS(useSt?STNI:PUZI)+' '+g$(cur)+' / '+g$(need))+'</b></p>'+
+  (!own?'<button id="rlu" data-rl="'+id+'">Unlock</button>':!mx?'<button id="rle" data-rl="'+id+'">Evolve</button>':'')+'</div></div>')}
+function relUnlock(id){GUARD.check();const r=REL.find(x=>x.id===id);if(!r||rOwned(id))return;PD.rf=PD.rf||{};if((PD.rf[id]||0)<CFG.unlock)return toast('You need '+CFG.unlock+' relic fragments');
+ PD.rf[id]-=CFG.unlock;PD.rs=PD.rs||{};PD.rs[id]={lv:1,ev:0,xp:0};saveP('rf','rs');SND.ult();toast('🎉 '+r.n+' unlocked!');openRelic(id);if(!$('#menu').hidden)menu()}
+function relEvolve(id){GUARD.check();const r=REL.find(x=>x.id===id);if(!r||!rOwned(id))return;const st=rsOf(id),e=st.ev;if(e>=MAXEV)return;const n=evNeed(e);
+ if(st.lv<CFG.maxLv)return toast('Reach level '+CFG.maxLv+' first');if(((PD.rf||{})[id]||0)<n.fr)return toast('Not enough relic fragments');if(PD.st<n.st)return toast('You need a Transcendence stone');
+ PD.rf[id]=(PD.rf[id]||0)-n.fr;PD.st-=n.st;PD.rs[id]={lv:1,ev:e+1,xp:0};saveP('rf','st','rs');SND.ult();toast('✨ '+r.n+' evolved to '+STG[e+1]+'!');openRelic(id);if(!$('#menu').hidden)menu()}
+document.addEventListener('click',e=>{const b=e.target.closest('#rlu,#rle');if(!b)return;if(b.id==='rlu')relUnlock(b.dataset.rl);else relEvolve(b.dataset.rl)});
 function unlockHero(k){GUARD.check();const h=HD.find(x=>hk(x)===k);if(!h||owned(h))return;if((PD.fr[k]||0)<CFG.unlock)return toast('You need '+CFG.unlock+' card fragments');
  PD.fr[k]-=CFG.unlock;PD.own[k]=true;saveP('fr','own');SND.ult();toast('🎉 '+h.n+' unlocked!');hdRender()}
 
@@ -3062,6 +3171,7 @@ function result(win){const R={win,heroes:[],rank:null,quests:[]};if(!PD||!curTea
  curTeam.forEach(h=>{const k=hk(h),s=PD.hs[k]=PD.hs[k]||{lv:1,ev:0,xp:0},b={lv:s.lv,xp:s.xp||0},ups=[];s.xp=s.xp||0;const wasMax=s.lv>=CFG.maxLv;
   if(!wasMax&&gain>0){s.xp+=gain;while(s.xp>=CFG.expLv&&s.lv<CFG.maxLv){s.xp-=CFG.expLv;s.lv++;ups.push(s.lv)}if(s.lv>=CFG.maxLv)s.xp=0}
   R.heroes.push({h,b,a:{lv:s.lv,xp:s.xp},gain:wasMax?0:gain,ups,max:wasMax})});
+ R.relics=[];if(!PD.rs)PD.rs={};P.u.forEach(u=>{const id=u.rid||(u.r&&u.r.id);const s=id&&PD.rs[id];if(!s||typeof s!=='object')return;s.lv=+s.lv||1;s.xp=+s.xp||0;if(s.lv<CFG.maxLv&&gain>0){s.xp+=gain;while(s.xp>=CFG.expLv&&s.lv<CFG.maxLv){s.xp-=CFG.expLv;s.lv++}if(s.lv>=CFG.maxLv)s.xp=0}R.relics.push(id)});
  if(win)PD.w++;else PD.l++;
  {const g=win?(curMode==='rank'?70:50):10,b=PD.gold|0;PD.gold=b+g;R.gold={b,a:b+g,d:g}}
  rkApply(R,win);botApply(win);
@@ -3069,7 +3179,7 @@ function result(win){const R={win,heroes:[],rank:null,quests:[]};if(!PD||!curTea
   R.daily=dqAdd({win:win?1:0,win_std:win&&curMode==='std'?1:0,win_rank:win&&curMode==='rank'?1:0,play:1,cards:MS.cards,ex:MS.ex,kill:E.u.filter(u=>u.hp<=0).length,dmg:sm('d'),heal:sm('h'),shield:sm('s')})}
  if(win)QUESTS.forEach(q=>{if(q.mode!=='any'&&q.mode!==curMode)return;const p=PD.qp[q.id]=PD.qp[q.id]||{w:0};if(p.c||p.w>=q.wins)return;p.w++;R.quests.push({t:q.t,w:p.w,n:q.wins})});
  {const td=new Date().toLocaleDateString('en-CA');if(PD.ld!==td){PD.ld=td;PD.days=(PD.days|0)+1}}
- saveP('played','w','l','hs','pts','qp','days','ld','gold');lbUpd();return R}
+ saveP('played','w','l','hs','pts','qp','days','ld','gold','rs');lbUpd();return R}
 /* ================= DAILY QUESTS (reset every day at 6:00 AM Philippine time = midnight UTC+2) ================= */
 let DQ={tasks:[],miles:[]},MS={cards:0,ex:0},dqTm=0;
 const DTT={win:['🏆','Win matches'],win_std:['⚔️','Win Standard matches'],win_rank:['👑','Win Ranked matches'],play:['🎮','Play matches'],cards:['🃏','Play cards in battle'],ex:['🌟','Use ultimates (EX)'],kill:['💀','Defeat enemy heroes'],dmg:['💥','Deal damage'],heal:['💚','Heal HP'],shield:['🛡️','Gain shield']};
@@ -3241,6 +3351,7 @@ function openInv(){const hl=HD.map(h=>({h,n:PD.fr[hk(h)]||0})).sort((a,b)=>b.n-a
  const it=(ic,n,l,c)=>'<div class="ivi" style="--ic:'+c+'"><span class="ivc">'+ic+'</span><b>'+g$(n)+'</b><small>'+l+'</small></div>';
  openMdl('<div class="ivh">'+BAGI+'<div><h3>Inventory</h3><small>Everything you have collected</small></div></div>'+
   '<div class="ivs">Currency & items</div><div class="ivg">'+it(GOLDI,PD.gold|0,'Gold','#ffc83a')+it(DIAI,diaN(),'Diamonds','#5ad0ff')+it(STNI,PD.st|0,'Transcendence Stones','#b36bff')+'</div>'+
+  (()=>{const rl=REL.filter(r=>((PD.rf||{})[r.id]||0)>0||rOwned(r.id));return rl.length?'<div class="ivs">Relics &amp; relic fragments</div><div class="ivg">'+rl.map(r=>{const st=rsOf(r.id);return '<div class="ivi" style="--ic:#9a9a9a"><span class="ivc">'+rIc(r)+'</span><b>'+cHtml(r.n)+'</b><small>'+(rOwned(r.id)?'Lv '+st.lv+' · '+(st.ev?STG[st.ev]:'Base'):'Locked')+' · '+ICS(PUZI)+g$((PD.rf||{})[r.id]||0)+'</small></div>'}).join('')+'</div>':''})()+
   '<div class="ivs">Hero fragments</div><div class="ivg">'+hl.map(o=>'<div class="ivf" style="--c:'+o.h.col+'"><div class="zf ivp">'+faceImgT(o.h)+'</div><b>'+cHtml(o.h.n)+'</b><span>'+PUZI+g$(o.n)+'</span></div>').join('')+'</div>'+
   (()=>{const fs=PREMF.filter(k=>ownF(k)),ss=Object.keys((WAL.own&&WAL.own.skins)||{}).filter(id=>SKINS[id]);return (fs.length?'<div class="ivs">Premium frames</div><div class="ivg">'+fs.map(k=>'<div class="ivfr">'+avH({...(PROF||{}),frame:k},56)+'<b>'+FRN[k]+'</b></div>').join('')+'</div>':'')+
    (ss.length?'<div class="ivs">Hero skins</div><div class="ivg">'+ss.map(id=>{const q=SKINS[id],h=HD.find(x=>hk(x)===q.hero);return h?'<div class="ivf" style="--c:'+h.col+'"><div class="zf ivp">'+faceImgT(applySkin(h,id,1))+'</div><b>'+esc(q.name||'Skin')+'</b><span>'+esc(h.n)+'</span></div>':''}).join('')+'</div>':'')})()+
@@ -3249,17 +3360,21 @@ function openInv(){const hl=HD.map(h=>({h,n:PD.fr[hk(h)]||0})).sort((a,b)=>b.n-a
 const SHOP_P={3:120,12:450,20:700};
 function shopDay(){const day=shopK();let h=2166136261;const key=day+'|'+(ME||'guest');for(let i=0;i<key.length;i++){h^=key.charCodeAt(i);h=Math.imul(h,16777619)}let x=h>>>0;const r=()=>{x^=x<<13;x>>>=0;x^=x>>>17;x^=x<<5;x>>>=0;return x/4294967296};
  const pool=HD.filter(h=>h&&h.img);if(!pool.length)return{day,o:[]};const ord=pool.map(h=>[r(),h]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]),sm=ord.slice(2).length?ord.slice(2):ord;
- return{day,o:[20,12,3,3,3,3].map((n,i)=>({i,n,h:hk(i<2?ord[i%ord.length]:sm[(i-2)%sm.length]),p:SHOP_P[n]}))}}
+ const o=[20,12,3,3,3,3].map((n,i)=>({i,n,h:hk(i<2?ord[i%ord.length]:sm[(i-2)%sm.length]),p:SHOP_P[n]}));
+ let ro=[];if(REL.length){const rk=REL.map(q=>[r(),q]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);ro=RSHOP.map((q,j)=>({i:6+j,n:q[0],r:rk[j%rk.length].id,p:q[1]}))}
+ return{day,o,ro}}
+const RSHOP=[[10,380],[5,200],[5,200]];
 const shopBought=i=>!!(PD.sh&&PD.sh.day===shopK()&&PD.sh.b&&PD.sh.b[i]);
-function buyOffer(i){GUARD.check();const S=shopDay(),o=S.o[i];if(!o)return;if(shopBought(i))return toast('Already bought today');
- if((PD.gold|0)<o.p){SND.click();return toast('Not enough gold')}const h=HD.find(x=>hk(x)===o.h);if(!h)return;
- PD.gold=(PD.gold|0)-o.p;PD.fr[o.h]=(PD.fr[o.h]||0)+o.n;if(!PD.sh||PD.sh.day!==S.day)PD.sh={day:S.day,b:{}};PD.sh.b[i]=1;saveP('gold','fr','sh');SND.heal();toast('Bought '+o.n+' '+h.n+' fragments!');renderHome()}
+function buyOffer(i){GUARD.check();const S=shopDay(),o=i<6?S.o[i]:S.ro[i-6];if(!o)return;if(shopBought(i))return toast('Already bought today');
+ if((PD.gold|0)<o.p){SND.click();return toast('Not enough gold')}const h=o.r?REL.find(x=>x.id===o.r):HD.find(x=>hk(x)===o.h);if(!h)return;
+ PD.gold=(PD.gold|0)-o.p;if(o.r){PD.rf=PD.rf||{};PD.rf[o.r]=(PD.rf[o.r]||0)+o.n}else PD.fr[o.h]=(PD.fr[o.h]||0)+o.n;if(!PD.sh||PD.sh.day!==S.day)PD.sh={day:S.day,b:{}};PD.sh.b[i]=1;saveP('gold','fr','rf','sh');SND.heal();toast('Bought '+o.n+' '+h.n+(o.r?' relic':'')+' fragments!');renderHome()}
 let shTm=0;
 const pgShop=()=>{const S=shopDay();clearInterval(shTm);shTm=setInterval(()=>{const t=$('#sht');if(!t){clearInterval(shTm);return}if(S.day!==shopK()){clearInterval(shTm);renderHome();return}t.textContent=fmtLeft(dLeft())},1000);
- return '<div class="pnl pad shp2"><div class="shh"><div><h3>Gold Shop</h3><small>Hero fragments · new offers every day</small></div><div class="shr"><span>Resets in</span><b id="sht">'+fmtLeft(dLeft())+'</b></div></div>'+
+ return '<div class="pnl pad shp2"><div class="shh"><div><h3>Gold Shop</h3><small>Hero &amp; relic fragments · new offers every day</small></div><div class="shr"><span>Resets in</span><b id="sht">'+fmtLeft(dLeft())+'</b></div></div>'+
  '<div class="shg">'+S.o.map(o=>{const h=HD.find(x=>hk(x)===o.h);if(!h)return '';const b=shopBought(o.i),aff=(PD.gold|0)>=o.p,x=h,big=o.n>=12;
   return '<div class="sho'+(b?' sold':'')+(big?' big n'+o.n:'')+'" style="--c:'+x.col+'">'+'<i class="shbar"></i><div class="sht zf">'+faceImg(x).replace('<img ','<img decoding="async" ')+'<span class="shq">'+PUZI+'×'+o.n+'</span></div><b class="shn">'+cHtml(x.n)+'</b><small class="shs">'+o.n+' fragments</small>'+
   (b?'<span class="shb sold">SOLD OUT</span>':'<button class="shb'+(aff?'':' no')+'" data-buy="'+o.i+'">'+GOLDI+g$(o.p)+'</button>')+'</div>'}).join('')+'</div>'+
+ (S.ro&&S.ro.length?'<div class="ivs" style="margin-top:10px">Relic fragments</div><div class="shg">'+S.ro.map(o=>{const r=REL.find(x=>x.id===o.r);if(!r)return '';const b=shopBought(o.i),aff=(PD.gold|0)>=o.p;return '<div class="sho'+(b?' sold':'')+'" style="--c:#9a9a9a"><i class="shbar"></i><div class="sht" style="display:grid;place-items:center;background:linear-gradient(#6b6f78,#2a2d33);font-size:44px">'+rIcB(r)+'<span class="shq">'+PUZI+'×'+o.n+'</span></div><b class="shn">'+cHtml(r.n)+'</b><small class="shs">'+o.n+' relic fragments</small>'+(b?'<span class="shb sold">SOLD OUT</span>':'<button class="shb'+(aff?'':' no')+'" data-buy="'+o.i+'">'+GOLDI+g$(o.p)+'</button>')+'</div>'}).join('')+'</div>':'')+
  '<p class="shft">Your gold: '+GOLDI+'<b>'+g$(PD.gold)+'</b> · Earn gold from battles and quests.</p></div>'};
 const pgShop0=()=>'<div class="pnl pad shp"><h3>🛒 Shop</h3><p class="sub big">Coming soon</p><p class="sub">Cards, skins and more will arrive here.</p></div>';
 const FRN={none:'Classic',bronze:'Bronze',silver:'Silver',gold:'Gold',neon:'Neon',flame:'Flame',rainbow:'Rainbow',void:'Void',pioneer:'Pioneer',aurora:'Aurora',phoenix:'Phoenix',abyss:'Abyss',royal:'Royal'};
@@ -3398,7 +3513,7 @@ function menu(){hidePop();$('#edt').textContent='Edit Line-up · Preset '+(ed+1)
  $('#ef').innerHTML=FILT.map(([k,ic])=>'<button data-f="'+k+'" class="'+(efl===k?'on':'')+'" style="'+(COL[k]?'--c:'+COL[k]:'--c:#8d93a3')+'" title="'+(FNAME[k]||k)+'"><span>'+ic+'</span></button>').join('');
  const g=$('#egrid');
  if(efl==='relic'){const used=new Map(Object.entries(RL).map(([i,r])=>[r,+i]));
-  g.innerHTML='<div class="ehint"><b>Relics</b> · equip on: '+(hi.length?hi.map(i=>'<button class="rtb'+(rt===i?' on':'')+'" data-rt="'+i+'">'+esc(evH(HD[i]).n)+'</button>').join(''):'<i>pick heroes first</i>')+'</div><div class="cg">'+(REL.length?REL.map(r=>'<div class="ct rl'+(used.has(r.id)?' in':'')+'" data-r="'+r.id+'" style="--c:#8d8d8d"><div class="cth">'+esc(r.n)+'</div><div class="ctf rlf">'+rIc(r)+'</div><small class="rtx">'+esc(r.t)+'</small>'+(used.has(r.id)?'<span class="on">'+esc(evH(HD[used.get(r.id)]).n)+'</span>':'')+'</div>').join(''):'<p class="sub">No relics yet.</p>')+'</div>'}
+  g.innerHTML='<div class="ehint"><b>Relics</b> · equip on: '+(hi.length?hi.map(i=>'<button class="rtb'+(rt===i?' on':'')+'" data-rt="'+i+'">'+esc(evH(HD[i]).n)+'</button>').join(''):'<i>pick heroes first</i>')+'</div><div class="cg">'+(REL.length?REL.map(r=>{const own=rOwned(r.id),st=rsOf(r.id),ra=relAt(r,st.ev);return '<div class="ct rl'+(used.has(r.id)?' in':'')+(own?'':' lk')+'" data-r="'+r.id+'" style="--c:#8d8d8d"><div class="cth">'+esc(r.n)+'</div><div class="ctf rlf">'+(own?rIc(r):'🔒')+'</div><small class="rtx">'+(own?'Lv '+st.lv+' · '+(st.ev?STG[st.ev]:'Base')+' · ':'Locked · ')+esc(ra.t)+'</small><small class="rtx" style="color:#9fb8ff">'+ICS(PUZI)+' '+g$((PD.rf||{})[r.id]||0)+'</small>'+(used.has(r.id)?'<span class="on">'+esc(evH(HD[used.get(r.id)]).n)+'</span>':'')+'<button class="rli" data-ri="'+r.id+'" title="Details">i</button></div>'}).join(''):'<p class="sub">No relics yet.</p>')+'</div>'}
  else if(efl==='gen'){g.innerHTML='<div class="ehint"><b>General cards</b> · choose '+need+' ('+GS.length+'/'+need+')</div><div class="cg">'+(GEN.length?GEN.map(x=>{const lk=!gAvail(x);return '<div class="ct gn'+(GS.includes(x.id)?' in':'')+(lk?' lk':'')+'" data-g="'+x.id+'" style="--c:#8d93a3"><div class="cth">'+esc(x.s.n)+'</div><div class="ctf rlf">'+(lk?'🔒':art(x.s))+'</div><small class="rtx">'+(lk?'Quest reward':'Cost '+x.s.c+' · '+esc(desc(x.s,1)))+'</small></div>'}).join(''):'<p class="sub">No general cards yet.</p>')+'</div>'}
  else{g.innerHTML=(COL[efl]?'<div class="ehint"><b>'+efl+'</b> heroes</div>':'')+'<div class="cg">'+visHeroes().map(heroTile).join('')+'</div>'}}
 $('#menu').addEventListener('click',e=>{
@@ -3412,7 +3527,8 @@ $('#menu').addEventListener('click',e=>{
  if(e.target.closest('[data-slot]')){efl='';SND.click();menu();return}
  const ft=e.target.closest('[data-f]');if(ft){efl=efl===ft.dataset.f?'':ft.dataset.f;SND.click();menu();return}
  const rtb=e.target.closest('[data-rt]');if(rtb){rt=+rtb.dataset.rt;menu();return}
- const rc=e.target.closest('.ct[data-r]');if(rc){const id=rc.dataset.r;if(rt<0||!hi.includes(rt))return toast('Pick which hero will wear it first');SND.click();if(RL[rt]===id)delete RL[rt];else{Object.keys(RL).forEach(k=>{if(RL[k]===id)delete RL[k]});RL[rt]=id}menu();return}
+ const ri=e.target.closest('[data-ri]');if(ri){openRelic(ri.dataset.ri);return}
+ const rc=e.target.closest('.ct[data-r]');if(rc){const id=rc.dataset.r;if(!rOwned(id)){openRelic(id);return}if(rt<0||!hi.includes(rt))return toast('Pick which hero will wear it first');SND.click();if(RL[rt]===id)delete RL[rt];else{Object.keys(RL).forEach(k=>{if(RL[k]===id)delete RL[k]});RL[rt]=id}menu();return}
  const gc=e.target.closest('.ct[data-g]');if(gc){const id=gc.dataset.g;if(!gAvail(GEN.find(x=>x.id===id)))return toast('That card is a quest reward. Complete the quest to unlock it.');SND.click();if(GS.includes(id))GS=GS.filter(k=>k!=id);else if(GS.length<needGen())GS.push(id);else toast('You already picked '+needGen()+' general cards. Remove one first.');menu();return}
  const ct=e.target.closest('.ct[data-h]');if(ct){SND.click();openHD(+ct.dataset.h)}});
 
@@ -3492,10 +3608,10 @@ function playGame(){mobFS();const m=PD.mode;if(m==='story')return toast('Story m
   openMdl('<div class="lup"><div class="lupi">⚔️</div><h3 class="mdh">Line-up '+(PD.sel+1)+' isn’t ready</h3><p>'+(cnt?'This line-up has <b>'+cnt+' of 4</b> heroes.':'This line-up is <b>empty</b>.')+' You need <b>4 heroes, one of each class</b>'+(needGen()?' and <b>'+needGen()+' general card'+(needGen()>1?'s':'')+'</b>':'')+' before you can enter battle.</p><div class="lupb"><button class="g" id="lupn">Not now</button><button id="lupg">Build line-up</button></div></div>');return}
  if(m==='rank'){if(!MM.on)mmStart();return}
  PV=0;PVS=null;OPP=null;AIQ=3;rn=Math.random;
- const ids=(l.h||[]).map(hidx),ps=ids.map(i=>evH(HD[i])),rl=ids.map(i=>REL.find(r=>r.id===(l.r||{})[hk(HD[i])])||null),gen=(l.g||[]).map(id=>GEN.find(g=>g.id===id)).filter(g=>gAvail(g)),
+ const ids=(l.h||[]).map(hidx),ps=ids.map(i=>evH(HD[i])),rl=ids.map(i=>myRel((l.r||{})[hk(HD[i])])),gen=(l.g||[]).map(id=>GEN.find(g=>g.id===id)).filter(g=>gAvail(g)),
   es=pickFoe(),fr=shuf(REL.slice()),fg=shuf(GEN.filter(g=>!g.locked)).slice(0,2);
  curMode=m;curTeam=ps;if(!PD.played){PD.played=true;saveP('played')}lbUpd();
- P=mk(ps,rl,gen);E=mk(es,es.map((_,i)=>fr[i]||null),fg);turn='p';over=1;inB=0;showIntro(ps,es)}
+ P=mk(ps,rl,gen);E=mk(es,es.map((_,i)=>fr[i]?relAt(fr[i],0):null),fg);turn='p';over=1;inB=0;showIntro(ps,es)}
 
 /* ================= RESULT SCREEN: stats meters -> hero EXP ================= */
 const MODE_NAME={std:'Standard Mode',rank:'Ranked Mode',story:'Story Mode'};
@@ -3670,11 +3786,11 @@ const mb32=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.
 const pk=n=>'k'+String(n).padStart(4,'0'),mmFmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0'),SV={'.sv':'timestamp'};
 const shuf2=a=>{for(let i=a.length;i>1;){const j=Math.floor(Math.random()*i--);[a[i],a[j]]=[a[j],a[i]]}return a};
 const FAKEN=['NightOwl_23','Kidlat','RiftHunter','Bagwis','xVenomx','Tala_Star','GhostBlade','Ember_PH','Kaiju77','SilentAce'];
-function myTeam(){const l=PD.lineups[PD.sel]||{},ids=(l.h||[]).map(hidx);return{hs:ids.map(i=>evH(HD[i])),rl:ids.map(i=>REL.find(r=>r.id===(l.r||{})[hk(HD[i])])||null),gen:(l.g||[]).map(id=>GEN.find(g=>g.id===id)).filter(g=>gAvail(g))}}
-function myLU(){const l=PD.lineups[PD.sel]||{},ids=(l.h||[]).map(hidx);return{h:ids.map(i=>String(HD[i].fid)),e:ids.map(i=>hs(HD[i]).ev|0),r:ids.map(i=>(l.r||{})[hk(HD[i])]||''),s:ids.map(i=>skinOf(HD[i])),g:(l.g||[]).filter(id=>gAvail(GEN.find(g=>g.id===id)))}}
+function myTeam(){const l=PD.lineups[PD.sel]||{},ids=(l.h||[]).map(hidx);return{hs:ids.map(i=>evH(HD[i])),rl:ids.map(i=>myRel((l.r||{})[hk(HD[i])])),gen:(l.g||[]).map(id=>GEN.find(g=>g.id===id)).filter(g=>gAvail(g))}}
+function myLU(){const l=PD.lineups[PD.sel]||{},ids=(l.h||[]).map(hidx);return{h:ids.map(i=>String(HD[i].fid)),e:ids.map(i=>hs(HD[i]).ev|0),r:ids.map(i=>rOwned((l.r||{})[hk(HD[i])])?(l.r||{})[hk(HD[i])]:''),re:ids.map(i=>rsOf((l.r||{})[hk(HD[i])]).ev|0),s:ids.map(i=>skinOf(HD[i])),g:(l.g||[]).filter(id=>gAvail(GEN.find(g=>g.id===id)))}}
 function teamFrom(lu){if(!lu)return null;const h=Object.values(lu.h||{}),e=Object.values(lu.e||{}),r=Object.values(lu.r||{}),g=Object.values(lu.g||{}),sk=Object.values(lu.s||{});
  const hs2=h.map((f,i)=>{const j=hidx(f);return j<0?null:applySkin(evHAt(HD[j],+e[i]||0),String(sk[i]||''),1)});if(hs2.length!==4||hs2.some(x=>!x))return null;
- return{hs:hs2,rl:hs2.map((_,i)=>REL.find(x=>x.id===r[i])||null),gen:g.map(id=>GEN.find(x=>x.id===id)).filter(Boolean)}}
+ const re=Object.values(lu.re||{});return{hs:hs2,rl:hs2.map((_,i)=>relAt(REL.find(x=>x.id===r[i])||null,+re[i]||0)),gen:g.map(id=>GEN.find(x=>x.id===id)).filter(Boolean)}}
 function myCard(){const im=PROF&&PROF.img&&String(PROF.img).length<60000?PROF.img:'';return{u:ME,n:myName(),a:(PROF&&+PROF.avatar)||0,f:(PROF&&PROF.frame)||'none',img:im,pts:PD.pts|0}}
 const cardP=c=>({avatar:+c.a||0,frame:c.f||'none',img:c.img||''});
 
@@ -4138,8 +4254,9 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
  Object.entries(as||{}).forEach(([id,a])=>{if(!a)return;if(a.effect==='shield'){AM[id]={sh:+a.value||8};return}
   if(MD[a.effect]){const n=MD[a.effect],b=a.type==='buff',k=(b?'bx':'dx')+n;AM[id]={k};SD[k]=[ic(a)||'×'+n,a.name||(b?'Power ×':'Vulnerable ×')+n,a.desc||(b?'deals ×'+n+' damage':'takes ×'+n+' damage')];return}
   const k=EK[a.effect]||'burn';AM[id]={k};SD[k]=[ic(a)||SD[k][0],a.name||SD[k][1],RMK.has(k)?SD[k][2]:(a.desc||SD[k][2])]});
- Object.entries(rs||{}).forEach(([id,r])=>{if(r&&r.name)REL.push({id,n:r.name,e:r.effect,v:+r.value||0,c:r.cost===undefined||r.cost===null||r.cost===''?1:Math.max(0,+r.cost||0),icon:r.icon||'',t:r.desc||relicText(r.effect,r.value)})});
- Object.entries(gs||{}).forEach(([id,g])=>{if(!g||!g.name)return;const v=+g.value||0,fx=g.effect,d=dd(g.ail,g.dur),s={n:g.name,c:Math.max(0,+g.manaCost||0)};if(g.icon)s.ic=g.icon;if(g.art)s.art=g.art;
+ Object.entries(rs||{}).forEach(([id,r])=>{if(r&&r.name)REL.push({id,vs:+r.perEvo||0,art:r.art||'',dsc:r.desc||'',n:r.name,e:r.effect,v:+r.value||0,c:r.cost===undefined||r.cost===null||r.cost===''?1:Math.max(0,+r.cost||0),icon:r.icon||'',t:r.desc||relicText(r.effect,r.value)})});
+ Object.entries(gs||{}).forEach(([id,g])=>{if(!g||!g.name)return;const v=+g.value||0,fx=g.effect,d=dd(g.ail,g.dur),s={n:g.name,c:0,gen:1};if(g.icon)s.ic=g.icon;if(g.art)s.art=g.art;
+  if(genFx(s,fx,v,+g.value2||0,g)){GEN.push({id,s,locked:!!g.locked});return}
   if(fx=='dmg'||fx=='dmg_all'){s.d=Math.max(.1,v);if(fx=='dmg_all')s.k='a';if(d)s.ap=d}
   else if(fx=='heal'||fx=='heal_all'){s.h=v||1;if(fx=='heal_all')s.tm=1;if(d)s.me=d}
   else if(fx=='shield'||fx=='shield_all'){s.sh=v||1;s.shd=Math.max(1,Math.min(9,+g.shDur||2));if(fx=='shield_all')s.tm=1;if(d)s.me=d}
@@ -4153,7 +4270,7 @@ HD.forEach(h=>{h.fid=h.id;h.bn=h.n;h.st=0});
  HD.forEach(h=>{[h.img,h.atkImg,h.exImg].forEach(calcFt);if(h.src&&h.src.evo)Object.values(h.src.evo).forEach(e=>e&&[e.img,e.atkImg,e.exImg].forEach(calcFt))});
 }catch(e){console.warn(e)}
  if(!RANKS.length)RANKS=defRanks();
- await loadPD();dqSync();await walLoad();
+ await loadPD();relMigrate();dqSync();await walLoad();
  fb('cardgame/rigs').then(r=>{RIGS=r||{}}).catch(()=>{});
  try{const [pr,sk]=await Promise.all([fb('cardgame/dshop/prices').catch(()=>null),fb('cardgame/skins').catch(()=>null)]);if(pr)for(const k in DPRICE_DEF)if(+pr[k]>0)DPRICE[k]=+pr[k];SKINS=sk||{};Object.values(SKINS).forEach(q=>q&&q.img&&calcFt(q.img))}catch(e){}
  if(PD.sel>=nSlots())PD.sel=0;grantsClaim();if(ME){mailLoad(true).then(()=>{if(!$('#home').hidden)$('#tbw').innerHTML=tbH()}).catch(()=>{});unrStart()}
