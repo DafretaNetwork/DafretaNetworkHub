@@ -1088,8 +1088,8 @@ async function importDefaults(){
   }catch(e){toast(e.message)}}
 const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,atkImg:'',atkFace:null,exImg:'',exFace:null,cards:[],evo:{},open:false,locked:false,comments:[]});
 const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:'',shDur:2,pct:false,value2:0,rch:false,cht:false,grow:0,exg:0});
-const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:'',cost:1});
-const emptyGF=()=>({art:'',shDur:2,id:null,name:'',effect:'dmg',value:10,delay:2,manaCost:1,ail:'',dur:2,icon:'',desc:'',locked:false});
+const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:'',cost:1,perEvo:0,art:''});
+const emptyGF=()=>({art:'',shDur:2,id:null,name:'',effect:'dmg',value:10,value2:0,delay:2,manaCost:0,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
 const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['dispel','Dispel — remove debuffs from an ally or buffs from an enemy'],['search','Search — look at the top cards, keep one'],['chaos','Chaotic — pick 1 of 3 random general cards (maybe another of this card)'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
 const CV_LABEL={dispel:'(not used)',chaos:'(not used)',search:'Cards to look at',attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
@@ -1105,7 +1105,13 @@ const RELIC_FX={
  regen_turn:['Heal every turn','Heals {v} HP at the start of every turn'],
  hp_bonus:['Max HP bonus','+{v} max HP'],
  atk_bonus:['ATK bonus','+{v} ATK'],
- dmg_pct:['Damage bonus (%)','Deals {v}% more damage']
+ dmg_pct:['Damage bonus (%)','Deals {v}% more damage'],
+ end_shield:['End of turn: gain shield','At the end of your turn, gain {v} shield'],
+ ex_self:['EX gives energy to itself','Using EX now gives {v} energy to this hero'],
+ dragon_scale:['On death: block to the other allies','When this hero dies, give {v} block to the other allies'],
+ power25:['Damage, healing and shield bonus (%)','Damage, healing and shield increased by {v}%'],
+ sage_cloak:['End of turn: gain block','At the end of your turn, gain {v} block'],
+ final_blade:['Attack turns a skill into 3 Final Gift','Attack now turns a random skill in your hand into 3 Final Gift']
 };
 const relicText=(e,v)=>((RELIC_FX[e]||['',''])[1]).replace('{v}',+v||0);
 const GEN_FX={
@@ -1117,10 +1123,30 @@ const GEN_FX={
  shield_all:['Shield the whole team','Give every ally {v} shield'],
  energy:['Gain energy','Gain {v} energy'],
  draw:['Draw cards','Draw {v} card(s)'],
- bomb:['Bomb (delayed explosion)','Explodes after {d} turn(s): deals {v} damage to all enemies']
+ bomb:['Bomb (delayed explosion)','Explodes after {d} turn(s): deals {v} damage to all enemies'],
+ fatigue_all:['Stressed Out: Fatigue all enemies','Give {v} Fatigue to all enemies'],
+ mana_moth:['Mana Moth: +Max Mana, keep & double mana','Raise Max Mana by {v}. At the end of this turn, keep and double your remaining mana for next turn'],
+ jester:["Jester's Curse: Joker cards to the foe","Add {v} Joker Cards to the opponent's hand"],
+ parcel:["Fortune's Parcel: shuffle random general cards in",'Shuffle {v} random general cards into your deck'],
+ chaos:['Chaotic Cube: pick 1 of 3 general cards','Look at 3 random general cards, add one to your hand'],
+ rebirth:['Rebirth: resurrect with shield','Resurrect an ally with {v2}% HP and give it shield equal to {v}% of its max HP'],
+ reroute:['Alternate Route: discard hand, draw +N','Discard your entire hand. Draw that many cards +{v}'],
+ disarm:['Disarmed: enemy relic back to its hand','Force an enemy to discard its equipped relic back to its hand'],
+ tainted:['Tainted Deal: sacrifice an ally','Sacrifice an ally. Bolster and Stun the others and give them {v} energy'],
+ certain_death:['Certain Death: % max HP to all enemies (Hold)','Deal damage equal to {v}% of their max HP to all enemies. Hold: +{v2}% at the end of each of your turns'],
+ anger:['Anger Spirit: energy to an ally','Give an ally {v} energy'],
+ scroll_str:['Scroll of Strength: Empower + Block','Empower an ally and give it {v} Block (2 turns)'],
+ focus_turret:['Focus Turret: delayed % max HP hit','Delay {d}: deal damage equal to {v}% of the target\'s max HP. Can be dispelled'],
+ aegis:['Aegis Protocol: shield = % max HP (team)','Give all allies shield equal to {v}% of their max HP'],
+ drained:['Drained: enemy loses all energy','Force an enemy hero to lose all energy'],
+ elixir:['Elixir of Defence: Bolster + heal % max HP','Bolster an ally and restore {v}% of its max HP'],
+ frostfire:['Frost-Fire Flask: Burn into Frost','Deal Frost damage equal to the target\'s Burn. Remove the Burn and Freeze it'],
+ time_turb:['Time Turbulence: becomes your last skill (Hold)','Hold: at the end of your turn, become the last skill you played this turn at 0 cost. Shuffle a Time Turbulence into your deck after playing it'],
+ ready_war:['Ready for War: shuffle Attacks of an ally','Shuffle {v} Attacks of the chosen ally into your deck']
 };
-const GEN_ICON={dmg:'💥',dmg_all:'🌋',heal:'💚',heal_all:'✨',shield:'🛡️',shield_all:'🏰',energy:'💎',draw:'🎴',bomb:'💣'};
-const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||0).replace('{d}',+g.delay||2)+(/^shield/.test(g.effect)?' for '+(+g.shDur||2)+' turn(s)':'')+(AILS[g.ail]?' + '+AILS[g.ail].name+' '+(+g.dur||2)+'⏱':'');
+const GEN_ICON={fatigue_all:'😩',mana_moth:'🦋',jester:'🤡',parcel:'📦',chaos:'🎲',rebirth:'👼',reroute:'🔀',disarm:'🚫',tainted:'🩸',certain_death:'☠️',anger:'💢',scroll_str:'📜',focus_turret:'🔭',aegis:'🛡️',drained:'🌀',elixir:'🧪',frostfire:'🧊',time_turb:'⏳',ready_war:'⚔️',dmg:'💥',dmg_all:'🌋',heal:'💚',heal_all:'✨',shield:'🛡️',shield_all:'🏰',energy:'💎',draw:'🎴',bomb:'💣'};
+const GEN_V2={rebirth:20,certain_death:5},GEN_V={fatigue_all:2,mana_moth:1,jester:3,parcel:2,rebirth:50,reroute:1,tainted:20,certain_death:10,anger:30,scroll_str:3,focus_turret:50,aegis:30,elixir:10,ready_war:5};
+const genText=g=>((GEN_FX[g.effect]||['',''])[1]).replace('{v}',+g.value||GEN_V[g.effect]||0).replace('{v2}',+g.value2||GEN_V2[g.effect]||0).replace('{d}',+g.delay||2)+(/^shield/.test(g.effect)?' for '+(+g.shDur||2)+' turn(s)':'')+(AILS[g.ail]?' + '+AILS[g.ail].name+' '+(+g.dur||2)+'⏱':'');
 function cardText(c){const v0=+c.value||0,v=c.pct?v0+'% ATK':v0,a=AILS[c.ail],st=ailStacks(c.ail),ad=a?' + '+a.name+(st?((+c.dur||1)>1?' ×'+(+c.dur||1):''):' '+(+c.dur||2)+'⏱'):'',hits=+c.hits>1?' ×'+(+c.hits):'',reach={pierce:' (Penetrate)',all:' (all foes)'}[c.scope]||'',v2=+c.value2>0?' or '+(c.pct?(+c.value2)+'% ATK':+c.value2):'';
   const sd=' '+(+c.shDur||2)+'⏱',ex=[+c.shield?'+'+(+c.shield)+' shield'+sd:'',+c.heal?'heal '+(+c.heal):'',+c.draw?'draw '+(+c.draw):''].filter(Boolean).join(', ');let t;
   switch(c.type){
@@ -2214,6 +2240,7 @@ function relicListHTML(){const e=Object.entries(RELS);if(!e.length)return '<p cl
 function relicSecInner(){
   return `<h3>Relics (Equipment)</h3>
   <p class="mut" style="margin:6px 0 10px;font-size:14px">A relic is a piece of equipment with a special effect. Players pick which hero gets which relic in their line-up. In battle the relic is a <b>card shuffled into the deck</b>, coloured like its hero: when it is drawn, playing it equips the relic on that hero only. <b>Entangle</b> switches a relic off, and a second Entangle sends it back into the deck.</p>
+  <p style="margin:0 0 10px"><button class="s" onclick="addStdRels()">➕ Add the 6 standard relics</button></p>
   <div id="rellist">${relicListHTML()}</div>
   <div class="bx2" style="margin-top:10px"><b>${RF.id?'✏️ Edit relic':'➕ New relic'}</b>
    <div class="f2" style="margin:8px 0 0;gap:8px">
@@ -2222,21 +2249,29 @@ function relicSecInner(){
     <div><label>Value</label><input type="number" min="0" value="${+RF.value||0}" oninput="RF.value=+this.value;rfTxt()"></div>
     <div><label>Description (optional, auto-written if empty)</label><input value="${esc(RF.desc)}" maxlength="90" oninput="RF.desc=this.value"></div>
     <div><label>Mana cost to equip</label><input type="number" min="0" max="10" value="${RF.cost===undefined||RF.cost===null||RF.cost===''?1:+RF.cost}" oninput="RF.cost=+this.value"></div>
+    <div><label>Value added per evolution (0 = the effect never changes)</label><input type="number" min="0" value="${+RF.perEvo||0}" oninput="RF.perEvo=+this.value;rfTxt()"></div>
    </div>
-   <p class="mut" id="rftx" style="font-size:13px;margin:8px 0">Effect: ${esc(relicText(RF.effect,RF.value))}</p>
-   <div class="row" style="align-items:center;gap:10px"><button class="s" onclick="$('#rif').click()">Upload icon (optional)</button><span id="rfpv">${RF.icon?`<img src="${RF.icon}" style="height:36px">`:''}</span>
+   <p class="mut" style="font-size:13px;margin:6px 0 0">Relics are unlocked with relic fragments (sold in the Gold Shop), level up in battles and evolve Base → II → III → IV → Transcendent I–V with the same costs as heroes. At evolution <i>n</i> the value is <b>Value + n × per-evolution value</b> (e.g. 21 + 3 per evolution: Base 21, II 24, … Transcendent V 45).</p>
+   <p class="mut" id="rftx" style="font-size:13px;margin:8px 0">Effect: ${esc(relicText(RF.effect,RF.value))}${+RF.perEvo?' (Transcendent V: '+esc(relicText(RF.effect,(+RF.value||0)+8*RF.perEvo))+')':''}</p>
+   <div class="row" style="align-items:center;gap:10px"><button class="s" onclick="$('#rif').click()">Upload icon (optional)</button><span id="rfpv">${RF.icon?`<img src="${RF.icon}" style="height:36px">`:''}</span><button class="s" onclick="$('#raf').click()">Upload card art (optional)</button><span id="rfav">${RF.art?`<img src="${RF.art}" style="height:48px;border-radius:6px">`:''}</span>${RF.art?'<button class="g s" onclick="RF.art=\'\';paintRel()">Remove art</button>':''}
     <button onclick="saveRelic()">💾 Save relic</button>${RF.id?'<button class="g" onclick="RF=emptyRF();paintRel()">Cancel</button>':''}</div>
-   <input id="rif" type="file" accept="image/*" hidden onchange="upRelIcon(this)">
+   <input id="rif" type="file" accept="image/*" hidden onchange="upRelIcon(this)"><input id="raf" type="file" accept="image/*" hidden onchange="upRelArt(this)">
   </div>`}
+const STD_RELS=[['Defense Mechanism','end_shield',21,3,2],['Reflux Gloves','ex_self',30,0,1],['Dragonic Scale','dragon_scale',3,0,1],['Unidentified Power','power25',25,0,2],["The Sage's Cloak",'sage_cloak',1,0,1],['Blade of the Final Gift','final_blade',0,0,1]];
+async function addStdRels(){const have=new Set(Object.values(RELS).map(r=>String(r.name||'').toLowerCase()));const todo=STD_RELS.filter(x=>!have.has(x[0].toLowerCase()));
+ if(!todo.length)return toast('All 6 standard relics are already there');if(!confirm('Add '+todo.length+' relic(s)?'))return;
+ try{let i=0;for(const [name,effect,value,perEvo,cost] of todo){const id='r'+Date.now().toString(36)+(i++).toString(36);const d={name,effect,value,perEvo,cost,desc:'',icon:null,art:null,updated:Date.now()};
+  await api('cardgame/relics/'+id,'PUT',d);RELS[id]=d}paintRel();toast('Added '+todo.length+' relics')}catch(e){toast(e.message)}}
 function paintRel(){const e=$('#relsec');if(e)e.innerHTML=relicSecInner()}
-function rfTxt(){const e=$('#rftx');if(e)e.textContent='Effect: '+relicText(RF.effect,RF.value)}
+function rfTxt(){const e=$('#rftx');if(e)e.textContent='Effect: '+relicText(RF.effect,RF.value)+(+RF.perEvo?' (Transcendent V: '+relicText(RF.effect,(+RF.value||0)+8*RF.perEvo)+')':'')}
+async function upRelArt(inp){const f=inp.files[0];if(!f)return;try{RF.art=await shrinkPng(f,512);const e=$('#rfav');if(e)e.innerHTML=`<img src="${RF.art}" style="height:48px;border-radius:6px">`}catch(e){toast(e.message)}}
 async function upRelIcon(inp){const f=inp.files[0];if(!f)return;try{RF.icon=await shrinkPng(f,96);const e=$('#rfpv');if(e)e.innerHTML=`<img src="${RF.icon}" style="height:36px">`}catch(e){toast(e.message)}}
 async function saveRelic(){
   if(!RF.name.trim())return toast('Relic name is required');
   const id=RF.id||'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const d={name:RF.name.trim(),effect:RF.effect,value:+RF.value||0,cost:Math.max(0,Math.min(10,RF.cost===undefined||RF.cost===''?1:+RF.cost||0)),desc:(RF.desc||'').trim(),icon:RF.icon||null,updated:Date.now()};
+  const d={name:RF.name.trim(),effect:RF.effect,value:+RF.value||0,cost:Math.max(0,Math.min(10,RF.cost===undefined||RF.cost===''?1:+RF.cost||0)),desc:(RF.desc||'').trim(),icon:RF.icon||null,perEvo:Math.max(0,+RF.perEvo||0),art:RF.art||null,updated:Date.now()};
   try{await api('cardgame/relics/'+id,'PUT',d);RELS[id]=d;RF=emptyRF();paintRel();toast('Relic saved')}catch(e){toast(e.message)}}
-function editRelic(id){const r=RELS[id];if(!r)return;RF={id,name:r.name||'',effect:r.effect||'ex_turn',value:+r.value||0,desc:r.desc||'',icon:r.icon||'',cost:r.cost===undefined||r.cost===null?1:+r.cost};paintRel();const e=$('#relsec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
+function editRelic(id){const r=RELS[id];if(!r)return;RF={id,name:r.name||'',effect:r.effect||'ex_turn',value:+r.value||0,desc:r.desc||'',icon:r.icon||'',cost:r.cost===undefined||r.cost===null?1:+r.cost,perEvo:+r.perEvo||0,art:r.art||''};paintRel();const e=$('#relsec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 async function delRelic(id){if(!confirm('Delete this relic?'))return;try{await api('cardgame/relics/'+id,'DELETE');delete RELS[id];if(RF.id===id)RF=emptyRF();paintRel()}catch(e){toast(e.message)}}
 
 /* ---- general cards ---- */
@@ -2245,16 +2280,17 @@ function genListHTML(){const e=Object.entries(GENS);if(!e.length)return '<p clas
     <div class="ba"><button class="s" onclick="editGen('${esc(k)}')">Edit</button><button class="d s" onclick="delGen('${esc(k)}')">✕</button></div></div>`).join('')}</div>`}
 function genSecInner(){
   return `<h3>General Cards</h3>
-  <p class="mut" style="margin:6px 0 10px;font-size:14px">Cards that don't belong to any hero (like a Bomb). Before a duel each player picks <b>2 general cards</b> that get shuffled into their deck.</p>
+  <p class="mut" style="margin:6px 0 10px;font-size:14px">Cards that don't belong to any hero (like a Bomb). Before a duel each player picks <b>2 general cards</b> that get shuffled into their deck. General cards have <b>no mana cost</b>. <button class="s" onclick="addStdGens()">➕ Add the 20 standard general cards</button></p>
   <div id="genlist">${genListHTML()}</div>
   <div class="bx2" style="margin-top:10px" oninput="gfPrevU()" onchange="gfPrevU()"><b>${GF.id?'✏️ Edit general card':'➕ New general card'}</b>
    <div class="f2" style="margin:8px 0 0;gap:8px">
     <div><label>Card Name</label><input value="${esc(GF.name)}" maxlength="30" oninput="GF.name=this.value" placeholder="e.g. Bomb"></div>
     <div><label>Effect</label><select onchange="GF.effect=this.value;paintGen()">${Object.entries(GEN_FX).map(([k,v])=>`<option value="${k}"${GF.effect===k?' selected':''}>${v[0]}</option>`).join('')}</select></div>
     <div><label>Value</label><input type="number" min="0" value="${+GF.value||0}" oninput="GF.value=+this.value;gfTxt()"></div>
-    ${/^shield/.test(GF.effect)?`<div><label>🛡️ Shield lasts (turns)</label><input type="number" min="1" max="9" value="${+GF.shDur||2}" oninput="GF.shDur=+this.value;gfTxt()"></div>`:''}
-    ${GF.effect==='bomb'?`<div><label>Explodes after (turns)</label><input type="number" min="1" max="9" value="${+GF.delay||2}" oninput="GF.delay=+this.value;gfTxt()"></div>`:''}
-    <div><label>Mana Cost</label><input type="number" min="0" max="20" value="${+GF.manaCost||0}" oninput="GF.manaCost=+this.value"></div>
+    ${GEN_V2[GF.effect]!=null?`<div><label>${GF.effect==='rebirth'?'HP restored (%)':'Grows each turn by (% max HP)'}</label><input type="number" min="0" value="${+GF.value2||GEN_V2[GF.effect]}" oninput="GF.value2=+this.value;gfTxt()"></div>`:''}
+    ${/^shield/.test(GF.effect)||GF.effect==='aegis'?`<div><label>🛡️ Shield lasts (turns)</label><input type="number" min="1" max="9" value="${+GF.shDur||2}" oninput="GF.shDur=+this.value;gfTxt()"></div>`:''}
+    ${GF.effect==='bomb'||GF.effect==='focus_turret'?`<div><label>${GF.effect==='bomb'?'Explodes after':'Fires after'} (turns)</label><input type="number" min="1" max="9" value="${+GF.delay||2}" oninput="GF.delay=+this.value;gfTxt()"></div>`:''}
+    <div><label>Mana Cost</label><input type="number" value="0" disabled title="General cards have no mana cost"><small class="mut">General cards have no mana cost</small></div>
     <div><label>Status ailment (optional)</label><select onchange="GF.ail=this.value;paintGen()">${ailOpts(GF.ail)}</select></div>
     ${GF.ail?`<div><label>Ailment duration (turns)</label><input type="number" min="1" max="9" value="${+GF.dur||2}" oninput="GF.dur=+this.value;gfTxt()"></div>`:''}
     <div><label>Icon emoji (optional)</label><input value="${esc(GF.icon)}" maxlength="4" oninput="GF.icon=this.value" placeholder="${GEN_ICON[GF.effect]||'🃏'}"></div>
@@ -2265,12 +2301,20 @@ function genSecInner(){
    ${artBox('g')}
    <div class="row"><button onclick="saveGen()">💾 Save general card</button>${GF.id?'<button class="g" onclick="GF=emptyGF();paintGen()">Cancel</button>':''}</div>
   </div>`}
+const STD_GENS=[['Stressed Out','fatigue_all',2],['Mana Moth','mana_moth',1],["Jester's Curse",'jester',3],["Fortune's Parcel",'parcel',2],['Chaotic Cube','chaos',0],
+ ['Rebirth','rebirth',50,20],['Alternate Route','reroute',1],['Disarmed','disarm',0],['Tainted Deal','tainted',20],['Mana Crystal','energy',4],['Certain Death','certain_death',10,5],
+ ['Anger Spirit','anger',30],['Scroll of Strength','scroll_str',3],['Focus Turret','focus_turret',50],['Aegis Protocol','aegis',30],['Drained','drained',0],['Elixir of Defence','elixir',10],
+ ['Frost-Fire Flask','frostfire',0],['Time Turbulence','time_turb',0],['Ready for War','ready_war',5]];
+async function addStdGens(){const have=new Set(Object.values(GENS).map(g=>String(g.name||'').toLowerCase()));const todo=STD_GENS.filter(x=>!have.has(x[0].toLowerCase()));
+ if(!todo.length)return toast('All 20 standard general cards are already there');if(!confirm('Add '+todo.length+' general card(s)?'))return;
+ try{let i=0;for(const [name,effect,value,value2] of todo){const id='g'+Date.now().toString(36)+(i++).toString(36);const d={name,effect,value:+value||0,value2:+value2||0,delay:2,shDur:2,manaCost:0,ail:'',dur:2,icon:'',desc:'',locked:false,art:null,updated:Date.now()};
+  await api('cardgame/general/'+id,'PUT',d);GENS[id]=d}paintGen();toast('Added '+todo.length+' general cards')}catch(e){toast(e.message)}}
 function paintGen(){const e=$('#gensec');if(e)e.innerHTML=genSecInner()}
 function gfTxt(){const e=$('#gftx');if(e)e.textContent='Effect: '+genText(GF)}
 async function saveGen(){
   if(!GF.name.trim())return toast('Card name is required');
   const id=GF.id||'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||0,delay:Math.max(1,+GF.delay||2),shDur:Math.max(1,Math.min(9,+GF.shDur||2)),manaCost:Math.max(0,+GF.manaCost||0),ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),locked:!!GF.locked,art:GF.art||null,updated:Date.now()};
+  const d={name:GF.name.trim(),effect:GF.effect,value:+GF.value||(GEN_V[GF.effect]||0),value2:+GF.value2||(GEN_V2[GF.effect]||0),delay:Math.max(1,+GF.delay||2),shDur:Math.max(1,Math.min(9,+GF.shDur||2)),manaCost:0,ail:GF.ail||'',dur:+GF.dur||2,icon:(GF.icon||'').trim(),desc:(GF.desc||'').trim(),locked:!!GF.locked,art:GF.art||null,updated:Date.now()};
   try{await api('cardgame/general/'+id,'PUT',d);GENS[id]=d;GF=emptyGF();paintGen();toast('General card saved')}catch(e){toast(e.message)}}
 function editGen(id){const g=GENS[id];if(!g)return;GF={...emptyGF(),...g,id};paintGen();const e=$('#gensec');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 async function delGen(id){if(!confirm('Delete this general card?'))return;try{await api('cardgame/general/'+id,'DELETE');delete GENS[id];if(GF.id===id)GF=emptyGF();paintGen()}catch(e){toast(e.message)}}
