@@ -668,6 +668,15 @@ background:radial-gradient(ellipse 60% 45% at 85% 8%,#10305f66,transparent 70%),
 .rkfx label{display:flex;flex-direction:column;gap:2px;margin:0;font-size:12px;color:var(--mute)}
 .rkfx select{width:auto;min-width:110px;padding:5px 8px;font-size:13px}
 .fxdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+/* menu portraits (alternate art for the app's main menu + Hero Details) */
+.ptst{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.ptst button{position:relative}.ptst .on{outline:2px solid var(--gold);outline-offset:1px}
+.ptst i{position:absolute;top:-5px;right:-5px;width:10px;height:10px;border-radius:50%;background:#38d27c;border:2px solid #0b1626}
+.ptw{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;margin-top:8px}@media(max-width:820px){.ptw{grid-template-columns:1fr}}
+.ptv{position:relative;overflow:hidden;border-radius:10px;border:1px solid var(--line);background:radial-gradient(120% 90% at 75% 0%,#5a3a22 0%,#25160c 55%,#120a05 100%)}
+.ptv .ar{position:absolute;inset:0;overflow:hidden}.ptv img{position:absolute;max-width:none;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.7))}
+.ptv .ov{position:absolute;border:1px dashed rgba(255,227,163,.55);background:rgba(20,10,4,.55);border-radius:6px;color:#e7c99b;font-size:10px;display:grid;place-items:center;text-align:center}
+.ptv .cap{position:absolute;left:6px;top:4px;font-size:11px;color:#ffe3a3;text-shadow:0 1px 2px #000;z-index:2}
+.ptsl{display:grid;grid-template-columns:auto 1fr 44px;gap:4px 8px;align-items:center;font-size:12px;margin-top:6px}.ptsl input{width:100%}.ptsl b{font-size:12px}
 </style>
 </head>
 <body>
@@ -1181,7 +1190,7 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn,mlx,rgs]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins','mail','rigs'].map(k=>api('cardgame/'+k).catch(()=>null)));APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn,mlx,rgs,ptv]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins','mail','rigs','portraitsv'].map(k=>api('cardgame/'+k).catch(()=>null)));PTV=ptv||{};APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
   AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};DSHOP=dsh||{};SKINSA=skn||{};SALES=null;MAILA=mlx||{};RIGSA=rgs||{};
@@ -1361,7 +1370,7 @@ function heroEditorHTML(){
     <div style="grid-column:1/-1"><label class="chk"><input type="checkbox" ${HF.locked?'checked':''} onchange="HF.locked=this.checked"> 🔒 Locked hero: players must collect ${CGC.unlock} card fragments of this hero to unlock it (otherwise everyone owns it from the start)</label></div></div>
    <label>Portrait <span class="mut" style="font-weight:400">(full-body PNG, transparent background, uploaded at full resolution)</span></label>
    <div class="row" style="align-items:center;margin:6px 0 0;gap:10px"><button class="s" onclick="$('#hif').click()">Upload portrait</button><span id="hpst" class="mut" style="font-size:13px"></span></div>
-   <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)"><div id="fcsec">${faceEdHTML()}</div><div id="posesec">${poseHTML()}</div></div>
+   <input id="hif" type="file" accept="image/*" hidden onchange="upHeroImg(this)"><div id="fcsec">${faceEdHTML()}</div><div id="posesec">${poseHTML()}</div><div id="ptsec">${ptHTML()}</div></div>
   <div class="cgstep"><div class="cgsh"><span>2</span><b>Cards</b></div>
    <p class="mut" style="margin:8px 0;font-size:13px">Colored automatically by class. A hero needs at least one non-ultimate card to appear in the game.</p>
    <div id="hcards">${renderCardList()}</div><div id="cform" style="margin-top:10px" oninput="cfPrevU()" onchange="cfPrevU()">${renderCardForm()}</div></div>
@@ -1380,6 +1389,55 @@ function poseHTML(){
    <input id="pz${k}" type="file" accept="image/*" hidden onchange="upPose('${k}',this)"></div></div>`}).join('')}</div>
   <p class="mut" style="font-size:12px;margin:8px 0 0">Without a pose image the hero still lunges and glows, it just keeps its normal picture. Evolutions with their own portrait can have their own poses (step 3).</p></div>`}
 const paintPose=()=>{const e=$('#posesec');if(e)e.innerHTML=poseHTML()};
+/* ---- menu portraits: sharp alternate art for the app's main menu hero and Hero Details ----
+   cardgame/portraits/{hero}/{look} = {img, v}             the picture (only the app downloads it, once per version)
+   cardgame/portraitsv/{hero}/{look} = {v,w,h,ms,mx,my,ds,dx,dy}   small index the app loads at start: version + placement
+   looks: b = base, e1..e4 = II, III, IV, Transcendence (Transcendence II-V use the Transcendence I look).
+   Placement: s = size %, x/y = offset in % of the area; m = main menu, d = Hero Details. */
+let PTV={},PTI={},PTS='b';const PTLOOK=[['b','Base'],['e1','II'],['e2','III'],['e3','IV'],['e4','Transcendence']],PTDEF={ms:100,mx:0,my:0,ds:100,dx:0,dy:0};
+const ptCur=()=>((PTV[HF.id]||{})[PTS])||null;
+const ptRect=(o,k,ax,ay,aw,ah,cx,iw,ih)=>{const sc=(+o[k+'s']||100)/100,z=Math.min(aw/iw,ah/ih)*sc,w=iw*z,h=ih*z;return{x:cx-w/2+(+o[k+'x']||0)/100*aw,y:ay+ah-h+(+o[k+'y']||0)/100*ah,w,h}};
+function ptHTML(){
+  if(!HF.id)return `<div class="bx2" style="margin-top:12px"><b>🖼️ Menu portrait</b><p class="mut" style="font-size:12px;margin:4px 0 0">Create the hero first (press Create hero), then come back to add its menu portrait.</p></div>`;
+  const P=PTV[HF.id]||{},cur=ptCur(),key=HF.id+'|'+PTS,img=PTI[key],ei=PTS==='b'?0:+PTS.slice(1),noArt=ei&&!(HF.evo&&HF.evo[ei]&&HF.evo[ei].img);
+  if(cur&&img===undefined){PTI[key]=null;api('cardgame/portraits/'+HF.id+'/'+PTS+'/img').then(u=>{PTI[key]=u||'';paintPt()}).catch(()=>{PTI[key]='';paintPt()})}
+  const o={...PTDEF,...(cur||{})},sl=(k,l,mn,mx)=>`<span>${l}</span><input type="range" min="${mn}" max="${mx}" step="1" value="${+o[k]}" oninput="ptSet('${k}',this.value)"><b id="ptv_${k}">${+o[k]}${k.endsWith('s')?'%':''}</b>`;
+  return `<div class="bx2" style="margin-top:12px"><b>🖼️ Menu portrait <span class="mut" style="font-weight:400">(optional alternate art, PNG with a transparent background)</span></b>
+  <p class="mut" style="font-size:12px;margin:4px 0 0">Shown in the app as the big hero on the main menu and in Hero Details, instead of a zoomed-in copy of the battle art. Battles still use the battle art. Each look can have its own portrait; a look without one uses the battle art. Skins always show their own art. Uploads save straight away (no need to press Save).</p>
+  <div class="ptst">${PTLOOK.map(([k,l])=>`<button class="s ${PTS===k?'on':'g'}" onclick="PTS='${k}';paintPt()">${l}${P[k]?'<i title="has a portrait"></i>':''}</button>`).join('')}</div>
+  ${noArt?`<p class="mut" style="font-size:12px;margin:0 0 6px">⚠ This evolution has no battle art of its own, so the game shows the <b>Base</b> portrait for it. A portrait here is only used once this evolution gets its own art (step 3).</p>`:''}
+  <div class="row" style="gap:6px;align-items:center"><button class="s" onclick="$('#ptf').click()">${cur?'Replace':'Upload'} ${esc(PTLOOK.find(x=>x[0]===PTS)[1])} portrait</button>${cur?`<button class="g s" onclick="ptReset()">Reset position</button><button class="d s" onclick="ptDel()">Remove</button>`:''}<span id="ptst" class="mut" style="font-size:12px">${cur&&cur.w?cur.w+'×'+cur.h:''}</span></div>
+  <input id="ptf" type="file" accept="image/png,image/webp,image/*" hidden onchange="ptUp(this)">
+  ${cur?`<div class="ptw"><div><div class="ptv" id="ptvm" style="aspect-ratio:835/340">${img?'':'<div class="cap" style="top:45%;left:0;right:0;text-align:center">Loading…</div>'}</div>
+     <div class="ptsl">${sl('ms','Size',40,250)}${sl('mx','Left / right',-60,60)}${sl('my','Up / down',-60,60)}</div></div>
+    <div><div class="ptv" id="ptvd" style="aspect-ratio:396/350"></div><div class="ptsl">${sl('ds','Size',40,250)}${sl('dx','Left / right',-60,60)}${sl('dy','Up / down',-60,60)}</div></div></div>`:''}
+  </div>`}
+function paintPt(){const e=$('#ptsec');if(!e)return;e.innerHTML=ptHTML();ptDraw()}
+/* previews use the app's own layout (915×412 screen) so what you see here is what players see */
+function ptDraw(){const cur=ptCur(),img=PTI[HF.id+'|'+PTS];if(!cur||!img)return;const o={...PTDEF,...cur};
+  const im=new Image();im.onload=()=>{const iw=im.naturalWidth,ih=im.naturalHeight;
+    const vm=$('#ptvm');if(vm){const W=835,H=340,bw=W*.58,bx=W-bw,r=ptRect(o,'m',bx,0,bw,H,bx+bw*.6,iw,ih),k=vm.clientWidth/W,p=v=>(v*k).toFixed(1)+'px',fade=`linear-gradient(90deg,transparent ${bx*k}px,#000 ${(bx+bw*.24)*k}px)`;
+      vm.innerHTML=`<div class="cap">Main menu</div><div class="ar" style="-webkit-mask-image:${fade};mask-image:${fade}"><img src="${esc(img)}" style="left:${p(r.x)};top:${p(r.y)};width:${p(r.w)};height:${p(r.h)}"></div>
+      <div class="ov" style="left:${p(10)};top:${p(H-188)};width:${p(442)};height:${p(180)}">Line-up</div><div class="ov" style="left:${p(W-310)};top:${p(H-112)};width:${p(300)};height:${p(104)}">Mode + Play</div><div class="ov" style="left:${p(10)};top:${p(6)};width:${p(330)};height:${p(56)}">Player</div>`}
+    const vd=$('#ptvd');if(vd){const W=396,H=350,r=ptRect(o,'d',0,0,W,H,W/2,iw,ih),k=vd.clientWidth/W,p=v=>(v*k).toFixed(1)+'px';
+      vd.innerHTML=`<div class="cap" style="left:auto;right:6px">Hero Details</div><div class="ar"><img src="${esc(img)}" style="left:${p(r.x)};top:${p(r.y)};width:${p(r.w)};height:${p(r.h)}"></div>
+      <div class="ar" style="top:70%;background:linear-gradient(transparent,rgba(18,10,5,.94))"></div><div class="ov" style="left:0;top:${p(8)};width:${p(150)};height:${p(32)}">Class</div><div class="ov" style="left:${p(W/2-90)};top:${p(H-46)};width:${p(180)};height:${p(36)}">Add to line-up</div>`}};
+  im.src=img}
+/* full-size cut-out, longest side up to 1600 px (sharp on phones, small download), WebP when the browser can */
+async function ptProc(f){const u=URL.createObjectURL(f);try{const im=await loadImg(u),c=trimCanvas(im),k=Math.min(1,1600/Math.max(c.width,c.height)),o=document.createElement('canvas');o.width=Math.round(c.width*k);o.height=Math.round(c.height*k);
+  const g=o.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(c,0,0,o.width,o.height);const a=g.getImageData(0,0,o.width,o.height).data,W=o.width,H=o.height,cn=[3,(W-1)*4+3,(H-1)*W*4+3,((H-1)*W+W-1)*4+3].filter(i=>a[i]>200).length;
+  let img=o.toDataURL('image/webp',.92);if(!/^data:image\/webp/.test(img))img=o.toDataURL('image/png');if(img.length>9e6)throw new Error('That image is too large. Please use a smaller file.');
+  return{img,w:o.width,h:o.height,solid:cn>=3,kb:Math.round(img.length*.75/1024)}}finally{URL.revokeObjectURL(u)}}
+async function ptUp(inp){const f=inp.files[0];inp.value='';if(!f||!HF.id)return;const st=$('#ptst');if(st)st.textContent='Processing…';
+  try{const r=await ptProc(f),v=Date.now(),old=ptCur()||{},meta={...PTDEF,...old,v,w:r.w,h:r.h};
+    await api('cardgame/portraits/'+HF.id+'/'+PTS,'PUT',{img:r.img,v});await api('cardgame/portraitsv/'+HF.id+'/'+PTS,'PUT',meta);
+    (PTV[HF.id]=PTV[HF.id]||{})[PTS]=meta;PTI[HF.id+'|'+PTS]=r.img;paintPt();
+    toast(r.solid?'Saved, but this picture has a solid background. Use a PNG with a transparent background so it blends into the menu.':'Portrait saved ('+r.w+'×'+r.h+', '+r.kb+' KB)')}catch(e){if(st)st.textContent='';toast(e.message)}}
+let ptT=0;function ptSet(k,v){const cur=ptCur();if(!cur)return;cur[k]=+v;const b=$('#ptv_'+k);if(b)b.textContent=v+(k.endsWith('s')?'%':'');ptDraw();
+  clearTimeout(ptT);const hid=HF.id,st=PTS,patch={ms:+cur.ms||100,mx:+cur.mx||0,my:+cur.my||0,ds:+cur.ds||100,dx:+cur.dx||0,dy:+cur.dy||0};ptT=setTimeout(()=>api('cardgame/portraitsv/'+hid+'/'+st,'PATCH',patch).catch(e=>toast(e.message)),450)}
+async function ptReset(){const cur=ptCur();if(!cur)return;Object.assign(cur,PTDEF);try{await api('cardgame/portraitsv/'+HF.id+'/'+PTS,'PATCH',PTDEF);paintPt()}catch(e){toast(e.message)}}
+async function ptDel(){if(!confirm('Remove this portrait? The game goes back to the battle art for this look.'))return;
+  try{await api('cardgame/portraitsv/'+HF.id+'/'+PTS,'DELETE');await api('cardgame/portraits/'+HF.id+'/'+PTS,'DELETE');if(PTV[HF.id])delete PTV[HF.id][PTS];delete PTI[HF.id+'|'+PTS];paintPt();toast('Portrait removed')}catch(e){toast(e.message)}}
 async function upPose(k,inp){const f=inp.files[0];inp.value='';if(!f)return;try{toast('Processing image…');const r=await procHeroImg(f);HF[k+'Img']=r.img;HF[k+'Face']=r.face;paintPose();toast('Pose ready ('+r.w+'×'+r.h+'). Press Save to keep it.')}catch(e){toast(e.message)}}
 async function upEvoPose(i,k,inp){const f=inp.files[0];inp.value='';if(!f)return;try{toast('Processing image…');const r=await procHeroImg(f);evSet(i,k+'Img',r.img);evSet(i,k+'Face',r.face);paintEvo();toast('Pose ready')}catch(e){toast(e.message)}}
 /* Transcendence II-V: same look as Transcendence I, own name and bonuses */
@@ -2074,7 +2132,7 @@ function heroCardHTML(id,h){
   return `<div class="cgh2" style="--hc:${hc}">
     <div class="cgh2t${h.img?' zf':''}">${h.img?faceTag(h.img,h.face):`<span>${icon}</span>`}</div>
     <div class="cgh2b"><b>${esc(h.name||'Unnamed')}</b><span class="cgcl">${esc(cls||'')}</span>${h.locked?' <span title="Players unlock this hero with fragments">🔒</span>':''}
-     <div class="mut" style="font-size:12px;margin-top:4px">❤️ ${+h.hp||0} · ⚔️ ${+h.atk||0} · 🃏 ${cs.length} · ✨ ${hasUlt?'ult':'no ult'} · ⬆ ${evn}/8 evo</div>
+     <div class="mut" style="font-size:12px;margin-top:4px">❤️ ${+h.hp||0} · ⚔️ ${+h.atk||0} · 🃏 ${cs.length} · ✨ ${hasUlt?'ult':'no ult'} · ⬆ ${evn}/8 evo${PTV[id]&&Object.keys(PTV[id]).length?' · 🖼️ '+Object.keys(PTV[id]).length+' portrait'+(Object.keys(PTV[id]).length>1?'s':''):''}</div>
      ${playable?'':'<div class="cgw">⚠ No cards: hidden from players</div>'}
      <div class="row" style="margin-top:8px"><button class="s" onclick="editHero('${esc(id)}')">✏️ Edit</button><button class="d s" onclick="deleteHero('${esc(id)}')">Delete</button></div></div></div>`;
 }
@@ -2102,10 +2160,10 @@ async function editHero(id){
     const evo={};[1,2,3,4,5,6,7,8].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={imgS:e.imgS||'',imgSrc:e.img||'',name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,bs:+e.bs||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,atkBs:+e.atkBs||0,exImg:e.exImg||'',exFace:e.exFace||null,exBs:+e.exBs||0}});
     let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
     HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,imgS:h.imgS||'',imgSrc:h.img||'',img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,atkBs:+h.atkBs||0,exImg:h.exImg||'',exFace:h.exFace||null,exBs:+h.exBs||0,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
-    CF=emptyCF();atab='cardgame';CGT='heroes';await adminV();window.scrollTo(0,0);autoFaceMissing()
+    CF=emptyCF();atab='cardgame';CGT='heroes';PTS='b';await adminV();window.scrollTo(0,0);ptDraw();autoFaceMissing()
   }catch(e){toast(e.message)}}
 async function deleteHero(id){if(!confirm('Delete this hero? Players who used it will lose it from their line-ups.'))return;
-  try{await api('cardgame/heroes/'+id,'DELETE');if(HF.id===id)HF=emptyHF();toast('Hero deleted');adminV()}catch(e){toast(e.message)}}
+  try{await api('cardgame/heroes/'+id,'DELETE');await api('cardgame/portraitsv/'+id,'DELETE').catch(()=>{});await api('cardgame/portraits/'+id,'DELETE').catch(()=>{});delete PTV[id];if(HF.id===id)HF=emptyHF();toast('Hero deleted');adminV()}catch(e){toast(e.message)}}
 
 /* ---- hero cards builder ---- */
 /* ---- card frame preview (same layout as the game) ---- */
