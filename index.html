@@ -718,8 +718,59 @@ async function tok(){if(!TOK)return null;if(Date.now()<TOK.exp)return TOK.it;if(
   tokP=(async()=>{try{const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+FBK,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(TOK.rt)});const j=await r.json();if(!r.ok)throw 0;setTok(j,TOK.u);return TOK.it}catch(e){TOK=null;localStorage.removeItem('dn_s');return null}finally{tokP=null}})();return tokP}
 const aq=()=>TOK&&TOK.it?'auth='+encodeURIComponent(TOK.it):'';
 setInterval(()=>{if(TOK)tok()},240000);
-const api=async(p,m='GET',b)=>{const [a,q0]=p.split('?');const t=await tok(),q=[q0,t?'auth='+encodeURIComponent(t):''].filter(Boolean).join('&');const r=await fetch(`${DB}/${a}.json${q?'?'+q:''}`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return r.json()};
+const api=async(p,m='GET',b)=>{const [a,q0]=p.split('?');const t=await tok(),q=[q0,t?'auth='+encodeURIComponent(t):''].filter(Boolean).join('&');const r=await fetch(`${DB}/${a}.json${q?'?'+q:''}`,{method:m,headers:{'Content-Type':'application/json'},body:b===undefined?undefined:JSON.stringify(b)});if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');if(m!=='GET')liteTouch(a,b);return r.json()};
 const mp=o=>api('','PATCH',o);
+/* ---------------- app updates (Godot app) ----------------
+   The phone app does not download the full game data with every picture inside it. Instead this admin panel
+   publishes an "app update" by itself every time you save something with pictures:
+     cardgame/assets/{id}  = one picture (data URL); the id is a hash of the picture, so a changed picture gets a new id
+     cardgame/lite/data    = heroes, general cards, relics, appearance, rigs, skins and menu portraits with every
+                             picture replaced by "asset:{id}"  (small: loads in about a second)
+     cardgame/lite/meta    = {v, sig, idx:{id:KB}, n, kb, old}: the picture list the app compares with the phone
+   The app shows "Update available · X MB" on its loading screen when pictures are new, downloads only those, and
+   keeps them. The website game keeps reading the normal paths, so it is not affected. */
+const LITE_SRC=['heroes','general','relics','appearance','rigs','skins','portraits','portraitsv'];
+const LITE_RE=/^cardgame\/(heroes|general|relics|appearance|rigs|skins|portraits|portraitsv)(\/|$)/;
+const LITE={busy:false,pend:false,t:0,last:null,err:''},AIDC=new Map();
+function liteTouch(p,b){if(LITE_RE.test(p)||(p===''&&b&&typeof b==='object'&&Object.keys(b).some(k=>LITE_RE.test(k))))liteQueue()}
+function liteQueue(ms=4000){LITE.pend=true;liteBar('📦 App update waiting for your changes…');clearTimeout(LITE.t);LITE.t=setTimeout(()=>litePublish(),ms)}
+function liteBar(t){let e=document.getElementById('litebar');if(!e){e=document.createElement('div');e.id='litebar';e.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9999;background:#0f1e33;border:1px solid #2c4a72;color:#ffe3a3;padding:8px 12px;border-radius:10px;font:600 12px system-ui;box-shadow:0 6px 18px rgba(0,0,0,.5);max-width:360px';document.body.appendChild(e)}e.textContent=t;e.style.display=t?'block':'none'}
+window.addEventListener('beforeunload',e=>{if(LITE.busy||LITE.pend){e.preventDefault();e.returnValue=''}});
+async function aidOf(s){let a=AIDC.get(s);if(a)return a;const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));a='a'+[...new Uint8Array(h)].slice(0,10).map(x=>x.toString(16).padStart(2,'0')).join('');AIDC.set(s,a);return a}
+/* every picture (data:image/… of a real size) anywhere in the data becomes "asset:{id}" */
+async function liteWalk(v,idx,need){if(typeof v==='string'){if(v.length>=400&&v.startsWith('data:image/')){const a=await aidOf(v);idx[a]=Math.max(1,Math.round(v.length*.75/1024));need[a]=v;return 'asset:'+a}return v}
+  if(Array.isArray(v)){const o=[];for(const x of v)o.push(await liteWalk(x,idx,need));return o}
+  if(v&&typeof v==='object'){const o={};for(const k in v)o[k]=await liteWalk(v[k],idx,need);return o}return v}
+async function liteBuild(src){const idx={},need={},data={};
+  for(const k of ['heroes','general','relics','appearance','rigs','skins'])data[k]=await liteWalk(src[k]||{},idx,need);
+  const pv=JSON.parse(JSON.stringify(src.portraitsv||{})),P=src.portraits||{};
+  for(const h in pv)for(const st in (pv[h]||{})){const im=P[h]&&P[h][st]&&P[h][st].img;if(im&&pv[h][st])pv[h][st].img=await liteWalk(im,idx,need)}
+  data.portraitsv=pv;return{data,idx,need,sig:await sha(JSON.stringify(data))}}
+/* src: data already loaded by the Card Game tab (to check without downloading it twice); otherwise read fresh */
+async function litePublish(force=false,src=null){
+  if(LITE.busy){LITE.pend=true;return}
+  LITE.busy=true;LITE.pend=false;clearTimeout(LITE.t);
+  try{if(!src){liteBar('📦 Preparing app update…');const v=await Promise.all(LITE_SRC.map(k=>api('cardgame/'+k)));src={};LITE_SRC.forEach((k,i)=>src[k]=v[i])}
+    if(!src.heroes||!Object.keys(src.heroes).length)throw new Error('no heroes found');            // never publish an empty game
+    const b=await liteBuild(src),meta0=await api('cardgame/lite/meta').catch(()=>null);
+    if(!force&&meta0&&meta0.sig===b.sig){LITE.last=meta0;LITE.err='';liteBar('');paintLite();return}
+    const have=new Set(await skeys('cardgame/assets').catch(()=>[])),up=Object.keys(b.need).filter(a=>!have.has(a));
+    let i=0,kb=0;for(const a of up){i++;liteBar(`📦 Publishing app update · picture ${i} of ${up.length}`);await api('cardgame/assets/'+a,'PUT',b.need[a]);kb+=b.idx[a]}
+    /* pictures no longer used are deleted 3 days later (players in the middle of updating may still need them) */
+    const now=Date.now(),old={...((meta0&&meta0.old)||{})};
+    for(const a of have)if(!b.idx[a]&&!old[a])old[a]=now;
+    for(const a of Object.keys(old)){if(b.idx[a]||!have.has(a)){delete old[a];continue}if(now-old[a]>3*864e5){await api('cardgame/assets/'+a,'DELETE').catch(()=>{});delete old[a]}}
+    const meta={v:now,sig:b.sig,idx:b.idx,n:Object.keys(b.idx).length,kb:Object.values(b.idx).reduce((x,y)=>x+y,0),old};
+    await api('','PATCH',{'cardgame/lite/data':b.data,'cardgame/lite/meta':meta});   // data + picture list change together
+    LITE.last=meta;LITE.err='';liteBar('');paintLite();
+    toast('📦 App update published'+(up.length?` · ${up.length} new picture${up.length>1?'s':''} (${kb>=1024?(kb/1024).toFixed(1)+' MB':kb+' KB'})`:''));
+  }catch(e){LITE.err=e.message||String(e);liteBar('');paintLite();toast('App update not published yet: '+LITE.err+'. Retrying in 30 s.');LITE.pend=true;clearTimeout(LITE.t);LITE.t=setTimeout(()=>litePublish(),30000)}
+  finally{LITE.busy=false;if(LITE.pend&&!LITE.err)liteQueue(1500)}}
+function liteHTML(){const m=LITE.last,ago=m?Math.max(0,Math.round((Date.now()-m.v)/6e4)):0,mb=m?(m.kb>=1024?(m.kb/1024).toFixed(1)+' MB':m.kb+' KB'):'';
+  return `<div class="cgp" id="litebox"><h4>📦 Phone app updates</h4><p class="mut" style="font-size:13px;margin:0 0 8px">${LITE.busy?'Publishing now…':LITE.err?'⚠ Last try failed: '+esc(LITE.err)+'. It retries by itself.':m?`Published ${ago<1?'just now':ago<60?ago+' min ago':ago<1440?Math.round(ago/60)+' h ago':Math.round(ago/1440)+' days ago'} · ${m.n} pictures · ${mb}`:'Not published yet.'}</p>
+   <div class="row" style="gap:10px;flex-wrap:wrap"><button onclick="litePublish(true)" ${LITE.busy?'disabled':''}>📦 Publish app update now</button></div>
+   <p class="mut" style="font-size:12px;margin:8px 0 0">Happens by itself a few seconds after you save heroes, cards, relics, skins, backgrounds, animations or portraits, and when this tab opens. Players see <b>Update available</b> on the app's loading screen and download only the new pictures. Keep this page open until the 📦 bar at the bottom left is gone. Before exporting a new APK, run <b>tools/bundle_art.gd</b> in Godot so new installs need nothing extra.</p></div>`}
+function paintLite(){const e=document.getElementById('litebox');if(e)e.outerHTML=liteHTML()}
 const skeys=async p=>{const t=await tok();const r=await fetch(`${DB}/${p}.json?shallow=true${t?'&auth='+encodeURIComponent(t):''}`);if(!r.ok)throw new Error('Database error '+r.status+'. Check your Firebase rules.');return Object.keys(await r.json()||{})};
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('dafreta:'+s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const mid=()=>Date.now().toString(36).padStart(9,'0')+Math.random().toString(36).slice(2,5);
@@ -1198,6 +1249,7 @@ async function cardgameAdminHTML(){
   if(!bts){try{const nb=await seedBots();if(nb)toast(nb+' starter bots created for Ranked')}catch(e){}}
   const rkl=rk?Object.values(rk).filter(r=>r&&r.n):[];RKSAVED=rkl.length>0;RKS=rkl.length?rkl:defRanksA();
   CF=emptyCF();RF=emptyRF();GF=emptyGF();QF=emptyQF();DF=emptyDF();
+  if(!LITE.busy&&!LITE.pend)api('cardgame/portraits').catch(()=>null).then(pt=>litePublish(false,{heroes,general:gens,relics:rels,appearance:apr,rigs:rgs,skins:skn,portraits:pt,portraitsv:ptv})).catch(()=>{});
   const n=o=>Object.keys(o).length;
   const tabs=[['overview','📊','Overview'],['heroes','🛡️','Heroes',n(HLIST)],['ails','✨','Buffs & Debuffs',n(AILS)],['relics','🔮','Relics',n(RELS)],['gen','🃏','General Cards',n(GENS)],['quests','📜','Quests',n(QSTS)],['daily','📅','Daily Quests',n(DAILY.tasks)],['ranks','🏅','Ranks',RKS.length],['bots','🤖','Bots',botList().length],['dshop','💎','Diamond Shop',Object.keys(SKINSA).length],['anim','🦴','Animation',Object.keys(RIGSA).length],['mail','📬','Mail',Object.values(MAILA).filter(m=>m&&+m.exp>Date.now()).length],['look','🖼️','Appearance'],['settings','⚙️','Settings']];
   const body={overview:cgOverview,heroes:cgHeroes,ails:cgAils,relics:()=>`<div class="cgp" id="relsec">${relicSecInner()}</div>`,gen:()=>`<div class="cgp" id="gensec">${genSecInner()}</div>`,daily:()=>`<div class="cgp" id="dailysec">${dailyInner()}</div>`,quests:()=>`<div class="cgp" id="questsec">${questSecInner()}</div>`,ranks:()=>`<div class="cgp" id="ranksec">${rankSecInner()}</div>`,bots:()=>`<div class="cgp" id="botsec">${botsInner()}</div>`,dshop:()=>`<div class="cgp" id="dssec">${dshopInner()}</div>`,mail:()=>`<div class="cgp" id="mlsec">${mailInner()}</div>`,anim:()=>{setTimeout(rigMount,0);return `<div class="cgp" id="rigsec">${rigInner()}</div>`},look:()=>`<div class="cgp" id="looksec">${lookInner()}</div>`,settings:()=>`<div class="cgp" id="setsec">${settingsInner()}</div>`}[CGT]||cgOverview;
@@ -1217,7 +1269,7 @@ let MNT={busy:false,log:[],scan:null};
 function mntLog(t){MNT.log.push(t);const e=$('#mntlog');if(e){e.innerHTML=MNT.log.slice(-60).map(x=>'<div>'+x+'</div>').join('');e.scrollTop=e.scrollHeight}}
 function maintHTML(){
   const sz=[['Heroes (portraits, poses, cards)',jlen(HLIST)],['Ranks (emblems)',jlen(RKS)],['Relics',jlen(RELS)],['General cards',jlen(GENS)],['Buffs & debuffs',jlen(AILS)]],tot=sz.reduce((a,b)=>a+b[1],0);
-  return `<div class="cgp"><h4>⚡ Performance &amp; storage</h4><p class="mut" style="font-size:13px;margin:0 0 10px">Game data players download: <b>${kb(tot)}</b> · ${sz.map(([l,n])=>esc(l)+': '+kb(n)).join(' · ')}</p>
+  return liteHTML()+`<div class="cgp"><h4>⚡ Performance &amp; storage</h4><p class="mut" style="font-size:13px;margin:0 0 10px">Game data players download: <b>${kb(tot)}</b> · ${sz.map(([l,n])=>esc(l)+': '+kb(n)).join(' · ')}</p>
    <div class="row" style="gap:10px;flex-wrap:wrap"><button onclick="mntScan()" ${MNT.busy?'disabled':''}>🧹 Flush unused data</button><button onclick="mntOptimize()" ${MNT.busy?'disabled':''}>🚀 One-click optimize</button></div>
    <p class="mut" style="font-size:12px;margin:8px 0 0"><b>Flush</b> finds data nobody uses any more and lets you remove it. <b>Optimize</b> re-saves every image at the size the game actually shows it, as WebP, with the same look (same picture, transparency, face positions, sizes and effects). It downloads a backup of your heroes first and skips anything already optimized, so you can run it again after uploading new art.</p>
    <div id="mntscan">${MNT.scan?mntScanHTML():''}</div><div id="mntlog" class="bx2" style="max-height:220px;overflow:auto;font-size:12.5px;margin-top:10px;${MNT.log.length?'':'display:none'}">${MNT.log.map(x=>'<div>'+x+'</div>').join('')}</div></div>`}
