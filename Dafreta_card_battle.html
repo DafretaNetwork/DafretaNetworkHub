@@ -620,6 +620,11 @@ body.sel .sdim{opacity:1}
 #vsx .vteam.l .vpi{clip-path:polygon(var(--sl) 0,100% 0,calc(100% - var(--sl)) 100%,0 100%)}
 #vsx .vpi img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 6%}
 #vsx .vpi img.vf{inset:auto;left:50%;top:calc(17% - var(--fy)*var(--vh));height:var(--vh);width:auto;max-width:none;object-fit:fill;transform:translateX(calc(var(--fx)*-100%))}
+/* the red team faces left, towards the blue team */
+#vsx #vr .vpi img{transform:scaleX(-1)}
+#vsx #vr .vpi img.vf{transform:translateX(calc((1 - var(--fx))*-100%)) scaleX(-1)}
+/* names always on one line (long names get smaller) so every class pill lines up */
+#vsx .vteam .vlb .vnm,#vsx #vl .vlb .vnm,#vsx #vr .vlb .vnm{white-space:nowrap;display:block;-webkit-line-clamp:unset;overflow:hidden;text-overflow:clip;font-size:max(7px,min(12cqw,calc(150cqw / var(--nl,10))));line-height:1.15;min-height:13.8cqw;display:flex;align-items:center;justify-content:center}
 #vsx .vgl{position:absolute;inset:0;background:repeating-linear-gradient(115deg,#ffffff0d 0 2px,transparent 2px 14px)}
 #vsx .vsh{position:absolute;inset:0;background:linear-gradient(transparent 52%,color-mix(in srgb,var(--c) 30%,#000c) 76%,#000e);pointer-events:none}
 #vsx .vsh::after{content:"";position:absolute;top:-20%;bottom:-20%;width:30%;left:-60%;background:linear-gradient(90deg,transparent,#ffffff40,transparent);transform:skewX(-18deg);animation:vshn 3.2s ease-in-out calc(1.2s + var(--i)*.12s) infinite}
@@ -1393,8 +1398,10 @@ html,body,#gw,#gw *{-webkit-user-select:none;user-select:none;-webkit-touch-call
 
 /* ===================== frozen Attack card (all effects stay inside the card) ===================== */
 #gw .card.fzc{filter:none;overflow:hidden}
-#gw .card.fzc::after{content:"";position:absolute;inset:0;z-index:5;background:#08131f80;pointer-events:none}
-#gw .card .cice{position:absolute;inset:0;z-index:6;overflow:hidden;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 5cqw #bdf0ff,inset 0 0 1.2cqw #fff}
+#gw .card.fzc::after{content:"";position:absolute;inset:0;z-index:5;background:#08131f30;pointer-events:none}
+#gw .card .cice .cifr{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 0 2px #bdf0ff);animation:cifp 2.8s ease-in-out infinite alternate}@keyframes cifp{to{filter:drop-shadow(0 0 4px #e6f8ff) brightness(1.08)}}
+.cice .ctx{opacity:.35}.cice .ccr{opacity:.45}
+.cice{position:absolute;inset:0;z-index:6;overflow:hidden;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 5cqw #bdf0ff,inset 0 0 1.2cqw #fff}
 #gw .card .ctx{position:absolute;inset:0;opacity:.78;background:
  radial-gradient(ellipse 40% 22% at 20% 12%,#ffffffb0,transparent 70%),radial-gradient(ellipse 50% 30% at 85% 92%,#ffffff90,transparent 70%),
  repeating-linear-gradient(115deg,#ffffff00 0 6%,#ffffff2e 6.5% 7%,#ffffff00 7.5% 13%),repeating-linear-gradient(28deg,#ffffff00 0 9%,#e6f8ff33 9.4% 9.8%,#ffffff00 10.2% 17%),
@@ -2193,12 +2200,19 @@ const CARDB='https://raw.githubusercontent.com/DafretaNetwork/DafretaNetworkHub/
 const cHtml=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dfs=n=>Math.max(4.4,Math.min(8.2,Math.sqrt(3900/Math.max(1,n)))).toFixed(2);
 /* frozen Attack card: frosted ice sheet with cracks, big still snowflakes and snowflakes that grow in */
+/* a thick jagged ice crust around a frozen card, with icicles hanging from the top (one fixed shape) */
+const ICEFR=(()=>{let sd=7;const rnd=(a,b)=>{sd=(sd*9301+49297)%233280;return a+(b-a)*sd/233280},W=100,H=150,th=9,out=[],inn=[];
+ [[0,0,W,0,0,-1],[W,0,W,H,1,0],[W,H,0,H,0,1],[0,H,0,0,-1,0]].forEach(([ax,ay,bx,by,nx,ny])=>{const n=Math.round(Math.hypot(bx-ax,by-ay)/7)+2,tp=ny<0?1.6:1;
+  for(let k=0;k<n;k++){const t=k/n,x=ax+(bx-ax)*t,y=ay+(by-ay)*t,o=rnd(.2,1.4)*1.5*tp,i=rnd(.45,1.25)*th*tp;out.push([x+nx*o,y+ny*o]);inn.push([x-nx*i,y-ny*i])}});
+ const P=a=>'M'+a.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')+'Z';let ic='';
+ for(let k=0;k<7;k++){const x=8+84*(k+rnd(-.3,.3))/6,y=th*rnd(.6,1.1),l=rnd(5,14),w=rnd(1.8,3);ic+='M'+(x-w).toFixed(1)+' '+(y-1).toFixed(1)+'L'+(x+w).toFixed(1)+' '+(y-1).toFixed(1)+'L'+x.toFixed(1)+' '+(y+l).toFixed(1)+'Z'}
+ return '<svg class="cifr" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="cifg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eefbff" stop-opacity=".95"/><stop offset=".5" stop-color="#a8e2ff" stop-opacity=".8"/><stop offset="1" stop-color="#d8f5ff" stop-opacity=".92"/></linearGradient><linearGradient id="cifi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4fdff"/><stop offset="1" stop-color="#bfeaff" stop-opacity=".15"/></linearGradient></defs><path d="'+P(out)+P(inn.slice().reverse())+'" fill="url(#cifg)" fill-rule="evenodd" stroke="#fff" stroke-width=".6" stroke-opacity=".85"/><path d="'+ic+'" fill="url(#cifi)"/></svg>'})();
 const CICE=(()=>{const arm='<path d="M0 0V-46M0-14l-9-9M0-14l9-9M0-28l-10-10M0-28l10-10M0-40l-6-6M0-40l6-6" />',
  flk='<g stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none">'+[0,60,120,180,240,300].map(a=>'<g transform="rotate('+a+')">'+arm+'</g>').join('')+'</g><circle r="6" fill="currentColor"/>',
  f=(c,x,y,sz,r)=>'<svg class="'+c+'" style="left:'+x+'%;top:'+y+'%;width:'+sz+'%;--r:'+r+'deg" viewBox="-50 -50 100 100" aria-hidden="true">'+flk+'</svg>';
  return '<i class="cice"><i class="ctx"></i><svg class="ccr" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8 0L30 40 22 62 46 90 38 120 56 150M30 40L58 46 72 30M46 90L76 96 92 84M22 62L4 74M58 46L64 70 88 64" fill="none" stroke="#f4fdff" stroke-width=".7" opacity=".9"/><path d="M100 18L78 34 82 58 66 76M82 58L100 66M0 104L18 112 14 136M18 112L36 110" fill="none" stroke="#e0f7ff" stroke-width=".5" opacity=".75"/></svg>'+
-  f('sf st',18,22,34,10)+f('sf st',78,70,40,-15)+f('sf st',30,82,22,25)+f('sf st',84,18,20,0)+f('sf st',56,46,16,30)+
-  f('sf an a1',62,24,42,0)+f('sf an a2',24,56,46,20)+f('sf an a3',72,88,38,-10)+'<i class="csh"></i></i>'})();
+  f('sf st',18,22,14,10)+f('sf st',78,70,17,-15)+f('sf st',30,82,9,25)+f('sf st',84,18,8,0)+f('sf st',56,46,7,30)+
+  f('sf an a1',62,24,17,0)+f('sf an a2',24,56,18,20)+f('sf an a3',72,88,15,-10)+'<i class="csh"></i>'+ICEFR+'</i>'})();
 const cardH=(s,cls,at,o)=>{const b=o&&bufS(s,o),cl=(o&&o.h&&o.h.cl)||'General',d=desc(s,o&&(o.atk*(o.s?pw(o):1)),b,o&&o.h&&o.h.cl!=='General'?o:null),pl=d.replace(/<[^>]*>/g,'').length,nm=String(s.n||''),cs=String(s.c);
  const fk=s.jk||(s.rel&&!(o&&o.h&&o.h.cl&&o.h.cl!=='General'))?' fOrb':(cl==='General'||s.gen)?' fGen':'';
  return '<div class="card cl'+cl+cls+fk+(s.ttx?' ttx':'')+'" '+at+'><span class="c'+(cs.length>1?' ex':'')+(s._cb!=null&&+s.c>s._cb?' cup':s._cb!=null&&+s.c<s._cb?' cdn':'')+'">'+cHtml(cs)+'</span><b class="cn" style="--nl:'+Math.max(11,nm.length)+'"><span>'+cHtml(nm)+'</span></b><div class="cart">'+(s.art?'<img src="'+s.art+'" alt="">':'<i class="art">'+art(s)+'</i>')+'</div>'+(o&&o.h&&cl!=='General'?'<em class="ow" style="background:'+o.h.col+'">'+cHtml(o.h.bn||o.h.n)+'</em>':'')+'<small class="cd" style="--df:'+dfs(pl)+'cqw"><span class="cdt">'+d+'</span></small>'+(/ fzc/.test(cls)?CICE:'')+'</div>'};
@@ -3264,14 +3278,14 @@ function result(win){const R={win,heroes:[],rank:null,quests:[]};if(!PD||!curTea
   if(!wasMax&&gain>0){s.xp+=gain;while(s.xp>=CFG.expLv&&s.lv<CFG.maxLv){s.xp-=CFG.expLv;s.lv++;ups.push(s.lv)}if(s.lv>=CFG.maxLv)s.xp=0}
   R.heroes.push({h,b,a:{lv:s.lv,xp:s.xp},gain:wasMax?0:gain,ups,max:wasMax})});
  R.relics=[];if(!PD.rs)PD.rs={};P.u.forEach(u=>{const id=u.rid||(u.r&&u.r.id);const s=id&&PD.rs[id];if(!s||typeof s!=='object')return;s.lv=+s.lv||1;s.xp=+s.xp||0;if(s.lv<CFG.maxLv&&gain>0){s.xp+=gain;while(s.xp>=CFG.expLv&&s.lv<CFG.maxLv){s.xp-=CFG.expLv;s.lv++}if(s.lv>=CFG.maxLv)s.xp=0}R.relics.push(id)});
- if(win)PD.w++;else PD.l++;
+ if(win)PD.w++;else PD.l++;{/* per-preset record for the line-up win rate: lst = {preset: [wins, losses]} */const L=(PD.lst&&typeof PD.lst==='object')?PD.lst:{},k=String(+PD.sel||0),r=Array.isArray(L[k])?L[k]:[0,0];L[k]=[(+r[0]||0)+(win?1:0),(+r[1]||0)+(win?0:1)];PD.lst=L}
  {const g=win?(curMode==='rank'?70:50):10,b=PD.gold|0;PD.gold=b+g;R.gold={b,a:b+g,d:g}}
  rkApply(R,win);botApply(win);
  {const sm=k=>P.u.concat(P.gl).reduce((a,u)=>a+(u.stt[k]||0),0);
   R.daily=dqAdd({win:win?1:0,win_std:win&&curMode==='std'?1:0,win_rank:win&&curMode==='rank'?1:0,play:1,cards:MS.cards,ex:MS.ex,kill:E.u.filter(u=>u.hp<=0).length,dmg:sm('d'),heal:sm('h'),shield:sm('s')})}
  if(win)QUESTS.forEach(q=>{if(q.mode!=='any'&&q.mode!==curMode)return;const p=PD.qp[q.id]=PD.qp[q.id]||{w:0};if(p.c||p.w>=q.wins)return;p.w++;R.quests.push({t:q.t,w:p.w,n:q.wins})});
  {const td=new Date().toLocaleDateString('en-CA');if(PD.ld!==td){PD.ld=td;PD.days=(PD.days|0)+1}}
- saveP('played','w','l','hs','pts','qp','days','ld','gold','rs');lbUpd();return R}
+ saveP('played','w','l','hs','pts','qp','days','ld','gold','rs','lst');lbUpd();return R}
 /* ================= DAILY QUESTS (reset every day at 6:00 AM Philippine time = midnight UTC+2) ================= */
 let DQ={tasks:[],miles:[]},MS={cards:0,ex:0},dqTm=0;
 const DTT={win:['🏆','Win matches'],win_std:['⚔️','Win Standard matches'],win_rank:['👑','Win Ranked matches'],play:['🎮','Play matches'],cards:['🃏','Play cards in battle'],ex:['🌟','Use ultimates (EX)'],kill:['💀','Defeat enemy heroes'],dmg:['💥','Deal damage'],heal:['💚','Heal HP'],shield:['🛡️','Gain shield']};
