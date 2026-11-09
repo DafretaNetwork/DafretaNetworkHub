@@ -1147,14 +1147,14 @@ async function importDefaults(){
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
 const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,atkImg:'',atkFace:null,exImg:'',exFace:null,cards:[],evo:{},open:false,locked:false,comments:[]});
-const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:'',shDur:2,pct:false,value2:0,rch:false,cht:false,grow:0,exg:0});
+const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:'',shDur:2,pct:false,value2:0,rch:false,cht:false,grow:0,exg:0,rnd:0,exk:0,mmx:0,delay:0,uses:0,echo:false,giveAtk:false,craft:false,reshuffle:false,growDmg:0,alsoDsp:false,sail:'',sdur:1,ail2:'',dur2:1,vfx:''});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:'',cost:1,perEvo:0,art:''});
 const emptyGF=()=>({art:'',shDur:2,id:null,name:'',effect:'dmg',value:10,value2:0,delay:2,manaCost:0,ail:'',dur:2,icon:'',desc:'',locked:false});
 let CF=emptyCF(),RF=emptyRF(),GF=emptyGF(),RELS={},GENS={};
-const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['dispel','Dispel — remove debuffs from an ally or buffs from an enemy'],['search','Search — look at the top cards, keep one'],['chaos','Chaotic — pick 1 of 3 random general cards (maybe another of this card)'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
-const CV_LABEL={dispel:'(not used)',chaos:'(not used)',search:'Cards to look at',attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)'};
-const TYPE_ICON={dispel:'✨',search:'🔍',chaos:'🎲',attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',conjure:'📜',buff:'🛡️',debuff:'☠️',ultimate:'🌟'};
-const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['pick','Damage ONE chosen enemy'],['revive','Resurrect an ally (and restore HP)'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally'],['none','No direct effect (use only “Add cards to hand”)']];
+const CARD_TYPES=[['attack','Attack — damages the front enemy'],['heal','Heal — restores HP to an ally'],['mana','Mana — gain energy'],['draw','Draw — draw cards from the deck'],['conjure','Conjure — add specific or random cards to your hand'],['buff','Buff — shield / buff an ally'],['debuff','Debuff — weakens the front enemy'],['dispel','Dispel — remove debuffs from an ally or buffs from an enemy'],['search','Search — look at the top cards, keep one'],['chaos','Chaotic — pick 1 of 3 random general cards (maybe another of this card)'],['none','Utility — only the extra effects (energy, max mana, craft…)'],['ultimate','Ultimate — only used as the hero\u2019s ultimate']];
+const CV_LABEL={dispel:'(not used)',chaos:'(not used)',search:'Cards to look at',attack:'Damage',heal:'Heal amount',mana:'Energy gained',draw:'Cards drawn',conjure:'(not used)',buff:'Shield amount (used when no buff is picked)',debuff:'Bonus damage (optional)',ultimate:'Power (damage / heal / shield amount)',none:'(not used)'};
+const TYPE_ICON={dispel:'✨',search:'🔍',chaos:'🎲',attack:'⚔️',heal:'💚',mana:'💎',draw:'🎴',conjure:'📜',buff:'🛡️',debuff:'☠️',ultimate:'🌟',none:'⚙️'};
+const ULT_FX=[['all','Damage ALL enemies'],['front','Damage the front enemy'],['pick','Damage ONE chosen enemy'],['revive','Resurrect an ally (and restore HP)'],['heal','Heal the WHOLE team'],['shield','Shield the WHOLE team'],['ally','Heal / shield / buff ONE chosen ally'],['team','Buff the WHOLE team (status below + second status)'],['none','No direct effect (use only “Add cards to hand”)']];
 const RELIC_FX={
  ex_turn:['Ultimate charge: +meter every turn','Gains {v} ultimate meter at the start of every turn'],
  ex_start:['Ultimate charge: starts battle with meter','Starts the battle with {v} ultimate meter'],
@@ -1217,11 +1217,14 @@ function cardText(c){const v0=+c.value||0,v=c.pct?v0+'% ATK':v0,a=AILS[c.ail],st
     case 'mana':t='Gain '+v+' energy';break;
     case 'conjure':t='Add cards to hand';break;
     case 'draw':t='Draw '+v+' card(s)';break;
+    case 'none':t='Utility';break;
     case 'buff':t=a?'Apply '+a.name+' '+(+c.dur||2)+'⏱ to '+(c.target==='self'?'self':'an ally'):'Gain '+v+' shield'+sd+(c.target==='self'?' (self)':'');break;
     case 'debuff':t=(v?'Deal '+v+' dmg'+hits+reach+' + ':'')+(a?'Apply '+a.name+' '+(+c.dur||2)+'⏱'+(c.target==='enemy'?' to any enemy':''):'');break;
-    case 'ultimate':t=({pick:'Deal '+v+' dmg to one enemy'+ad,revive:'Resurrect an ally'+(v0?' and restore '+v+' HP':''),all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,none:c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?'Ultimate':'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' '+(+c.dur||2)+'⏱':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
+    case 'ultimate':t=({pick:'Deal '+v+' dmg to one enemy'+ad,revive:'Resurrect an ally'+(v0?' and restore '+v+' HP':''),all:'Deal '+v+' dmg to ALL foes'+ad,front:'Deal '+v+' dmg to the front foe'+ad,heal:'Heal the whole team for '+v+ad,shield:'Shield the whole team for '+v+ad,team:'Buff the whole team'+ad,none:c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?'Ultimate':'No direct effect',ally:(()=>{const q=[v?'heal '+v:'',a?a.name+' '+(+c.dur||2)+'⏱':''].filter(Boolean);return 'One ally'+(q.length?': '+q.join(', '):'')})()}[c.ult||'all']);break;
     default:t='Deal '+v+v2+' dmg'+hits+reach+(c.target==='enemy'?' to any enemy':'')+ad}
-  const cj=c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?' · adds '+(c.conj.mode==='random'?(+c.conj.n||1)+' random':Object.keys(c.conj.pool).length)+' card(s) to hand':'';const kw=[+c.exg?'+'+(+c.exg)+' energy':'',+c.grow?'+'+(+c.grow)+'% dmg each turn':'',c.rch?'Recharge':'',c.cht?'Chant':''].filter(Boolean).join(' · ');return t+(ex?' · '+ex:'')+cj+(kw?' · '+kw:'')+(c.token?' · token':'')}
+  const cj=c.conj&&c.conj.pool&&Object.keys(c.conj.pool).length?' · adds '+(c.conj.mode==='random'?(+c.conj.n||1)+' random':Object.keys(c.conj.pool).length)+' card(s) to hand':'';const a2=AILS[c.ail2],sa=AILS[c.sail],kw=[+c.exg?'+'+(+c.exg)+' energy':'',+c.grow?'+'+(+c.grow)+'% dmg each turn':'',c.rch?'Recharge':'',c.cht?'Chant':'',
+   +c.rnd?(+c.rnd)+' random hit(s)':'',+c.delay?'Delay '+(+c.delay):'',+c.exk?'+'+(+c.exk)+' energy per kill':'',+c.mmx?'max mana +'+(+c.mmx):'',+c.uses>1?'usable '+(+c.uses)+'×':'',c.echo?'Echo':'',
+   c.reshuffle?'back into deck'+(+c.growDmg?' (+'+(+c.growDmg)+' dmg)':''):'',c.giveAtk?'+ Attack card':'',c.craft?'Craftsmanship':'',c.alsoDsp?'+ dispel':'',sa?'self: '+sa.name:'',a2?'+ '+a2.name:'',c.vfx?'fx: '+c.vfx:''].filter(Boolean).join(' · ');return t+(ex?' · '+ex:'')+cj+(kw?' · '+kw:'')+(c.token?' · token':'')}
 const ailOpts=sel=>{const b=Object.entries(AILS),g=t=>b.filter(([,a])=>a.type===t).map(([k,a])=>`<option value="${esc(k)}"${sel===k?' selected':''}>${esc(a.name)} — ${AIL_EFFECTS[a.effect]||a.effect}</option>`).join('');
   return '<option value="">None</option>'+(g('debuff')?`<optgroup label="Debuffs">${g('debuff')}</optgroup>`:'')+(g('buff')?`<optgroup label="Buffs">${g('buff')}</optgroup>`:'')};
 
@@ -1401,11 +1404,54 @@ async function applyKits(){const hit=Object.entries(HLIST).map(([id,h])=>[id,h,k
 async function restoreKits(){const bak=Object.entries(HLIST).filter(([,h])=>h&&h.cardsBak);if(!bak.length)return;
  if(!confirm('Put back the cards these heroes had before the skill kits: '+bak.map(x=>x[1].name).join(', ')+'?'))return;
  try{for(const [id,h] of bak){await api('cardgame/heroes/'+id+'/cards','PUT',cardsOf({cards:h.cardsBak}));await api('cardgame/heroes/'+id+'/cardsBak','DELETE')}toast('Previous cards restored');atab='cardgame';CGT='heroes';adminV()}catch(e){toast(e.message)}}
+/* ---------------- new heroes (Assaulter, Scout, Blacksmith, Druid, Lightning Mage) ----------------
+   One click in the Heroes tab: pick dafreta_new_heroes_pack.json (battle art + menu portraits). Creates the heroes with
+   their skill kits (values are % of ATK), the status effects they need, their battle art and menu portraits. */
+const NEW_HEROES=[{id:'hx_assaulter',k:'assaulter',name:'Assaulter',class_:'Defender',hp:72,atk:6},{id:'hx_scout',k:'scout',name:'Scout',class_:'Attacker',hp:52,atk:6},
+ {id:'hx_blacksmith',k:'blacksmith',name:'Blacksmith',class_:'Specialist',hp:60,atk:5},{id:'hx_druid',k:'druid',name:'Druid',class_:'Healer',hp:42,atk:5},{id:'hx_lmage',k:'lmage',name:'Lightning Mage',class_:'Magic',hp:44,atk:6}];
+function newHeroCards(k,hid){const c=(id,o)=>({id:hid+'_'+id,value:0,manaCost:1,ail:'',dur:1,hits:1,scope:'front',target:'',shield:0,shDur:2,heal:0,draw:0,pct:true,...o});
+ if(k==='assaulter')return [c('x',{name:'Fallen Strike',type:'ultimate',ult:'front',manaCost:0,value:200,ail:'k_weak',dur:1,scope:'pierce',vfx:'chop'}),
+  c('s1',{name:'Killing Chop',type:'attack',manaCost:2,value:200,vfx:'chop'}),
+  c('s2',{name:'Bull Rage',type:'none',manaCost:2,pct:false,exg:40,vfx:'rage'}),
+  c('s3',{name:'War Stomp',type:'attack',manaCost:2,value:50,scope:'all',sail:'k_taunt',sdur:1,reshuffle:true,growDmg:2,vfx:'stomp'})];
+ if(k==='scout')return [c('x',{name:'Deadeye Shot',type:'ultimate',ult:'pick',manaCost:0,value:275,scope:'pierce',exk:40,vfx:'arrow'}),
+  c('s1',{name:'Sundering Arrow',type:'attack',manaCost:2,value:100,ail:'k_break',dur:1,vfx:'arrow'}),
+  c('s2',{name:'Ricochet Arrows',type:'attack',manaCost:2,value:50,rnd:2,rch:true,echo:true,exg:5,vfx:'arrow'}),
+  c('s3',{name:'Hamstring Shot',type:'attack',manaCost:1,value:75,ail:'k_fatigue',dur:1,uses:3,vfx:'arrow'})];
+ if(k==='blacksmith')return [c('x',{name:'Masterwork Arsenal',type:'ultimate',ult:'team',manaCost:0,ail:'k_empower',dur:2,ail2:'k_block',dur2:1,vfx:'forge'}),
+  c('s1',{name:'Molten Hammer',type:'attack',manaCost:1,value:100,ail:'k_burn',dur:1,vfx:'hammer'}),
+  c('s2',{name:'Reinforce Gear',type:'buff',manaCost:2,target:'ally',value:250,giveAtk:true}),
+  c('s3',{name:"Smith's Ingenuity",type:'none',manaCost:1,pct:false,craft:true,vfx:'forge'})];
+ if(k==='druid')return [c('x',{name:'Star Pray',type:'ultimate',ult:'front',manaCost:0,value:275,rnd:3,vfx:'stars'}),
+  c('s1',{name:'Jadeite Tree Fruit',type:'none',manaCost:1,pct:false,mmx:1,exg:20,vfx:'leaf'}),
+  c('s2',{name:'Restorative Spell',type:'heal',manaCost:2,target:'ally',value:500,alsoDsp:true,delay:1}),
+  c('s3',{name:'Healing Wind',type:'heal',manaCost:2,target:'team',value:300,delay:1})];
+ if(k==='lmage'){const ov=c('ov',{name:'Storm Overload',type:'attack',manaCost:2,value:75,rnd:3,exg:20,cht:true,token:true,vfx:'bolt'});
+  return [c('x',{name:'Summon of Thor',type:'ultimate',ult:'pick',manaCost:0,value:450,scope:'pierce',delay:1,vfx:'bolt'}),
+   c('s1',{name:'Storm Eye',type:'conjure',manaCost:2,pct:false,conj:{mode:'specific',n:3,cost:'',pool:[hid+'::'+ov.id,hid+'::'+ov.id,hid+'::'+ov.id]}}),ov,
+   c('s3',{name:'Lightning Storm',type:'attack',manaCost:2,value:75,value2:150,scope:'all',vfx:'bolt'})]}
+ return null}
+function newHeroesHTML(){const miss=NEW_HEROES.filter(d=>!HLIST[d.id]);if(!miss.length)return '';
+ return `<div class="bx2" style="border-left:4px solid #38d27c;margin:12px 0"><b>🆕 New heroes</b><p class="mut" style="margin:6px 0 10px;font-size:14px">${miss.map(d=>esc(d.name)).join(', ')}: battle art, menu portraits and full skill kits. Pick the hero pack file <b>dafreta_new_heroes_pack.json</b>.</p>
+  <button onclick="$('#nhf').click()">📥 Add new heroes</button><input id="nhf" type="file" accept=".json,application/json" hidden onchange="importNewHeroes(this)"><span id="nhst" class="mut" style="font-size:12px;margin-left:8px"></span></div>`}
+async function importNewHeroes(inp){const f=inp.files[0];inp.value='';if(!f)return;const st=$('#nhst'),say=t=>{if(st)st.textContent=t};
+ try{const pack=JSON.parse(await f.text());if(!pack||pack.kind!=='dafreta-hero-pack'||!pack.heroes)throw new Error('That is not a Dafreta hero pack file.');
+  const fileOf=async(u,n)=>new File([await (await fetch(u)).blob()],n,{type:'image/webp'});
+  const have=await api('cardgame/ailments').catch(()=>null)||{};for(const [k,a] of Object.entries(KIT_AILS))if(!have[k])await api('cardgame/ailments/'+k,'PUT',a);
+  const t0=Date.now();let n=0;
+  for(const d of NEW_HEROES){if(HLIST[d.id])continue;const art=pack.heroes[d.k];if(!art)continue;n++;say('Adding '+d.name+'…');
+   const r=await procHeroImg(await fileOf(art.img,d.k+'.webp'));const h={name:d.name,class_:d.class_,hp:d.hp,atk:d.atk,img:r.img,face:r.face,ar:r.ar,bs:100,cards:newHeroCards(d.k,d.id),created:t0+n,updated:t0+n};
+   try{const sm=await reenc(r.img,OPT_SMALL*2,OPT_SMALL,.9);if(sm&&sm.u)h.imgS=sm.u}catch(e){}
+   await api('cardgame/heroes/'+d.id,'PUT',h);
+   if(art.portrait){const pr=await ptProc(await fileOf(art.portrait,d.k+'_p.webp')),v=Date.now();
+    await api('cardgame/portraits/'+d.id+'/b','PUT',{img:pr.img,v});await api('cardgame/portraitsv/'+d.id+'/b','PUT',{...PTDEF,v,w:pr.w,h:pr.h});(PTV[d.id]=PTV[d.id]||{}).b={...PTDEF,v,w:pr.w,h:pr.h}}}
+  say('');toast(n?n+' new hero'+(n>1?'es':'')+' added. The app update publishes by itself.':'These heroes are already added.');atab='cardgame';CGT='heroes';adminV()}
+ catch(e){say('');toast(e.message)}}
 function cgHeroes(){
   if(HF.open)return heroEditorHTML();
   const hl=Object.entries(HLIST),miss=DEFAULT_HEROES.filter(d=>!HLIST['hd_'+d.key]);
   return `<div class="cgp"><div class="cgph"><div><h4>Heroes</h4><p class="mut" style="font-size:13px;margin:0">Click a hero to edit its stats, cards and evolutions.</p></div><button onclick="newHero()">＋ New hero</button></div>
-   ${miss.length?`<div class="bx2" style="border-left:4px solid var(--gold);margin:12px 0"><b>Built-in heroes</b><p class="mut" style="margin:6px 0 10px;font-size:14px">Knight, Mage, Priest, Marksman and Adventurer are built into the game. Import them to edit their stats, portraits, cards and evolutions here.${miss.length<DEFAULT_HEROES.length?' ('+miss.length+' not imported: '+miss.map(d=>d.data.name).join(', ')+')':''}</p><button onclick="importDefaults()">📥 Import built-in heroes</button></div>`:''}
+   ${newHeroesHTML()}${miss.length?`<div class="bx2" style="border-left:4px solid var(--gold);margin:12px 0"><b>Built-in heroes</b><p class="mut" style="margin:6px 0 10px;font-size:14px">Knight, Mage, Priest, Marksman and Adventurer are built into the game. Import them to edit their stats, portraits, cards and evolutions here.${miss.length<DEFAULT_HEROES.length?' ('+miss.length+' not imported: '+miss.map(d=>d.data.name).join(', ')+')':''}</p><button onclick="importDefaults()">📥 Import built-in heroes</button></div>`:''}
    ${kitBoxHTML()}${hl.length?`<div class="cghg">${hl.map(([id,h])=>heroCardHTML(id,h)).join('')}</div>`:'<p class="mut" style="margin-top:14px">No heroes yet. Press “New hero” to add your first.</p>'}</div>`;
 }
 function newHero(){HF={...emptyHF(),open:true};CF=emptyCF();adminV()}
@@ -2246,6 +2292,26 @@ function renderCardList(){
       <div class="ba"><button class="s" onclick="editCard(${i})">Edit</button><button class="d s" onclick="removeCard(${i})">✕</button></div></div>`}).join('')}</div>
     <p class="mut" style="font-size:13px;margin:4px 0 0">${HF.cards.length} card(s) on this hero</p>`;
 }
+const VFX_OPTS=[['','Default for the class'],['chop','Heavy chop (axe / cleaver)'],['stomp','Ground stomp shockwave'],['arrow','Arrow streak'],['boomerang','Spinning boomerang'],['hammer','Molten hammer impact'],['bolt','Lightning bolt from the sky'],['stars','Falling stars'],['sw','Sword slash'],['sh','Shot streak'],['mg','Magic burst'],['rage','Rage burst on the hero (no damage)'],['leaf','Nature glow on the hero (no damage)'],['forge','Forge sparks on the hero (no damage)']];
+function moreFxHTML(c,u){const n=(k,l,mn,mx,h)=>`<div><label>${l}${h?' <span class="mut" style="font-weight:400">· '+h+'</span>':''}</label><input type="number" min="${mn}" max="${mx}" value="${+c[k]||0}" oninput="CF.${k}=+this.value"></div>`,
+  ck=(k,l,h)=>`<label class="chk" style="margin:0"><input type="checkbox" ${c[k]?'checked':''} onchange="CF.${k}=this.checked"> ${l}${h?' <span class="mut" style="font-weight:400">('+h+')</span>':''}</label>`,
+  open=['rnd','exk','mmx','delay','uses','growDmg'].some(k=>+c[k])||['echo','giveAtk','craft','reshuffle','alsoDsp'].some(k=>c[k])||c.sail||c.ail2||c.vfx;
+ return `<details style="margin-top:10px"${open?' open':''}><summary style="cursor:pointer;font-weight:700">✨ More effects</summary>
+  <div class="f2" style="margin:8px 0 0;gap:8px">
+   <div><label>💥 Hit effect (animation)</label><select onchange="CF.vfx=this.value">${VFX_OPTS.map(([k,l])=>`<option value="${k}"${(c.vfx||'')===k?' selected':''}>${l}</option>`).join('')}</select></div>
+   ${n('rnd','🎯 Random targets','0','9','each hit picks a random enemy; 0 = off')}
+   ${n('delay','⏳ Delay (turns)','0','3','the whole effect happens at the start of your next turn')}
+   ${n('exk','☠️ Energy per enemy killed','0','100')}
+   ${n('mmx','🔷 Raise max mana by','0','5')}
+   ${u?'':n('uses','🔁 Can be used N times','0','9','returns to the hand until used up')}
+   ${u?'':n('growDmg','📈 Damage +N each use','0','99','with “Shuffle back into the deck”')}
+   <div><label>🙋 Status on the hero itself (after the attack)</label><select onchange="CF.sail=this.value;refreshCF()">${ailOpts(c.sail)}</select></div>
+   ${c.sail?`<div><label>${ailStacks(c.sail)?'Stacks':'Turns'}</label><input type="number" min="1" max="9" value="${+c.sdur||1}" oninput="CF.sdur=+this.value"></div>`:''}
+   <div><label>➕ Second status (same targets as the first)</label><select onchange="CF.ail2=this.value;refreshCF()">${ailOpts(c.ail2)}</select></div>
+   ${c.ail2?`<div><label>${ailStacks(c.ail2)?'Stacks':'Turns'}</label><input type="number" min="1" max="9" value="${+c.dur2||1}" oninput="CF.dur2=+this.value"></div>`:''}
+  </div>
+  <div class="row" style="gap:18px;margin-top:8px;flex-wrap:wrap">${u?'':ck('echo','🔊 Echo','a copy without Echo goes to the hand after use')}${u?'':ck('reshuffle','🔀 Shuffle back into the deck','instead of the discard pile')}${ck('giveAtk','⚔️ Add an Attack of the target to the hand')}${ck('craft','🛠️ Craftsmanship','draw 1: a relic costs 0, anything else is copied')}${ck('alsoDsp','✨ Also dispel the ally’s debuffs')}</div>
+ </details>`}
 function renderCardForm(){
   const c=CF,u=c.type==='ultimate',col=HERO_COLORS[HF.class_]||'#888',showAil=c.type!=='mana'&&c.type!=='conjure';
   return `<div class="bx2" style="border-left:4px solid ${col};margin-bottom:0">
@@ -2272,6 +2338,7 @@ function renderCardForm(){
    </div>
    ${['conjure','dispel','chaos','mana','draw','search'].includes(c.type)?'':`<label class="chk" style="margin-top:10px"><input type="checkbox" ${c.pct?'checked':''} onchange="CF.pct=this.checked;refreshCF()"> 📊 Values are a <b>% of the hero's ATK</b> (e.g. 150 = 150% × ATK). Recommended: the card grows when the hero's ATK goes up.</label>`}
    ${u?'':`<div class="row" style="gap:18px;margin-top:6px;flex-wrap:wrap"><label class="chk" style="margin:0"><input type="checkbox" ${c.rch?'checked':''} onchange="CF.rch=this.checked"> 🔋 Recharge <span class="mut" style="font-weight:400">(−1 cost per card played this turn)</span></label><label class="chk" style="margin:0"><input type="checkbox" ${c.cht?'checked':''} onchange="CF.cht=this.checked"> 🕯️ Chant <span class="mut" style="font-weight:400">(−1 cost per turn held in hand)</span></label></div>`}
+   ${moreFxHTML(c,u)}
    ${conjHTML()}
    ${artBox('c')}
    ${!u?`<label class="chk" style="margin-top:10px"><input type="checkbox" ${c.token?'checked':''} onchange="CF.token=this.checked"> 🪙 Token card: not shuffled into the deck. It can only be added to a hand by other skills.</label>`:''}
@@ -2316,6 +2383,9 @@ async function saveCard(){
   if(CF.cmode&&!CF.cpool.length)return toast('Add at least one card to the “Add cards to hand” list, or set the mode to None');
   const card={name,type:CF.type,value:+CF.value||0,manaCost:CF.type==='ultimate'?0:Math.max(0,+CF.manaCost||0),ail:CF.type==='mana'?'':(CF.ail||''),dur:+CF.dur||2,hits:Math.max(1,Math.min(5,+CF.hits||1)),scope:CF.scope||'front',target:(CF.type==='heal'||CF.type==='buff'||CF.type==='debuff')?(CF.target||''):'',shield:Math.max(0,+CF.shield||0),shDur:Math.max(1,Math.min(9,+CF.shDur||2)),heal:Math.max(0,+CF.heal||0),draw:Math.max(0,+CF.draw||0)};
   if(CF.type==='attack')card.target=CF.target==='enemy'?'enemy':'';if(CF.pct)card.pct=true;if(+CF.value2>0)card.value2=+CF.value2;if(+CF.exg>0)card.exg=Math.min(100,+CF.exg);if(+CF.grow>0&&CF.type==='attack')card.grow=+CF.grow;if(CF.rch&&CF.type!=='ultimate')card.rch=true;if(CF.cht&&CF.type!=='ultimate')card.cht=true;
+  {const U=CF.type==='ultimate';if(+CF.rnd>0)card.rnd=Math.min(9,+CF.rnd);if(+CF.delay>0)card.delay=Math.min(3,+CF.delay);if(+CF.exk>0)card.exk=Math.min(100,+CF.exk);if(+CF.mmx>0)card.mmx=Math.min(5,+CF.mmx);
+   if(!U&&+CF.uses>1)card.uses=Math.min(9,+CF.uses);if(!U&&+CF.growDmg>0)card.growDmg=+CF.growDmg;if(!U&&CF.echo)card.echo=true;if(!U&&CF.reshuffle)card.reshuffle=true;if(CF.giveAtk)card.giveAtk=true;if(CF.craft)card.craft=true;if(CF.alsoDsp)card.alsoDsp=true;
+   if(CF.sail){card.sail=CF.sail;card.sdur=Math.max(1,+CF.sdur||1)}if(CF.ail2){card.ail2=CF.ail2;card.dur2=Math.max(1,+CF.dur2||1)}if(CF.vfx)card.vfx=CF.vfx}
   if(CF.type==='ultimate')card.ult=CF.ult||'all';
   card.id=CF.id||newCid();if(CF.art)card.art=CF.art;if(CF.token&&CF.type!=='ultimate')card.token=true;
   if(CF.cmode&&CF.cpool.length)card.conj={mode:CF.cmode,n:Math.max(1,Math.min(5,+CF.cn||1)),cost:(CF.ccost===''||CF.ccost==null)?'':Math.max(0,+CF.ccost),pool:CF.cpool.slice()};
