@@ -1146,7 +1146,9 @@ async function importDefaults(){
     for(let i=0;i<DEFAULT_HEROES.length;i++){const d=DEFAULT_HEROES[i],id='hd_'+d.key;if(!have[id])await api('cardgame/heroes/'+id,'PUT',{...d.data,created:t0+i,updated:t0+i})}
     toast('Default heroes imported. You can edit them below.');atab='cardgame';CGT='heroes';adminV()
   }catch(e){toast(e.message)}}
-const emptyHF=()=>({id:null,name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,atkImg:'',atkFace:null,exImg:'',exFace:null,cards:[],evo:{},open:false,locked:false,comments:[]});
+/* weapon -> attack motions in battle ('' = by class: Defender sword, Specialist dagger, Attacker bow, Magic magic, Healer staff) */
+const HERO_WEAPONS=[['','Auto (by class)'],['sword','🗡️ Sword'],['dagger','🔪 Dagger'],['hammer','🔨 Hammer'],['axe','🪓 Axe'],['spear','🔱 Spear'],['bow','🏹 Bow / crossbow'],['gun','🔫 Gun'],['staff','🪄 Staff'],['magic','✨ Magic (book, orb, wand)']];
+const emptyHF=()=>({id:null,weapon:'',name:'',class_:'Defender',hp:100,atk:15,img:'',face:null,ar:0,bs:100,atkImg:'',atkFace:null,exImg:'',exFace:null,cards:[],evo:{},open:false,locked:false,comments:[]});
 const emptyCF=()=>({art:'',id:'',token:false,cmode:'',cn:1,ccost:'',cpool:[],i:null,name:'',type:'attack',value:10,manaCost:1,ail:'',dur:2,ult:'all',hits:1,scope:'front',shield:0,heal:0,draw:0,target:'',shDur:2,pct:false,value2:0,rch:false,cht:false,grow:0,exg:0,rnd:0,exk:0,mmx:0,delay:0,uses:0,echo:false,giveAtk:false,craft:false,reshuffle:false,growDmg:0,alsoDsp:false,sail:'',sdur:1,ail2:'',dur2:1,vfx:''});
 const emptyRF=()=>({id:null,name:'',effect:'ex_turn',value:20,desc:'',icon:'',cost:1,perEvo:0,art:''});
 const emptyGF=()=>({art:'',shDur:2,id:null,name:'',effect:'dmg',value:10,value2:0,delay:2,manaCost:0,ail:'',dur:2,icon:'',desc:'',locked:false});
@@ -1244,7 +1246,7 @@ function cgGo(t){CGT=t;atab='cardgame';adminV()}
 
 async function cardgameAdminHTML(){
   let cfg=null;try{cfg=await api('config/cardgame')}catch(e){}CGON=!!(cfg&&cfg.enabled);
-  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn,mlx,rgs,ptv]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins','mail','rigs','portraitsv'].map(k=>api('cardgame/'+k).catch(()=>null)));PTV=ptv||{};APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
+  const [heroes,ails,rels,gens,qs,rk,cf,lb,apr,dly,flg,bts,dsh,skn,mlx,rgs,ptv]=await Promise.all(['heroes','ailments','relics','general','quests','ranks','config','lb','appearance','daily','flags','bots','dshop','skins','mail','rigs','portraitsv'].map(k=>api('cardgame/'+k).catch(()=>null)));PTV=ptv||{};api('cardgame/testers').catch(()=>null).then(t=>{TESTERS=t||{};const e=$('#testsec');if(e)e.innerHTML=testerInner()});APP=apr||{};FLAGS=flg||{};DAILY={tasks:(dly&&dly.tasks)||{},miles:dly&&dly.miles?Object.values(dly.miles).filter(Boolean).map(m=>({at:+m.at||1,rw:{...(m.rw||{})}})):[]};
   HLIST=heroes||{};
   for(const [k,h] of Object.entries(HLIST)){const cs=cardsOf(h);if(cs.length&&cs.some(c=>!c.id)){const arr=cs.map(c=>c.id?c:{...c,id:newCid()});try{await api('cardgame/heroes/'+k+'/cards','PUT',arr);h.cards=arr}catch(e){}}}
   AILS=ails||{};RELS=rels||{};GENS=gens||{};QSTS=qs||{};LBA=lb||{};LBN=Object.keys(LBA).filter(k=>!/^bot_/.test(k)).length;BOTS=bts||{};DSHOP=dsh||{};SKINSA=skn||{};SALES=null;MAILA=mlx||{};RIGSA=rgs||{};
@@ -1339,12 +1341,27 @@ function flagsHTML(){const e=Object.entries(FLAGS);if(!e.length)return '<div cla
   return e.map(([k,v])=>{const ev=Object.entries(v||{}).map(([t,w])=>({t:+String(t).slice(1)||0,w})).sort((a,b)=>b.t-a.t);
    return `<div class="bx2 qrow"><div style="flex:1;min-width:0"><b>🚩 ${esc(k)}</b> <span class="mut" style="font-size:12px">${ev.length} event${ev.length>1?'s':''} · last ${ev[0]?new Date(ev[0].t).toLocaleString():''}</span>${[...new Set(ev.map(x=>x.w))].map(w=>`<div class="mut" style="font-size:13px">• ${esc(FLAGWHY[w]||w)}</div>`).join('')}</div><div class="row"><button class="g s" onclick="location.hash='#/char/${esc(k)}'">View</button><button class="s" onclick="clearFlag('${esc(k)}')">Clear</button></div></div>`}).join('')}
 async function clearFlag(k){if(!confirm('Clear the flags for '+k+'?'))return;try{await api('cardgame/flags/'+k,'DELETE');delete FLAGS[k];const e=$('#flagsec');if(e)e.innerHTML=flagsHTML()}catch(e){toast(e.message)}}
+/* ---------------- tester accounts: everything unlocked, max diamonds and gold ----------------
+   The game reads cardgame/testers/<user> and unlocks every hero, general card and relic itself (so the signed save stays valid)
+   and tops gold up to TESTER_GOLD. Diamonds, frames, skins and deck slots live in the wallet, written here. */
+let TESTERS={};const TESTER_DIA=9999999,TESTER_GOLD=999999999,TESTER_SLOTS=5;
+const testerInner=()=>{const ks=Object.keys(TESTERS||{});return `<h4>🧪 Tester accounts</h4><p class="mut" style="font-size:13px;margin:0 0 10px">A tester owns every hero, general card, relic, frame and skin and gets ${TESTER_DIA.toLocaleString()} diamonds and ${TESTER_GOLD.toLocaleString()} gold. Heroes, cards and relics you add later unlock for testers automatically. The player sees it the next time the game opens.</p>
+ <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><input id="tstu" placeholder="Username, e.g. david2" style="max-width:240px" value="${ks.length?'':'david2'}"><button onclick="testerSet($('#tstu').value)">🧪 Make tester &amp; max out</button></div>
+ ${ks.length?'<div style="margin-top:10px">'+ks.map(k=>`<div class="row" style="gap:8px;align-items:center;margin:4px 0"><b>${esc(k)}</b><span class="mut" style="font-size:12px">since ${new Date(+TESTERS[k].t||0).toLocaleDateString()}</span><button class="s" onclick="testerSet('${esc(k)}')">🔄 Refill</button><button class="d s" onclick="testerDel('${esc(k)}')">Remove</button></div>`).join('')+'</div>':''}`};
+async function testerSet(u){u=String(u||'').trim().toLowerCase();if(!u)return toast('Type a username');
+ try{const au=await api('auth/'+u).catch(()=>null);if(!au&&!confirm('No account named "'+u+'" was found. Make it a tester anyway?'))return;
+  await api('cardgame/testers/'+u,'PUT',{t:Date.now(),gold:TESTER_GOLD});
+  const skins={};Object.keys(SKINSA||{}).forEach(k=>skins[k]=true);const frames={};PREMF.forEach(k=>frames[k]=true);
+  await api('cardgame/wallet/'+u+'/dia','PUT',TESTER_DIA);await api('cardgame/wallet/'+u+'/slots','PUT',TESTER_SLOTS);
+  await api('cardgame/wallet/'+u+'/own/frames','PATCH',frames);if(Object.keys(skins).length)await api('cardgame/wallet/'+u+'/own/skins','PATCH',skins);
+  TESTERS[u]={t:Date.now(),gold:TESTER_GOLD};const e=$('#testsec');if(e)e.innerHTML=testerInner();toast('🧪 '+u+' is a tester: everything unlocked, diamonds and gold maxed')}catch(x){toast(x.message)}}
+async function testerDel(u){if(!confirm('Stop '+u+' being a tester? What they already have stays.'))return;try{await api('cardgame/testers/'+u,'DELETE');delete TESTERS[u];const e=$('#testsec');if(e)e.innerHTML=testerInner();toast('Removed')}catch(x){toast(x.message)}}
 function cgOverview(){
   const hs=Object.values(HLIST),play=hs.filter(isPlayable).length,noCards=hs.filter(h=>!isPlayable(h)),noUlt=hs.filter(h=>isPlayable(h)&&!cardsOf(h).some(c=>c.type==='ultimate'));
   const miss=DEFAULT_HEROES.filter(d=>!HLIST['hd_'+d.key]);
   const tile=(ic,l,v,sub,t)=>`<div class="cgt" onclick="cgGo('${t}')"><span class="ic">${ic}</span><b>${v}</b><span>${l}</span><small>${sub}</small></div>`;
   const chk=(ok,t,fix)=>`<div class="cgck ${ok?'ok':'warn'}"><span>${ok?'✓':'⚠'}</span><div>${t}${!ok&&fix?` <a onclick="cgGo('${fix}')">Fix →</a>`:''}</div></div>`;
-  return `<div class="cgp"><h4>At a glance</h4><div class="cgts">
+  return `<div class="cgp" id="testsec">${testerInner()}</div><div class="cgp"><h4>At a glance</h4><div class="cgts">
     ${tile('🛡️','Heroes',Object.keys(HLIST).length,`${play} playable`,'heroes')}${tile('✨','Buffs & Debuffs',Object.keys(AILS).length,'status effects','ails')}${tile('🔮','Relics',Object.keys(RELS).length,'equipment','relics')}
     ${tile('🃏','General Cards',Object.keys(GENS).length,`${Object.values(GENS).filter(g=>g.locked).length} reward-only`,'gen')}${tile('📜','Quests',Object.keys(QSTS).length,'win-based','quests')}${tile('🏅','Ranks',RKS.length,RKSAVED?'custom saved':'defaults','ranks')}${tile('🤖','Bots',botList().filter(([,b])=>b.on!==false).length,'ranked AI opponents','bots')}
     <div class="cgt" style="cursor:default"><span class="ic">👥</span><b>${LBN}</b><span>Players who played</span><small>on the leaderboard</small></div></div></div>
@@ -1407,8 +1424,8 @@ async function restoreKits(){const bak=Object.entries(HLIST).filter(([,h])=>h&&h
 /* ---------------- new heroes (Assaulter, Scout, Blacksmith, Druid, Lightning Mage) ----------------
    One click in the Heroes tab: pick dafreta_new_heroes_pack.json (battle art + menu portraits). Creates the heroes with
    their skill kits (values are % of ATK), the status effects they need, their battle art and menu portraits. */
-const NEW_HEROES=[{id:'hx_assaulter',k:'assaulter',name:'Assaulter',class_:'Defender',hp:72,atk:6},{id:'hx_scout',k:'scout',name:'Scout',class_:'Attacker',hp:52,atk:6},
- {id:'hx_blacksmith',k:'blacksmith',name:'Blacksmith',class_:'Specialist',hp:60,atk:5},{id:'hx_druid',k:'druid',name:'Druid',class_:'Healer',hp:42,atk:5},{id:'hx_lmage',k:'lmage',name:'Lightning Mage',class_:'Magic',hp:44,atk:6}];
+const NEW_HEROES=[{id:'hx_assaulter',k:'assaulter',name:'Assaulter',class_:'Defender',hp:72,atk:6,weapon:'axe'},{id:'hx_scout',k:'scout',name:'Scout',class_:'Attacker',hp:52,atk:6,weapon:'bow'},
+ {id:'hx_blacksmith',k:'blacksmith',name:'Blacksmith',class_:'Specialist',hp:60,atk:5,weapon:'hammer'},{id:'hx_druid',k:'druid',name:'Druid',class_:'Healer',hp:42,atk:5,weapon:'staff'},{id:'hx_lmage',k:'lmage',name:'Lightning Mage',class_:'Magic',hp:44,atk:6,weapon:'magic'}];
 function newHeroCards(k,hid){const c=(id,o)=>({id:hid+'_'+id,value:0,manaCost:1,ail:'',dur:1,hits:1,scope:'front',target:'',shield:0,shDur:2,heal:0,draw:0,pct:true,...o});
  if(k==='assaulter')return [c('x',{name:'Fallen Strike',type:'ultimate',ult:'front',manaCost:0,value:200,ail:'k_weak',dur:1,scope:'pierce',vfx:'chop'}),
   c('s1',{name:'Killing Chop',type:'attack',manaCost:2,value:200,vfx:'chop'}),
@@ -1440,7 +1457,7 @@ async function importNewHeroes(inp){const f=inp.files[0];inp.value='';if(!f)retu
   const have=await api('cardgame/ailments').catch(()=>null)||{};for(const [k,a] of Object.entries(KIT_AILS))if(!have[k])await api('cardgame/ailments/'+k,'PUT',a);
   const t0=Date.now();let n=0;
   for(const d of NEW_HEROES){if(HLIST[d.id])continue;const art=pack.heroes[d.k];if(!art)continue;n++;say('Adding '+d.name+'…');
-   const r=await procHeroImg(await fileOf(art.img,d.k+'.webp'));const h={name:d.name,class_:d.class_,hp:d.hp,atk:d.atk,img:r.img,face:r.face,ar:r.ar,bs:100,cards:newHeroCards(d.k,d.id),created:t0+n,updated:t0+n};
+   const r=await procHeroImg(await fileOf(art.img,d.k+'.webp'));const h={name:d.name,class_:d.class_,weapon:d.weapon||null,hp:d.hp,atk:d.atk,img:r.img,face:r.face,ar:r.ar,bs:100,cards:newHeroCards(d.k,d.id),created:t0+n,updated:t0+n};
    try{const sm=await reenc(r.img,OPT_SMALL*2,OPT_SMALL,.9);if(sm&&sm.u)h.imgS=sm.u}catch(e){}
    await api('cardgame/heroes/'+d.id,'PUT',h);
    if(art.portrait){const pr=await ptProc(await fileOf(art.portrait,d.k+'_p.webp')),v=Date.now();
@@ -1463,6 +1480,7 @@ function heroEditorHTML(){
    <div class="f2" style="margin:10px 0">
     <div><label>Hero Name</label><input id="hn" maxlength="40" value="${esc(HF.name)}" oninput="HF.name=this.value" placeholder="e.g. Sir Aldric"></div>
     <div><label>Class</label><select id="hcl" onchange="hClass(this)" style="border-color:${hc};color:${hc};font-weight:700">${HERO_CLASSES.map(c=>`<option style="color:${HERO_COLORS[c]}"${HF.class_===c?' selected':''}>${c}</option>`).join('')}</select></div>
+    <div><label>Weapon <span class="mut" style="font-size:12px">(attack animation)</span></label><select id="hwp" onchange="HF.weapon=this.value">${HERO_WEAPONS.map(([v,t])=>`<option value="${v}"${(HF.weapon||'')===v?' selected':''}>${t}</option>`).join('')}</select></div>
     <div><label>Max HP</label><input id="hhp" type="number" min="1" max="9999" value="${HF.hp||100}" oninput="HF.hp=+this.value"></div>
     <div><label>Base ATK</label><input id="hatk" type="number" min="0" max="9999" value="${HF.atk||0}" oninput="HF.atk=+this.value"></div>
     <div style="grid-column:1/-1"><label class="chk"><input type="checkbox" ${HF.locked?'checked':''} onchange="HF.locked=this.checked"> 🔒 Locked hero: players must collect ${CGC.unlock} card fragments of this hero to unlock it (otherwise everyone owns it from the start)</label></div></div>
@@ -2247,7 +2265,7 @@ async function saveHero(){
     const id=HF.id||'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
     let created=Date.now();
     if(isEdit){try{const old=await api('cardgame/heroes/'+id);if(old&&old.created)created=old.created}catch(e){}}
-    const data={name,class_:cls,hp,atk:atk||0,imgS:HF.img&&HF.imgS&&HF.imgSrc===HF.img?HF.imgS:null,img:HF.img||null,face:HF.img&&HF.face?HF.face:null,ar:HF.img&&+HF.ar?+HF.ar:null,bs:+HF.bs&&+HF.bs!==100?+HF.bs:null,atkImg:HF.atkImg||null,atkFace:HF.atkImg&&HF.atkFace?HF.atkFace:null,atkBs:HF.atkImg&&+HF.atkBs&&+HF.atkBs!==100?+HF.atkBs:null,exImg:HF.exImg||null,exFace:HF.exImg&&HF.exFace?HF.exFace:null,exBs:HF.exImg&&+HF.exBs&&+HF.exBs!==100?+HF.exBs:null,cards:HF.cards.map(c=>c.conj?{...c,conj:{...c.conj,pool:c.conj.pool.map(r=>String(r).replace(/^@self::/,id+'::'))}}:c),evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
+    const data={name,class_:cls,weapon:HF.weapon||null,hp,atk:atk||0,imgS:HF.img&&HF.imgS&&HF.imgSrc===HF.img?HF.imgS:null,img:HF.img||null,face:HF.img&&HF.face?HF.face:null,ar:HF.img&&+HF.ar?+HF.ar:null,bs:+HF.bs&&+HF.bs!==100?+HF.bs:null,atkImg:HF.atkImg||null,atkFace:HF.atkImg&&HF.atkFace?HF.atkFace:null,atkBs:HF.atkImg&&+HF.atkBs&&+HF.atkBs!==100?+HF.atkBs:null,exImg:HF.exImg||null,exFace:HF.exImg&&HF.exFace?HF.exFace:null,exBs:HF.exImg&&+HF.exBs&&+HF.exBs!==100?+HF.exBs:null,cards:HF.cards.map(c=>c.conj?{...c,conj:{...c.conj,pool:c.conj.pool.map(r=>String(r).replace(/^@self::/,id+'::'))}}:c),evo:Object.keys(evo).length?evo:null,locked:HF.locked?true:null,created,updated:Date.now()};
     await api('cardgame/heroes/'+id,'PUT',data);
     HF=emptyHF();CF=emptyCF();
     toast(isEdit?'Hero updated':'Hero created');atab='cardgame';CGT='heroes';adminV();
@@ -2257,7 +2275,7 @@ async function editHero(id){
   try{const h=await api('cardgame/heroes/'+id);if(!h)return toast('Hero not found');
     const evo={};[1,2,3,4,5,6,7,8].forEach(i=>{const e=h.evo&&h.evo[i];if(e)evo[i]={imgS:e.imgS||'',imgSrc:e.img||'',name:e.name||'',bonus:e.bonus===undefined?'':e.bonus,hpB:e.hpB===undefined?'':e.hpB,atkB:e.atkB===undefined?'':e.atkB,img:e.img||'',face:e.face||null,ar:+e.ar||0,bs:+e.bs||0,atkImg:e.atkImg||'',atkFace:e.atkFace||null,atkBs:+e.atkBs||0,exImg:e.exImg||'',exFace:e.exFace||null,exBs:+e.exBs||0}});
     let cm=[];try{const o=await api('cardgame/comments/'+id);cm=Object.entries(o||{}).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0))}catch(e){}
-    HF={id,open:true,name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,imgS:h.imgS||'',imgSrc:h.img||'',img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,atkBs:+h.atkBs||0,exImg:h.exImg||'',exFace:h.exFace||null,exBs:+h.exBs||0,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
+    HF={id,open:true,weapon:h.weapon||'',name:h.name||'',class_:h.class_==='Mage'?'Magic':(h.class_||'Defender'),hp:h.hp||100,atk:h.atk||0,imgS:h.imgS||'',imgSrc:h.img||'',img:h.img||'',face:h.face||null,ar:+h.ar||0,bs:+h.bs||100,atkImg:h.atkImg||'',atkFace:h.atkFace||null,atkBs:+h.atkBs||0,exImg:h.exImg||'',exFace:h.exFace||null,exBs:+h.exBs||0,cards:cardsOf(h),evo,locked:!!h.locked,comments:cm};
     CF=emptyCF();atab='cardgame';CGT='heroes';PTS='b';await adminV();window.scrollTo(0,0);ptDraw();autoFaceMissing()
   }catch(e){toast(e.message)}}
 async function deleteHero(id){if(!confirm('Delete this hero? Players who used it will lose it from their line-ups.'))return;
